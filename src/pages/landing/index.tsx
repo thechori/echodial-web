@@ -13,7 +13,7 @@ function Landing() {
           <div className="hero-subcontainer">
             <div className="left">
               <h1>The CRM built on what matters most – communication</h1>
-              <h2>Conversations drive sales. Ringy handles them for you.</h2>
+              <h2>Conversations drive sales. L34ds handles them for you.</h2>
               <p>
                 Turn calls into customers with an automated sales team in your
                 back pocket.
