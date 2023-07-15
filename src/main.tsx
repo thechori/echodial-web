@@ -15,13 +15,6 @@ import StyleProvider from "./styles";
 import store from "./store";
 import ProtectedRoute from "./components/protected-route";
 
-// import Dashboard from "./pages/dashboard";
-// import Campaigns from "./pages/campaigns";
-// import Leads from "./pages/leads";
-// import StyleProvider from "./styles/index.ts";
-// import Listings from "./pages/listings";
-// import Robocall from "./pages/robocall";
-
 const router = createBrowserRouter([
   {
     path: "/",

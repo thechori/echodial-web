@@ -106,7 +106,7 @@ const StyleProvider = styled.div`
     margin-left: auto;
 
     @media ${devices.tablet} {
-      max-width: 720px;
+      max-width: 900px;
     }
 
     @media ${devices.desktop} {
