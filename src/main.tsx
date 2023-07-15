@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
@@ -14,31 +14,27 @@ import Settings from "./pages/settings";
 import StyleProvider from "./styles";
 import store from "./store";
 import ProtectedRoute from "./components/protected-route";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Landing />,
-  },
-  {
-    path: "/sign-in",
-    element: <SignIn />,
-  },
-  {
-    path: "/settings",
-    element: (
-      <ProtectedRoute>
-        <Settings />
-      </ProtectedRoute>
-    ),
-  },
-]);
+import Header from "./components/header";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
       <StyleProvider>
-        <RouterProvider router={router} />
+        <BrowserRouter>
+          <Header />
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
       </StyleProvider>
     </Provider>
   </React.StrictMode>

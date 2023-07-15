@@ -1,11 +1,8 @@
-import Header from "../../components/header";
-
 function Landing() {
   return (
-    <>
-      <Header />
+    <div className="container">
       <h1>Landing</h1>
-    </>
+    </div>
   );
 }
 

@@ -1,11 +1,8 @@
-import Header from "../../components/header";
-
 function Settings() {
   return (
-    <>
-      <Header />
+    <div className="container">
       <h1>Settings</h1>
-    </>
+    </div>
   );
 }
 

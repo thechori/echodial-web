@@ -1,11 +1,8 @@
-import Header from "../../components/header";
-
 function SignIn() {
   return (
-    <>
-      <Header />
+    <div className="container">
       <h1>Sign in</h1>
-    </>
+    </div>
   );
 }
 
