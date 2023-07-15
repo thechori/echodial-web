@@ -8,11 +8,12 @@ const StyleProvider = styled.div`
 
   a {
     font-weight: 500;
-    color: #646cff;
+    color: ${colors.purple};
     text-decoration: inherit;
 
     &:hover {
-      color: #535bf2;
+      color: ${colors.purple};
+      cursor: pointer;
     }
 
     &.button {
@@ -45,9 +46,21 @@ const StyleProvider = styled.div`
     border-radius: 8px;
     padding: 0.6em 1.2em;
     font-size: 1em;
+    font-weight: 600;
     border: none;
+    background-color: ${colors.purple};
+    color: white;
+    transition: opacity 200ms ease;
 
-    cursor: pointer;
+    &:hover {
+      cursor: pointer;
+      opacity: 0.6;
+    }
+
+    &.lg {
+      font-size: 1.2rem;
+      padding: 1rem 1.5rem;
+    }
   }
 
   input {
@@ -106,11 +119,11 @@ const StyleProvider = styled.div`
     margin-left: auto;
 
     @media ${devices.tablet} {
-      max-width: 900px;
+      max-width: 1024px;
     }
 
     @media ${devices.desktop} {
-      max-width: 1240px;
+      max-width: 1400px;
     }
   }
 

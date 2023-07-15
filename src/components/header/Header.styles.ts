@@ -3,9 +3,14 @@ import devices from "../../styles/devices";
 
 const HeaderStyled = styled.div`
   background-color: #2a2a2a;
-  height: 100px;
   display: flex;
   align-items: center;
+
+  height: 80px;
+
+  @media ${devices.tablet} {
+    height: 100px;
+  }
 
   .full-menu {
     display: none;
@@ -22,11 +27,6 @@ const HeaderStyled = styled.div`
     @media ${devices.tablet} {
       display: none;
     }
-
-    &:hover {
-      cursor: pointer;
-      opacity: 0.6;
-    }
   }
 
   .hamburger-menu-drawer {
@@ -37,7 +37,7 @@ const HeaderStyled = styled.div`
     left: 0;
     height: 100vh;
     width: 100vw;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.85);
 
     .hamburger-menu-drawer-links {
       width: 100%;
@@ -66,13 +66,18 @@ const HeaderStyled = styled.div`
   }
 
   img {
-    height: 50px;
+    height: 40px;
+    @media ${devices.tablet} {
+      height: 50px;
+    }
   }
 
   a {
     color: white;
     font-size: 1.2rem;
+    font-weight: 700;
     padding: 1rem;
+    transition: opacity 200ms ease-in-out;
 
     &:hover {
       opacity: 0.6;
