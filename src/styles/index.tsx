@@ -48,7 +48,7 @@ const StyleProvider = styled.div`
     font-size: 1em;
     font-weight: 600;
     border: none;
-    background-color: ${colors.purple};
+    background-color: ${colors.blue};
     color: white;
     transition: opacity 200ms ease;
 
@@ -60,6 +60,10 @@ const StyleProvider = styled.div`
     &.lg {
       font-size: 1.2rem;
       padding: 1rem 1.5rem;
+    }
+
+    &.pink {
+      background-color: ${colors.pink};
     }
   }
 

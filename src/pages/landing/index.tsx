@@ -18,7 +18,7 @@ function Landing() {
                 Turn calls into customers with an automated sales team in your
                 back pocket.
               </p>
-              <button className="lg" onClick={() => navigate("/sign-up")}>
+              <button className="pink lg" onClick={() => navigate("/sign-up")}>
                 Sign up today
               </button>
             </div>

@@ -4,7 +4,12 @@ import devices from "../../styles/devices";
 
 const LandingStyled = styled.div`
   .hero {
-    background-color: white;
+    /* background-color: white; */
+    background: radial-gradient(
+      circle,
+      ${colors.blue} 0%,
+      ${colors.darkBackground} 75%
+    );
 
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -18,7 +23,7 @@ const LandingStyled = styled.div`
     }
 
     h1 {
-      color: ${colors.purple};
+      color: white;
       font-size: 2rem;
       line-height: 2.2rem;
       margin-top: 0.5rem;
@@ -38,10 +43,12 @@ const LandingStyled = styled.div`
     }
 
     h2 {
+      color: ${colors.gold};
     }
 
     p {
       margin-bottom: 2rem;
+      color: white;
     }
 
     .hero-subcontainer {
