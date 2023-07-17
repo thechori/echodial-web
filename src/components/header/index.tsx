@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { AiOutlineMenu } from "react-icons/ai";
 //
 import HeaderStyled from "./Header.styles";
 import leadsLogoFull from "../../assets/l34ds-logo-full.png";
@@ -24,7 +25,7 @@ const Header = () => {
               className="hamburger-menu"
               onClick={() => setExpanded(!expanded)}
             >
-              🍔
+              <AiOutlineMenu fontSize="26px" color="white" />
             </div>
 
             {expanded && (
