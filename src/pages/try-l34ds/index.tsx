@@ -8,9 +8,13 @@ import routes from "../../configs/routes";
 import { AiOutlineCheck } from "react-icons/ai";
 import colors from "../../styles/colors";
 import { extractErrorMessage } from "../../utils/error";
+import { useAppDispatch } from "../../store/hooks";
+import { setJwt } from "../../store/user/slice";
 
 function SignUp() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -29,13 +33,25 @@ function SignUp() {
     setLoading(true);
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_HOST}/user`, {
+      // Create User
+      await axios.post(`${import.meta.env.VITE_API_HOST}/user`, {
         firstName,
         lastName,
         email,
         password,
       });
-      console.log(res);
+
+      // Sign in to new User account
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_HOST}/auth/sign-in`,
+        {
+          email,
+          password,
+        }
+      );
+
+      dispatch(setJwt(data));
+      navigate(routes.dashboard);
     } catch (error) {
       setError(extractErrorMessage(error));
     } finally {
