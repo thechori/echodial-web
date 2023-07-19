@@ -95,8 +95,6 @@ const StyleProvider = styled.div`
   input {
     border-radius: 4px;
     border: 1px solid rgba(0, 0, 0, 0.25);
-    margin-left: auto;
-    margin-right: auto;
     display: block;
 
     padding: 0.5rem;
