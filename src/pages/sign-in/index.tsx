@@ -1,37 +1,7 @@
-import { styled } from "styled-components";
-//
-import l34dsLogo from "../../assets/l34ds-logo-full.png";
 import { useNavigate } from "react-router-dom";
-
-const SignInStyled = styled.div`
-  width: 100vw;
-  height: 100vh;
-  flex-direction: column;
-  display: flex;
-  place-content: center;
-
-  .logo-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding-bottom: 2rem;
-
-    img {
-      width: 300px;
-    }
-  }
-
-  .form-container {
-    width: 450px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .lower-links {
-    display: flex;
-    justify-content: space-between;
-  }
-`;
+//
+import SignInStyled from "./SignIn.styles";
+import l34dsLogo from "../../assets/l34ds-logo-full.png";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -65,9 +35,14 @@ function SignIn() {
               <input type="checkbox" />
               <label>Remember me</label>
             </div>
-            <a href="/forgot-password">For your password?</a>
+            <a href="/forgot-password">Forgot your password?</a>
           </div>
         </form>
+
+        <div className="lower-lower-links">
+          <span>Not a customer yet?</span>
+          <button onClick={() => navigate("/sign-up")}>Try for free</button>
+        </div>
       </div>
     </SignInStyled>
   );

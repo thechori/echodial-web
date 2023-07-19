@@ -63,7 +63,7 @@ const StyleProvider = styled.div`
     border-radius: 4px;
     padding: 0.6em 1.2em;
     font-size: 1em;
-    font-weight: 600;
+    font-weight: 500;
     border: none;
     background-color: ${colors.blue};
     color: white;
