@@ -2,37 +2,54 @@ import { styled } from "styled-components";
 //
 import colors from "./colors";
 import devices from "./devices";
+import { darken } from "polished";
 
 const StyleProvider = styled.div`
   color: #343434;
 
   a {
     font-weight: 500;
-    color: ${colors.purple};
+    color: ${colors.blue};
     text-decoration: inherit;
+    transition: color 200ms ease;
 
     &:hover {
-      color: ${colors.purple};
+      color: ${darken(0.1, colors.blue)};
       cursor: pointer;
+    }
+
+    &.light {
+      color: white;
+      transition: opacity 200ms ease;
+
+      &:hover {
+        opacity: 0.6;
+        /* cursor: pointer; */
+      }
     }
 
     &.button {
       background-color: ${colors.blue};
       color: white;
       display: block;
-      margin-bottom: 1rem;
+      margin: 0;
       padding: 1rem;
-      width: -webkit-fill-available;
       border-radius: 4px;
+      text-align: center;
+      transition: background-color 200ms ease;
 
       &.disabled {
         opacity: 0.3;
         pointer-events: none;
       }
 
+      &.full {
+        width: -webkit-fill-available;
+      }
+
       &:hover {
         cursor: pointer;
-        opacity: 0.6;
+        background-color: ${darken(0.1, colors.blue)};
       }
     }
   }
@@ -43,18 +60,22 @@ const StyleProvider = styled.div`
   }
 
   button {
-    border-radius: 8px;
+    border-radius: 4px;
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 600;
     border: none;
     background-color: ${colors.blue};
     color: white;
-    transition: opacity 200ms ease;
+    transition: background-color 200ms ease;
 
     &:hover {
       cursor: pointer;
-      opacity: 0.6;
+      background-color: ${darken(0.1, colors.blue)};
+    }
+
+    &.full {
+      width: -webkit-fill-available;
     }
 
     &.lg {
@@ -68,9 +89,6 @@ const StyleProvider = styled.div`
   }
 
   input {
-    width: -webkit-fill-available;
-
-    text-align: center;
     border-radius: 4px;
     border: 1px solid rgba(0, 0, 0, 0.25);
     margin-left: auto;
@@ -84,7 +102,6 @@ const StyleProvider = styled.div`
       padding: 0.75rem;
       margin-bottom: 1.5rem;
       font-size: 1.2rem;
-      width: 240px;
     }
   }
 
@@ -113,6 +130,20 @@ const StyleProvider = styled.div`
       color: ${colors.red};
       font-size: 0.8rem;
     }
+  }
+
+  .surface {
+    background-color: ${colors.surface};
+  }
+
+  .py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .py-8 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
   }
 
   .container {
@@ -180,6 +211,47 @@ const StyleProvider = styled.div`
         #3dd875 66%,
         #31b3ec
       );
+    }
+  }
+
+  form {
+    background-color: white;
+    padding: 1.25rem;
+    border: 1px solid rgb(216, 221, 230);
+    border-radius: 4px;
+
+    .input-field {
+      text-align: left;
+
+      label {
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+    }
+  }
+
+  .input-checkbox {
+    display: flex;
+    align-items: center;
+
+    input[type="checkbox"] {
+      margin: auto;
+      margin-right: 0.5rem;
+    }
+  }
+
+  hr {
+    opacity: 0.3;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .hoverable {
+    transition: opacity 200ms ease;
+
+    &:hover {
+      opacity: 0.6;
+      cursor: pointer;
     }
   }
 `;

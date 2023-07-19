@@ -16,7 +16,8 @@ const HeaderStyled = styled.div`
     display: none;
 
     @media ${devices.tablet} {
-      display: block;
+      display: flex;
+      align-items: center;
     }
   }
 
@@ -73,15 +74,12 @@ const HeaderStyled = styled.div`
   }
 
   a {
-    color: white;
     font-size: 1.2rem;
-    font-weight: 700;
     padding: 1rem;
-    transition: opacity 200ms ease-in-out;
+  }
 
-    &:hover {
-      opacity: 0.6;
-    }
+  .sign-up-container {
+    margin-left: 1rem;
   }
 `;
 

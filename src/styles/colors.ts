@@ -3,9 +3,13 @@ const colors = {
   blue: "#0d79a5",
   red: "#d63a14",
   purple: "#646cff",
-  darkBackground: "#2a2a2a",
   pink: "#ea1773",
   gold: "#ffad2a",
+
+  darkBackground: "#2a2a2a",
+  lightBackground: "#F4F6F9",
+  fontOnDarkBackground: "#fff",
+  surface: "#efefef",
 };
 
 export default colors;
