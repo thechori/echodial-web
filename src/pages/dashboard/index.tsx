@@ -1,8 +1,12 @@
+import DashboardStyled from "./Dashboard.styles";
+
 function Dashboard() {
   return (
-    <div>
-      <h1>Dashboard</h1>
-    </div>
+    <DashboardStyled>
+      <div className="container">
+        <h1>Dashboard</h1>
+      </div>
+    </DashboardStyled>
   );
 }
 

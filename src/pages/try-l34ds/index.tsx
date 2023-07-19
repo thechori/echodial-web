@@ -1,13 +1,47 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 //
 import TryL34dsStyled from "./TryL34ds";
 import l34dsLogo from "../../assets/l34ds-logo-full.png";
 import routes from "../../configs/routes";
 import { AiOutlineCheck } from "react-icons/ai";
 import colors from "../../styles/colors";
+import { extractErrorMessage } from "../../utils/error";
 
 function SignUp() {
   const navigate = useNavigate();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleFormSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    // Clear errors
+    setError("");
+
+    // API call
+    setLoading(true);
+
+    try {
+      const res = await axios.post("http://localhost:3001/user", {
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+      console.log(res);
+    } catch (error) {
+      setError(extractErrorMessage(error));
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <TryL34dsStyled>
@@ -57,23 +91,64 @@ function SignUp() {
           </div>
         </div>
         <div className="right">
-          <form>
+          <form onSubmit={handleFormSubmit}>
             <div className="input-field">
-              <input type="text" name="firstName" placeholder="First name *" />
+              <input
+                required
+                type="text"
+                name="firstName"
+                placeholder="First name *"
+                value={firstName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFirstName(e.target.value)
+                }
+              />
             </div>
             <div className="input-field">
-              <input type="text" name="lastName" placeholder="Last name *" />
+              <input
+                required
+                type="text"
+                name="lastName"
+                placeholder="Last name *"
+                value={lastName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setLastName(e.target.value)
+                }
+              />
             </div>
             <div className="input-field">
-              <input type="email" placeholder="Email address *" />
+              <input
+                required
+                type="email"
+                placeholder="Email address *"
+                value={email}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setEmail(e.target.value)
+                }
+              />
             </div>
 
             <div className="input-field">
-              <input type="password" placeholder="Password *" />
+              <input
+                required
+                type="password"
+                placeholder="Password *"
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setPassword(e.target.value)
+                }
+              />
             </div>
 
             <div className="legal">
-              <input type="checkbox" />
+              <input
+                required
+                type="checkbox"
+                checked={acceptTerms}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setAcceptTerms(e.target.checked)
+                }
+              />
               <label>
                 I accept the <a href="#">L34ds Terms of Service</a> and have
                 read the <a href="#">L34ds Privacy Notice</a>.
@@ -81,9 +156,10 @@ function SignUp() {
             </div>
 
             <div style={{ height: 24 }} />
+            <div className="error">{error}</div>
 
             <button className="full lg shadow" type="submit">
-              Start your free trial
+              {loading ? "Loading..." : "Start your free trial"}
             </button>
           </form>
         </div>

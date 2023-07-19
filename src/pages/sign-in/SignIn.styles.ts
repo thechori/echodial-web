@@ -6,6 +6,7 @@ const SignInStyled = styled.div`
   flex-direction: column;
   display: flex;
   place-content: center;
+  color: white;
 
   .logo-container {
     width: 100%;
@@ -37,6 +38,10 @@ const SignInStyled = styled.div`
     margin: auto;
     width: 300px;
     padding: 1.25rem;
+  }
+
+  .error {
+    margin-top: 1rem;
   }
 `;
 

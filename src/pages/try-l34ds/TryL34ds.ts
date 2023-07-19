@@ -109,6 +109,10 @@ const TryL34dsStyled = styled.div`
     }
   }
 
+  .error {
+    margin-bottom: 1rem;
+  }
+
   .lower-links {
     display: flex;
     justify-content: space-between;

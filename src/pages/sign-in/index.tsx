@@ -3,9 +3,41 @@ import { useNavigate } from "react-router-dom";
 import SignInStyled from "./SignIn.styles";
 import l34dsLogo from "../../assets/l34ds-logo-full.png";
 import routes from "../../configs/routes";
+import { useState } from "react";
+import { extractErrorMessage } from "../../utils/error";
+import axios from "axios";
+import { useAppDispatch } from "../../store/hooks";
+import { setJwt } from "../../store/user/slice";
 
 function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleFormSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await axios.post("http://localhost:3001/auth/login", {
+        email,
+        password,
+      });
+
+      dispatch(setJwt(res.data));
+      navigate(routes.dashboard);
+    } catch (error) {
+      setError(extractErrorMessage(error));
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <SignInStyled>
@@ -17,20 +49,37 @@ function SignIn() {
           <img src={l34dsLogo} alt="L34ds logo" />
         </div>
 
-        <form>
+        <form onSubmit={handleFormSubmit}>
           <div className="input-field">
             <label htmlFor="email">Email</label>
-            <input id="email" type="email" placeholder="Email address..." />
+            <input
+              id="email"
+              type="email"
+              placeholder="Email address..."
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
+            />
           </div>
 
           <div className="input-field">
             <label htmlFor="Password">Password</label>
-            <input type="password" placeholder="Password..." />
+            <input
+              type="password"
+              placeholder="Password..."
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
+            />
           </div>
 
           <button className="full" type="submit">
-            Submit
+            {loading ? "Loading..." : "Submit"}
           </button>
+
+          <div className="error">{error}</div>
 
           <hr />
 
