@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AiOutlineMenu } from "react-icons/ai";
 //
 import HeaderStyled from "./Header.styles";
@@ -45,27 +45,27 @@ const Header = () => {
                 <div className="hamburger-menu-drawer-links">
                   {isLoggedIn ? (
                     <>
-                      <Link className="light" to={routes.landing}>
-                        Home
-                      </Link>
-                      <Link className="light" to={routes.proDial}>
+                      <NavLink className="light" to={routes.dashboard}>
+                        Dashboard
+                      </NavLink>
+                      <NavLink className="light" to={routes.dialer}>
                         Dialer
-                      </Link>
-                      <Link className="light" to={routes.settings}>
+                      </NavLink>
+                      <NavLink className="light" to={routes.settings}>
                         Settings
-                      </Link>
+                      </NavLink>
                     </>
                   ) : (
                     <>
-                      <Link className="light" to={routes.landing}>
+                      <NavLink className="light" to={routes.landing}>
                         Home
-                      </Link>
-                      <Link className="light" to={routes.signIn}>
+                      </NavLink>
+                      <NavLink className="light" to={routes.signIn}>
                         Sign in
-                      </Link>
-                      <Link className="button light" to={routes.tryL34ds}>
+                      </NavLink>
+                      <NavLink className="button light" to={routes.tryL34ds}>
                         Try for free
-                      </Link>
+                      </NavLink>
                     </>
                   )}
                 </div>
@@ -75,28 +75,28 @@ const Header = () => {
             <div className="full-menu">
               {isLoggedIn ? (
                 <>
-                  <Link className="light" to={routes.dashboard}>
-                    Home
-                  </Link>
-                  <Link className="light" to={routes.proDial}>
+                  <NavLink className="light" to={routes.dashboard}>
+                    Dashboard
+                  </NavLink>
+                  <NavLink className="light" to={routes.dialer}>
                     Dialer
-                  </Link>
-                  <Link className="light" to={routes.settings}>
+                  </NavLink>
+                  <NavLink className="light" to={routes.settings}>
                     Settings
-                  </Link>
+                  </NavLink>
                 </>
               ) : (
                 <>
-                  <Link className="light" to={routes.landing}>
+                  <NavLink className="light" to={routes.landing}>
                     Home
-                  </Link>
-                  <Link className="light" to={routes.signIn}>
+                  </NavLink>
+                  <NavLink className="light" to={routes.signIn}>
                     Sign in
-                  </Link>
+                  </NavLink>
                   <div className="sign-up-container">
-                    <Link className="button" to={routes.tryL34ds}>
+                    <NavLink className="button" to={routes.tryL34ds}>
                       Try for free
-                    </Link>
+                    </NavLink>
                   </div>
                 </>
               )}

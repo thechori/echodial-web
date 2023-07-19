@@ -138,6 +138,48 @@ const StyleProvider = styled.div`
     background-color: ${colors.surface};
   }
 
+  .silver {
+    background: conic-gradient(
+      #d7d7d7,
+      #c3c3c3,
+      #cccccc,
+      #c6c6c6,
+      #d7d7d7,
+      #c3c3c3,
+      #cccccc,
+      #c6c6c6,
+      #d7d7d7,
+      #c3c3c3,
+      #cccccc,
+      #c6c6c6,
+      #d7d7d7,
+      #c3c3c3,
+      #cccccc,
+      #c6c6c6
+    );
+  }
+
+  .titanium {
+    background: conic-gradient(
+      #e6e9bf,
+      #d2b5aa,
+      #cbaea3,
+      #d4b5ab,
+      #e6e9bf,
+      #d2b5aa,
+      #cbaea3,
+      #d4b5ab,
+      #e6e9bf,
+      #d2b5aa,
+      #cbaea3,
+      #d4b5ab,
+      #e6e9bf,
+      #d2b5aa,
+      #cbaea3,
+      #d4b5ab
+    );
+  }
+
   .py-4 {
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -156,7 +198,7 @@ const StyleProvider = styled.div`
     margin-left: auto;
 
     @media ${devices.tablet} {
-      max-width: 1024px;
+      max-width: 1200px;
     }
 
     @media ${devices.desktop} {

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import devices from "../../styles/devices";
+import colors from "../../styles/colors";
 
 const HeaderStyled = styled.div`
   background-color: #2a2a2a;
@@ -75,7 +76,19 @@ const HeaderStyled = styled.div`
 
   a {
     font-size: 1.2rem;
-    padding: 1rem;
+    padding: 0.5rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    padding-bottom: 0.5rem;
+    background: transparent;
+
+    &.active {
+      color: ${colors.blue};
+      text-shadow: 0 0 30px ${colors.purple};
+      /* text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #0fa,
+        0 0 82px #0fa, 0 0 92px #0fa, 0 0 102px #0fa, 0 0 151px #0fa; */
+      border-bottom: 4px solid ${colors.blue};
+    }
   }
 
   .sign-up-container {

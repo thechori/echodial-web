@@ -1,7 +1,7 @@
 const routes = {
   dashboard: "/dashboard",
   landing: "/",
-  proDial: "/pro-dial",
+  dialer: "/dialer",
   settings: "/settings",
   signIn: "/sign-in",
   forgotPassword: "/forgot-password",

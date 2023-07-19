@@ -5,6 +5,8 @@ function Dashboard() {
     <DashboardStyled>
       <div className="container">
         <h1>Dashboard</h1>
+        <p>Welcome to the app!</p>
+        <p>We think you're going to like it here.</p>
       </div>
     </DashboardStyled>
   );

@@ -7,11 +7,8 @@ const ProtectedRoute = ({ children }: any) => {
   const jwt = useAppSelector(selectJwt);
 
   if (!jwt) {
-    console.log("not authorized");
     return <Navigate to="/sign-in" replace />;
   }
-
-  console.log("authorized!");
 
   return children;
 };
