@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 //
 import LandingStyled from "./Landing.styles";
 import l34dsScreenshot from "../../assets/l34ds-screenshot.png";
+import routes from "../../configs/routes";
 
 function Landing() {
   const navigate = useNavigate();
@@ -18,7 +19,10 @@ function Landing() {
                 Turn calls into customers with an automated sales team in your
                 back pocket.
               </p>
-              <button className="pink lg" onClick={() => navigate("/sign-up")}>
+              <button
+                className="pink lg"
+                onClick={() => navigate(routes.tryL34ds)}
+              >
                 Sign up today
               </button>
             </div>

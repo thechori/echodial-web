@@ -4,6 +4,7 @@ import { AiOutlineMenu } from "react-icons/ai";
 //
 import HeaderStyled from "./Header.styles";
 import leadsLogoFull from "../../assets/l34ds-logo-full.png";
+import routes from "../../configs/routes";
 
 const Header = () => {
   const [expanded, setExpanded] = useState(false);
@@ -15,7 +16,7 @@ const Header = () => {
     setExpanded(false);
   };
 
-  if (pathname === "/sign-in") {
+  if (pathname === routes.signIn || pathname === routes.tryL34ds) {
     return null;
   }
 
@@ -23,7 +24,10 @@ const Header = () => {
     <HeaderStyled>
       <div className="container">
         <div className="header-container">
-          <div className="logo hoverable" onClick={() => navigate("/")}>
+          <div
+            className="logo hoverable"
+            onClick={() => navigate(routes.landing)}
+          >
             <img src={leadsLogoFull} alt="L34ds company logo" />
           </div>
           <div className="links">
@@ -37,13 +41,13 @@ const Header = () => {
             {expanded && (
               <div className="hamburger-menu-drawer" onClick={handleClickOff}>
                 <div className="hamburger-menu-drawer-links">
-                  <Link className="light" to="/">
+                  <Link className="light" to={routes.landing}>
                     Home
                   </Link>
-                  <Link className="light" to="/sign-in">
+                  <Link className="light" to={routes.signIn}>
                     Sign in
                   </Link>
-                  <Link className="button light" to="/sign-up">
+                  <Link className="button light" to={routes.tryL34ds}>
                     Try for free
                   </Link>
                 </div>
@@ -51,14 +55,14 @@ const Header = () => {
             )}
 
             <div className="full-menu">
-              <Link className="light" to="/">
+              <Link className="light" to={routes.landing}>
                 Home
               </Link>
-              <Link className="light" to="/sign-in">
+              <Link className="light" to={routes.signIn}>
                 Sign in
               </Link>
               <div className="sign-up-container">
-                <Link className="button" to="/sign-up">
+                <Link className="button" to={routes.tryL34ds}>
                   Try for free
                 </Link>
               </div>

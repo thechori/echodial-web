@@ -63,7 +63,7 @@ const StyleProvider = styled.div`
     border-radius: 4px;
     padding: 0.6em 1.2em;
     font-size: 1em;
-    font-weight: 500;
+    font-weight: 300;
     border: none;
     background-color: ${colors.blue};
     color: white;
@@ -79,12 +79,16 @@ const StyleProvider = styled.div`
     }
 
     &.lg {
-      font-size: 1.2rem;
-      padding: 1rem 1.5rem;
+      font-size: 1.1rem;
+      padding: 1.1rem 1.5rem;
     }
 
     &.pink {
       background-color: ${colors.pink};
+    }
+
+    &.shadow {
+      box-shadow: 0 5px 30px hsla(214, 3%, 59%, 0.996);
     }
   }
 
@@ -214,19 +218,19 @@ const StyleProvider = styled.div`
     }
   }
 
-  form {
+  .form {
     background-color: white;
     padding: 1.25rem;
     border: 1px solid rgb(216, 221, 230);
     border-radius: 4px;
+  }
 
-    .input-field {
-      text-align: left;
+  .input-field {
+    text-align: left;
 
-      label {
-        display: block;
-        margin-bottom: 0.25rem;
-      }
+    label {
+      display: block;
+      margin-bottom: 0.25rem;
     }
   }
 

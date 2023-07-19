@@ -5,6 +5,7 @@ const colors = {
   purple: "#646cff",
   pink: "#ea1773",
   gold: "#ffad2a",
+  green: "#37d575",
 
   darkBackground: "#2a2a2a",
   lightBackground: "#F4F6F9",
