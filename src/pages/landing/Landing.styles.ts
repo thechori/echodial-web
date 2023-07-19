@@ -4,7 +4,6 @@ import devices from "../../styles/devices";
 
 const LandingStyled = styled.div`
   .hero {
-    /* background-color: white; */
     background: radial-gradient(
       circle,
       ${colors.blue} 0%,
@@ -19,7 +18,7 @@ const LandingStyled = styled.div`
       align-items: center;
       padding-top: 2rem;
       padding-bottom: 2rem;
-      height: 65vh;
+      height: 600px;
     }
 
     h1 {

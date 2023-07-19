@@ -18,6 +18,7 @@ import store from "./store";
 import ProtectedRoute from "./components/protected-route";
 import Header from "./components/header";
 import routes from "./configs/routes";
+import NotFound from "./pages/not-found";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -45,6 +46,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                 </ProtectedRoute>
               }
             />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </StyleProvider>
