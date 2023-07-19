@@ -29,7 +29,7 @@ function SignUp() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:3001/user", {
+      const res = await axios.post(`${import.meta.env.VITE_API_HOST}/user`, {
         firstName,
         lastName,
         email,

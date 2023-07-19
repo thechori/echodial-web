@@ -20,34 +20,40 @@ const TryL34dsStyled = styled.div`
     font-weight: 200;
 
     padding-top: 2rem;
+    padding-bottom: 2rem;
 
     @media ${devices.tablet} {
       font-size: 2.25rem;
       padding-top: 4rem;
+      padding-bottom: 3rem;
     }
 
     .title {
       text-align: center;
-
-      margin-bottom: 3rem;
     }
   }
 
   .card {
-    display: flex;
     margin-left: auto;
     margin-right: auto;
+    display: block;
 
     @media ${devices.tablet} {
+      display: flex;
       max-width: 780px;
     }
 
     .left {
-      width: 45%;
-      flex: 1;
       background: linear-gradient(304deg, hsla(0, 0%, 100%, 0.4), #fff);
       border-top-left-radius: 6px;
       border-bottom-left-radius: 6px;
+
+      display: none;
+
+      @media ${devices.tablet} {
+        flex: 1;
+        width: 45%;
+      }
 
       .value-proposition {
         padding: 75px 55px;
@@ -75,10 +81,16 @@ const TryL34dsStyled = styled.div`
     .right {
       background-color: white;
       flex: 1;
-      width: 55%;
-      padding: 30px 50px;
-      border-top-right-radius: 6px;
-      border-bottom-right-radius: 6px;
+
+      padding: 3rem 2rem;
+
+      @media ${devices.tablet} {
+        padding: 30px 50px;
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+        flex: 1;
+        width: 55%;
+      }
     }
   }
 
@@ -124,8 +136,13 @@ const TryL34dsStyled = styled.div`
     align-items: center;
     color: white;
     margin: auto;
-    width: 300px;
-    padding: 3rem;
+
+    padding: 2rem;
+
+    @media ${devices.tablet} {
+      padding: 3rem;
+      width: 300px;
+    }
   }
 `;
 
