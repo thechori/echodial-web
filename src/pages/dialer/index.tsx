@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { styled } from "styled-components";
+import { Device } from "@twilio/voice-sdk";
 import { BsFillMicMuteFill } from "react-icons/bs";
 import { FaHandPaper } from "react-icons/fa";
 import { BsFillTelephoneFill, BsFillTelephoneXFill } from "react-icons/bs";
@@ -6,6 +8,7 @@ import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { TbGridDots } from "react-icons/tb";
 //
 import DialerStyled, { DialStyled } from "./Dialer.styles";
+import apiService from "../../services/api";
 
 /**
 
@@ -17,14 +20,63 @@ import DialerStyled, { DialStyled } from "./Dialer.styles";
 
  */
 function Dialer() {
+  const [device, setDevice] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+  async function startupClient() {
+    console.log("Requesting Access Token...");
+
+    try {
+      const data = await apiService("/token");
+      console.log("Got a token.");
+      const token = data.token;
+      setToken(token);
+      setClientNameUI(data.identity);
+      intitializeDevice();
+    } catch (err) {
+      console.log(err);
+      console.log(
+        "An error occurred. See your browser console for more information."
+      );
+    }
+  }
+
+  function startupDevice() {
+    setDevice(true);
+
+    const device = new Device(token, {
+      logLevel: 1,
+      // Set Opus as our preferred codec. Opus generally performs better, requiring less bandwidth and
+      // providing better audio quality in restrained network conditions.
+      codecPreferences: ["opus", "pcmu"],
+    });
+
+    addDeviceListeners(device);
+
+    // Device must be registered in order to receive incoming calls
+    device.register();
+  }
+
   return (
     <DialerStyled>
       <div className="container">
         <h1>Dialer</h1>
+        <button
+          className={`startup ${device ? "active" : "inactive"}`}
+          onClick={startupDevice}
+        >
+          {device ? "Device activated" : "Startup device"}
+        </button>
         <div className="dialer-container">
-          <Dial number="(832) 111-2222" />
-          <Dial number="(281) 222-3333" />
-          <Dial number="(346) 333-4444" />
+          <div className="left">
+            <Dial number="(832) 111-2222" />
+            <Dial number="(281) 222-3333" />
+            <Dial number="(346) 333-4444" />
+          </div>
+
+          <div className="right">
+            <DialList />
+          </div>
         </div>
       </div>
     </DialerStyled>
@@ -94,5 +146,28 @@ function Dial({ number }: { number: string }) {
         )}
       </div>
     </DialStyled>
+  );
+}
+
+const DialListStyled = styled.div`
+  padding: 2rem;
+
+  .title {
+    font-size: 2rem;
+  }
+`;
+
+function DialList() {
+  return (
+    <DialListStyled>
+      <div className="title">Call Queue</div>
+      <div className="list">
+        <div>(832) 111-2222</div>
+        <div>(281) 222-3333</div>
+        <div>(832) 111-2222</div>
+        <div>(346) 111-2222</div>
+        <div>(713) 111-2222</div>
+      </div>
+    </DialListStyled>
   );
 }

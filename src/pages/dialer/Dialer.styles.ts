@@ -5,9 +5,23 @@ const DialerStyled = styled.div`
   color: white;
   padding-bottom: 4rem;
 
+  button.startup {
+    /* color: red; */
+    &.active {
+      background-color: green;
+    }
+  }
+
   .dialer-container {
     display: flex;
     justify-content: space-between;
+    .left {
+      display: flex;
+      justify-content: space-between;
+    }
+    .right {
+      background-color: lightblue;
+    }
   }
 `;
 
@@ -23,12 +37,14 @@ export const DialStyled = styled.div`
   background: radial-gradient(ellipse at top, #1e3c2d, transparent),
     radial-gradient(ellipse at bottom, #043a47, transparent);
 
-  margin: 0.25rem;
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
   padding-top: 2rem;
   padding-bottom: 2rem;
 
   @media ${devices.tablet} {
-    margin: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
     padding-top: 4rem;
     padding-bottom: 4rem;
   }

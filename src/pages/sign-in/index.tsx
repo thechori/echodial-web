@@ -5,9 +5,9 @@ import l34dsLogo from "../../assets/l34ds-logo-full.png";
 import routes from "../../configs/routes";
 import { useState } from "react";
 import { extractErrorMessage } from "../../utils/error";
-import axios from "axios";
 import { useAppDispatch } from "../../store/hooks";
 import { setJwt } from "../../store/user/slice";
+import apiService from "../../services/api";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -25,13 +25,10 @@ function SignIn() {
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_HOST}/auth/sign-in`,
-        {
-          email,
-          password,
-        }
-      );
+      const res = await apiService.post("/auth/sign-in", {
+        email,
+        password,
+      });
 
       dispatch(setJwt(res.data));
       navigate(routes.dashboard);
