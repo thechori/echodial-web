@@ -6,12 +6,15 @@ import { FaHandPaper } from "react-icons/fa";
 import { BsFillTelephoneFill, BsFillTelephoneXFill } from "react-icons/bs";
 import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { TbGridDots } from "react-icons/tb";
+import { Select } from "@mantine/core";
 //
 import DialerStyled, { DialStyled } from "./Dialer.styles";
 import apiService from "../../services/api";
+import numbers from "../../configs/numbers";
 
 /**
 
+- [ ] Ability to trigger 1 call
 - [ ] Ability to trigger 3 concurrent calls
 - [ ] Ability to listen to first call made
 - [ ] Ability to be notified of someone picking up on another line (and is now currently on hold)
@@ -20,19 +23,43 @@ import apiService from "../../services/api";
 
  */
 function Dialer() {
+  const [error, setError] = useState("");
   const [device, setDevice] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [clientNameUi, setClientNameUi] = useState("");
+
+  const [fromNumber, setFromNumber] = useState<string | null>(numbers[0].value);
+
+  function initializeDevice() {
+    // logDiv.classList.remove("hide");
+    console.log("Initializing device");
+    if (!token) {
+      setError("No token found");
+      return;
+    }
+
+    const device = new Device(token, {
+      logLevel: 1,
+      // Set Opus as our preferred codec. Opus generally performs better, requiring less bandwidth and
+      // providing better audio quality in restrained network conditions.
+      // @ts-ignore
+      codecPreferences: ["opus", "pcmu"],
+    });
+
+    // Device must be registered in order to receive incoming calls
+    device.register();
+  }
 
   async function startupClient() {
     console.log("Requesting Access Token...");
 
     try {
-      const data = await apiService("/token");
+      const { data } = await apiService("/token");
       console.log("Got a token.");
       const token = data.token;
       setToken(token);
-      setClientNameUI(data.identity);
-      intitializeDevice();
+      setClientNameUi(data.identity);
+      initializeDevice();
     } catch (err) {
       console.log(err);
       console.log(
@@ -44,14 +71,20 @@ function Dialer() {
   function startupDevice() {
     setDevice(true);
 
+    if (!token) {
+      setError("No token found");
+      return;
+    }
+
     const device = new Device(token, {
       logLevel: 1,
       // Set Opus as our preferred codec. Opus generally performs better, requiring less bandwidth and
       // providing better audio quality in restrained network conditions.
+      // @ts-ignore
       codecPreferences: ["opus", "pcmu"],
     });
 
-    addDeviceListeners(device);
+    // addDeviceListeners(device);
 
     // Device must be registered in order to receive incoming calls
     device.register();
@@ -67,6 +100,15 @@ function Dialer() {
         >
           {device ? "Device activated" : "Startup device"}
         </button>
+
+        <Select
+          label="Your number"
+          placeholder="Pick one"
+          data={numbers}
+          value={fromNumber}
+          onChange={setFromNumber}
+        />
+
         <div className="dialer-container">
           <div className="left">
             <Dial number="(832) 111-2222" />

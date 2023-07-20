@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Checkbox } from "@mantine/core";
 //
 import SignInStyled from "./SignIn.styles";
 import l34dsLogo from "../../assets/l34ds-logo-full.png";
@@ -84,10 +85,8 @@ function SignIn() {
           <hr />
 
           <div className="lower-links">
-            <div className="input-checkbox">
-              <input type="checkbox" />
-              <label>Remember me</label>
-            </div>
+            <Checkbox label="Remember me" />
+
             <a href={routes.forgotPassword}>Forgot your password?</a>
           </div>
         </form>

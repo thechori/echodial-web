@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { MantineProvider } from "@mantine/core";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
@@ -25,39 +26,41 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
       <StyleProvider>
-        <BrowserRouter>
-          <Header />
-          <Routes>
-            <Route path={routes.landing} element={<Landing />} />
-            <Route path={routes.signIn} element={<SignIn />} />
-            <Route path={routes.tryL34ds} element={<TryL34ds />} />
-            <Route
-              path={routes.dashboard}
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path={routes.dialer}
-              element={
-                <ProtectedRoute>
-                  <Dialer />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path={routes.settings}
-              element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <MantineProvider withGlobalStyles withNormalizeCSS>
+          <BrowserRouter>
+            <Header />
+            <Routes>
+              <Route path={routes.landing} element={<Landing />} />
+              <Route path={routes.signIn} element={<SignIn />} />
+              <Route path={routes.tryL34ds} element={<TryL34ds />} />
+              <Route
+                path={routes.dashboard}
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.dialer}
+                element={
+                  <ProtectedRoute>
+                    <Dialer />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.settings}
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </MantineProvider>
       </StyleProvider>
     </Provider>
   </React.StrictMode>
