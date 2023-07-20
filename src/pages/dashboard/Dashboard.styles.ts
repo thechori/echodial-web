@@ -1,7 +1,5 @@
 import { styled } from "styled-components";
 
-const DashboardStyled = styled.div`
-  color: white;
-`;
+const DashboardStyled = styled.div``;
 
 export default DashboardStyled;

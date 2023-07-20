@@ -2,7 +2,6 @@ import { styled } from "styled-components";
 import devices from "../../styles/devices";
 
 const DialerStyled = styled.div`
-  color: white;
   padding-bottom: 4rem;
 
   button.startup {

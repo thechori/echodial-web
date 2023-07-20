@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Checkbox } from "@mantine/core";
+import { Button, Checkbox, TextInput } from "@mantine/core";
 //
 import SignInStyled from "./SignIn.styles";
-import l34dsLogo from "../../assets/l34ds-logo-full.png";
+import l34dsLogo from "../../assets/l34ds-logo-full-inverted.png";
 import routes from "../../configs/routes";
 import { useState } from "react";
 import { extractErrorMessage } from "../../utils/error";
@@ -52,11 +52,8 @@ function SignIn() {
 
         <form onSubmit={handleFormSubmit}>
           <div className="input-field">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Email address..."
+            <TextInput
+              label="Email"
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setEmail(e.target.value)
@@ -65,10 +62,9 @@ function SignIn() {
           </div>
 
           <div className="input-field">
-            <label htmlFor="Password">Password</label>
-            <input
+            <TextInput
               type="password"
-              placeholder="Password..."
+              label="Password"
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setPassword(e.target.value)
@@ -76,9 +72,12 @@ function SignIn() {
             />
           </div>
 
-          <button className="full" type="submit">
+          <Button className="full" type="submit">
             {loading ? "Loading..." : "Submit"}
-          </button>
+          </Button>
+          {/* <button className="full" type="submit">
+            {loading ? "Loading..." : "Submit"}
+          </button> */}
 
           <div className="error">{error}</div>
 

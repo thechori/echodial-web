@@ -6,7 +6,6 @@ const SignInStyled = styled.div`
   flex-direction: column;
   display: flex;
   place-content: center;
-  color: white;
 
   .logo-container {
     width: 100%;
@@ -32,12 +31,14 @@ const SignInStyled = styled.div`
 
   .lower-lower-links {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    color: white;
-    margin: auto;
-    width: 300px;
+    margin: 1rem auto;
     padding: 1.25rem;
+
+    span {
+      margin-right: 1rem;
+    }
   }
 
   .error {

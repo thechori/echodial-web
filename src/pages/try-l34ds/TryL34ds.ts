@@ -141,7 +141,7 @@ const TryL34dsStyled = styled.div`
 
     @media ${devices.tablet} {
       padding: 3rem;
-      width: 300px;
+      width: 400px;
     }
   }
 `;
