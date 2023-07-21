@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { Device } from "@twilio/voice-sdk";
 import { BsFillMicMuteFill } from "react-icons/bs";
@@ -6,11 +6,20 @@ import { FaHandPaper } from "react-icons/fa";
 import { BsFillTelephoneFill, BsFillTelephoneXFill } from "react-icons/bs";
 import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { TbGridDots } from "react-icons/tb";
-import { Select } from "@mantine/core";
+import { Button, Select, TextInput } from "@mantine/core";
 //
 import DialerStyled, { DialStyled } from "./Dialer.styles";
 import apiService from "../../services/api";
 import numbers from "../../configs/numbers";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  selectRingtoneDevices,
+  setCall,
+  setError,
+  setFromNumber,
+  setToNumber,
+  setToken,
+} from "../../store/dialer/slice";
 
 /**
 
@@ -23,56 +32,44 @@ import numbers from "../../configs/numbers";
 
  */
 function Dialer() {
-  const [error, setError] = useState("");
-  const [device, setDevice] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  const [clientNameUi, setClientNameUi] = useState("");
+  const dispatch = useAppDispatch();
+  const [device, setDevice] = useState<any>(null);
+  const [selectedDevices, setSelectedDevices] = useState<any>(null);
+  const [availableInputDevices, setAvailableInputDevices] = useState([]);
+  const [availableOutputDevices, setAvailableOutputDevices] = useState([]);
 
-  const [fromNumber, setFromNumber] = useState<string | null>(numbers[0].value);
-
-  function initializeDevice() {
-    // logDiv.classList.remove("hide");
-    console.log("Initializing device");
-    if (!token) {
-      setError("No token found");
-      return;
-    }
-
-    const device = new Device(token, {
-      logLevel: 1,
-      // Set Opus as our preferred codec. Opus generally performs better, requiring less bandwidth and
-      // providing better audio quality in restrained network conditions.
-      // @ts-ignore
-      codecPreferences: ["opus", "pcmu"],
-    });
-
-    // Device must be registered in order to receive incoming calls
-    device.register();
-  }
+  const { call, token, error, identity, fromNumber, toNumber } = useAppSelector(
+    (state) => state.dialer
+  );
 
   async function startupClient() {
     console.log("Requesting Access Token...");
 
     try {
-      const { data } = await apiService("/token");
+      const { data } = await apiService("/dialer/token");
       console.log("Got a token.");
       const token = data.token;
-      setToken(token);
-      setClientNameUi(data.identity);
-      initializeDevice();
+      dispatch(setToken(token));
     } catch (err) {
       console.log(err);
-      console.log(
-        "An error occurred. See your browser console for more information."
+      dispatch(
+        setError(
+          "An error occurred. See your browser console for more information."
+        )
       );
     }
   }
 
-  function startupDevice() {
-    setDevice(true);
+  async function initializeDevice() {
+    dispatch(setError(""));
+
+    // const mediaDevices = await navigator.mediaDevices.getUserMedia({
+    //   audio: true,
+    // });
+    // console.log("mediaDevices", mediaDevices);
 
     if (!token) {
-      setError("No token found");
+      dispatch(setError("No token found"));
       return;
     }
 
@@ -84,32 +81,129 @@ function Dialer() {
       codecPreferences: ["opus", "pcmu"],
     });
 
-    // addDeviceListeners(device);
-
     // Device must be registered in order to receive incoming calls
     device.register();
+
+    setDevice(device);
   }
+
+  function hangUp() {
+    console.log("Hanging up ...");
+    call.disconnect();
+  }
+
+  async function makeOutgoingCall() {
+    const params = {
+      To: toNumber,
+      From: fromNumber,
+    };
+
+    if (device) {
+      console.log(`Attempting to call ${params.To} ...`);
+
+      // Twilio.Device.connect() returns a Call object
+      const call = await device.connect({ params });
+
+      dispatch(setCall(call));
+
+      // add listeners to the Call
+      // "accepted" means the call has finished connecting and the state is now "open"
+      // call.on("accept", updateUIAcceptedOutgoingCall);
+      // call.on("disconnect", updateUIDisconnectedOutgoingCall);
+      // call.on("cancel", updateUIDisconnectedOutgoingCall);
+    } else {
+      console.log("Unable to make call.");
+      setError("No device found.");
+    }
+  }
+
+  useEffect(() => {
+    if (device) {
+      console.log("device??", device);
+
+      console.log("speakerDevices", device.audio.speakerDevices.get());
+      console.log("ringtoneDevices", device.audio.ringtoneDevices.get());
+      console.log(
+        "device.audio.availableInputDevices",
+        device.audio.availableInputDevices
+      );
+
+      // device.audio.availableInputDevices.forEach((d) => {
+      //   console.log("d", d);
+      // });
+
+      console.log("hi");
+      // for (const [key, value] of device.audio.availableInputDevices.entries()) {
+      //   console.log(key, value);
+      // }
+      device.audio.availableOutputDevices.forEach(function (
+        device: any,
+        id: any
+      ) {
+        console.log("device: ", device);
+        console.log("id: ", id);
+      });
+    }
+  }, [device]);
+
+  // Initialize device once a token exists
+  useEffect(() => {
+    if (token) {
+      console.log("token found, initializing device...");
+      initializeDevice();
+    }
+  }, [token]);
 
   return (
     <DialerStyled>
       <div className="container">
         <h1>Dialer</h1>
+        <div className="error">{error}</div>
         <button
           className={`startup ${device ? "active" : "inactive"}`}
-          onClick={startupDevice}
+          onClick={startupClient}
         >
           {device ? "Device activated" : "Startup device"}
         </button>
+
+        <div>Identity: {identity}</div>
+
+        {/* <div>
+          <Select
+            label="Input Devices"
+            // value={}
+            data={availableInputDevices}
+          />
+        </div>
+
+        <div>
+          <Select
+            label="Output Devices"
+            // value={}
+            data={availableOutputDevices}
+          />
+        </div> */}
 
         <Select
           label="Your number"
           placeholder="Pick one"
           data={numbers}
           value={fromNumber}
-          onChange={setFromNumber}
+          onChange={(number) => dispatch(setFromNumber(number))}
         />
 
-        <div className="dialer-container">
+        <TextInput
+          label="Number to call"
+          value={toNumber}
+          onChange={(e: any) => dispatch(setToNumber(e.target.value))}
+        />
+
+        <Button onClick={makeOutgoingCall}>Call</Button>
+        <Button onClick={hangUp}>Hang up</Button>
+
+        {/* <div>{device}</div> */}
+
+        {/* <div className="dialer-container">
           <div className="left">
             <Dial number="(832) 111-2222" />
             <Dial number="(281) 222-3333" />
@@ -119,7 +213,7 @@ function Dialer() {
           <div className="right">
             <DialList />
           </div>
-        </div>
+        </div> */}
       </div>
     </DialerStyled>
   );

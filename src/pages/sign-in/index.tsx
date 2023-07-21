@@ -75,9 +75,6 @@ function SignIn() {
           <Button className="full" type="submit">
             {loading ? "Loading..." : "Submit"}
           </Button>
-          {/* <button className="full" type="submit">
-            {loading ? "Loading..." : "Submit"}
-          </button> */}
 
           <div className="error">{error}</div>
 
