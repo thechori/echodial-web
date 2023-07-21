@@ -6,21 +6,28 @@ interface UserState {
   jwt: string | null;
 }
 
-const initialState: UserState = {
-  jwt: null,
-};
+const buildInitialState = (): UserState => ({
+  jwt: localStorage.getItem("jwt") || null,
+});
 
 export const UserSlice = createSlice({
   name: "user",
-  initialState,
+  initialState: buildInitialState(),
   reducers: {
     setJwt: (state, action) => {
       state.jwt = action.payload;
+
+      // Persist in local storage
+      localStorage.setItem("jwt", action.payload);
+    },
+    signOut: (state) => {
+      state.jwt = null;
+      localStorage.removeItem("jwt");
     },
   },
 });
 
-export const { setJwt } = UserSlice.actions;
+export const { setJwt, signOut } = UserSlice.actions;
 
 export const selectJwt = (state: RootState) => state.user.jwt;
 

@@ -22,7 +22,7 @@ import {
 
 /**
 
-- [ ] Ability to trigger 1 call
+- [x] Ability to trigger 1 call
 - [ ] Ability to trigger 3 concurrent calls
 - [ ] Ability to listen to first call made
 - [ ] Ability to be notified of someone picking up on another line (and is now currently on hold)
@@ -32,6 +32,9 @@ import {
  */
 function Dialer() {
   const dispatch = useAppDispatch();
+  const [status, setStatus] = useState<
+    "idle" | "calling" | "accepted" | "ended" | "canceled" | "rejected"
+  >("idle");
   const [device, setDevice] = useState<any>(null);
   // const [selectedDevices, setSelectedDevices] = useState<any>(null);
   // const [availableInputDevices, setAvailableInputDevices] = useState([]);
@@ -103,6 +106,11 @@ function Dialer() {
       // Twilio.Device.connect() returns a Call object
       const call = await device.connect({ params });
 
+      call.on("accept", () => setStatus("accepted"));
+      call.on("disconnect", () => setStatus("ended"));
+      call.on("cancel", () => setStatus("canceled"));
+      call.on("reject", () => setStatus("rejected"));
+
       dispatch(setCall(call));
 
       // add listeners to the Call
@@ -166,6 +174,8 @@ function Dialer() {
         </button>
 
         <div>Identity: {identity}</div>
+        {/* <div>Device status: {}</div> */}
+        <div>Call status: {status}</div>
 
         {/* <div>
           <Select

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
+//
 import { useAppDispatch } from "../../store/hooks";
-import { setJwt } from "../../store/user/slice";
+import { signOut } from "../../store/user/slice";
 import routes from "../../configs/routes";
 import SettingsStyled from "./Settings.styles";
 
@@ -9,7 +10,7 @@ function Settings() {
   const navigate = useNavigate();
 
   function handleSignOut() {
-    dispatch(setJwt(null));
+    dispatch(signOut());
     navigate(routes.signIn);
   }
 
