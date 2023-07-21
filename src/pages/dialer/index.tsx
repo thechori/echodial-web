@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
-import { styled } from "styled-components";
+// import { styled } from "styled-components";
 import { Device } from "@twilio/voice-sdk";
-import { BsFillMicMuteFill } from "react-icons/bs";
-import { FaHandPaper } from "react-icons/fa";
-import { BsFillTelephoneFill, BsFillTelephoneXFill } from "react-icons/bs";
-import { IoIosArrowDropdownCircle } from "react-icons/io";
-import { TbGridDots } from "react-icons/tb";
+// import { BsFillMicMuteFill } from "react-icons/bs";
+// import { FaHandPaper } from "react-icons/fa";
+// import { BsFillTelephoneFill, BsFillTelephoneXFill } from "react-icons/bs";
+// import { IoIosArrowDropdownCircle } from "react-icons/io";
+// import { TbGridDots } from "react-icons/tb";
 import { Button, Select, TextInput } from "@mantine/core";
 //
-import DialerStyled, { DialStyled } from "./Dialer.styles";
+import DialerStyled from "./Dialer.styles";
 import apiService from "../../services/api";
 import numbers from "../../configs/numbers";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
-  selectRingtoneDevices,
   setCall,
   setError,
   setFromNumber,
@@ -34,9 +33,9 @@ import {
 function Dialer() {
   const dispatch = useAppDispatch();
   const [device, setDevice] = useState<any>(null);
-  const [selectedDevices, setSelectedDevices] = useState<any>(null);
-  const [availableInputDevices, setAvailableInputDevices] = useState([]);
-  const [availableOutputDevices, setAvailableOutputDevices] = useState([]);
+  // const [selectedDevices, setSelectedDevices] = useState<any>(null);
+  // const [availableInputDevices, setAvailableInputDevices] = useState([]);
+  // const [availableOutputDevices, setAvailableOutputDevices] = useState([]);
 
   const { call, token, error, identity, fromNumber, toNumber } = useAppSelector(
     (state) => state.dialer
@@ -221,89 +220,89 @@ function Dialer() {
 
 export default Dialer;
 
-function Dial({ number }: { number: string }) {
-  const [status, setStatus] = useState<"idle" | "calling" | "active" | "ended">(
-    "idle"
-  );
-  const [muted, setMuted] = useState(false);
-  const [onHold, setOnHold] = useState(false);
+// function Dial({ number }: { number: string }) {
+//   const [status, setStatus] = useState<"idle" | "calling" | "active" | "ended">(
+//     "idle"
+//   );
+//   const [muted, setMuted] = useState(false);
+//   const [onHold, setOnHold] = useState(false);
 
-  return (
-    <DialStyled>
-      <div className="number-container">
-        <div className="number">{number}</div>
-        <IoIosArrowDropdownCircle />
-      </div>
-      <div className="status label">
-        {status === "calling" ? "calling..." : status}
-      </div>
-      <div className="call-options">
-        <div
-          className={`option ${muted && "active"}`}
-          onClick={() => setMuted(!muted)}
-        >
-          <div className="icon">
-            <BsFillMicMuteFill fontSize="20px" />
-          </div>
-          <div className="label">mute</div>
-        </div>
-        <div
-          className={`option ${onHold && "active"}`}
-          onClick={() => setOnHold(!onHold)}
-        >
-          <div className="icon">
-            <FaHandPaper fontSize="20px" />
-          </div>
-          <div className="label">hold</div>
-        </div>
-        <div className="option">
-          <div className="icon">
-            <TbGridDots fontSize="20px" />
-          </div>
-          <div className="label">options</div>
-        </div>
-      </div>
+//   return (
+//     <DialStyled>
+//       <div className="number-container">
+//         <div className="number">{number}</div>
+//         <IoIosArrowDropdownCircle />
+//       </div>
+//       <div className="status label">
+//         {status === "calling" ? "calling..." : status}
+//       </div>
+//       <div className="call-options">
+//         <div
+//           className={`option ${muted && "active"}`}
+//           onClick={() => setMuted(!muted)}
+//         >
+//           <div className="icon">
+//             <BsFillMicMuteFill fontSize="20px" />
+//           </div>
+//           <div className="label">mute</div>
+//         </div>
+//         <div
+//           className={`option ${onHold && "active"}`}
+//           onClick={() => setOnHold(!onHold)}
+//         >
+//           <div className="icon">
+//             <FaHandPaper fontSize="20px" />
+//           </div>
+//           <div className="label">hold</div>
+//         </div>
+//         <div className="option">
+//           <div className="icon">
+//             <TbGridDots fontSize="20px" />
+//           </div>
+//           <div className="label">options</div>
+//         </div>
+//       </div>
 
-      <div className="end-section">
-        {status === "idle" || status === "ended" ? (
-          <div className="option" onClick={() => setStatus("calling")}>
-            <div className="icon">
-              <BsFillTelephoneFill fontSize="30px" color="green" />
-            </div>
-            <div className="label">call</div>
-          </div>
-        ) : (
-          <div className="option" onClick={() => setStatus("ended")}>
-            <div className="icon">
-              <BsFillTelephoneXFill fontSize="30px" color="red" />
-            </div>
-            <div className="label">end</div>
-          </div>
-        )}
-      </div>
-    </DialStyled>
-  );
-}
+//       <div className="end-section">
+//         {status === "idle" || status === "ended" ? (
+//           <div className="option" onClick={() => setStatus("calling")}>
+//             <div className="icon">
+//               <BsFillTelephoneFill fontSize="30px" color="green" />
+//             </div>
+//             <div className="label">call</div>
+//           </div>
+//         ) : (
+//           <div className="option" onClick={() => setStatus("ended")}>
+//             <div className="icon">
+//               <BsFillTelephoneXFill fontSize="30px" color="red" />
+//             </div>
+//             <div className="label">end</div>
+//           </div>
+//         )}
+//       </div>
+//     </DialStyled>
+//   );
+// }
 
-const DialListStyled = styled.div`
-  padding: 2rem;
+// const DialListStyled = styled.div`
+//   padding: 2rem;
 
-  .title {
-    font-size: 2rem;
-  }
-`;
+//   .title {
+//     font-size: 2rem;
+//   }
+// `;
 
-function DialList() {
-  return (
-    <DialListStyled>
-      <div className="title">Call Queue</div>
-      <div className="list">
-        <div>(832) 111-2222</div>
-        <div>(281) 222-3333</div>
-        <div>(832) 111-2222</div>
-        <div>(346) 111-2222</div>
-        <div>(713) 111-2222</div>
-      </div>
-    </DialListStyled>
-  );
-}
+// function DialList() {
+//   return (
+//     <DialListStyled>
+//       <div className="title">Call Queue</div>
+//       <div className="list">
+//         <div>(832) 111-2222</div>
+//         <div>(281) 222-3333</div>
+//         <div>(832) 111-2222</div>
+//         <div>(346) 111-2222</div>
+//         <div>(713) 111-2222</div>
+//       </div>
+//     </DialListStyled>
+//   );
+// }
