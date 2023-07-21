@@ -33,7 +33,13 @@ import {
 function Dialer() {
   const dispatch = useAppDispatch();
   const [status, setStatus] = useState<
-    "idle" | "calling" | "accepted" | "ended" | "canceled" | "rejected"
+    | "idle"
+    | "calling"
+    | "accepted"
+    | "answered"
+    | "ended"
+    | "canceled"
+    | "rejected"
   >("idle");
   const [device, setDevice] = useState<any>(null);
   // const [selectedDevices, setSelectedDevices] = useState<any>(null);
@@ -95,6 +101,8 @@ function Dialer() {
   }
 
   async function makeOutgoingCall() {
+    setStatus("calling");
+
     const params = {
       To: toNumber,
       From: fromNumber,
@@ -106,10 +114,26 @@ function Dialer() {
       // Twilio.Device.connect() returns a Call object
       const call = await device.connect({ params });
 
+      // valid
       call.on("accept", () => setStatus("accepted"));
       call.on("disconnect", () => setStatus("ended"));
       call.on("cancel", () => setStatus("canceled"));
       call.on("reject", () => setStatus("rejected"));
+      call.on("volume", (inputVolume: number, outputVolume: number) =>
+        console.log("volume adjusted", inputVolume, outputVolume)
+      );
+
+      //
+      call.on("answer", (props: any) => {
+        setStatus("answered");
+        console.log("answer.props", props);
+      });
+      call.on("ack", (props: any) => {
+        console.log("ack.props", props);
+      });
+      call.on("message", (props: any) => {
+        console.log("message.props", props);
+      });
 
       dispatch(setCall(call));
 
@@ -193,26 +217,27 @@ function Dialer() {
           />
         </div> */}
 
-        <Select
-          label="Your number"
-          placeholder="Pick one"
-          data={numbers}
-          value={fromNumber}
-          onChange={(number) => dispatch(setFromNumber(number))}
-        />
+        <div className={`settings ${device && "active"}`}>
+          <Select
+            label="Your number"
+            placeholder="Pick one"
+            data={numbers}
+            value={fromNumber}
+            onChange={(number) => dispatch(setFromNumber(number))}
+          />
 
-        <TextInput
-          label="Number to call"
-          value={toNumber}
-          onChange={(e: any) => dispatch(setToNumber(e.target.value))}
-        />
+          <TextInput
+            label="Number to call"
+            value={toNumber}
+            onChange={(e: any) => dispatch(setToNumber(e.target.value))}
+          />
 
-        <Button onClick={makeOutgoingCall}>Call</Button>
-        <Button onClick={hangUp}>Hang up</Button>
+          <Button onClick={makeOutgoingCall}>Call</Button>
+          <Button onClick={hangUp}>Hang up</Button>
 
-        {/* <div>{device}</div> */}
+          {/* <div>{device}</div> */}
 
-        {/* <div className="dialer-container">
+          {/* <div className="dialer-container">
           <div className="left">
             <Dial number="(832) 111-2222" />
             <Dial number="(281) 222-3333" />
@@ -223,6 +248,7 @@ function Dialer() {
             <DialList />
           </div>
         </div> */}
+        </div>
       </div>
     </DialerStyled>
   );

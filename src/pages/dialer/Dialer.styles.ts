@@ -22,6 +22,17 @@ const DialerStyled = styled.div`
       background-color: lightblue;
     }
   }
+
+  .settings {
+    pointer-events: none;
+    opacity: 0.4;
+    transition: opacity 1s ease;
+
+    &.active {
+      pointer-events: all;
+      opacity: 1;
+    }
+  }
 `;
 
 export default DialerStyled;
