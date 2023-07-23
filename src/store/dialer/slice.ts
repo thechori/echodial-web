@@ -1,39 +1,33 @@
 import { createSlice } from "@reduxjs/toolkit";
 import numbers from "../../configs/numbers";
 //
-import type { RootState } from "..";
+import { TContact } from "../contacts/types";
+import contacts from "../../pages/dialer/contacts";
 
 interface IDialerState {
-  device: any;
-  //
-  calls: ICall[];
-}
-
-interface ICall {
-  id: number;
-  //
-  fromNumber: string | null;
-  toNumber?: string;
-  token: string | null;
-  identity: string | null;
-  call: any;
   error: string;
+  status: "idle" | "calling" | "failed" | "stopped" | "connected";
+  muted: boolean;
+  token: null | string;
+  identity: null | string;
+  fromNumber: string;
+  call: any;
+  contactsActive: TContact[];
+  contactQueue: TContact[];
+  activeCallSids: string[];
 }
 
 const initialState: IDialerState = {
-  device: null,
-  //
-  calls: [
-    {
-      id: 0,
-      fromNumber: numbers[0].value,
-      toNumber: "+18326460869",
-      token: null,
-      identity: null,
-      call: null,
-      error: "",
-    },
-  ],
+  call: null,
+  fromNumber: numbers[2].value,
+  error: "",
+  status: "idle",
+  muted: false,
+  token: null,
+  identity: null,
+  contactsActive: [],
+  contactQueue: contacts,
+  activeCallSids: [],
 };
 
 export const DialerSlice = createSlice({
@@ -42,9 +36,6 @@ export const DialerSlice = createSlice({
   reducers: {
     setFromNumber: (state, action) => {
       state.fromNumber = action.payload;
-    },
-    setToNumber: (state, action) => {
-      state.toNumber = action.payload;
     },
     setToken: (state, action) => {
       state.token = action.payload;
@@ -55,51 +46,43 @@ export const DialerSlice = createSlice({
     setCall: (state, action) => {
       state.call = action.payload;
     },
-    setDevice: (state, action) => {
-      state.device = action.payload;
-    },
     setError: (state, action) => {
       state.error = action.payload;
     },
+    setActiveCallSids: (state, action) => {
+      state.activeCallSids = action.payload;
+    },
+    setContactsActive: (state, action) => {
+      console.log("setContactsActive", action.payload);
+      state.contactsActive = action.payload;
+    },
+    setContactQueue: (state, action) => {
+      console.log("setContactQueue", action.payload);
+      state.contactQueue = action.payload;
+    },
+    setMuted: (state, action) => {
+      state.muted = action.payload;
+    },
+    setStatus: (state, action) => {
+      state.status = action.payload;
+    },
+    //
+    startDialer: (state, action) => {},
+    stopDialer: (state, action) => {},
   },
 });
 
 export const {
   setFromNumber,
-  setToNumber,
+  setActiveCallSids,
   setIdentity,
   setToken,
   setCall,
-  setDevice,
   setError,
+  setContactQueue,
+  setContactsActive,
+  setMuted,
+  setStatus,
 } = DialerSlice.actions;
-
-export const selectRingtoneDevices = (state: RootState) => {
-  const { device } = state.dialer;
-  if (!device) return [];
-  const ringtoneDevices = device.audio.speakerDevices.get();
-  console.log("ringtoneDevices", ringtoneDevices);
-
-  console.log("device.audio", device.audio);
-
-  // device.audio.availableOutputDevices.forEach(function (device, id) {
-  //   var isActive = selectedDevices.size === 0 && id === "default";
-  //   selectedDevices.forEach(function (device) {
-  //     if (device.deviceId === id) {
-  //       isActive = true;
-  //     }
-  //   });
-
-  //   var option = document.createElement("option");
-  //   option.label = device.label;
-  //   option.setAttribute("data-id", id);
-  //   if (isActive) {
-  //     option.setAttribute("selected", "selected");
-  //   }
-  //   selectEl.appendChild(option);
-  // });
-
-  return ringtoneDevices;
-};
 
 export default DialerSlice.reducer;

@@ -1,9 +1,11 @@
 import { styled } from "styled-components";
 //
 import { TContact } from "../../store/contacts/types";
+import { Card, List, Paper, Title } from "@mantine/core";
+import { useAppSelector } from "../../store/hooks";
 
 const ContactQueueStyled = styled.div`
-  padding: 2rem;
+  padding: 1rem;
 
   .title {
     font-size: 2rem;
@@ -23,19 +25,23 @@ const ContactQueueStyled = styled.div`
   }
 `;
 
-function ContactQueue({ contacts }: { contacts: TContact[] }) {
+function ContactQueue() {
+  const contacts = useAppSelector((state) => state.dialer.contactQueue);
+
   return (
-    <ContactQueueStyled>
-      <div className="title">Call Queue</div>
-      <div className="list">
+    <Paper shadow="xs" p="md">
+      {/* <Card withBorder radius="md" p="md"> */}
+      <Title order={2}>Contact Queue</Title>
+
+      <List>
         {contacts.length ? (
           contacts.map((c) => (
-            <div key={c.id} className="contact">
+            <List.Item key={c.id} className="contact">
               <div className="phone">{c.phone}</div>
               <div className="name">
                 {c.firstName} {c.lastName}
               </div>
-            </div>
+            </List.Item>
           ))
         ) : (
           <div className="empty-message">
@@ -43,8 +49,8 @@ function ContactQueue({ contacts }: { contacts: TContact[] }) {
             <button>+ Add some</button>
           </div>
         )}
-      </div>
-    </ContactQueueStyled>
+      </List>
+    </Paper>
   );
 }
 
