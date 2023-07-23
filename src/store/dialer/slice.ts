@@ -3,24 +3,37 @@ import numbers from "../../configs/numbers";
 //
 import type { RootState } from "..";
 
-interface DialerState {
+interface IDialerState {
+  device: any;
+  //
+  calls: ICall[];
+}
+
+interface ICall {
+  id: number;
+  //
   fromNumber: string | null;
   toNumber?: string;
   token: string | null;
   identity: string | null;
   call: any;
   error: string;
-  device: any;
 }
 
-const initialState: DialerState = {
-  fromNumber: numbers[0].value,
-  toNumber: "+18326460869",
-  token: null,
-  identity: null,
-  call: null,
-  error: "",
+const initialState: IDialerState = {
   device: null,
+  //
+  calls: [
+    {
+      id: 0,
+      fromNumber: numbers[0].value,
+      toNumber: "+18326460869",
+      token: null,
+      identity: null,
+      call: null,
+      error: "",
+    },
+  ],
 };
 
 export const DialerSlice = createSlice({

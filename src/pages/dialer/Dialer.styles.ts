@@ -5,7 +5,6 @@ const DialerStyled = styled.div`
   padding-bottom: 4rem;
 
   button.startup {
-    /* color: red; */
     &.active {
       background-color: green;
     }
@@ -39,10 +38,7 @@ export default DialerStyled;
 
 export const DialStyled = styled.div`
   text-align: center;
-  /* width: 400px; */
-  /* height: 600px; */
   border: 1px solid #ffffff10;
-  /* padding: 1rem; */
   border-radius: 6px;
   background: radial-gradient(ellipse at top, #1e3c2d, transparent),
     radial-gradient(ellipse at bottom, #043a47, transparent);

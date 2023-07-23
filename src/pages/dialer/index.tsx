@@ -8,6 +8,7 @@ import { Device } from "@twilio/voice-sdk";
 // import { TbGridDots } from "react-icons/tb";
 import { Button, Select, TextInput } from "@mantine/core";
 //
+import TwilioSDK from "twilio";
 import DialerStyled from "./Dialer.styles";
 import apiService from "../../services/api";
 import numbers from "../../configs/numbers";
@@ -19,6 +20,9 @@ import {
   setToNumber,
   setToken,
 } from "../../store/dialer/slice";
+import ActiveCalls from "./ActiveCalls";
+import ContactQueue from "./ContactQueue";
+import contacts from "./contacts";
 
 /**
 
@@ -28,8 +32,10 @@ import {
 - [ ] Ability to be notified of someone picking up on another line (and is now currently on hold)
 - [ ] Ability for person on hold to be greeted with a prerecorded message
 - [ ] Ability to switch between calls
+*/
 
- */
+const numbersToCall = ["+18326460869", "+18328638635"];
+
 function Dialer() {
   const dispatch = useAppDispatch();
   const [status, setStatus] = useState<
@@ -41,50 +47,39 @@ function Dialer() {
     | "canceled"
     | "rejected"
   >("idle");
+  const [error, setError] = useState("");
+  const [token, setToken] = useState<null | string>(null);
   const [device, setDevice] = useState<any>(null);
-  // const [selectedDevices, setSelectedDevices] = useState<any>(null);
-  // const [availableInputDevices, setAvailableInputDevices] = useState([]);
-  // const [availableOutputDevices, setAvailableOutputDevices] = useState([]);
+  const [activeCall, setActiveCall] = useState<any>(null);
+  const [calls, setCalls] = useState<any>({});
 
-  const { call, token, error, identity, fromNumber, toNumber } = useAppSelector(
-    (state) => state.dialer
-  );
+  // const twilio = TwilioSDK(process.env.);
 
   async function startupClient() {
-    console.log("Requesting Access Token...");
-
     try {
       const { data } = await apiService("/dialer/token");
       console.log("Got a token.");
       const token = data.token;
-      dispatch(setToken(token));
+      setToken(token);
     } catch (err) {
       console.log(err);
-      dispatch(
-        setError(
-          "An error occurred. See your browser console for more information."
-        )
+
+      setError(
+        "An error occurred. See your browser console for more information."
       );
     }
   }
 
   async function initializeDevice() {
-    dispatch(setError(""));
-
-    // const mediaDevices = await navigator.mediaDevices.getUserMedia({
-    //   audio: true,
-    // });
-    // console.log("mediaDevices", mediaDevices);
+    setError("");
 
     if (!token) {
-      dispatch(setError("No token found"));
+      setError("No token found");
       return;
     }
 
     const device = new Device(token, {
       logLevel: 1,
-      // Set Opus as our preferred codec. Opus generally performs better, requiring less bandwidth and
-      // providing better audio quality in restrained network conditions.
       // @ts-ignore
       codecPreferences: ["opus", "pcmu"],
     });
@@ -96,91 +91,49 @@ function Dialer() {
   }
 
   function hangUp() {
-    console.log("Hanging up ...");
-    call.disconnect();
+    if (activeCall) {
+      activeCall.disconnect();
+    }
   }
 
-  async function makeOutgoingCall() {
-    setStatus("calling");
-
-    const params = {
-      To: toNumber,
-      From: fromNumber,
-    };
-
+  async function makeCall() {
     if (device) {
-      console.log(`Attempting to call ${params.To} ...`);
+      numbersToCall.forEach(async (number, index) => {
+        if (index > 0) return;
+        // Twilio.Device.connect() returns a Call object
+        const call = await device.connect({
+          To: number,
+          From: numbers[0].value,
+        });
 
-      // Twilio.Device.connect() returns a Call object
-      const call = await device.connect({ params });
-
-      // valid
-      call.on("accept", () => setStatus("accepted"));
-      call.on("disconnect", () => setStatus("ended"));
-      call.on("cancel", () => setStatus("canceled"));
-      call.on("reject", () => setStatus("rejected"));
-      call.on("volume", (inputVolume: number, outputVolume: number) =>
-        console.log("volume adjusted", inputVolume, outputVolume)
-      );
-
-      //
-      call.on("answer", (props: any) => {
-        setStatus("answered");
-        console.log("answer.props", props);
+        // Events
+        call.on("accept", () => setStatus("accepted"));
+        call.on("disconnect", () => setStatus("ended"));
+        call.on("cancel", () => setStatus("canceled"));
+        call.on("reject", () => setStatus("rejected"));
+        // call.on("mute", (isMuted: boolean) => {
+        //   setMuted(isMuted);
+        // });
+        call.on("answer", (props: any) => {
+          setStatus("answered");
+          console.log("answer.props", props);
+        });
+        call.on("ack", (props: any) => {
+          console.log("ack.props", props);
+        });
+        call.on("message", (props: any) => {
+          console.log("message.props", props);
+        });
       });
-      call.on("ack", (props: any) => {
-        console.log("ack.props", props);
-      });
-      call.on("message", (props: any) => {
-        console.log("message.props", props);
-      });
-
-      dispatch(setCall(call));
-
-      // add listeners to the Call
-      // "accepted" means the call has finished connecting and the state is now "open"
-      // call.on("accept", updateUIAcceptedOutgoingCall);
-      // call.on("disconnect", updateUIDisconnectedOutgoingCall);
-      // call.on("cancel", updateUIDisconnectedOutgoingCall);
     } else {
       console.log("Unable to make call.");
       setError("No device found.");
     }
   }
 
-  useEffect(() => {
-    if (device) {
-      console.log("device??", device);
-
-      console.log("speakerDevices", device.audio.speakerDevices.get());
-      console.log("ringtoneDevices", device.audio.ringtoneDevices.get());
-      console.log(
-        "device.audio.availableInputDevices",
-        device.audio.availableInputDevices
-      );
-
-      // device.audio.availableInputDevices.forEach((d) => {
-      //   console.log("d", d);
-      // });
-
-      console.log("hi");
-      // for (const [key, value] of device.audio.availableInputDevices.entries()) {
-      //   console.log(key, value);
-      // }
-      device.audio.availableOutputDevices.forEach(function (
-        device: any,
-        id: any
-      ) {
-        console.log("device: ", device);
-        console.log("id: ", id);
-      });
-    }
-  }, [device]);
-
   // Initialize device once a token exists
   useEffect(() => {
     if (token) {
-      console.log("token found, initializing device...");
       initializeDevice();
     }
   }, [token]);
@@ -189,7 +142,6 @@ function Dialer() {
     <DialerStyled>
       <div className="container">
         <h1>Dialer</h1>
-        <div className="error">{error}</div>
         <button
           className={`startup ${device ? "active" : "inactive"}`}
           onClick={startupClient}
@@ -197,57 +149,42 @@ function Dialer() {
           {device ? "Device activated" : "Startup device"}
         </button>
 
-        <div>Identity: {identity}</div>
-        {/* <div>Device status: {}</div> */}
-        <div>Call status: {status}</div>
-
-        {/* <div>
-          <Select
-            label="Input Devices"
-            // value={}
-            data={availableInputDevices}
-          />
+        <div className="calls">
+          <ActiveCalls />
         </div>
 
-        <div>
-          <Select
-            label="Output Devices"
-            // value={}
-            data={availableOutputDevices}
-          />
-        </div> */}
+        {/* <div>Identity: {identity}</div> */}
+        <div>Call status: {status}</div>
 
         <div className={`settings ${device && "active"}`}>
           <Select
             label="Your number"
             placeholder="Pick one"
             data={numbers}
-            value={fromNumber}
+            value={numbers[0].value}
             onChange={(number) => dispatch(setFromNumber(number))}
           />
 
           <TextInput
             label="Number to call"
-            value={toNumber}
+            value={"+18326460869"}
             onChange={(e: any) => dispatch(setToNumber(e.target.value))}
           />
 
-          <Button onClick={makeOutgoingCall}>Call</Button>
+          <Button onClick={makeCall}>Call</Button>
           <Button onClick={hangUp}>Hang up</Button>
 
-          {/* <div>{device}</div> */}
+          <div className="dialer-container">
+            <div className="left">
+              {/* <Dial number="(832) 111-2222" />
+              <Dial number="(281) 222-3333" />
+              <Dial number="(346) 333-4444" /> */}
+            </div>
 
-          {/* <div className="dialer-container">
-          <div className="left">
-            <Dial number="(832) 111-2222" />
-            <Dial number="(281) 222-3333" />
-            <Dial number="(346) 333-4444" />
+            <div className="right">
+              <ContactQueue contacts={contacts} />
+            </div>
           </div>
-
-          <div className="right">
-            <DialList />
-          </div>
-        </div> */}
         </div>
       </div>
     </DialerStyled>
@@ -317,28 +254,5 @@ export default Dialer;
 //         )}
 //       </div>
 //     </DialStyled>
-//   );
-// }
-
-// const DialListStyled = styled.div`
-//   padding: 2rem;
-
-//   .title {
-//     font-size: 2rem;
-//   }
-// `;
-
-// function DialList() {
-//   return (
-//     <DialListStyled>
-//       <div className="title">Call Queue</div>
-//       <div className="list">
-//         <div>(832) 111-2222</div>
-//         <div>(281) 222-3333</div>
-//         <div>(832) 111-2222</div>
-//         <div>(346) 111-2222</div>
-//         <div>(713) 111-2222</div>
-//       </div>
-//     </DialListStyled>
 //   );
 // }
