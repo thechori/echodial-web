@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Device } from "@twilio/voice-sdk";
+import { Call, Device } from "@twilio/voice-sdk";
 import {
   Button,
   Container,
@@ -34,13 +34,12 @@ import { TContact } from "../../store/contacts/types";
 - [ ] Ability to switch between calls
 */
 
-const numbersToCall = ["+18326460869", "+18328638635"];
-
 function Dialer() {
   const dispatch = useAppDispatch();
   const [error, setError] = useState("");
   const [device, setDevice] = useState<any>(null);
-  const { token, call, status, fromNumber, contactQueue, contactsActive } =
+  const [call, setCall] = useState<any>(null);
+  const { token, status, fromNumber, contactQueue, contactsActive } =
     useAppSelector((state) => state.dialer);
 
   async function startupClient() {
@@ -71,6 +70,9 @@ function Dialer() {
       // @ts-ignore
       codecPreferences: ["opus", "pcmu"],
     });
+
+    // TODO: look into this
+    // device.on("incoming", handleIncomingCall);
 
     // Device must be registered in order to receive incoming calls
     device.register();
@@ -130,14 +132,13 @@ function Dialer() {
 
     // Hit API to fire off calls
 
-    console.log("calling: ", contactsToStart[0].phone);
-    console.log("fromNumber", fromNumber);
-
-    // Join call
-    const call = await device.connect({
+    var params = {
       To: contactsToStart[0].phone,
       From: fromNumber,
-    });
+    };
+
+    // Join call
+    const call = await device.connect({ params });
 
     call.on("accept", async (arg1: any, arg2: any) => {
       console.log("call.accept", arg1, arg2);
@@ -148,16 +149,12 @@ function Dialer() {
 
     call.on("disconnect", async () => {
       console.log(`clearing call sid ${call.parameters.CallSid} from api`);
-      await apiService.delete(`/active-call-sids/${call.parameters.CallSid}`);
+      await apiService.delete(
+        `/dialer/active-call-sids/${call.parameters.CallSid}`
+      );
     });
 
-    // numbersToCall.forEach(async (number, index) => {
-    //   if (index > 0) return;
-    //   // Twilio.Device.connect() returns a Call object
-    //   const call = await device.connect({
-    //     To: number,
-    //     From: fromNumber,
-    //   });
+    setCall(call);
 
     //   // Events
     //   call.on("accept", () => setStatus("accepted"));
@@ -199,8 +196,12 @@ function Dialer() {
             {device ? "Device activated" : "Startup device"}
           </Button>
           <div className={`settings ${device && "active"}`}>
-            <Button onClick={startDialer}>Start Dialer</Button>
-            <Button onClick={stopDialer}>Stop Dialer</Button>
+            <Button disabled={call} onClick={startDialer}>
+              Start Dialer
+            </Button>
+            <Button disabled={!call} onClick={stopDialer}>
+              Stop Dialer
+            </Button>
           </div>
           <Select
             label="Your number"

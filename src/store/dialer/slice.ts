@@ -11,14 +11,12 @@ interface IDialerState {
   token: null | string;
   identity: null | string;
   fromNumber: string;
-  call: any;
   contactsActive: TContact[];
   contactQueue: TContact[];
   activeCallSids: string[];
 }
 
 const initialState: IDialerState = {
-  call: null,
   fromNumber: numbers[2].value,
   error: "",
   status: "idle",
@@ -42,9 +40,6 @@ export const DialerSlice = createSlice({
     },
     setIdentity: (state, action) => {
       state.identity = action.payload;
-    },
-    setCall: (state, action) => {
-      state.call = action.payload;
     },
     setError: (state, action) => {
       state.error = action.payload;
@@ -77,7 +72,6 @@ export const {
   setActiveCallSids,
   setIdentity,
   setToken,
-  setCall,
   setError,
   setContactQueue,
   setContactsActive,
