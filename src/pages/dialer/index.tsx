@@ -172,7 +172,7 @@ function Dialer() {
 
   return (
     <DialerStyled>
-      <Container my="md">
+      <Container size="xl">
         <Flex justify={"space-between"} align={"center"}>
           <Title order={2}>Dialer</Title>
           <Button
@@ -194,10 +194,10 @@ function Dialer() {
           />
         </Flex>
         <Grid>
-          <Grid.Col xs={12} sm={8}>
+          <Grid.Col xs={12} sm={7}>
             <ActiveCalls />
           </Grid.Col>
-          <Grid.Col xs={12} sm={4}>
+          <Grid.Col xs={12} sm={5}>
             <ContactQueue />
           </Grid.Col>
         </Grid>

@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import apiService from "../../services/api";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { Card, Title } from "@mantine/core";
+import { Card, Space, Title } from "@mantine/core";
 import { setActiveCallSids } from "../../store/dialer/slice";
 
 const ActiveCallsStyled = styled.div`
-  border: 1px solid lightyellow;
+  .call {
+    border: 1px solid lightgrey;
+    padding: 1rem;
+  }
 `;
 
 const ActiveCalls = () => {
@@ -36,28 +39,33 @@ const ActiveCalls = () => {
   }, []);
 
   return (
-    <Card withBorder radius="md" p="md">
-      <Title order={2}>Active Calls</Title>
-      <div className="contacts">
-        {contactsActive.length ? (
-          contactsActive.map((contact) => (
-            <div key={contact.id}>
-              {contact.phone} ({contact.firstName} {contact.lastName})
-            </div>
-          ))
-        ) : (
-          <div>No active contacts</div>
-        )}
-      </div>
+    <ActiveCallsStyled>
+      <Card withBorder radius="md" p="md">
+        <Title order={2}>Active Calls</Title>
+        <div className="contacts">
+          {contactsActive.length ? (
+            contactsActive.map((contact) => (
+              <div key={contact.id} className="call">
+                {contact.phone} ({contact.firstName} {contact.lastName})
+              </div>
+            ))
+          ) : (
+            <div>No active contacts</div>
+          )}
+        </div>
 
-      <div className="ids">
-        {activeCallSids.length ? (
-          activeCallSids.map((id) => <div key={id}>{id}</div>)
-        ) : (
-          <div>No active calls</div>
-        )}
-      </div>
-    </Card>
+        <Space h={32} />
+
+        <Title order={2}>Active Calls SIDs (from API)</Title>
+        <div className="ids">
+          {activeCallSids.length ? (
+            activeCallSids.map((id) => <div key={id}>{id}</div>)
+          ) : (
+            <div>No active call SIDs</div>
+          )}
+        </div>
+      </Card>
+    </ActiveCallsStyled>
   );
 };
 
