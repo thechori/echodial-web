@@ -50,7 +50,7 @@ const ActiveCalls = () => {
               </div>
             ))
           ) : (
-            <div>No active contacts</div>
+            <i>No active calls</i>
           )}
         </div>
 
@@ -61,7 +61,7 @@ const ActiveCalls = () => {
           {activeCallSids.length ? (
             activeCallSids.map((id) => <div key={id}>{id}</div>)
           ) : (
-            <div>No active call SIDs</div>
+            <i>No active call SIDs</i>
           )}
         </div>
       </Card>

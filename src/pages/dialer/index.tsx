@@ -128,11 +128,28 @@ function Dialer() {
     dispatch(setContactsActive(contactsToStart));
     dispatch(setContactQueue(contactQueueUpdated));
 
-    // Start call
-    // const call = await device.connect({
-    //   To: ,
-    //   From: fromNumber
-    // })
+    // Hit API to fire off calls
+
+    console.log("calling: ", contactsToStart[0].phone);
+    console.log("fromNumber", fromNumber);
+
+    // Join call
+    const call = await device.connect({
+      To: contactsToStart[0].phone,
+      From: fromNumber,
+    });
+
+    call.on("accept", async (arg1: any, arg2: any) => {
+      console.log("call.accept", arg1, arg2);
+      await apiService.post("/dialer/active-call-sids", {
+        call_sid: call.parameters.CallSid,
+      });
+    });
+
+    call.on("disconnect", async () => {
+      console.log(`clearing call sid ${call.parameters.CallSid} from api`);
+      await apiService.delete(`/active-call-sids/${call.parameters.CallSid}`);
+    });
 
     // numbersToCall.forEach(async (number, index) => {
     //   if (index > 0) return;
