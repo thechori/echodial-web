@@ -14,6 +14,8 @@ interface IDialerState {
   contactsActive: TContact[];
   contactQueue: TContact[];
   activeCallSids: string[];
+  activeConferenceIds: string[];
+  selectedConferenceId: null | string;
 }
 
 const initialState: IDialerState = {
@@ -26,6 +28,8 @@ const initialState: IDialerState = {
   contactsActive: [],
   contactQueue: contacts,
   activeCallSids: [],
+  activeConferenceIds: [],
+  selectedConferenceId: null,
 };
 
 export const DialerSlice = createSlice({
@@ -61,6 +65,12 @@ export const DialerSlice = createSlice({
     setStatus: (state, action) => {
       state.status = action.payload;
     },
+    setActiveConferenceIds: (state, action) => {
+      state.activeConferenceIds = action.payload;
+    },
+    setSelectedConferenceId: (state, action) => {
+      state.selectedConferenceId = action.payload;
+    },
     //
     startDialer: (state, action) => {},
     stopDialer: (state, action) => {},
@@ -77,6 +87,8 @@ export const {
   setContactsActive,
   setMuted,
   setStatus,
+  setActiveConferenceIds,
+  setSelectedConferenceId,
 } = DialerSlice.actions;
 
 export default DialerSlice.reducer;

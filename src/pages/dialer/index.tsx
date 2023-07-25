@@ -8,6 +8,7 @@ import {
   Flex,
   Grid,
   Text,
+  Stack,
 } from "@mantine/core";
 //
 import DialerStyled from "./Dialer.styles";
@@ -23,6 +24,7 @@ import {
 import ActiveCalls from "./ActiveCalls";
 import ContactQueue from "./ContactQueue";
 import { TContact } from "../../store/contacts/types";
+import ActiveConferences from "./ActiveConferences";
 
 /**
 
@@ -130,14 +132,12 @@ function Dialer() {
     dispatch(setContactsActive(contactsToStart));
     dispatch(setContactQueue(contactQueueUpdated));
 
-    // Hit API to fire off calls
-
     var params = {
       To: contactsToStart[0].phone,
       From: fromNumber,
     };
 
-    // Join call
+    // Start Call #1
     const call = await device.connect({ params });
 
     call.on("accept", async (arg1: any, arg2: any) => {
@@ -155,6 +155,20 @@ function Dialer() {
     });
 
     setCall(call);
+
+    // Start Call #2 via API
+    // console.log("hitting api for call 2");
+    // const a = await apiService.post("/dialer/call", {
+    //   From: fromNumber,
+    //   To: contactsToStart[1].phone,
+    // });
+    // console.log(a);
+
+    // Start Conference #1 via API
+    // const conf1 = await apiService.post("/conference", {
+    //   from: fromNumber,
+    //   to: , to_label, sid
+    // })
 
     //   // Events
     //   call.on("accept", () => setStatus("accepted"));
@@ -213,7 +227,10 @@ function Dialer() {
         </Flex>
         <Grid>
           <Grid.Col xs={12} sm={7}>
-            <ActiveCalls />
+            <Stack>
+              {/* <ActiveCalls />
+              <ActiveConferences /> */}
+            </Stack>
           </Grid.Col>
           <Grid.Col xs={12} sm={5}>
             <ContactQueue />
