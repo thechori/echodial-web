@@ -12,15 +12,6 @@ import {
 import { useAppSelector } from "../../store/hooks";
 
 const ContactQueueStyled = styled.div`
-  padding: 1rem;
-
-  .title {
-    font-size: 2rem;
-  }
-
-  .list {
-  }
-
   .contact {
     border: 1px solid rgba(0, 0, 0, 0.1);
     display: flex;
@@ -30,13 +21,20 @@ const ContactQueueStyled = styled.div`
       margin-right: 1rem;
     }
   }
+
+  tr.active {
+    border: 2px solid green;
+    background-color: #00800030;
+  }
 `;
 
 function ContactQueue() {
-  const contacts = useAppSelector((state) => state.dialer.contactQueue);
+  const { contactQueue, activeContact } = useAppSelector(
+    (state) => state.dialer
+  );
 
-  const rows = contacts.map((c) => (
-    <tr key={c.id}>
+  const rows = contactQueue.map((c) => (
+    <tr key={c.id} className={activeContact?.id === c.id ? "active" : ""}>
       <td>
         <Group spacing="sm">
           <Avatar size={30} radius={30} />

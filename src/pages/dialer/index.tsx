@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Device } from "@twilio/voice-sdk";
 import {
   Button,
@@ -16,33 +16,21 @@ import apiService from "../../services/api";
 import numbers from "../../configs/numbers";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
-  setContactQueue,
   setActiveContact,
   setFromNumber,
   setToken,
+  setError,
+  setStatus,
+  setDevice,
+  setCall,
 } from "../../store/dialer/slice";
 import ActiveCall from "./ActiveCall";
 import ContactQueue from "./ContactQueue";
-import { TContact } from "../../store/contacts/types";
-
-/**
-
-- [x] Ability to trigger 1 call
-- [ ] Ability to trigger 3 concurrent calls
-- [ ] Ability to listen to first call made
-- [ ] Ability to be notified of someone picking up on another line (and is now currently on hold)
-- [ ] Ability for person on hold to be greeted with a prerecorded message
-- [ ] Ability to switch between calls
-*/
 
 function Dialer() {
   const dispatch = useAppDispatch();
-  const [error, setError] = useState("");
-  const [device, setDevice] = useState<any>(null);
-  const [call, setCall] = useState<any>(null);
-  const { token, fromNumber, contactQueue, activeContact } = useAppSelector(
-    (state) => state.dialer
-  );
+  const { call, device, token, fromNumber, contactQueue, error } =
+    useAppSelector((state) => state.dialer);
 
   async function startupClient() {
     try {
@@ -53,17 +41,19 @@ function Dialer() {
     } catch (err) {
       console.log(err);
 
-      setError(
-        "An error occurred. See your browser console for more information."
+      dispatch(
+        setError(
+          "An error occurred. See your browser console for more information."
+        )
       );
     }
   }
 
   async function initializeDevice() {
-    setError("");
+    dispatch(setError(""));
 
     if (!token) {
-      setError("No token found");
+      dispatch(setError("No token found"));
       return;
     }
 
@@ -79,24 +69,17 @@ function Dialer() {
     // Device must be registered in order to receive incoming calls
     device.register();
 
-    setDevice(device);
+    dispatch(setDevice(device));
   }
 
   function stopDialer() {
-    if (call) {
-      // return setError("No call in progress");
-      call.disconnect();
+    if (!call) {
+      return dispatch(setError("No call in progress"));
     }
 
-    // Move contact back into queue (at the front)
-    const contactQueueUpdated: TContact[] = [...contactQueue];
-
-    if (activeContact) {
-      contactQueueUpdated.unshift(activeContact);
-    }
-
+    call.disconnect();
+    dispatch(setCall(null));
     dispatch(setActiveContact(null));
-    dispatch(setContactQueue(contactQueueUpdated));
   }
 
   /**
@@ -105,34 +88,33 @@ function Dialer() {
    */
   async function startDialer() {
     if (!device) {
-      return setError("No device found.");
+      return dispatch(setError("No device found."));
     }
 
     if (!contactQueue.length) {
-      return setError("No contacts in the queue");
+      return dispatch(setError("No contacts in the queue"));
     }
-
-    // Grab first index (shift) from `contactQueue` and set to `activeContact`
-    const contactQueueUpdated: TContact[] = [...contactQueue];
-
-    const contact = contactQueueUpdated.shift();
-
-    if (!contact) {
-      return setError("No contact found");
-    }
-
-    dispatch(setActiveContact(contact));
-    dispatch(setContactQueue(contactQueueUpdated));
 
     var params = {
-      To: contact.phone,
+      To: contactQueue[0].phone,
       From: fromNumber,
     };
 
     // Start Call #1
     const call = await device.connect({ params });
 
-    setCall(call);
+    call.on("accept", (accept: string) => {
+      console.log("accept", accept);
+      dispatch(setStatus("accepted"));
+    });
+
+    call.on("error", (error: string) => {
+      console.log("error", error);
+      dispatch(setError(error));
+    });
+
+    dispatch(setCall(call));
+    dispatch(setActiveContact(contactQueue[0]));
   }
 
   // Initialize device once a token exists
@@ -145,29 +127,36 @@ function Dialer() {
   return (
     <DialerStyled>
       <Container size="xl">
-        <Flex justify={"space-between"} align={"center"}>
+        <Flex justify={"space-between"} align={"center"} py="md">
           <Title order={2}>Dialer</Title>
-          <Button
-            className={`startup ${device ? "active" : "inactive"}`}
-            onClick={startupClient}
-          >
-            {device ? "Device activated" : "Startup device"}
-          </Button>
-          <div className={`settings ${device && "active"}`}>
-            <Button disabled={call} onClick={startDialer}>
-              Start Dialer
-            </Button>
-            <Button disabled={!call} onClick={stopDialer}>
-              Stop Dialer
-            </Button>
+          <div>
+            {device ? (
+              <Flex align="center">
+                {call ? (
+                  <Button px="xs" disabled={!call} onClick={stopDialer}>
+                    Stop Dialer
+                  </Button>
+                ) : (
+                  <Button px="xs" disabled={!!call} onClick={startDialer}>
+                    Start Dialer
+                  </Button>
+                )}
+
+                <Select
+                  px="xs"
+                  label="Your number"
+                  placeholder="Pick one"
+                  data={numbers}
+                  value={fromNumber}
+                  onChange={(number) => dispatch(setFromNumber(number))}
+                />
+              </Flex>
+            ) : (
+              <Button className="startup inactive" onClick={startupClient}>
+                Startup device
+              </Button>
+            )}
           </div>
-          <Select
-            label="Your number"
-            placeholder="Pick one"
-            data={numbers}
-            value={fromNumber}
-            onChange={(number) => dispatch(setFromNumber(number))}
-          />
         </Flex>
         <Grid>
           <Grid.Col xs={12} sm={7}>

@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 //
 import userReducer from "./user/slice";
 import dialerReducer from "./dialer/slice";
@@ -8,6 +9,10 @@ const store = configureStore({
     user: userReducer,
     dialer: dialerReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

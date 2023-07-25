@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { BsFillMicMuteFill } from "react-icons/bs";
 import { FaHandPaper } from "react-icons/fa";
 import { BsFillTelephoneFill, BsFillTelephoneXFill } from "react-icons/bs";
-import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { TbGridDots } from "react-icons/tb";
 import { styled } from "styled-components";
 //
@@ -10,15 +8,18 @@ import devices from "../../styles/devices";
 
 export const IPhoneDialStyled = styled.div`
   text-align: center;
-  border: 1px solid #ffffff10;
+  border: 1px solid #303030;
   border-radius: 6px;
-  background: radial-gradient(ellipse at top, #1e3c2d, transparent),
-    radial-gradient(ellipse at bottom, #043a47, transparent);
+  color: white;
+  background-color: #2c2c2c;
+  /* background: radial-gradient(ellipse at top, #005c2c, transparent),
+    radial-gradient(ellipse at bottom, #94eaff, transparent); */
 
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
+  margin-left: auto;
+  margin-right: auto;
   padding-top: 2rem;
   padding-bottom: 2rem;
+  width: 340px;
 
   @media ${devices.tablet} {
     margin-left: 1rem;
@@ -108,18 +109,34 @@ export const IPhoneDialStyled = styled.div`
   }
 `;
 
-function IPhoneDial({ number }: { number: string }) {
-  const [status, setStatus] = useState<"idle" | "calling" | "active" | "ended">(
-    "idle"
-  );
-  const [muted, setMuted] = useState(false);
-  const [onHold, setOnHold] = useState(false);
+type TIPhoneDialProps = {
+  number?: string;
+  status: string;
+  isCallActive: boolean;
+  onHold: boolean;
+  muted: boolean;
+  //
+  setOnHold: (onHold: boolean) => void;
+  setMuted: (muted: boolean) => void;
+  start: () => void;
+  end: () => void;
+};
 
+function IPhoneDial({
+  number,
+  isCallActive,
+  status,
+  muted,
+  onHold,
+  setOnHold,
+  setMuted,
+  start,
+  end,
+}: TIPhoneDialProps) {
   return (
     <IPhoneDialStyled>
       <div className="number-container">
-        <div className="number">{number}</div>
-        <IoIosArrowDropdownCircle />
+        <div className="number">{number || "no contact"}</div>
       </div>
       <div className="status label">
         {status === "calling" ? "calling..." : status}
@@ -152,15 +169,15 @@ function IPhoneDial({ number }: { number: string }) {
       </div>
 
       <div className="end-section">
-        {status === "idle" || status === "ended" ? (
-          <div className="option" onClick={() => setStatus("calling")}>
+        {!isCallActive ? (
+          <div className="option" onClick={start}>
             <div className="icon">
               <BsFillTelephoneFill fontSize="30px" color="green" />
             </div>
             <div className="label">call</div>
           </div>
         ) : (
-          <div className="option" onClick={() => setStatus("ended")}>
+          <div className="option" onClick={end}>
             <div className="icon">
               <BsFillTelephoneXFill fontSize="30px" color="red" />
             </div>
