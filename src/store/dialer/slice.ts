@@ -11,11 +11,8 @@ interface IDialerState {
   token: null | string;
   identity: null | string;
   fromNumber: string;
-  contactsActive: TContact[];
+  activeContact: null | TContact;
   contactQueue: TContact[];
-  activeCallSids: string[];
-  activeConferenceIds: string[];
-  selectedConferenceId: null | string;
 }
 
 const initialState: IDialerState = {
@@ -25,11 +22,8 @@ const initialState: IDialerState = {
   muted: false,
   token: null,
   identity: null,
-  contactsActive: [],
+  activeContact: null,
   contactQueue: contacts,
-  activeCallSids: [],
-  activeConferenceIds: [],
-  selectedConferenceId: null,
 };
 
 export const DialerSlice = createSlice({
@@ -48,12 +42,9 @@ export const DialerSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
-    setActiveCallSids: (state, action) => {
-      state.activeCallSids = action.payload;
-    },
-    setContactsActive: (state, action) => {
-      console.log("setContactsActive", action.payload);
-      state.contactsActive = action.payload;
+    setActiveContact: (state, action) => {
+      console.log("setActiveContact", action.payload);
+      state.activeContact = action.payload;
     },
     setContactQueue: (state, action) => {
       console.log("setContactQueue", action.payload);
@@ -65,30 +56,18 @@ export const DialerSlice = createSlice({
     setStatus: (state, action) => {
       state.status = action.payload;
     },
-    setActiveConferenceIds: (state, action) => {
-      state.activeConferenceIds = action.payload;
-    },
-    setSelectedConferenceId: (state, action) => {
-      state.selectedConferenceId = action.payload;
-    },
-    //
-    startDialer: (state, action) => {},
-    stopDialer: (state, action) => {},
   },
 });
 
 export const {
   setFromNumber,
-  setActiveCallSids,
   setIdentity,
   setToken,
   setError,
   setContactQueue,
-  setContactsActive,
+  setActiveContact,
   setMuted,
   setStatus,
-  setActiveConferenceIds,
-  setSelectedConferenceId,
 } = DialerSlice.actions;
 
 export default DialerSlice.reducer;

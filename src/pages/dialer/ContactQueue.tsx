@@ -1,17 +1,9 @@
 import { styled } from "styled-components";
-import { IconPencil, IconTrash } from "@tabler/icons-react";
-
 //
-import { TContact } from "../../store/contacts/types";
 import {
-  ActionIcon,
-  Anchor,
   Avatar,
-  Badge,
   Card,
   Group,
-  List,
-  Paper,
   ScrollArea,
   Table,
   Text,
@@ -60,40 +52,24 @@ function ContactQueue() {
   ));
 
   return (
-    <Card withBorder radius="md" p="md">
-      <Title order={2}>Call Queue</Title>
+    <ContactQueueStyled>
+      <Card withBorder radius="md" p="md">
+        <Title order={2}>Call Queue</Title>
 
-      <ScrollArea h={400}>
-        <Table sx={{ minWidth: 500 }} verticalSpacing="sm">
-          <thead>
-            <tr>
-              <th>Contact</th>
-              <th>Phone</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </ScrollArea>
-
-      {/* <List>
-        {contacts.length ? (
-          contacts.map((c) => (
-            <List.Item key={c.id} className="contact">
-              <div className="phone">{c.phone}</div>
-              <div className="name">
-                {c.firstName} {c.lastName}
-              </div>
-            </List.Item>
-          ))
-        ) : (
-          <div className="empty-message">
-            <div>No contacts in the queue</div>
-            <button>+ Add some</button>
-          </div>
-        )}
-      </List> */}
-    </Card>
+        <ScrollArea h={400}>
+          <Table sx={{ minWidth: 500 }} verticalSpacing="sm">
+            <thead>
+              <tr>
+                <th>Contact</th>
+                <th>Phone</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>{rows}</tbody>
+          </Table>
+        </ScrollArea>
+      </Card>
+    </ContactQueueStyled>
   );
 }
 
