@@ -18,7 +18,7 @@ const Header = () => {
     setExpanded(false);
   };
 
-  // Show on landing,
+  // Show on landing
   if (pathname !== routes.landing) {
     return null;
   }

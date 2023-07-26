@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   FaHome,
   FaPhone,
@@ -15,6 +15,17 @@ import routes from "../../configs/routes";
 import logo from "../../assets/l34ds-logo-full.png";
 
 const Sidebar = () => {
+  const { pathname } = useLocation();
+
+  // Don't show on landing, sign-in, or try-l34ds
+  if (
+    pathname === routes.landing ||
+    pathname === routes.signIn ||
+    pathname === routes.tryL34ds
+  ) {
+    return null;
+  }
+
   return (
     <SidebarStyled>
       <div className="header">
