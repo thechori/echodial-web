@@ -18,7 +18,8 @@ const Header = () => {
     setExpanded(false);
   };
 
-  if (pathname === routes.signIn || pathname === routes.tryL34ds) {
+  // Show on landing,
+  if (pathname !== routes.landing) {
     return null;
   }
 

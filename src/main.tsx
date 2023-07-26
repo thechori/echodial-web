@@ -21,6 +21,8 @@ import Header from "./components/header";
 import routes from "./configs/routes";
 import NotFound from "./pages/not-found";
 import Dialer from "./pages/dialer";
+import Sidebar from "./components/sidebar";
+import Content from "./components/_common/Content";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -29,36 +31,39 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <MantineProvider withGlobalStyles withNormalizeCSS>
           <BrowserRouter>
             <Header />
-            <Routes>
-              <Route path={routes.landing} element={<Landing />} />
-              <Route path={routes.signIn} element={<SignIn />} />
-              <Route path={routes.tryL34ds} element={<TryL34ds />} />
-              <Route
-                path={routes.dashboard}
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={routes.dialer}
-                element={
-                  <ProtectedRoute>
-                    <Dialer />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={routes.settings}
-                element={
-                  <ProtectedRoute>
-                    <Settings />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Content>
+              <Sidebar />
+              <Routes>
+                <Route path={routes.landing} element={<Landing />} />
+                <Route path={routes.signIn} element={<SignIn />} />
+                <Route path={routes.tryL34ds} element={<TryL34ds />} />
+                <Route
+                  path={routes.dashboard}
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={routes.dialer}
+                  element={
+                    <ProtectedRoute>
+                      <Dialer />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={routes.settings}
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Content>
           </BrowserRouter>
         </MantineProvider>
       </StyleProvider>
