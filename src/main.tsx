@@ -24,6 +24,11 @@ import Features from "./pages/features";
 import Pricing from "./pages/pricing";
 import Layout from "./components/layouts/Layout";
 import AuthenticatedUserLayout from "./components/layouts/AuthenticatedUserLayout";
+import Leads from "./pages/leads";
+import PhoneNumbers from "./pages/phone-numbers";
+import Reports from "./pages/reports";
+import Pipelines from "./pages/pipelines";
+import Billing from "./pages/billing";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -74,6 +79,56 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   <ProtectedRoute>
                     <AuthenticatedUserLayout>
                       <Dialer />
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.leads}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
+                      <Leads />
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.phoneNumbers}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
+                      <PhoneNumbers />
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.reports}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
+                      <Reports />
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.pipelines}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
+                      <Pipelines />
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.billing}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
+                      <Billing />
                     </AuthenticatedUserLayout>
                   </ProtectedRoute>
                 }
