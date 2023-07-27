@@ -40,6 +40,7 @@ const HeaderStyled = styled.div`
     height: 100vh;
     width: 100vw;
     background-color: rgba(0, 0, 0, 0.85);
+    z-index: 100;
 
     .hamburger-menu-drawer-links {
       width: 100%;

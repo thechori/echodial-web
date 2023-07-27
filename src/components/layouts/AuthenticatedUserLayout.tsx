@@ -1,9 +1,14 @@
 import { styled } from "styled-components";
 //
 import Sidebar from "../sidebar";
+import devices from "../../styles/devices";
 
 const Container = styled.div`
-  display: flex;
+  display: block;
+
+  @media ${devices.tablet} {
+    display: flex;
+  }
 `;
 
 const AuthenticatedUserLayout = ({ children }: any) => {

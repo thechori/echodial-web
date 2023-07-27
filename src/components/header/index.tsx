@@ -6,18 +6,17 @@ import HeaderStyled from "./Header.styles";
 import leadsLogoFull from "../../assets/l34ds-logo-full.png";
 import routes from "../../configs/routes";
 import { useAppSelector } from "../../store/hooks";
+import { selectJwt } from "../../store/user/slice";
 
 const Header = () => {
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
-  const isLoggedIn = useAppSelector((state) => state.user.jwt);
+  const jwt = useAppSelector(selectJwt);
 
   const handleClickOff = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     setExpanded(false);
   };
-
-  console.log("isLoggedIn", isLoggedIn);
 
   return (
     <HeaderStyled>
@@ -54,7 +53,7 @@ const Header = () => {
             )}
 
             <div className="full-menu">
-              {isLoggedIn ? (
+              {jwt ? (
                 <>
                   <NavLink className="light" to={routes.landing}>
                     Home
