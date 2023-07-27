@@ -1,8 +1,6 @@
 import { styled } from "styled-components";
 
 const DialerStyled = styled.div`
-  padding-bottom: 4rem;
-
   button.startup {
     &.active {
       background-color: green;

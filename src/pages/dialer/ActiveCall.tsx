@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { Box, Card, Title } from "@mantine/core";
+import { Box, Title } from "@mantine/core";
 import IPhoneDial from "./IPhoneDial";
 import {
   selectIsCallActive,
@@ -24,23 +24,23 @@ const ActiveCall = () => {
 
   return (
     <ActiveCallStyled>
-      <Card withBorder radius="md" p="md">
-        <Title order={2}>Active Call</Title>
+      <Title order={2} mb={16}>
+        Active Call
+      </Title>
 
-        <Box p="md">
-          <IPhoneDial
-            onHold={onHold}
-            status={status}
-            muted={muted}
-            number={activeContact?.phone}
-            setMuted={(muted) => dispatch(setMuted(muted))}
-            setOnHold={(onHold) => dispatch(setOnHold(onHold))}
-            isCallActive={isCallActive}
-            start={() => alert("hi")}
-            end={() => alert("hi")}
-          />
-        </Box>
-      </Card>
+      <Box>
+        <IPhoneDial
+          onHold={onHold}
+          status={status}
+          muted={muted}
+          number={activeContact?.phone}
+          setMuted={(muted) => dispatch(setMuted(muted))}
+          setOnHold={(onHold) => dispatch(setOnHold(onHold))}
+          isCallActive={isCallActive}
+          start={() => alert("hi")}
+          end={() => alert("hi")}
+        />
+      </Box>
     </ActiveCallStyled>
   );
 };

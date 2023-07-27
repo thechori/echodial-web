@@ -1,14 +1,6 @@
 import { styled } from "styled-components";
 //
-import {
-  Avatar,
-  Card,
-  Group,
-  ScrollArea,
-  Table,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Avatar, Group, ScrollArea, Table, Text, Title } from "@mantine/core";
 import { useAppSelector } from "../../store/hooks";
 
 const ContactQueueStyled = styled.div`
@@ -51,22 +43,22 @@ function ContactQueue() {
 
   return (
     <ContactQueueStyled>
-      <Card withBorder radius="md" p="md">
-        <Title order={2}>Call Queue</Title>
+      <Title order={2} mb={16}>
+        Call Queue
+      </Title>
 
-        <ScrollArea h={400}>
-          <Table verticalSpacing="sm">
-            <thead>
-              <tr>
-                <th>Contact</th>
-                <th>Phone</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>{rows}</tbody>
-          </Table>
-        </ScrollArea>
-      </Card>
+      <ScrollArea h={400}>
+        <Table verticalSpacing="sm">
+          <thead>
+            <tr>
+              <th>Contact</th>
+              <th>Phone</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </Table>
+      </ScrollArea>
     </ContactQueueStyled>
   );
 }

@@ -8,7 +8,7 @@ import {
   Flex,
   Grid,
   Text,
-  Stack,
+  Card,
 } from "@mantine/core";
 //
 import DialerStyled from "./Dialer.styles";
@@ -128,7 +128,7 @@ function Dialer() {
     <DialerStyled>
       <Container size="xl">
         <Flex justify={"space-between"} align={"center"} py="md">
-          <Title order={2}>Dialer</Title>
+          <Title order={1}>Dialer</Title>
           <div>
             {device ? (
               <Flex align="center">
@@ -158,14 +158,17 @@ function Dialer() {
             )}
           </div>
         </Flex>
+
         <Grid>
-          <Grid.Col xs={12} sm={6}>
-            <Stack>
+          <Grid.Col xs={12} sm={12} md={6}>
+            <Card withBorder shadow="md">
               <ActiveCall />
-            </Stack>
+            </Card>
           </Grid.Col>
-          <Grid.Col xs={12} sm={6}>
-            <ContactQueue />
+          <Grid.Col xs={12} sm={12} md={6}>
+            <Card withBorder shadow="md">
+              <ContactQueue />
+            </Card>
           </Grid.Col>
         </Grid>
 
