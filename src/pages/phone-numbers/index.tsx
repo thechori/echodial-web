@@ -1,54 +1,87 @@
-import { Card, Container, List, Text, ThemeIcon, Title } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  Flex,
+  Grid,
+  Text,
+  ThemeIcon,
+  Title,
+} from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
+import { BiPlus } from "react-icons/bi";
 //
 import PhoneNumbersStyled from "./PhoneNumbers.styles";
 import contacts from "../dialer/contacts";
 import phoneFormatter from "../../utils/phone-formatter";
+import PhoneNumberMenu from "./PhoneNumberMenu";
 
 function PhoneNumbers() {
   return (
     <PhoneNumbersStyled>
       <Container p="xl">
-        <Card shadow="md" withBorder radius="md" m="md">
-          <Title order={2} mb={16}>
-            L34ds Phone Numbers
-          </Title>
-          <Text>Here are some PhoneNumbers</Text>
-          <List
-            py={16}
-            spacing="xs"
-            icon={
-              <ThemeIcon color="teal" size={24} radius="xl">
-                <IconCircleCheck size="1rem" />
-              </ThemeIcon>
-            }
-          >
-            {contacts.map((c) => (
-              <List.Item key={c.id}>{phoneFormatter(c.phone)}</List.Item>
-            ))}
-          </List>
-        </Card>
+        <Grid>
+          <Grid.Col xs={12} sm={6}>
+            <Card shadow="md" withBorder radius="md" m="lg">
+              <Title order={2} mb={16}>
+                Phone Numbers (L34ds)
+              </Title>
 
-        <Card shadow="md" withBorder radius="md" m="md">
-          <Title order={2} mb={16}>
-            Your Phone Numbers
-          </Title>
-          <Text>
-            Put your own phone number to use to increase the likelihood of
-            success when dialing people.
-          </Text>
-          <List
-            py={16}
-            spacing="xs"
-            icon={
-              <ThemeIcon color="teal" size={24} radius="xl">
-                <IconCircleCheck size="1rem" />
-              </ThemeIcon>
-            }
-          >
-            <List.Item>(832) 646-0869</List.Item>
-          </List>
-        </Card>
+              <Text>The numbers included with your L34ds subscription</Text>
+
+              <Box p="lg">
+                {contacts.map((c) => (
+                  <Flex
+                    key={c.id}
+                    py={4}
+                    align="center"
+                    justify="space-between"
+                  >
+                    <Flex align="center">
+                      <ThemeIcon color="teal" size={24} radius="xl">
+                        <IconCircleCheck size="1rem" />
+                      </ThemeIcon>
+                      <Box ml={16}>{phoneFormatter(c.phone)}</Box>
+                    </Flex>
+                    <PhoneNumberMenu />
+                  </Flex>
+                ))}
+              </Box>
+
+              <Button leftIcon={<BiPlus />}>Add new</Button>
+            </Card>
+          </Grid.Col>
+          <Grid.Col xs={12} sm={6}>
+            <Card shadow="md" withBorder radius="md" m="lg">
+              <Title order={2} mb={16}>
+                Phone Numbers (Personal)
+              </Title>
+              <Text>Your personal numbers you've verified with L34ds</Text>
+
+              <Box p="lg">
+                {["+18326460869", "+18328638635"].map((number) => (
+                  <Flex
+                    key={number}
+                    py={4}
+                    align="center"
+                    justify="space-between"
+                  >
+                    <Flex align="center">
+                      <ThemeIcon color="teal" size={24} radius="xl">
+                        <IconCircleCheck size="1rem" />
+                      </ThemeIcon>
+                      <Box ml={16}>{phoneFormatter(number)}</Box>
+                    </Flex>
+                    <PhoneNumberMenu />
+                  </Flex>
+                ))}
+              </Box>
+
+              <Button leftIcon={<BiPlus />}>Add new</Button>
+            </Card>
+          </Grid.Col>
+        </Grid>
       </Container>
     </PhoneNumbersStyled>
   );

@@ -54,59 +54,6 @@ const StyleProvider = styled.div`
     }
   }
 
-  h1 {
-    font-size: 3.2em;
-    line-height: 1.1;
-  }
-
-  button {
-    border-radius: 4px;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 300;
-    border: none;
-    background-color: ${colors.blue};
-    color: white;
-    transition: background-color 200ms ease;
-
-    &:hover {
-      cursor: pointer;
-      background-color: ${darken(0.1, colors.blue)};
-    }
-
-    &.full {
-      width: -webkit-fill-available;
-    }
-
-    &.lg {
-      font-size: 1.1rem;
-      padding: 1.1rem 1.5rem;
-    }
-
-    &.pink {
-      background-color: ${colors.pink};
-    }
-
-    &.shadow {
-      box-shadow: 0 5px 30px hsla(214, 3%, 59%, 0.996);
-    }
-  }
-
-  input {
-    border-radius: 4px;
-    border: 1px solid rgba(0, 0, 0, 0.25);
-    display: block;
-
-    padding: 0.5rem;
-    font-size: 1rem;
-
-    @media ${devices.tablet} {
-      padding: 0.75rem;
-      margin-bottom: 1.5rem;
-      font-size: 1.2rem;
-    }
-  }
-
   .react-datepicker-wrapper {
     width: 100%;
   }
@@ -132,10 +79,6 @@ const StyleProvider = styled.div`
       color: ${colors.red};
       font-size: 0.8rem;
     }
-  }
-
-  .surface {
-    background-color: ${colors.surface};
   }
 
   .silver {
@@ -178,16 +121,6 @@ const StyleProvider = styled.div`
       #cbaea3,
       #d4b5ab
     );
-  }
-
-  .py-4 {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-
-  .py-8 {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
   }
 
   .container {
@@ -282,12 +215,6 @@ const StyleProvider = styled.div`
       margin: auto;
       margin-right: 0.5rem;
     }
-  }
-
-  hr {
-    opacity: 0.3;
-    margin-top: 1.25rem;
-    margin-bottom: 1.25rem;
   }
 
   .hoverable {
