@@ -3,7 +3,10 @@
  * @param number Twilio-compliant phone number (string)
  * @returns Human readable string
  */
-function phoneFormatter(number: string) {
+function phoneFormatter(number?: string) {
+  // Handle undefined
+  if (!number) return "N/A";
+
   // Remove all non-numeric characters from the input phone number
   const numericOnly = number.replace(/\D/g, "");
 

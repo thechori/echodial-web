@@ -27,7 +27,7 @@ import AuthenticatedUserLayout from "./components/layouts/AuthenticatedUserLayou
 import Leads from "./pages/leads";
 import PhoneNumbers from "./pages/phone-numbers";
 import Reports from "./pages/reports";
-import Pipelines from "./pages/pipelines";
+import Phases from "./pages/phases";
 import Billing from "./pages/billing";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
@@ -113,16 +113,19 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path={routes.pipelines}
-                element={
-                  <ProtectedRoute>
-                    <AuthenticatedUserLayout>
-                      <Pipelines />
-                    </AuthenticatedUserLayout>
-                  </ProtectedRoute>
-                }
-              />
+              <Route path={routes.phases}>
+                <Route
+                  path={routes.phases}
+                  element={
+                    <ProtectedRoute>
+                      <AuthenticatedUserLayout>
+                        <Phases />
+                      </AuthenticatedUserLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path={`${routes.phases}/:phaseId`} />
+              </Route>
               <Route
                 path={routes.billing}
                 element={

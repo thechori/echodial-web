@@ -57,9 +57,9 @@ const Sidebar = () => {
                   <div>Leads</div>
                 </NavLink>
 
-                <NavLink to={routes.pipelines}>
+                <NavLink to={routes.phases}>
                   <FaFolderOpen fontSize="1.75rem" />
-                  <div>Pipelines</div>
+                  <div>Phases</div>
                 </NavLink>
 
                 <NavLink to={routes.reports}>
@@ -107,9 +107,9 @@ const Sidebar = () => {
             <div>Leads</div>
           </NavLink>
 
-          <NavLink to={routes.pipelines}>
+          <NavLink to={routes.phases}>
             <FaFolderOpen fontSize="1.75rem" />
-            <div>Pipelines</div>
+            <div>Phases</div>
           </NavLink>
 
           <NavLink to={routes.reports}>

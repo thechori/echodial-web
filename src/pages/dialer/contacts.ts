@@ -3,6 +3,20 @@ import { TContact } from "../../store/contacts/types";
 const contacts: TContact[] = [
   {
     id: "8978s6df78s6df67sdf",
+    firstName: "Patrick",
+    lastName: "Cambel",
+    email: "littlepenis@gmail.com",
+    phone: "+19793088159",
+    favoriteColor: "",
+    dateOfBirth: "1988-12-20",
+    address1: "14715 Barryknoll Ln",
+    address2: "Apt 129",
+    city: "Houston",
+    state: "TX",
+    zip: "77079",
+  },
+  {
+    id: "8978s6df78s6df67sdf",
     firstName: "Teodoro",
     lastName: "Systems",
     email: "ryan@teodorosystems.com",

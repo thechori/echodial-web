@@ -8,6 +8,7 @@ import { Device, Call } from "@twilio/voice-sdk";
 
 interface IDialerState {
   error: string;
+  alphaDialerVisible: boolean;
   device: any | Device;
   call: null | Call;
   status: "idle" | "calling" | "failed" | "stopped" | "connected";
@@ -21,6 +22,7 @@ interface IDialerState {
 }
 
 const initialState: IDialerState = {
+  alphaDialerVisible: false,
   device: null,
   call: null,
   fromNumber: numbers[2].value,
@@ -38,6 +40,9 @@ export const DialerSlice = createSlice({
   name: "dialer",
   initialState,
   reducers: {
+    setAlphaDialerVisible: (state, action) => {
+      state.alphaDialerVisible = action.payload;
+    },
     setDevice: (state, action) => {
       state.device = action.payload;
     },
@@ -77,6 +82,7 @@ export const DialerSlice = createSlice({
 });
 
 export const {
+  setAlphaDialerVisible,
   setCall,
   setDevice,
   setFromNumber,

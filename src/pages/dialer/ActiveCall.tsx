@@ -1,46 +1,38 @@
 import { styled } from "styled-components";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { Box, Title } from "@mantine/core";
-import IPhoneDial from "./IPhoneDial";
-import {
-  selectIsCallActive,
-  setMuted,
-  setOnHold,
-} from "../../store/dialer/slice";
+import { Box, Button, Text, Title } from "@mantine/core";
+import { setAlphaDialerVisible } from "../../store/dialer/slice";
+import phoneFormatter from "../../utils/phone-formatter";
+import AlphaDialer from "./AlphaDialer";
 
 const ActiveCallStyled = styled.div`
   .call {
-    /* border: 1px solid lightgrey; */
     padding: 1rem;
   }
 `;
 
 const ActiveCall = () => {
   const dispatch = useAppDispatch();
-  const { activeContact, onHold, status, muted } = useAppSelector(
-    (state) => state.dialer
-  );
-  const isCallActive = useAppSelector(selectIsCallActive);
+  const { activeContact, status } = useAppSelector((state) => state.dialer);
+
+  const showAlphaDialer = () => {
+    dispatch(setAlphaDialerVisible(true));
+  };
 
   return (
     <ActiveCallStyled>
-      <Title order={2} mb={16}>
-        Active Call
-      </Title>
+      <Title order={2}>Active Call</Title>
+
+      <Box py="md">
+        <Text>Status: {status}</Text>
+        <Text>Phone number: {phoneFormatter(activeContact?.phone)}</Text>
+      </Box>
 
       <Box>
-        <IPhoneDial
-          onHold={onHold}
-          status={status}
-          muted={muted}
-          number={activeContact?.phone}
-          setMuted={(muted) => dispatch(setMuted(muted))}
-          setOnHold={(onHold) => dispatch(setOnHold(onHold))}
-          isCallActive={isCallActive}
-          start={() => alert("hi")}
-          end={() => alert("hi")}
-        />
+        <Button onClick={showAlphaDialer}>Open AlphaDialer</Button>
       </Box>
+
+      <AlphaDialer />
     </ActiveCallStyled>
   );
 };

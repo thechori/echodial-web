@@ -1,40 +1,38 @@
-import { useNavigate } from "react-router-dom";
-//
-import { useAppDispatch } from "../../store/hooks";
-import { signOut } from "../../store/user/slice";
-import routes from "../../configs/routes";
 import BillingStyled from "./Billing.styles";
-import { Box, Card, Title } from "@mantine/core";
+import { Box, Card, Container, Grid, Title } from "@mantine/core";
+import SimpleAreaChart from "../../components/charts/simple-area";
 
 function Billing() {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
-  function handleSignOut() {
-    dispatch(signOut());
-    navigate(routes.signIn);
-  }
-
   return (
     <BillingStyled>
-      <div className="container">
+      <Container>
         <h1>Billing</h1>
         <p>Here are some Billing</p>
-        <Card>
-          <Title order={2} mb={16}>
-            Balance History
-          </Title>
-          <Box></Box>
-        </Card>
-        <Card>
-          <Title order={2} mb={16}>
-            Usage History
-          </Title>
+        <Grid>
+          <Grid.Col xs={12} sm={6} lg={4}>
+            <Card>
+              <Title order={2} mb={16}>
+                Balance History
+              </Title>
+              <Box h={300} w={400}>
+                <SimpleAreaChart />
+              </Box>
+            </Card>
+          </Grid.Col>
 
-          <Box></Box>
-        </Card>
-        <button onClick={handleSignOut}>Sign out</button>
-      </div>
+          <Grid.Col xs={12} sm={6} lg={4}>
+            <Card>
+              <Title order={2} mb={16}>
+                Usage History
+              </Title>
+
+              <Box h={300} w={400}>
+                <SimpleAreaChart />
+              </Box>
+            </Card>
+          </Grid.Col>
+        </Grid>
+      </Container>
     </BillingStyled>
   );
 }

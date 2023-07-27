@@ -12,7 +12,7 @@ const routes = {
   settings: "/settings",
   tryL34ds: "/try-l34ds",
   leads: "/leads",
-  pipelines: "/pipelines",
+  phases: "/phases",
   reports: "/reports",
   phoneNumbers: "/phone-numbers",
   billing: "/billing",
