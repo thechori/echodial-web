@@ -1,31 +1,55 @@
-import { useNavigate } from "react-router-dom";
+import { Card, Container, List, Text, ThemeIcon, Title } from "@mantine/core";
+import { IconCircleCheck } from "@tabler/icons-react";
 //
-import { useAppDispatch } from "../../store/hooks";
-import { signOut } from "../../store/user/slice";
-import routes from "../../configs/routes";
 import PhoneNumbersStyled from "./PhoneNumbers.styles";
+import contacts from "../dialer/contacts";
+import phoneFormatter from "../../utils/phone-formatter";
 
 function PhoneNumbers() {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
-  function handleSignOut() {
-    dispatch(signOut());
-    navigate(routes.signIn);
-  }
-
   return (
     <PhoneNumbersStyled>
-      <div className="container">
-        <h1>Phone Numbers</h1>
-        <p>Here are some PhoneNumbers</p>
-        <p>(832) 111-2222</p>
-        <p>(832) 111-2222</p>
-        <p>(832) 111-2222</p>
-        <p>(832) 111-2222</p>
-        <p>(832) 111-2222</p>
-        <button onClick={handleSignOut}>Sign out</button>
-      </div>
+      <Container p="xl">
+        <Card shadow="md" withBorder radius="md" m="md">
+          <Title order={2} mb={16}>
+            L34ds Phone Numbers
+          </Title>
+          <Text>Here are some PhoneNumbers</Text>
+          <List
+            py={16}
+            spacing="xs"
+            icon={
+              <ThemeIcon color="teal" size={24} radius="xl">
+                <IconCircleCheck size="1rem" />
+              </ThemeIcon>
+            }
+          >
+            {contacts.map((c) => (
+              <List.Item key={c.id}>{phoneFormatter(c.phone)}</List.Item>
+            ))}
+          </List>
+        </Card>
+
+        <Card shadow="md" withBorder radius="md" m="md">
+          <Title order={2} mb={16}>
+            Your Phone Numbers
+          </Title>
+          <Text>
+            Put your own phone number to use to increase the likelihood of
+            success when dialing people.
+          </Text>
+          <List
+            py={16}
+            spacing="xs"
+            icon={
+              <ThemeIcon color="teal" size={24} radius="xl">
+                <IconCircleCheck size="1rem" />
+              </ThemeIcon>
+            }
+          >
+            <List.Item>(832) 646-0869</List.Item>
+          </List>
+        </Card>
+      </Container>
     </PhoneNumbersStyled>
   );
 }

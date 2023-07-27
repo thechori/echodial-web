@@ -55,7 +55,7 @@ function ContactQueue() {
         <Title order={2}>Call Queue</Title>
 
         <ScrollArea h={400}>
-          <Table sx={{ minWidth: 500 }} verticalSpacing="sm">
+          <Table verticalSpacing="sm">
             <thead>
               <tr>
                 <th>Contact</th>

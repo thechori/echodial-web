@@ -159,12 +159,12 @@ function Dialer() {
           </div>
         </Flex>
         <Grid>
-          <Grid.Col xs={12} sm={7}>
+          <Grid.Col xs={12} sm={6}>
             <Stack>
               <ActiveCall />
             </Stack>
           </Grid.Col>
-          <Grid.Col xs={12} sm={5}>
+          <Grid.Col xs={12} sm={6}>
             <ContactQueue />
           </Grid.Col>
         </Grid>
