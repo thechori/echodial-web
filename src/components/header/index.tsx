@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineMenu } from "react-icons/ai";
 //
 import HeaderStyled from "./Header.styles";
@@ -9,7 +9,6 @@ import { useAppSelector } from "../../store/hooks";
 
 const Header = () => {
   const [expanded, setExpanded] = useState(false);
-  const { pathname } = useLocation();
   const navigate = useNavigate();
   const isLoggedIn = useAppSelector((state) => state.user.jwt);
 
@@ -18,10 +17,7 @@ const Header = () => {
     setExpanded(false);
   };
 
-  // Show on landing
-  if (pathname !== routes.landing) {
-    return null;
-  }
+  console.log("isLoggedIn", isLoggedIn);
 
   return (
     <HeaderStyled>
@@ -44,31 +40,15 @@ const Header = () => {
             {expanded && (
               <div className="hamburger-menu-drawer" onClick={handleClickOff}>
                 <div className="hamburger-menu-drawer-links">
-                  {isLoggedIn ? (
-                    <>
-                      <NavLink className="light" to={routes.dashboard}>
-                        Dashboard
-                      </NavLink>
-                      <NavLink className="light" to={routes.dialer}>
-                        Dialer
-                      </NavLink>
-                      <NavLink className="light" to={routes.settings}>
-                        Settings
-                      </NavLink>
-                    </>
-                  ) : (
-                    <>
-                      <NavLink className="light" to={routes.landing}>
-                        Home
-                      </NavLink>
-                      <NavLink className="light" to={routes.signIn}>
-                        Sign in
-                      </NavLink>
-                      <NavLink className="button light" to={routes.tryL34ds}>
-                        Try for free
-                      </NavLink>
-                    </>
-                  )}
+                  <NavLink className="light" to={routes.landing}>
+                    Home
+                  </NavLink>
+                  <NavLink className="light" to={routes.signIn}>
+                    Sign in
+                  </NavLink>
+                  <NavLink className="button light" to={routes.tryL34ds}>
+                    Try for free
+                  </NavLink>
                 </div>
               </div>
             )}
@@ -76,20 +56,32 @@ const Header = () => {
             <div className="full-menu">
               {isLoggedIn ? (
                 <>
-                  <NavLink className="light" to={routes.dashboard}>
-                    Dashboard
+                  <NavLink className="light" to={routes.landing}>
+                    Home
                   </NavLink>
-                  <NavLink className="light" to={routes.dialer}>
-                    Dialer
+                  <NavLink className="light" to={routes.features}>
+                    Features
                   </NavLink>
-                  <NavLink className="light" to={routes.settings}>
-                    Settings
+                  <NavLink className="light" to={routes.pricing}>
+                    Pricing
                   </NavLink>
+
+                  <div className="sign-up-container">
+                    <NavLink className="button" to={routes.dashboard}>
+                      Dashboard
+                    </NavLink>
+                  </div>
                 </>
               ) : (
                 <>
                   <NavLink className="light" to={routes.landing}>
                     Home
+                  </NavLink>
+                  <NavLink className="light" to={routes.features}>
+                    Features
+                  </NavLink>
+                  <NavLink className="light" to={routes.pricing}>
+                    Pricing
                   </NavLink>
                   <NavLink className="light" to={routes.signIn}>
                     Sign in

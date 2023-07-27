@@ -4,15 +4,17 @@ import { Button, Checkbox, TextInput } from "@mantine/core";
 import SignInStyled from "./SignIn.styles";
 import l34dsLogo from "../../assets/l34ds-logo-full-inverted.png";
 import routes from "../../configs/routes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { extractErrorMessage } from "../../utils/error";
-import { useAppDispatch } from "../../store/hooks";
-import { setJwt } from "../../store/user/slice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectJwt, setJwt } from "../../store/user/slice";
 import apiService from "../../services/api";
 
 function SignIn() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const jwt = useAppSelector(selectJwt);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,6 +41,13 @@ function SignIn() {
       setLoading(false);
     }
   }
+
+  // Check for active session
+  useEffect(() => {
+    if (jwt) {
+      navigate(routes.dashboard);
+    }
+  }, [jwt]);
 
   return (
     <SignInStyled>

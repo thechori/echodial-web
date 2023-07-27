@@ -1,10 +1,15 @@
 const routes = {
-  dashboard: "/dashboard",
+  // Public
   landing: "/",
+  signIn: "/sign-in",
+  features: "/features",
+  pricing: "/pricing",
+  forgotPassword: "/forgot-password",
+
+  // Protected
+  dashboard: "/dashboard",
   dialer: "/dialer",
   settings: "/settings",
-  signIn: "/sign-in",
-  forgotPassword: "/forgot-password",
   tryL34ds: "/try-l34ds",
   leads: "/leads",
   pipelines: "/pipelines",

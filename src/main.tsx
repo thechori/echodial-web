@@ -17,12 +17,13 @@ import Settings from "./pages/settings";
 import StyleProvider from "./styles";
 import store from "./store";
 import ProtectedRoute from "./components/protected-route";
-import Header from "./components/header";
 import routes from "./configs/routes";
 import NotFound from "./pages/not-found";
 import Dialer from "./pages/dialer";
-import Sidebar from "./components/sidebar";
-import Content from "./components/_common/Content";
+import Features from "./pages/features";
+import Pricing from "./pages/pricing";
+import Layout from "./components/layouts/Layout";
+import AuthenticatedUserLayout from "./components/layouts/AuthenticatedUserLayout";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -30,40 +31,65 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <StyleProvider>
         <MantineProvider withGlobalStyles withNormalizeCSS>
           <BrowserRouter>
-            <Header />
-            <Content>
-              <Sidebar />
-              <Routes>
-                <Route path={routes.landing} element={<Landing />} />
-                <Route path={routes.signIn} element={<SignIn />} />
-                <Route path={routes.tryL34ds} element={<TryL34ds />} />
-                <Route
-                  path={routes.dashboard}
-                  element={
-                    <ProtectedRoute>
+            <Routes>
+              <Route
+                path={routes.landing}
+                element={
+                  <Layout>
+                    <Landing />
+                  </Layout>
+                }
+              />
+              <Route path={routes.signIn} element={<SignIn />} />
+              <Route path={routes.tryL34ds} element={<TryL34ds />} />
+              <Route
+                path={routes.features}
+                element={
+                  <Layout>
+                    <Features />
+                  </Layout>
+                }
+              />
+              <Route
+                path={routes.pricing}
+                element={
+                  <Layout>
+                    <Pricing />
+                  </Layout>
+                }
+              />
+              <Route
+                path={routes.dashboard}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
                       <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={routes.dialer}
-                  element={
-                    <ProtectedRoute>
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.dialer}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
                       <Dialer />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={routes.settings}
-                  element={
-                    <ProtectedRoute>
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.settings}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
                       <Settings />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Content>
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </BrowserRouter>
         </MantineProvider>
       </StyleProvider>
