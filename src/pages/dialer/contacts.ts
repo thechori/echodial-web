@@ -2,7 +2,7 @@ import { TContact } from "../../store/contacts/types";
 
 const contacts: TContact[] = [
   {
-    id: "8978s6df78s6df67sdf",
+    id: "1278sfvv78s6df67sdf",
     firstName: "Patrick",
     lastName: "Cambel",
     email: "littlepenis@gmail.com",
@@ -16,7 +16,7 @@ const contacts: TContact[] = [
     zip: "77079",
   },
   {
-    id: "8978s6df78s6df67sdf",
+    id: "8978s6df78s6dvvf67sdf",
     firstName: "Teodoro",
     lastName: "Systems",
     email: "ryan@teodorosystems.com",
@@ -30,7 +30,7 @@ const contacts: TContact[] = [
     zip: "77079",
   },
   {
-    id: "98df7g89df7g9df",
+    id: "98dfvvv7g89df7g9df",
     firstName: "Raymund",
     lastName: "Teodoro",
     email: "thechori@gmail.com",
@@ -45,7 +45,7 @@ const contacts: TContact[] = [
   },
 
   {
-    id: "sdf67s5df67s5d67f5s76",
+    id: "sdf67vvs5df67s5d67f5s76",
     firstName: "Angela",
     lastName: "Teodoro",
     email: "Angela.Teodoro@insightglobal.com",
@@ -59,7 +59,7 @@ const contacts: TContact[] = [
     zip: "77094",
   },
   {
-    id: "45sd3aaaf45sdf35sdg56s6",
+    id: "45sxxd3aaaf45sdf35sdg56s6",
     firstName: "Kevin",
     lastName: "Pham",
     email: "kpham986@gmail.com",
@@ -73,7 +73,7 @@ const contacts: TContact[] = [
     zip: "77079",
   },
   {
-    id: "45sd3aaf45sdf35sdg56s6",
+    id: "45saaad3aaf45sdf35sdg56s6",
     firstName: "Kevin",
     lastName: "Pham",
     email: "kpham986@gmail.com",
@@ -87,7 +87,7 @@ const contacts: TContact[] = [
     zip: "77079",
   },
   {
-    id: "69sd3f45sdf35sdg56s6",
+    id: "69sd3f45fffsdf35sdg56s6",
     firstName: "Kevin",
     lastName: "Pham",
     email: "kpham986@gmail.com",
@@ -101,7 +101,7 @@ const contacts: TContact[] = [
     zip: "77079",
   },
   {
-    id: "35sd3f45sdf35sdg56s6",
+    id: "35sd3f45asdfsdf35sdg56s6",
     firstName: "Kevin",
     lastName: "Pham",
     email: "kpham986@gmail.com",
@@ -115,7 +115,7 @@ const contacts: TContact[] = [
     zip: "77079",
   },
   {
-    id: "45sd3f45sdf35sdg56s6",
+    id: "45sd3asdf45sdf35sdg56s6",
     firstName: "Kevin",
     lastName: "Pham",
     email: "kpham986@gmail.com",
