@@ -5,11 +5,11 @@ import devices from "../../styles/devices";
 const SidebarStyled = styled.div`
   background-color: black;
   color: white;
+  position: sticky;
+  top: 0;
+  z-index: 99;
 
   .mobile {
-    /* width: 200px; */
-    /* height: 100px; */
-
     display: block;
 
     @media ${devices.tablet} {
@@ -55,13 +55,9 @@ const SidebarStyled = styled.div`
   }
 
   .content {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-
-    /* padding: 2rem; */
-
     @media ${devices.tablet} {
-      /* padding: 2rem; */
+      margin-top: 1rem;
+      margin-bottom: 1rem;
     }
   }
 
@@ -99,17 +95,21 @@ const SidebarStyled = styled.div`
     background-color: rgba(0, 0, 0, 0.85);
     z-index: 100;
 
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
     .hamburger-menu-drawer-links {
-      width: 100%;
-      height: 100%;
+      width: 66%;
+      /*height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: flex-end;
+      align-items: flex-end; */
 
       a {
-        font-size: 2rem;
-        padding: 1.5rem;
+        font-size: 1.5rem;
+        padding: 1.25rem;
       }
     }
   }

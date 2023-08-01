@@ -76,6 +76,11 @@ const Sidebar = () => {
                   <FaCreditCard fontSize="1.75rem" />
                   <div>Billing</div>
                 </NavLink>
+
+                <NavLink to={routes.settings}>
+                  <FaCreditCard fontSize="1.75rem" />
+                  <div>Settings</div>
+                </NavLink>
               </div>
             </div>
           </div>
