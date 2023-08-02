@@ -1,5 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Button, Checkbox, Flex, Text, TextInput } from "@mantine/core";
+import {
+  Button,
+  Checkbox,
+  Container,
+  Flex,
+  Text,
+  TextInput,
+} from "@mantine/core";
 //
 import SignInStyled from "./SignIn.styles";
 import l34dsLogo from "../../assets/l34ds-logo-full-inverted.png";
@@ -51,57 +58,68 @@ function SignIn() {
 
   return (
     <SignInStyled>
-      <div className="form-container">
-        <div
-          className="logo-container hoverable"
-          onClick={() => navigate(routes.landing)}
-        >
-          <img src={l34dsLogo} alt="L34ds logo" />
-        </div>
-
-        <form onSubmit={handleFormSubmit}>
-          <div className="input-field">
-            <TextInput
-              label="Email"
-              value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setEmail(e.target.value)
-              }
-            />
+      <Container>
+        <div className="form-container">
+          <div
+            className="logo-container hoverable"
+            onClick={() => navigate(routes.landing)}
+          >
+            <img src={l34dsLogo} alt="L34ds logo" />
           </div>
 
-          <div className="input-field">
-            <TextInput
-              type="password"
-              label="Password"
-              value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.target.value)
-              }
-            />
-          </div>
+          <form onSubmit={handleFormSubmit}>
+            <div className="input-field">
+              <TextInput
+                label="Email"
+                value={email}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setEmail(e.target.value)
+                }
+              />
+            </div>
 
-          <Flex justify="space-between">
-            <Checkbox label="Remember me" />
-            <Link to={routes.forgotPassword}>
-              <Text size="sm">Forgot your password?</Text>
-            </Link>
+            <div className="input-field">
+              <TextInput
+                type="password"
+                label="Password"
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setPassword(e.target.value)
+                }
+              />
+            </div>
+
+            <Flex justify="space-between">
+              <Checkbox label="Remember me" />
+              <Link to={routes.forgotPassword}>
+                <Text size="sm">Forgot your password?</Text>
+              </Link>
+            </Flex>
+
+            <Button type="submit" fullWidth my="md" size="lg">
+              {loading ? "Loading..." : "Submit"}
+            </Button>
+
+            <Text color="red">{error}</Text>
+          </form>
+
+          <Flex
+            align="center"
+            justify="space-between"
+            w={300}
+            mx="auto"
+            mt={48}
+          >
+            <Text>Not a customer yet?</Text>
+            <Button
+              variant="gradient"
+              onClick={() => navigate(routes.tryL34ds)}
+            >
+              Try for free
+            </Button>
           </Flex>
-
-          <Button type="submit" fullWidth my="md" size="lg">
-            {loading ? "Loading..." : "Submit"}
-          </Button>
-
-          <Text color="red">{error}</Text>
-        </form>
-
-        <Flex align="center" justify="space-between" w={300} mx="auto" mt={48}>
-          <Text>Not a customer yet?</Text>
-          <Button variant="gradient" onClick={() => navigate(routes.tryL34ds)}>
-            Try for free
-          </Button>
-        </Flex>
-      </div>
+        </div>
+      </Container>
     </SignInStyled>
   );
 }

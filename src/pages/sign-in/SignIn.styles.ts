@@ -1,4 +1,6 @@
 import { styled } from "styled-components";
+//
+import devices from "../../styles/devices";
 
 const SignInStyled = styled.div`
   width: 100vw;
@@ -14,14 +16,20 @@ const SignInStyled = styled.div`
     padding-bottom: 2rem;
 
     img {
-      width: 300px;
+      width: 200px;
+
+      @media ${devices.tablet} {
+        width: 300px;
+      }
     }
   }
 
   .form-container {
-    width: 450px;
-    margin-left: auto;
-    margin-right: auto;
+    @media ${devices.tablet} {
+      width: 450px;
+      margin-left: auto;
+      margin-right: auto;
+    }
   }
 `;
 

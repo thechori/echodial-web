@@ -80,10 +80,10 @@ function SignUp() {
           </Box>
 
           <Box py="md">
-            <Title color="white" order={2}>
+            <Title color="white" order={1} weight={200}>
               Start building with L34DS for free.
             </Title>
-            <Title color="white" order={2}>
+            <Title color="white" order={1} weight={200}>
               No credit card required.
             </Title>
           </Box>

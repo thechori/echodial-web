@@ -78,7 +78,7 @@ const Sidebar = () => {
                 </NavLink>
 
                 <NavLink to={routes.settings}>
-                  <FaCreditCard fontSize="1.75rem" />
+                  <IoIosSettings fontSize="1.75rem" />
                   <div>Settings</div>
                 </NavLink>
               </div>

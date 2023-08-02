@@ -42,6 +42,12 @@ const Header = () => {
                   <NavLink className="light" to={routes.landing}>
                     Home
                   </NavLink>
+                  <NavLink className="light" to={routes.features}>
+                    Features
+                  </NavLink>
+                  <NavLink className="light" to={routes.pricing}>
+                    Pricing
+                  </NavLink>
                   <NavLink className="light" to={routes.signIn}>
                     Sign in
                   </NavLink>
