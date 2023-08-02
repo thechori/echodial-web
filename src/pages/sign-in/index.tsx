@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
-import { Button, Checkbox, TextInput } from "@mantine/core";
+import { Link, useNavigate } from "react-router-dom";
+import { Button, Checkbox, Flex, Text, TextInput } from "@mantine/core";
 //
 import SignInStyled from "./SignIn.styles";
 import l34dsLogo from "../../assets/l34ds-logo-full-inverted.png";
@@ -81,27 +81,26 @@ function SignIn() {
             />
           </div>
 
-          <Button className="full" type="submit">
+          <Flex justify="space-between">
+            <Checkbox label="Remember me" />
+            <Link to={routes.forgotPassword}>
+              <Text size="sm">Forgot your password?</Text>
+            </Link>
+          </Flex>
+
+          <Button type="submit" fullWidth my="md" size="lg">
             {loading ? "Loading..." : "Submit"}
           </Button>
 
-          <div className="error">{error}</div>
-
-          <hr />
-
-          <div className="lower-links">
-            <Checkbox label="Remember me" />
-
-            <a href={routes.forgotPassword}>Forgot your password?</a>
-          </div>
+          <Text color="red">{error}</Text>
         </form>
 
-        <div className="lower-lower-links">
-          <span>Not a customer yet?</span>
-          <button onClick={() => navigate(routes.tryL34ds)}>
+        <Flex align="center" justify="space-between" w={300} mx="auto" mt={48}>
+          <Text>Not a customer yet?</Text>
+          <Button variant="gradient" onClick={() => navigate(routes.tryL34ds)}>
             Try for free
-          </button>
-        </div>
+          </Button>
+        </Flex>
       </div>
     </SignInStyled>
   );

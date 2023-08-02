@@ -23,27 +23,6 @@ const SignInStyled = styled.div`
     margin-left: auto;
     margin-right: auto;
   }
-
-  .lower-links {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .lower-lower-links {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 1rem auto;
-    padding: 1.25rem;
-
-    span {
-      margin-right: 1rem;
-    }
-  }
-
-  .error {
-    margin-top: 1rem;
-  }
 `;
 
 export default SignInStyled;

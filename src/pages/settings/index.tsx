@@ -33,14 +33,24 @@ function Settings() {
   return (
     <SettingsStyled>
       <Container py="sm">
-        <Card withBorder shadow="md" m="sm">
-          <Title order={2}>Account</Title>
-          <Box>
-            <TextInput label="Email" readOnly value={email} />
-            <TextInput label="Password" />
-            <Button>Update</Button>
-          </Box>
-        </Card>
+        <Grid>
+          <Grid.Col xs={12} sm={6}>
+            <Card withBorder shadow="md" m="sm">
+              <Title order={2}>Account</Title>
+              <Box>
+                <form>
+                  <TextInput label="Email" readOnly value={email} />
+                  <TextInput label="Password" />
+                  <Button>Update</Button>
+                </form>
+
+                <Button color="red" onClick={handleSignOut}>
+                  Sign out
+                </Button>
+              </Box>
+            </Card>
+          </Grid.Col>
+        </Grid>
 
         <Card withBorder shadow="md" m="sm">
           <Title order={2} mb="sm">
@@ -67,10 +77,6 @@ function Settings() {
 
           <Button>Save</Button>
         </Card>
-
-        <Button color="red" onClick={handleSignOut}>
-          Sign out
-        </Button>
       </Container>
     </SettingsStyled>
   );
