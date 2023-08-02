@@ -33,8 +33,8 @@ import Billing from "./pages/billing";
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
-      <StyleProvider>
-        <MantineProvider withGlobalStyles withNormalizeCSS>
+      <MantineProvider withGlobalStyles withNormalizeCSS>
+        <StyleProvider>
           <BrowserRouter>
             <Routes>
               <Route
@@ -149,8 +149,8 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
-        </MantineProvider>
-      </StyleProvider>
+        </StyleProvider>
+      </MantineProvider>
     </Provider>
   </React.StrictMode>
 );

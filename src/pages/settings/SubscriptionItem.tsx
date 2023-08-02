@@ -1,11 +1,20 @@
-import { styled } from "styled-components";
+import styled from "@emotion/styled";
+
 import { Box, List, Text, ThemeIcon, Title } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
 //
 import { TSubscription } from "./settings-data";
 
 const Container = styled.div<{ selected: boolean }>`
-  border: ${(props) => (props.selected ? "2px solid green" : "none")};
+  border: ${(props) => {
+    console.log("props.theme", props.theme);
+
+    return props.selected
+      ? // @ts-ignore
+        `2px solid ${props.theme.colors.green[5]}`
+      : "none";
+  }};
+
   padding: 1rem;
   border-radius: 4px;
 `;
@@ -23,7 +32,7 @@ const SubscriptionItem = ({
 }: TSubscriptionItemProps) => {
   const { title, price, subtitle, features } = data;
   return (
-    <Container onClick={onSelect} selected={selected}>
+    <Container onClick={onSelect} selected={selected} className="hoverable">
       <Box>
         <Title order={3}>{title}</Title>
       </Box>

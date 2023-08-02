@@ -4,7 +4,15 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectEmail, signOut } from "../../store/user/slice";
 import routes from "../../configs/routes";
 import SettingsStyled from "./Settings.styles";
-import { Box, Button, Card, Grid, TextInput, Title } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  Grid,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import SubscriptionItem from "./SubscriptionItem";
 import { useState } from "react";
 import { basic, pro } from "./settings-data";
@@ -24,10 +32,8 @@ function Settings() {
 
   return (
     <SettingsStyled>
-      <div className="container">
-        <h1>Settings</h1>
-
-        <Card withBorder shadow="md">
+      <Container py="sm">
+        <Card withBorder shadow="md" m="sm">
           <Title order={2}>Account</Title>
           <Box>
             <TextInput label="Email" readOnly value={email} />
@@ -36,10 +42,12 @@ function Settings() {
           </Box>
         </Card>
 
-        <Card withBorder shadow="md">
-          <Title order={2}>Subscription</Title>
+        <Card withBorder shadow="md" m="sm">
+          <Title order={2} mb="sm">
+            Subscription
+          </Title>
 
-          <Grid p="lg">
+          <Grid>
             <Grid.Col xs={12} sm={6} md={4}>
               <SubscriptionItem
                 data={basic}
@@ -63,7 +71,7 @@ function Settings() {
         <Button color="red" onClick={handleSignOut}>
           Sign out
         </Button>
-      </div>
+      </Container>
     </SettingsStyled>
   );
 }
