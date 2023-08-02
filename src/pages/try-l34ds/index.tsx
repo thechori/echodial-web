@@ -1,15 +1,26 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { IconCircleCheck } from "@tabler/icons-react";
 //
 import TryL34dsStyled from "./TryL34ds";
 import l34dsLogo from "../../assets/l34ds-logo-full.png";
 import routes from "../../configs/routes";
-import { AiOutlineCheck } from "react-icons/ai";
-import colors from "../../styles/colors";
 import { extractErrorMessage } from "../../utils/error";
 import { useAppDispatch } from "../../store/hooks";
 import { setJwt } from "../../store/user/slice";
 import apiService from "../../services/api";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  Flex,
+  List,
+  Text,
+  TextInput,
+  ThemeIcon,
+  Title,
+} from "@mantine/core";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -58,55 +69,53 @@ function SignUp() {
 
   return (
     <TryL34dsStyled>
-      <div className="header">
-        <div
-          className="logo-container hoverable"
-          onClick={() => navigate(routes.landing)}
-        >
-          <img src={l34dsLogo} alt="L34ds logo" />
-        </div>
-        <div className="title">
-          <div>Start building with L34DS for free.</div>
-          <div>No credit card required.</div>
-        </div>
-      </div>
+      <Container>
+        <Box ta="center" py="lg">
+          <Box
+            py="md"
+            className="logo-container hoverable"
+            onClick={() => navigate(routes.landing)}
+          >
+            <img src={l34dsLogo} alt="L34ds logo" />
+          </Box>
 
-      <div className="card">
-        <div className="left">
-          <div className="value-proposition">
-            <div className="title">With L34ds you can:</div>
-            <div className="items">
-              <div className="item">
-                <AiOutlineCheck fontSize="24px" color={colors.green} />
-                <span>SMS Marketing</span>
-              </div>
-              <div className="item">
-                <AiOutlineCheck fontSize="24px" color={colors.green} />
-                <span>Autodialer</span>
-              </div>
-              <div className="item">
-                <AiOutlineCheck fontSize="24px" color={colors.green} />
-                <span>Triple simultaneous dialing</span>
-              </div>
-              <div className="item">
-                <AiOutlineCheck fontSize="24px" color={colors.green} />
-                <span>Instantaneous call handoffs</span>
-              </div>
-              <div className="item">
-                <AiOutlineCheck fontSize="24px" color={colors.green} />
-                <span>On-hold functionality</span>
-              </div>
-              <div className="item">
-                <AiOutlineCheck fontSize="24px" color={colors.green} />
-                <span>Free leads every month</span>
-              </div>
+          <Box py="md">
+            <Title color="white" order={2}>
+              Start building with L34DS for free.
+            </Title>
+            <Title color="white" order={2}>
+              No credit card required.
+            </Title>
+          </Box>
+        </Box>
+
+        <div className="card">
+          <div className="left">
+            <div className="value-proposition">
+              <div className="title">With L34ds you can:</div>
+              <List
+                spacing="xs"
+                size="sm"
+                center
+                icon={
+                  <ThemeIcon color="teal" size={24} radius="xl">
+                    <IconCircleCheck size="1rem" />
+                  </ThemeIcon>
+                }
+              >
+                <List.Item>SMS Marketing</List.Item>
+                <List.Item>Autodialer</List.Item>
+                <List.Item>Triple simultaneous dialing</List.Item>
+                <List.Item>Instantaneous call handoffs</List.Item>
+                <List.Item>On-hold functionality</List.Item>
+                <List.Item>Free leads every month</List.Item>
+              </List>
             </div>
           </div>
-        </div>
-        <div className="right">
-          <form onSubmit={handleFormSubmit}>
-            <div className="input-field">
-              <input
+          <div className="right">
+            <form onSubmit={handleFormSubmit}>
+              <TextInput
+                py="sm"
                 required
                 type="text"
                 name="firstName"
@@ -116,9 +125,9 @@ function SignUp() {
                   setFirstName(e.target.value)
                 }
               />
-            </div>
-            <div className="input-field">
-              <input
+
+              <TextInput
+                py="sm"
                 required
                 type="text"
                 name="lastName"
@@ -128,9 +137,9 @@ function SignUp() {
                   setLastName(e.target.value)
                 }
               />
-            </div>
-            <div className="input-field">
-              <input
+
+              <TextInput
+                py="sm"
                 required
                 type="email"
                 placeholder="Email address *"
@@ -139,10 +148,9 @@ function SignUp() {
                   setEmail(e.target.value)
                 }
               />
-            </div>
 
-            <div className="input-field">
-              <input
+              <TextInput
+                py="sm"
                 required
                 type="password"
                 placeholder="Password *"
@@ -151,37 +159,39 @@ function SignUp() {
                   setPassword(e.target.value)
                 }
               />
-            </div>
 
-            <div className="legal">
-              <input
-                required
-                type="checkbox"
-                checked={acceptTerms}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setAcceptTerms(e.target.checked)
-                }
-              />
-              <label>
-                I accept the <a href="#">L34ds Terms of Service</a> and have
-                read the <a href="#">L34ds Privacy Notice</a>.
-              </label>
-            </div>
+              <Flex align="flex-start" justify="space-between">
+                <Checkbox
+                  pr="sm"
+                  required
+                  checked={acceptTerms}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setAcceptTerms(e.target.checked)
+                  }
+                />
+                <Text size="xs">
+                  I accept the <a href="#">L34ds Terms of Service</a> and have
+                  read the <a href="#">L34ds Privacy Notice</a>.
+                </Text>
+              </Flex>
 
-            <div style={{ height: 24 }} />
-            <div className="error">{error}</div>
+              <div style={{ height: 24 }} />
+              <div className="error">{error}</div>
 
-            <button className="full lg shadow" type="submit">
-              {loading ? "Loading..." : "Start your free trial"}
-            </button>
-          </form>
+              <Button fullWidth size="lg" variant="gradient" type="submit">
+                {loading ? "Loading..." : "Start your free trial"}
+              </Button>
+            </form>
+          </div>
         </div>
-      </div>
 
-      <div className="lower-lower-links">
-        <span>Already have an account?</span>
-        <button onClick={() => navigate(routes.signIn)}>Sign In</button>
-      </div>
+        <Flex align="center" justify="space-between" w={300} py={32} mx="auto">
+          <Text color="white">Already have an account?</Text>
+          <Button variant="white" onClick={() => navigate(routes.signIn)}>
+            Sign In
+          </Button>
+        </Flex>
+      </Container>
     </TryL34dsStyled>
   );
 }

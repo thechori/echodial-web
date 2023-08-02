@@ -4,8 +4,7 @@ import devices from "../../styles/devices";
 
 const TryL34dsStyled = styled.div`
   width: 100vw;
-  height: 100vh;
-
+  min-height: 100vh;
   background: linear-gradient(
       129deg,
       rgba(242, 47, 70, 0.85),
@@ -16,7 +15,6 @@ const TryL34dsStyled = styled.div`
   background-size: cover;
 
   .header {
-    color: white;
     font-weight: 200;
 
     padding-top: 2rem;
@@ -26,10 +24,6 @@ const TryL34dsStyled = styled.div`
       font-size: 2.25rem;
       padding-top: 4rem;
       padding-bottom: 3rem;
-    }
-
-    .title {
-      text-align: center;
     }
   }
 
@@ -51,12 +45,13 @@ const TryL34dsStyled = styled.div`
       display: none;
 
       @media ${devices.tablet} {
+        display: flex;
         flex: 1;
         width: 45%;
       }
 
       .value-proposition {
-        padding: 75px 55px;
+        padding: 40px 55px 75px 55px;
 
         .title {
           margin-bottom: 1rem;
@@ -82,10 +77,10 @@ const TryL34dsStyled = styled.div`
       background-color: white;
       flex: 1;
 
-      padding: 3rem 2rem;
+      padding: 2rem;
 
       @media ${devices.tablet} {
-        padding: 30px 50px;
+        padding: 40px 50px 30px 50px;
         border-top-right-radius: 6px;
         border-bottom-right-radius: 6px;
         flex: 1;
@@ -95,11 +90,6 @@ const TryL34dsStyled = styled.div`
   }
 
   .logo-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding-bottom: 2rem;
-
     img {
       width: 200px;
 
@@ -109,34 +99,7 @@ const TryL34dsStyled = styled.div`
     }
   }
 
-  .legal {
-    display: flex;
-
-    input {
-      margin-right: 0.5rem;
-    }
-
-    label {
-      font-size: 0.85rem;
-    }
-  }
-
-  .error {
-    margin-bottom: 1rem;
-  }
-
-  .lower-links {
-    display: flex;
-    justify-content: space-between;
-  }
-
   .lower-lower-links {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    margin: auto;
-
     padding: 2rem;
 
     @media ${devices.tablet} {
