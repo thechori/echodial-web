@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import LandingStyled from "./Landing.styles";
 import l34dsScreenshot from "../../assets/l34ds-screenshot.png";
 import routes from "../../configs/routes";
+import { Button, Container } from "@mantine/core";
+import { FeaturesGrid } from "../features/FeaturesGrid";
 
 function Landing() {
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ function Landing() {
   return (
     <LandingStyled>
       <section className="hero">
-        <div className="container">
+        <Container>
           <div className="hero-subcontainer">
             <div className="left">
               <h1>The CRM built on what matters most – communication</h1>
@@ -19,12 +21,13 @@ function Landing() {
                 Turn calls into customers with an automated sales team in your
                 back pocket.
               </p>
-              <button
-                className="pink lg"
+              <Button
+                size="xl"
+                variant="gradient"
                 onClick={() => navigate(routes.tryL34ds)}
               >
                 Sign up today
-              </button>
+              </Button>
             </div>
             <div className="right">
               <img
@@ -34,7 +37,13 @@ function Landing() {
               />
             </div>
           </div>
-        </div>
+        </Container>
+      </section>
+
+      <section>
+        <Container py="lg">
+          <FeaturesGrid />
+        </Container>
       </section>
     </LandingStyled>
   );

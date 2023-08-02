@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineMenu } from "react-icons/ai";
+import { Box, Button } from "@mantine/core";
 //
 import HeaderStyled from "./Header.styles";
 import leadsLogoFull from "../../assets/l34ds-logo-full.png";
@@ -39,21 +40,44 @@ const Header = () => {
             {expanded && (
               <div className="hamburger-menu-drawer" onClick={handleClickOff}>
                 <div className="hamburger-menu-drawer-links">
-                  <NavLink className="light" to={routes.landing}>
-                    Home
-                  </NavLink>
-                  <NavLink className="light" to={routes.features}>
-                    Features
-                  </NavLink>
-                  <NavLink className="light" to={routes.pricing}>
-                    Pricing
-                  </NavLink>
-                  <NavLink className="light" to={routes.signIn}>
-                    Sign in
-                  </NavLink>
-                  <NavLink className="button light" to={routes.tryL34ds}>
-                    Try for free
-                  </NavLink>
+                  {jwt ? (
+                    <>
+                      <NavLink className="light" to={routes.landing}>
+                        Home
+                      </NavLink>
+                      <NavLink className="light" to={routes.features}>
+                        Features
+                      </NavLink>
+                      <NavLink className="light" to={routes.pricing}>
+                        Pricing
+                      </NavLink>
+                      <NavLink to={routes.dashboard}>
+                        <Button size="xl" variant="gradient">
+                          Dashboard
+                        </Button>
+                      </NavLink>
+                    </>
+                  ) : (
+                    <>
+                      <NavLink className="light" to={routes.landing}>
+                        Home
+                      </NavLink>
+                      <NavLink className="light" to={routes.features}>
+                        Features
+                      </NavLink>
+                      <NavLink className="light" to={routes.pricing}>
+                        Pricing
+                      </NavLink>
+                      <NavLink className="light" to={routes.signIn}>
+                        Sign in
+                      </NavLink>
+                      <NavLink to={routes.tryL34ds}>
+                        <Button size="xl" variant="gradient">
+                          Try for free
+                        </Button>
+                      </NavLink>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -72,8 +96,8 @@ const Header = () => {
                   </NavLink>
 
                   <div className="sign-up-container">
-                    <NavLink className="button" to={routes.dashboard}>
-                      Dashboard
+                    <NavLink to={routes.dashboard}>
+                      <Button size="lg">Dashboard</Button>
                     </NavLink>
                   </div>
                 </>
@@ -91,11 +115,14 @@ const Header = () => {
                   <NavLink className="light" to={routes.signIn}>
                     Sign in
                   </NavLink>
-                  <div className="sign-up-container">
-                    <NavLink className="button" to={routes.tryL34ds}>
-                      Try for free
+
+                  <Box ml="md">
+                    <NavLink to={routes.tryL34ds}>
+                      <Button size="lg" variant="gradient">
+                        Try for free
+                      </Button>
                     </NavLink>
-                  </div>
+                  </Box>
                 </>
               )}
             </div>

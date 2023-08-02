@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
-  FaHome,
   FaPhone,
   FaFolderOpen,
   FaCreditCard,
@@ -10,7 +9,7 @@ import {
 import { IoIosSettings } from "react-icons/io";
 import { MdGroups } from "react-icons/md";
 import { BiSolidReport } from "react-icons/bi";
-import { AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineMenu, AiOutlineDashboard } from "react-icons/ai";
 //
 import SidebarStyled from "./Sidebar.styles";
 import routes from "../../configs/routes";
@@ -29,7 +28,12 @@ const Sidebar = () => {
     <SidebarStyled>
       <div className="mobile">
         <div className="header">
-          <img src={logo} alt="L34ds logo" />
+          <img
+            className="hoverable"
+            src={logo}
+            alt="L34ds logo"
+            onClick={() => navigate(routes.landing)}
+          />
           <div
             className="hamburger-menu"
             onClick={() => setExpanded(!expanded)}
@@ -43,7 +47,7 @@ const Sidebar = () => {
             <div className="hamburger-menu-drawer-links">
               <div className="content">
                 <NavLink to={routes.dashboard}>
-                  <FaHome fontSize="1.75rem" />
+                  <AiOutlineDashboard fontSize="1.75rem" />
                   <div>Dashboard</div>
                 </NavLink>
 
@@ -98,7 +102,7 @@ const Sidebar = () => {
 
         <div className="content">
           <NavLink to={routes.dashboard}>
-            <FaHome fontSize="1.75rem" />
+            <AiOutlineDashboard fontSize="1.75rem" />
             <div>Dashboard</div>
           </NavLink>
 

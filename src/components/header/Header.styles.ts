@@ -92,10 +92,6 @@ const HeaderStyled = styled.div`
       border-bottom: 4px solid ${colors.blue};
     }
   }
-
-  .sign-up-container {
-    margin-left: 1rem;
-  }
 `;
 
 export default HeaderStyled;
