@@ -14,8 +14,8 @@ import FeaturesStyled from "./Features.styles";
 function Features() {
   return (
     <FeaturesStyled>
-      <Container>
-        <Card withBorder shadow="md" p="lg" maw={400}>
+      <Container py="xl">
+        <Card withBorder shadow="md" p="lg" maw={400} mx="auto">
           <Title order={1} weight={200} mb="md">
             Features
           </Title>
