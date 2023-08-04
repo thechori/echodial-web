@@ -8,6 +8,7 @@ const colors = {
   green: "#37d575",
 
   darkBackground: "#2a2a2a",
+  darkBlueBackground: "#105370",
   lightBackground: "#F4F6F9",
   fontOnDarkBackground: "#fff",
   surface: "#efefef",

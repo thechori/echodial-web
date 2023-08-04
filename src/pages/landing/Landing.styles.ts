@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
+//
 import colors from "../../styles/colors";
 import devices from "../../styles/devices";
 
@@ -6,7 +7,7 @@ const LandingStyled = styled.div`
   .hero {
     background: radial-gradient(
       circle,
-      ${colors.blue} 0%,
+      ${colors.darkBlueBackground} 0%,
       ${colors.darkBackground} 75%
     );
 
@@ -19,25 +20,6 @@ const LandingStyled = styled.div`
       padding-top: 2rem;
       padding-bottom: 2rem;
       height: 600px;
-    }
-
-    h1 {
-      font-size: 2rem;
-      /* line-height: 2.2rem; */
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
-
-      @media ${devices.tablet} {
-        font-size: 2.5rem;
-        /* line-height: 2.75rem; */
-        margin-bottom: 1rem;
-      }
-
-      @media ${devices.desktop} {
-        font-size: 3rem;
-        /* line-height: 3.25rem; */
-        margin-bottom: 1rem;
-      }
     }
 
     .hero-subcontainer {

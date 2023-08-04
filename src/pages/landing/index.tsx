@@ -15,25 +15,20 @@ function Landing() {
         <Container>
           <div className="hero-subcontainer">
             <div className="left">
-              <Title weight={400} color="white" lh="3.2rem">
-                Automatic dialing –{" "}
-                <Text weight={600} span color="gold" lh="2.75rem">
-                  it's like magic 🪄
-                </Text>
+              <Title weight={400} color="white">
+                Automatic dialing –
               </Title>
-              <Title
-                order={2}
-                weight={300}
-                color="dimmed"
-                py="sm"
-                lh="1.875rem"
-              >
+
+              <Title weight={600} color="gold">
+                it's like magic 🪄
+              </Title>
+              <Title order={2} weight={300} color="dimmed" py="sm">
                 Spend your time doing better things while we take care of the
                 calling
               </Title>
               <Text color="white" py="sm" size="1.2rem">
-                Use your own phone number -- never get marked as a spam risk
-                again
+                Use your own phone number -- <i>never</i> get marked as a spam
+                risk again
               </Text>
               <Button
                 size="xl"
