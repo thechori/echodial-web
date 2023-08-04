@@ -29,8 +29,6 @@ export const UserSlice = createSlice({
       const jwtDecoded = jwt_decode(action.payload) || null; //
       state.jwtDecoded = jwtDecoded as TJwtDecoded | null;
 
-      console.log("jwtDecoded", jwtDecoded);
-
       // Persist in local storage
       localStorage.setItem("jwt", action.payload);
       localStorage.setItem("jwtDecoded", JSON.stringify(jwtDecoded));
@@ -50,6 +48,21 @@ export const selectEmail = (state: RootState) => {
   const { jwtDecoded } = state.user;
   if (!jwtDecoded) return undefined;
   return jwtDecoded.email;
+};
+export const selectPhone = (state: RootState) => {
+  const { jwtDecoded } = state.user;
+  if (!jwtDecoded) return "";
+  return jwtDecoded.phone;
+};
+export const selectFirstName = (state: RootState) => {
+  const { jwtDecoded } = state.user;
+  if (!jwtDecoded) return "";
+  return jwtDecoded.first_name;
+};
+export const selectLastName = (state: RootState) => {
+  const { jwtDecoded } = state.user;
+  if (!jwtDecoded) return "";
+  return jwtDecoded.last_name;
 };
 
 export default UserSlice.reducer;

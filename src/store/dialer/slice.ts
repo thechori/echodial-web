@@ -6,6 +6,14 @@ import contacts from "../../pages/dialer/contacts";
 import { RootState } from "..";
 import { Device, Call } from "@twilio/voice-sdk";
 
+const initialOptions: TDialerOptions = {
+  maxCallTries: 3,
+};
+
+type TDialerOptions = {
+  maxCallTries: number;
+};
+
 interface IDialerState {
   error: string;
   alphaDialerVisible: boolean;
@@ -19,6 +27,7 @@ interface IDialerState {
   fromNumber: string;
   activeContact: null | TContact;
   contactQueue: TContact[];
+  options: TDialerOptions;
 }
 
 const initialState: IDialerState = {
@@ -34,6 +43,8 @@ const initialState: IDialerState = {
   identity: null,
   activeContact: null,
   contactQueue: contacts,
+  //
+  options: initialOptions,
 };
 
 export const DialerSlice = createSlice({
@@ -62,11 +73,9 @@ export const DialerSlice = createSlice({
       state.error = action.payload;
     },
     setActiveContact: (state, action) => {
-      console.log("setActiveContact", action.payload);
       state.activeContact = action.payload;
     },
     setContactQueue: (state, action) => {
-      console.log("setContactQueue", action.payload);
       state.contactQueue = action.payload;
     },
     setMuted: (state, action) => {

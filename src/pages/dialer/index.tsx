@@ -35,12 +35,9 @@ function Dialer() {
   async function startupClient() {
     try {
       const { data } = await apiService("/dialer/token");
-      console.log("Got a token.");
       const token = data.token;
       dispatch(setToken(token));
     } catch (err) {
-      console.log(err);
-
       dispatch(
         setError(
           "An error occurred. See your browser console for more information."
@@ -103,13 +100,11 @@ function Dialer() {
     // Start Call #1
     const call = await device.connect({ params });
 
-    call.on("accept", (accept: string) => {
-      console.log("accept", accept);
+    call.on("accept", () => {
       dispatch(setStatus("accepted"));
     });
 
     call.on("error", (error: string) => {
-      console.log("error", error);
       dispatch(setError(error));
     });
 

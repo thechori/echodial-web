@@ -11,7 +11,7 @@ export const extractErrorMessage = (
   message = "There was an error. Please try again later."
 ) => {
   if (error instanceof AxiosError) {
-    return error.response?.data?.message || message;
+    return error.response?.data?.message || error.response?.data || message;
   }
   if (error instanceof Error) {
     return error.message;

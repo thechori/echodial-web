@@ -1,20 +1,27 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { selectEmail, signOut } from "../../store/user/slice";
+import {
+  selectEmail,
+  selectFirstName,
+  selectLastName,
+  selectPhone,
+  signOut,
+} from "../../store/user/slice";
 import routes from "../../configs/routes";
 import SettingsStyled from "./Settings.styles";
 import {
-  Box,
   Button,
   Card,
   Container,
   Grid,
+  Group,
+  Space,
   TextInput,
   Title,
 } from "@mantine/core";
 import SubscriptionItem from "./SubscriptionItem";
-import { useState } from "react";
 import { basic, pro } from "./settings-data";
 
 function Settings() {
@@ -24,6 +31,9 @@ function Settings() {
   const [plan, setPlan] = useState<"pro" | "basic">("pro");
 
   const email = useAppSelector(selectEmail);
+  const phone = useAppSelector(selectPhone);
+  const firstName = useAppSelector(selectFirstName);
+  const lastName = useAppSelector(selectLastName);
 
   function handleSignOut() {
     dispatch(signOut());
@@ -37,17 +47,34 @@ function Settings() {
           <Grid.Col xs={12} sm={6}>
             <Card withBorder shadow="md" m="sm">
               <Title order={2}>Account</Title>
-              <Box>
-                <form>
-                  <TextInput label="Email" readOnly value={email} />
-                  <TextInput label="Password" />
-                  <Button>Update</Button>
-                </form>
+              <Group spacing="sm">
+                <TextInput miw={300} label="First name" value={firstName} />
+                <TextInput miw={300} label="Last name" value={lastName} />
+                <TextInput miw={300} label="Phone number" value={phone} />
 
-                <Button color="red" onClick={handleSignOut}>
-                  Sign out
-                </Button>
-              </Box>
+                <Button disabled>Update</Button>
+              </Group>
+              <Space h="md" />
+              <Button color="red" onClick={handleSignOut}>
+                Sign out
+              </Button>
+            </Card>
+          </Grid.Col>
+          <Grid.Col xs={12} sm={6}>
+            <Card withBorder shadow="md" m="sm">
+              <Title order={2}>Security</Title>
+              <Group>
+                <TextInput
+                  miw={300}
+                  label="Email"
+                  readOnly
+                  value={email}
+                  disabled
+                />
+                <TextInput miw={300} label="New password" />
+                <TextInput miw={300} label="Confirm new password" />
+                <Button disabled>Update</Button>
+              </Group>
             </Card>
           </Grid.Col>
         </Grid>
@@ -58,7 +85,7 @@ function Settings() {
           </Title>
 
           <Grid>
-            <Grid.Col xs={12} sm={6} md={4}>
+            <Grid.Col xs={6} sm={6}>
               <SubscriptionItem
                 data={basic}
                 selected={plan === "basic"}
@@ -66,7 +93,7 @@ function Settings() {
               />
             </Grid.Col>
 
-            <Grid.Col xs={12} sm={6} md={4}>
+            <Grid.Col xs={6} sm={6}>
               <SubscriptionItem
                 data={pro}
                 selected={plan === "pro"}
@@ -75,7 +102,9 @@ function Settings() {
             </Grid.Col>
           </Grid>
 
-          <Button>Save</Button>
+          <Button size="lg" variant="gradient" disabled>
+            Update
+          </Button>
         </Card>
       </Container>
     </SettingsStyled>
