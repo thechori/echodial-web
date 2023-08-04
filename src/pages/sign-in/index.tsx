@@ -27,6 +27,7 @@ function SignIn() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,6 +56,32 @@ function SignIn() {
       navigate(routes.dashboard);
     }
   }, [jwt]);
+
+  function handleRememberMe(remember: boolean) {
+    if (remember) {
+      setRememberMe(true);
+      localStorage.setItem("email", email);
+    } else {
+      setRememberMe(false);
+      localStorage.removeItem("email");
+    }
+  }
+
+  // Initialize email if found in local storage
+  useEffect(() => {
+    const foundEmail = localStorage.getItem("email");
+    if (foundEmail) {
+      setEmail(foundEmail);
+      setRememberMe(true);
+    }
+  }, []);
+
+  // Handle updates to the email after checkbox has been clicked (e.g., user clicks checkbox mid way through typing their email)
+  useEffect(() => {
+    if (rememberMe) {
+      localStorage.setItem("email", email);
+    }
+  }, [email, rememberMe]);
 
   return (
     <SignInStyled>
@@ -90,7 +117,11 @@ function SignIn() {
             </div>
 
             <Flex justify="space-between">
-              <Checkbox label="Remember me" />
+              <Checkbox
+                label="Remember me"
+                checked={rememberMe}
+                onChange={() => handleRememberMe(!rememberMe)}
+              />
               <Link to={routes.forgotPassword}>
                 <Text size="sm">Forgot your password?</Text>
               </Link>
