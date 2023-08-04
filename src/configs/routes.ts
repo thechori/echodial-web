@@ -10,11 +10,11 @@ const routes = {
   dashboard: "/dashboard",
   dialer: "/dialer",
   settings: "/settings",
-  tryL34ds: "/try-l34ds",
+  signUp: "/sign-up",
   leads: "/leads",
   phases: "/phases",
   reports: "/reports",
-  phoneNumbers: "/phone-numbers",
+  callerIds: "/caller-ids",
   billing: "/billing",
 };
 

@@ -22,32 +22,22 @@ const LandingStyled = styled.div`
     }
 
     h1 {
-      color: white;
       font-size: 2rem;
-      line-height: 2.2rem;
+      /* line-height: 2.2rem; */
       margin-top: 0.5rem;
       margin-bottom: 0.5rem;
 
       @media ${devices.tablet} {
         font-size: 2.5rem;
-        line-height: 2.75rem;
+        /* line-height: 2.75rem; */
         margin-bottom: 1rem;
       }
 
       @media ${devices.desktop} {
         font-size: 3rem;
-        line-height: 3.25rem;
+        /* line-height: 3.25rem; */
         margin-bottom: 1rem;
       }
-    }
-
-    h2 {
-      color: ${colors.gold};
-    }
-
-    p {
-      margin-bottom: 2rem;
-      color: white;
     }
 
     .hero-subcontainer {

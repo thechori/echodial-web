@@ -111,10 +111,7 @@ function SignIn() {
             mt={48}
           >
             <Text>Not a customer yet?</Text>
-            <Button
-              variant="gradient"
-              onClick={() => navigate(routes.tryL34ds)}
-            >
+            <Button variant="gradient" onClick={() => navigate(routes.signUp)}>
               Try for free
             </Button>
           </Flex>

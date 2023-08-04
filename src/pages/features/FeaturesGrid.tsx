@@ -10,6 +10,7 @@ import {
   rem,
 } from "@mantine/core";
 import features from "./features.data";
+import { APP_NAME } from "../../configs/names";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -51,14 +52,23 @@ export function FeaturesGrid() {
   return (
     <div className={classes.wrapper}>
       <Grid gutter={80}>
+        <Col span={12} md={7}>
+          <SimpleGrid
+            cols={2}
+            spacing={30}
+            breakpoints={[{ maxWidth: "md", cols: 1 }]}
+          >
+            {items}
+          </SimpleGrid>
+        </Col>
         <Col span={12} md={5}>
           <Title className={classes.title} order={2}>
-            A fully featured React components library for your next project
+            We specialize in dialing.
           </Title>
           <Text c="dimmed">
-            Build fully functional accessible web applications faster than ever
-            – Mantine includes more than 120 customizable components and hooks
-            to cover you in any situation
+            Other CRMs specialize in nothing, because they try to do too much.
+            With {APP_NAME}, you can get more done by becoming a super-human
+            multi tasker.
           </Text>
 
           <Button
@@ -70,15 +80,6 @@ export function FeaturesGrid() {
           >
             Try for free
           </Button>
-        </Col>
-        <Col span={12} md={7}>
-          <SimpleGrid
-            cols={2}
-            spacing={30}
-            breakpoints={[{ maxWidth: "md", cols: 1 }]}
-          >
-            {items}
-          </SimpleGrid>
         </Col>
       </Grid>
     </div>

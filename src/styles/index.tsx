@@ -225,6 +225,11 @@ const StyleProvider = styled.div`
       cursor: pointer;
     }
   }
+
+  .disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
 `;
 
 export default StyleProvider;

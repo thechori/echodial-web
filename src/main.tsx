@@ -11,7 +11,7 @@ import "@fontsource/roboto/700.css";
 import "./index.css";
 import Landing from "./pages/landing";
 import SignIn from "./pages/sign-in";
-import TryL34ds from "./pages/try-l34ds";
+import SignUp from "./pages/sign-up";
 import Dashboard from "./pages/dashboard";
 import Settings from "./pages/settings";
 import StyleProvider from "./styles";
@@ -25,7 +25,7 @@ import Pricing from "./pages/pricing";
 import Layout from "./components/layouts/Layout";
 import AuthenticatedUserLayout from "./components/layouts/AuthenticatedUserLayout";
 import Leads from "./pages/leads";
-import PhoneNumbers from "./pages/phone-numbers";
+import CallerIds from "./pages/caller-ids";
 import Reports from "./pages/reports";
 import Phases from "./pages/phases";
 import Billing from "./pages/billing";
@@ -46,7 +46,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                 }
               />
               <Route path={routes.signIn} element={<SignIn />} />
-              <Route path={routes.tryL34ds} element={<TryL34ds />} />
+              <Route path={routes.signUp} element={<SignUp />} />
               <Route
                 path={routes.features}
                 element={
@@ -94,11 +94,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                 }
               />
               <Route
-                path={routes.phoneNumbers}
+                path={routes.callerIds}
                 element={
                   <ProtectedRoute>
                     <AuthenticatedUserLayout>
-                      <PhoneNumbers />
+                      <CallerIds />
                     </AuthenticatedUserLayout>
                   </ProtectedRoute>
                 }

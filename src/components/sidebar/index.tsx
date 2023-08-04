@@ -71,9 +71,9 @@ const Sidebar = () => {
                   <div>Reports</div>
                 </NavLink>
 
-                <NavLink to={routes.phoneNumbers}>
+                <NavLink to={routes.callerIds}>
                   <FaAddressBook fontSize="1.75rem" />
-                  <div>Phone Numbers</div>
+                  <div>Caller IDs</div>
                 </NavLink>
 
                 <NavLink to={routes.billing}>
@@ -126,9 +126,9 @@ const Sidebar = () => {
             <div>Reports</div>
           </NavLink>
 
-          <NavLink to={routes.phoneNumbers}>
+          <NavLink to={routes.callerIds}>
             <FaAddressBook fontSize="1.75rem" />
-            <div>Phone Numbers</div>
+            <div>Caller IDs</div>
           </NavLink>
 
           <NavLink to={routes.billing}>

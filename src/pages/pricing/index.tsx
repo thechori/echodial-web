@@ -10,7 +10,7 @@ function Pricing() {
         <h1>Pricing</h1>
         <p>$100/mo</p>
         <Space h="2rem" />
-        <Link to={routes.tryL34ds}>
+        <Link to={routes.signUp}>
           <Button size="xl">Try L34ds free</Button>
         </Link>
       </div>

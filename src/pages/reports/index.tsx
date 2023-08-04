@@ -1,5 +1,6 @@
-import ReportsStyled from "./Reports.styles";
 import { Box, Card, Container, Grid, Title } from "@mantine/core";
+//
+import ReportsStyled from "./Reports.styles";
 import SimpleAreaChart from "../../components/charts/simple-area";
 
 function Reports() {
@@ -9,10 +10,10 @@ function Reports() {
         <h1>Reports</h1>
 
         <Grid>
-          <Grid.Col xs={12} sm={6} lg={4}>
+          <Grid.Col xs={12} sm={6}>
             <Card>
               <Title order={2} mb={16}>
-                Balance History
+                Call History
               </Title>
               <Box h={300} w={400}>
                 <SimpleAreaChart />
@@ -20,10 +21,10 @@ function Reports() {
             </Card>
           </Grid.Col>
 
-          <Grid.Col xs={12} sm={6} lg={4}>
+          <Grid.Col xs={12} sm={6}>
             <Card>
               <Title order={2} mb={16}>
-                Usage History
+                Leads Closed
               </Title>
 
               <Box h={300} w={400}>

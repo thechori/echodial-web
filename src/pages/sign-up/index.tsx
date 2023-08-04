@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconCircleCheck } from "@tabler/icons-react";
 //
-import TryL34dsStyled from "./TryL34ds";
+import SignUpStyled from "./SignUp.styles";
 import l34dsLogo from "../../assets/l34ds-logo-full.png";
 import routes from "../../configs/routes";
 import { extractErrorMessage } from "../../utils/error";
@@ -68,7 +68,7 @@ function SignUp() {
   }
 
   return (
-    <TryL34dsStyled>
+    <SignUpStyled>
       <Container>
         <Box ta="center" py="lg">
           <Box
@@ -192,7 +192,7 @@ function SignUp() {
           </Button>
         </Flex>
       </Container>
-    </TryL34dsStyled>
+    </SignUpStyled>
   );
 }
 

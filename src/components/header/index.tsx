@@ -71,7 +71,7 @@ const Header = () => {
                       <NavLink className="light" to={routes.signIn}>
                         Sign in
                       </NavLink>
-                      <NavLink to={routes.tryL34ds}>
+                      <NavLink to={routes.signUp}>
                         <Button size="xl" variant="gradient">
                           Try for free
                         </Button>
@@ -117,7 +117,7 @@ const Header = () => {
                   </NavLink>
 
                   <Box ml="md">
-                    <NavLink to={routes.tryL34ds}>
+                    <NavLink to={routes.signUp}>
                       <Button size="lg" variant="gradient">
                         Try for free
                       </Button>
