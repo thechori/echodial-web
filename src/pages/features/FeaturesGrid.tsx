@@ -11,6 +11,8 @@ import {
 } from "@mantine/core";
 import features from "./features.data";
 import { APP_NAME } from "../../configs/names";
+import routes from "../../configs/routes";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -29,6 +31,7 @@ const useStyles = createStyles((theme) => ({
 
 export function FeaturesGrid() {
   const { classes } = useStyles();
+  const navigate = useNavigate();
 
   const items = features.map((feature) => (
     <div key={feature.title}>
@@ -77,6 +80,7 @@ export function FeaturesGrid() {
             size="xl"
             radius="md"
             mt="xl"
+            onClick={() => navigate(routes.signUp)}
           >
             Try for free
           </Button>
