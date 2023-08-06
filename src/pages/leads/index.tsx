@@ -48,11 +48,7 @@ function Leads() {
           <Button onClick={open}>Upload .CSV</Button>
         </Flex>
 
-        <Box
-          className="ag-theme-alpine"
-          style={{ minWidth: 700, height: 500 }}
-          my="md"
-        >
+        <Box className="ag-theme-alpine" h={500} my="md">
           <AgGridReact
             ref={gridRef} // Ref for accessing Grid's API
             rowData={rowData} // Row Data for Rows
