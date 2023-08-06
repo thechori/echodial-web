@@ -23,12 +23,12 @@ function Leads() {
 
   // Each Column Definition results in one Column.
   const [columnDefs] = useState([
-    { field: "id", filter: true },
-    { field: "email", filter: true },
-    { field: "first_name", filter: true },
-    { field: "last_name", filter: true },
+    { field: "id", headerName: "ID", filter: true },
     { field: "phone", filter: true },
-    { field: "created_at", filter: true },
+    { field: "first_name", headerName: "First name", filter: true },
+    { field: "last_name", headerName: "Last name", filter: true },
+    { field: "email", filter: true },
+    { field: "created_at", headerName: "Created at", filter: true },
   ]);
 
   // DefaultColDef sets props common to all Columns

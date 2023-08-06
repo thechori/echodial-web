@@ -5,9 +5,13 @@ import type { RootState } from "../";
 
 export type TJwtDecoded = {
   email: string;
+  password_hash: string;
   first_name: string;
   last_name: string;
   phone: string;
+  created_at: Date;
+  iat: number;
+  exp: number;
 };
 
 export type TUserState = {
@@ -44,6 +48,7 @@ export const UserSlice = createSlice({
 export const { setJwt, signOut } = UserSlice.actions;
 
 export const selectJwt = (state: RootState) => state.user.jwt;
+export const selectJwtDecoded = (state: RootState) => state.user.jwtDecoded;
 export const selectEmail = (state: RootState) => {
   const { jwtDecoded } = state.user;
   if (!jwtDecoded) return undefined;
