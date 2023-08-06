@@ -13,7 +13,7 @@ function Phases() {
 
   return (
     <PhasesStyled>
-      <Container py="lg">
+      <Container fluid py="lg">
         <Box>
           {phases.map((p) => (
             <Card

@@ -1,57 +1,14 @@
 import { styled } from "styled-components";
 //
 import Header from "../header";
-import { Footer, TFooterProps } from "../footer";
+import { Footer } from "../footer";
+import footerData from "./footer-data";
 
 const Container = styled.div`
   .content {
     min-height: calc(100vh - 150px);
   }
 `;
-
-const footerData: TFooterProps = {
-  data: [
-    {
-      title: "About",
-      links: [
-        {
-          label: "Features",
-          link: "",
-        },
-        {
-          label: "Pricing",
-          link: "",
-        },
-        {
-          label: "Support",
-          link: "",
-        },
-        {
-          label: "FAQ",
-          link: "",
-        },
-      ],
-    },
-    {
-      title: "Company",
-
-      links: [
-        {
-          label: "Meet the team",
-          link: "",
-        },
-        {
-          label: "Our mission",
-          link: "",
-        },
-        {
-          label: "Careers",
-          link: "",
-        },
-      ],
-    },
-  ],
-};
 
 const Layout = ({ children }: any) => {
   return (

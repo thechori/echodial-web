@@ -6,7 +6,7 @@ import LineChartRechart from "./LineChartRechart";
 function Dashboard() {
   return (
     <DashboardStyled>
-      <Container p="lg">
+      <Container fluid py="lg">
         <Grid>
           <Grid.Col>
             <StatsGrid

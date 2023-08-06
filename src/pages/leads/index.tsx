@@ -42,13 +42,13 @@ function Leads() {
 
   return (
     <LeadsStyled>
-      <Container py="xl">
+      <Container fluid py="xl">
         <Flex align="center" justify="space-between">
           <Title order={2}>Leads</Title>
           <Button onClick={open}>Upload .CSV</Button>
         </Flex>
 
-        <Box className="ag-theme-alpine" h={500} my="md">
+        <Box className="ag-theme-alpine lead-grid-container" h={500} my="md">
           <AgGridReact
             ref={gridRef} // Ref for accessing Grid's API
             rowData={rowData} // Row Data for Rows

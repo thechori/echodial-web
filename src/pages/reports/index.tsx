@@ -6,7 +6,7 @@ import SimpleAreaChart from "../../components/charts/simple-area";
 function Reports() {
   return (
     <ReportsStyled>
-      <Container>
+      <Container fluid py="lg">
         <h1>Reports</h1>
 
         <Grid>

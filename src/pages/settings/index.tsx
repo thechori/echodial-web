@@ -42,7 +42,7 @@ function Settings() {
 
   return (
     <SettingsStyled>
-      <Container py="sm">
+      <Container fluid py="lg">
         <Grid>
           <Grid.Col xs={12} sm={6}>
             <Card withBorder shadow="md" m="sm">

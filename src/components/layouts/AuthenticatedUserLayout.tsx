@@ -9,6 +9,10 @@ const Container = styled.div`
   @media ${devices.tablet} {
     display: flex;
   }
+
+  .content {
+    width: 100%;
+  }
 `;
 
 const AuthenticatedUserLayout = ({ children }: any) => {

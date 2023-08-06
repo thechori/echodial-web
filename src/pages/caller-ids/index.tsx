@@ -100,7 +100,7 @@ function PhoneNumbers() {
         </Modal.Body>
       </Modal>
 
-      <Container p="xl">
+      <Container fluid py="lg">
         <Grid>
           <Grid.Col xs={12} sm={12}>
             <Card shadow="md" withBorder radius="md" m="lg">

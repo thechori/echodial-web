@@ -5,7 +5,7 @@ import SimpleAreaChart from "../../components/charts/simple-area";
 function Billing() {
   return (
     <BillingStyled>
-      <Container>
+      <Container fluid py="lg">
         <h1>Billing</h1>
         <p>Here are some Billing</p>
         <Grid>
