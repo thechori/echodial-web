@@ -1,4 +1,13 @@
-import { Button, Card, Modal, Text, Title } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Center,
+  List,
+  Modal,
+  Text,
+  ThemeIcon,
+} from "@mantine/core";
+import { IconCircleCheck } from "@tabler/icons-react";
 import Dropzone from "./Dropzone";
 
 const NewLeadModal = ({ opened, close }: any) => {
@@ -6,20 +15,32 @@ const NewLeadModal = ({ opened, close }: any) => {
     <Modal opened={opened} onClose={close} title="Upload new leads">
       <Modal.Body>
         <Text mb="md">
-          In order to verify that you own this number, we'll send you a text
-          message and a phone call simultaneously. Enter the Validation Code
-          that you receive via SMS in the phone call to complete this step.
+          In order to properly upload, ensure your column headers have the
+          following names:
         </Text>
 
-        <Card withBorder shadow="md" my="md">
-          <Title order={2} mb="md">
-            Upload new leads
-          </Title>
+        <List
+          ta="left"
+          spacing="xs"
+          icon={
+            <ThemeIcon color="teal" size={24} radius="xl">
+              <IconCircleCheck size="0.75rem" />
+            </ThemeIcon>
+          }
+        >
+          <List.Item>email</List.Item>
+          <List.Item>first_name</List.Item>
+          <List.Item>last_name</List.Item>
+          <List.Item>phone_number</List.Item>
+        </List>
 
+        <Box my="md">
           <Dropzone />
-        </Card>
+        </Box>
 
-        <Button onClick={() => alert("ty")}>Submit</Button>
+        <Center>
+          <Button onClick={() => alert("ty")}>Submit</Button>
+        </Center>
 
         {/* <Text w="100%" color="red">
               {error}
