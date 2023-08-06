@@ -1,6 +1,8 @@
 import {
   Box,
+  Button,
   Card,
+  Center,
   Container,
   List,
   Text,
@@ -8,10 +10,13 @@ import {
   Title,
 } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 //
 import FeaturesStyled from "./Features.styles";
+import routes from "../../configs/routes";
 
 function Features() {
+  const navigate = useNavigate();
   return (
     <FeaturesStyled>
       <Container py="xl">
@@ -44,6 +49,17 @@ function Features() {
             </List>
           </Box>
         </Card>
+
+        <Center>
+          <Button
+            variant="gradient"
+            size="xl"
+            onClick={() => navigate(routes.signUp)}
+            mt={32}
+          >
+            Try for free
+          </Button>
+        </Center>
       </Container>
     </FeaturesStyled>
   );

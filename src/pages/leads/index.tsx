@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useDisclosure } from "@mantine/hooks";
 import { AgGridReact } from "ag-grid-react"; // the AG Grid React Component
-import { Box, Card, Container, Title } from "@mantine/core";
+import { Box, Button, Container, Flex, Title } from "@mantine/core";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 //
 import LeadsStyled from "./Leads.styles";
-import Dropzone from "./Dropzone";
+import NewLeadModal from "./NewLeadModal";
 
 function Leads() {
+  const [opened, { open, close }] = useDisclosure(false);
   const gridRef = useRef<any>(); // Optional - for accessing Grid's API
   const [rowData, setRowData] = useState(); // Set rowData to Array of Objects, one Object per Row
 
@@ -41,7 +43,10 @@ function Leads() {
   return (
     <LeadsStyled>
       <Container py="xl">
-        <Title order={2}>Leads</Title>
+        <Flex align="center" justify="space-between">
+          <Title order={2}>Leads</Title>
+          <Button onClick={open}>Upload .CSV</Button>
+        </Flex>
 
         <Box
           className="ag-theme-alpine"
@@ -59,12 +64,7 @@ function Leads() {
           />
         </Box>
 
-        <Card withBorder shadow="md" my="md">
-          <Title order={2} mb="md">
-            Upload new leads
-          </Title>
-          <Dropzone />
-        </Card>
+        <NewLeadModal opened={opened} close={close} />
       </Container>
     </LeadsStyled>
   );
