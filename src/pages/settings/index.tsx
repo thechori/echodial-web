@@ -106,6 +106,16 @@ function Settings() {
             Update
           </Button>
         </Card>
+
+        <Card withBorder shadow="md" color="red">
+          <Title order={2} mb="sm">
+            Danger zone
+          </Title>
+          <Space h="md" />
+          <Button color="red" onClick={handleSignOut}>
+            Delete account
+          </Button>
+        </Card>
       </Container>
     </SettingsStyled>
   );

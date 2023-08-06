@@ -1,8 +1,7 @@
-import { Box, Container, Grid } from "@mantine/core";
+import { Box, Card, Container, Grid, Title } from "@mantine/core";
 import DashboardStyled from "./Dashboard.styles";
 import StatsGrid from "./StatsGrid";
-import LineChart from "./LineChart";
-import lineChartData from "./LineChart.data";
+import LineChartRechart from "./LineChartRechart";
 
 function Dashboard() {
   return (
@@ -41,9 +40,14 @@ function Dashboard() {
           </Grid.Col>
 
           <Grid.Col xs={12}>
-            <Box h={500}>
-              <LineChart data={lineChartData} />
-            </Box>
+            <Card withBorder shadow="md" py="md">
+              <Title order={2} mb="md">
+                Activity
+              </Title>
+              <Box h={400}>
+                <LineChartRechart />
+              </Box>
+            </Card>
           </Grid.Col>
         </Grid>
       </Container>
