@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { AgGridReact } from "ag-grid-react"; // the AG Grid React Component
-import { Box, Container, Title } from "@mantine/core";
+import { Box, Card, Container, Title } from "@mantine/core";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 //
 import LeadsStyled from "./Leads.styles";
+import Dropzone from "./Dropzone";
 
 function Leads() {
   const gridRef = useRef<any>(); // Optional - for accessing Grid's API
@@ -42,7 +43,11 @@ function Leads() {
       <Container py="xl">
         <Title order={2}>Leads</Title>
 
-        <Box className="ag-theme-alpine" style={{ width: 500, height: 500 }}>
+        <Box
+          className="ag-theme-alpine"
+          style={{ minWidth: 700, height: 500 }}
+          my="md"
+        >
           <AgGridReact
             ref={gridRef} // Ref for accessing Grid's API
             rowData={rowData} // Row Data for Rows
@@ -53,6 +58,13 @@ function Leads() {
             onCellClicked={cellClickedListener} // Optional - registering for Grid Event
           />
         </Box>
+
+        <Card withBorder shadow="md" my="md">
+          <Title order={2} mb="md">
+            Upload new leads
+          </Title>
+          <Dropzone />
+        </Card>
       </Container>
     </LeadsStyled>
   );
