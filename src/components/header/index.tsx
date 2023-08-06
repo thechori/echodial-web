@@ -51,6 +51,9 @@ const Header = () => {
                       <NavLink className="light" to={routes.pricing}>
                         Pricing
                       </NavLink>
+                      <NavLink className="light" to={routes.faq}>
+                        FAQ
+                      </NavLink>
                       <NavLink to={routes.dashboard}>
                         <Button size="xl" variant="gradient">
                           Dashboard
@@ -67,6 +70,9 @@ const Header = () => {
                       </NavLink>
                       <NavLink className="light" to={routes.pricing}>
                         Pricing
+                      </NavLink>
+                      <NavLink className="light" to={routes.faq}>
+                        FAQ
                       </NavLink>
                       <NavLink className="light" to={routes.signIn}>
                         Sign in
@@ -94,6 +100,9 @@ const Header = () => {
                   <NavLink className="light" to={routes.pricing}>
                     Pricing
                   </NavLink>
+                  <NavLink className="light" to={routes.faq}>
+                    FAQ
+                  </NavLink>
 
                   <div className="sign-up-container">
                     <NavLink to={routes.dashboard}>
@@ -111,6 +120,9 @@ const Header = () => {
                   </NavLink>
                   <NavLink className="light" to={routes.pricing}>
                     Pricing
+                  </NavLink>
+                  <NavLink className="light" to={routes.faq}>
+                    FAQ
                   </NavLink>
                   <NavLink className="light" to={routes.signIn}>
                     Sign in

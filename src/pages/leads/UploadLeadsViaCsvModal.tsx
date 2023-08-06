@@ -10,7 +10,7 @@ import {
 import { IconCircleCheck } from "@tabler/icons-react";
 import Dropzone from "./Dropzone";
 
-const NewLeadModal = ({ opened, close }: any) => {
+const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
   return (
     <Modal opened={opened} onClose={close} title="Upload new leads">
       <Modal.Body>
@@ -50,4 +50,4 @@ const NewLeadModal = ({ opened, close }: any) => {
   );
 };
 
-export default NewLeadModal;
+export default UploadLeadsViaCsvModal;

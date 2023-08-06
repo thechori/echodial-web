@@ -4,6 +4,7 @@ const routes = {
   signIn: "/sign-in",
   features: "/features",
   pricing: "/pricing",
+  faq: "/faq",
   forgotPassword: "/forgot-password",
 
   // Protected

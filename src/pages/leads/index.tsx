@@ -1,23 +1,34 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { AgGridReact } from "ag-grid-react"; // the AG Grid React Component
-import { Box, Button, Container, Flex, Title } from "@mantine/core";
+import { Box, Container, Flex, Text, Title } from "@mantine/core";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 //
 import LeadsStyled from "./Leads.styles";
-import NewLeadModal from "./NewLeadModal";
+import UploadLeadsViaCsvModal from "./UploadLeadsViaCsvModal";
+import NewLeadsMenu from "./NewLeadsMenu";
+import apiService from "../../services/api";
+import { extractErrorMessage } from "../../utils/error";
+import ManualInputLeadModal from "./ManualInputLeadModal";
 
 function Leads() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [opened, { open, close }] = useDisclosure(false);
-  const gridRef = useRef<any>(); // Optional - for accessing Grid's API
+  const [openedManual, { open: openManual, close: closeManual }] =
+    useDisclosure(false);
+  const gridRef = useRef<AgGridReact<any>>(null); // Optional - for accessing Grid's API
   const [rowData, setRowData] = useState(); // Set rowData to Array of Objects, one Object per Row
 
   // Each Column Definition results in one Column.
   const [columnDefs] = useState([
-    { field: "make", filter: true },
-    { field: "model", filter: true },
-    { field: "price" },
+    { field: "id", filter: true },
+    { field: "email", filter: true },
+    { field: "first_name", filter: true },
+    { field: "last_name", filter: true },
+    { field: "phone", filter: true },
+    { field: "created_at", filter: true },
   ]);
 
   // DefaultColDef sets props common to all Columns
@@ -28,24 +39,29 @@ function Leads() {
     []
   );
 
-  // Example of consuming Grid Event
-  const cellClickedListener = useCallback((event: any) => {
-    console.log("cellClicked", event);
+  useEffect(() => {
+    setLoading(true);
+
+    // Get MY Leads
+    apiService("/lead")
+      .then((response) => setRowData(response.data))
+      .catch((error) => setError(extractErrorMessage(error)));
   }, []);
 
-  // Example load data from server
   useEffect(() => {
-    fetch("https://www.ag-grid.com/example-assets/row-data.json")
-      .then((result) => result.json())
-      .then((rowData) => setRowData(rowData));
-  }, []);
+    if (loading) {
+      gridRef.current?.api?.showLoadingOverlay();
+    } else {
+      gridRef.current?.api?.hideOverlay();
+    }
+  }, [loading]);
 
   return (
     <LeadsStyled>
       <Container fluid py="xl">
         <Flex align="center" justify="space-between">
           <Title order={2}>Leads</Title>
-          <Button onClick={open}>Upload .CSV</Button>
+          <NewLeadsMenu onCsvUpload={open} onManualInput={openManual} />
         </Flex>
 
         <Box className="ag-theme-alpine lead-grid-container" h={500} my="md">
@@ -56,11 +72,13 @@ function Leads() {
             defaultColDef={defaultColDef} // Default Column Properties
             animateRows={true} // Optional - set to 'true' to have rows animate when sorted
             rowSelection="multiple" // Options - allows click selection of rows
-            onCellClicked={cellClickedListener} // Optional - registering for Grid Event
           />
         </Box>
 
-        <NewLeadModal opened={opened} close={close} />
+        <Text color="red">{error}</Text>
+
+        <UploadLeadsViaCsvModal opened={opened} close={close} />
+        <ManualInputLeadModal opened={openedManual} close={closeManual} />
       </Container>
     </LeadsStyled>
   );

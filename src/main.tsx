@@ -12,6 +12,7 @@ import "./index.css";
 import Landing from "./pages/landing";
 import SignIn from "./pages/sign-in";
 import SignUp from "./pages/sign-up";
+import Faq from "./pages/faq";
 import Dashboard from "./pages/dashboard";
 import Settings from "./pages/settings";
 import StyleProvider from "./styles";
@@ -60,6 +61,14 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                 element={
                   <Layout>
                     <Pricing />
+                  </Layout>
+                }
+              />
+              <Route
+                path={routes.faq}
+                element={
+                  <Layout>
+                    <Faq />
                   </Layout>
                 }
               />
