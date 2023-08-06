@@ -11,6 +11,7 @@ import NewLeadsMenu from "./NewLeadsMenu";
 import apiService from "../../services/api";
 import { extractErrorMessage } from "../../utils/error";
 import ManualInputLeadModal from "./ManualInputLeadModal";
+import phoneFormatter from "../../utils/phone-formatter";
 
 function Leads() {
   const [loading, setLoading] = useState(false);
@@ -23,8 +24,16 @@ function Leads() {
 
   // Each Column Definition results in one Column.
   const [columnDefs] = useState([
-    { field: "id", headerName: "ID", filter: true },
-    { field: "phone", filter: true },
+    { field: "id", headerName: "ID", filter: true, width: 100 },
+    {
+      field: "phone",
+      filter: true,
+      cellRenderer: (param: any) => {
+        console.log(param);
+
+        return phoneFormatter(param.value);
+      },
+    },
     { field: "first_name", headerName: "First name", filter: true },
     { field: "last_name", headerName: "Last name", filter: true },
     { field: "email", filter: true },
