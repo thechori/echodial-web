@@ -22,25 +22,36 @@ const ContactQueueStyled = styled.div`
 `;
 
 function ContactQueue() {
-  const { contactQueue, activeContact } = useAppSelector(
+  const { contactQueue, activeContactIndex } = useAppSelector(
     (state) => state.dialer
   );
 
-  const rows = contactQueue.map((c) => (
-    <tr key={c.id} className={activeContact?.id === c.id ? "active" : ""}>
-      <td>
-        <Group spacing="sm">
-          <Avatar size={30} radius={30} />
-          <Text fz="sm" fw={500}>
-            {c.firstName} {c.lastName}
-          </Text>
-        </Group>
-      </td>
-      <td>
-        <Text size="sm">{phoneFormatter(c.phone)}</Text>
-      </td>
-    </tr>
-  ));
+  const rows = contactQueue.map((c) => {
+    let active = false;
+
+    if (
+      activeContactIndex !== null &&
+      contactQueue[activeContactIndex].id === c.id
+    ) {
+      active = true;
+    }
+
+    return (
+      <tr key={c.id} className={active ? "active" : ""}>
+        <td>
+          <Group spacing="sm">
+            <Avatar size={30} radius={30} />
+            <Text fz="sm" fw={500}>
+              {c.firstName} {c.lastName}
+            </Text>
+          </Group>
+        </td>
+        <td>
+          <Text size="sm">{phoneFormatter(c.phone)}</Text>
+        </td>
+      </tr>
+    );
+  });
 
   return (
     <ContactQueueStyled>

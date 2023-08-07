@@ -25,7 +25,7 @@ interface IDialerState {
   token: null | string;
   identity: null | string;
   fromNumber: string;
-  activeContact: null | TContact;
+  activeContactIndex: null | number;
   contactQueue: TContact[];
   options: TDialerOptions;
 }
@@ -41,7 +41,7 @@ const initialState: IDialerState = {
   onHold: false,
   token: null,
   identity: null,
-  activeContact: null,
+  activeContactIndex: null,
   contactQueue: contacts,
   //
   options: initialOptions,
@@ -72,8 +72,8 @@ export const DialerSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
-    setActiveContact: (state, action) => {
-      state.activeContact = action.payload;
+    setActiveContactIndex: (state, action) => {
+      state.activeContactIndex = action.payload;
     },
     setContactQueue: (state, action) => {
       state.contactQueue = action.payload;
@@ -99,7 +99,7 @@ export const {
   setToken,
   setError,
   setContactQueue,
-  setActiveContact,
+  setActiveContactIndex,
   setMuted,
   setOnHold,
   setStatus,

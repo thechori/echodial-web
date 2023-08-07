@@ -16,7 +16,7 @@ import apiService from "../../services/api";
 import numbers from "../../configs/numbers";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
-  setActiveContact,
+  setActiveContactIndex,
   setFromNumber,
   setToken,
   setError,
@@ -29,8 +29,15 @@ import ContactQueue from "./ContactQueue";
 
 function Dialer() {
   const dispatch = useAppDispatch();
-  const { call, device, token, fromNumber, contactQueue, error } =
-    useAppSelector((state) => state.dialer);
+  const {
+    call,
+    device,
+    token,
+    fromNumber,
+    contactQueue,
+    error,
+    activeContactIndex,
+  } = useAppSelector((state) => state.dialer);
 
   async function startupClient() {
     try {
@@ -54,14 +61,15 @@ function Dialer() {
       return;
     }
 
+    console.log("token", token);
+
     const device = new Device(token, {
       logLevel: 1,
       // @ts-ignore
       codecPreferences: ["opus", "pcmu"],
     });
 
-    // TODO: look into this
-    // device.on("incoming", handleIncomingCall);
+    device.on("incoming", () => alert("you've got an incoming call"));
 
     // Device must be registered in order to receive incoming calls
     device.register();
@@ -76,7 +84,7 @@ function Dialer() {
 
     call.disconnect();
     dispatch(setCall(null));
-    dispatch(setActiveContact(null));
+    dispatch(setActiveContactIndex(null));
   }
 
   /**
@@ -92,8 +100,17 @@ function Dialer() {
       return dispatch(setError("No contacts in the queue"));
     }
 
+    if (activeContactIndex === null) {
+      return dispatch(setError("No active contact found"));
+    }
+
+    console.log(
+      "contactQueue[activeContactIndex].phone: ",
+      contactQueue[activeContactIndex].phone
+    );
+
     var params = {
-      To: contactQueue[0].phone,
+      To: contactQueue[activeContactIndex].phone,
       From: fromNumber,
     };
 
@@ -107,12 +124,12 @@ function Dialer() {
     call.on("error", (error: unknown) => {
       console.log("error", error);
       dispatch(setError("There was an error. Please try again."));
-      dispatch(setActiveContact(null));
+      dispatch(setActiveContactIndex(null));
       dispatch(setCall(null));
     });
 
     dispatch(setCall(call));
-    dispatch(setActiveContact(contactQueue[0]));
+    dispatch(setActiveContactIndex(0));
   }
 
   // Initialize device once a token exists
@@ -121,6 +138,13 @@ function Dialer() {
       initializeDevice();
     }
   }, [token]);
+
+  useEffect(() => {
+    console.log("activeContactIndex", activeContactIndex);
+    if (activeContactIndex !== null) {
+      startDialer();
+    }
+  }, [activeContactIndex]);
 
   return (
     <DialerStyled>
@@ -135,7 +159,12 @@ function Dialer() {
                     Stop Dialer
                   </Button>
                 ) : (
-                  <Button px="xs" disabled={!!call} onClick={startDialer}>
+                  <Button
+                    px="xs"
+                    disabled={!!call}
+                    // TODO: extend this logic
+                    onClick={() => dispatch(setActiveContactIndex(0))}
+                  >
                     Start Dialer
                   </Button>
                 )}
