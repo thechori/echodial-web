@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useForm } from "@mantine/form";
 import { Box, Button, Center, Modal, Text, TextInput } from "@mantine/core";
-import { useState } from "react";
+import { notifications } from "@mantine/notifications";
+//
 import apiService from "../../services/api";
 import { extractErrorMessage } from "../../utils/error";
 
@@ -33,19 +35,31 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
   async function createLead() {
     form.validate();
 
-    if (form.errors) {
-      console.log("errors found");
+    if (!form.isValid()) {
       return;
     }
 
-    if (!form.isValid()) {
-      console.log("form invalid");
-      return;
-    }
+    const {
+      email,
+      firstName: first_name,
+      lastName: last_name,
+      phone,
+    } = form.values;
 
     setLoading(true);
     try {
-      apiService.post("/lead");
+      const res = await apiService.post("/lead", {
+        email,
+        first_name,
+        last_name,
+        phone,
+      });
+      console.log("res", res);
+      notifications.show({
+        title: "Success",
+        message: "Your lead was successfully created",
+      });
+      close();
     } catch (error) {
       setError(extractErrorMessage(error));
     } finally {
@@ -58,28 +72,19 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
       <Modal.Body>
         <Text mb="md">Manually create your new Lead via the form below:</Text>
 
-        <form>
-          <Box>
-            <TextInput label="Email" {...form.getInputProps("email")} />
-            <TextInput
-              label="First name"
-              {...form.getInputProps("firstName")}
-            />
-            <TextInput label="Last name" {...form.getInputProps("lastName")} />
+        <Box>
+          <TextInput label="Email" {...form.getInputProps("email")} />
+          <TextInput label="First name" {...form.getInputProps("firstName")} />
+          <TextInput label="Last name" {...form.getInputProps("lastName")} />
 
-            <TextInput
-              required
-              label="Phone"
-              {...form.getInputProps("phone")}
-            />
-          </Box>
+          <TextInput required label="Phone" {...form.getInputProps("phone")} />
+        </Box>
 
-          <Center py="md">
-            <Button loading={loading} onClick={createLead}>
-              Create
-            </Button>
-          </Center>
-        </form>
+        <Center py="md">
+          <Button loading={loading} onClick={createLead}>
+            Create
+          </Button>
+        </Center>
 
         <Text w="100%" color="red">
           {error}

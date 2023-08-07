@@ -104,8 +104,11 @@ function Dialer() {
       dispatch(setStatus("accepted"));
     });
 
-    call.on("error", (error: string) => {
-      dispatch(setError(error));
+    call.on("error", (error: unknown) => {
+      console.log("error", error);
+      dispatch(setError("There was an error. Please try again."));
+      dispatch(setActiveContact(null));
+      dispatch(setCall(null));
     });
 
     dispatch(setCall(call));
@@ -124,9 +127,9 @@ function Dialer() {
       <Container size="xl">
         <Flex justify={"space-between"} align={"center"} py="md">
           <Title order={1}>Dialer</Title>
-          <div>
+          <Flex align="center">
             {device ? (
-              <Flex align="center">
+              <Flex align="flex-end">
                 {call ? (
                   <Button px="xs" disabled={!call} onClick={stopDialer}>
                     Stop Dialer
@@ -151,7 +154,7 @@ function Dialer() {
                 Startup device
               </Button>
             )}
-          </div>
+          </Flex>
         </Flex>
 
         <Grid>

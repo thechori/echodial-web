@@ -1,9 +1,7 @@
 import { styled } from "styled-components";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { Box, Button, Text, Title } from "@mantine/core";
-import { setAlphaDialerVisible } from "../../store/dialer/slice";
+import { useAppSelector } from "../../store/hooks";
+import { Box, Text, Title } from "@mantine/core";
 import phoneFormatter from "../../utils/phone-formatter";
-import AlphaDialer from "./AlphaDialer";
 
 const ActiveCallStyled = styled.div`
   .call {
@@ -12,12 +10,14 @@ const ActiveCallStyled = styled.div`
 `;
 
 const ActiveCall = () => {
-  const dispatch = useAppDispatch();
-  const { activeContact, status } = useAppSelector((state) => state.dialer);
+  // const dispatch = useAppDispatch();
+  const { activeContact, status, error } = useAppSelector(
+    (state) => state.dialer
+  );
 
-  const showAlphaDialer = () => {
-    dispatch(setAlphaDialerVisible(true));
-  };
+  // const showAlphaDialer = () => {
+  //   dispatch(setAlphaDialerVisible(true));
+  // };
 
   return (
     <ActiveCallStyled>
@@ -26,13 +26,14 @@ const ActiveCall = () => {
       <Box py="md">
         <Text>Status: {status}</Text>
         <Text>Phone number: {phoneFormatter(activeContact?.phone)}</Text>
+        <Text color="red">{error}</Text>
       </Box>
 
-      <Box>
+      {/* <Box>
         <Button onClick={showAlphaDialer}>Open AlphaDialer</Button>
       </Box>
 
-      <AlphaDialer />
+      <AlphaDialer /> */}
     </ActiveCallStyled>
   );
 };

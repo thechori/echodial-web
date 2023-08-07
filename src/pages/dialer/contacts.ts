@@ -2,12 +2,12 @@ import { TContact } from "../../store/contacts/types";
 
 const contacts: TContact[] = [
   {
-    id: "1278sfvv78s6df67sdf",
-    firstName: "Patrick",
-    lastName: "Cambel",
-    email: "littlepenis@gmail.com",
-    phone: "+19793088159",
-    favoriteColor: "",
+    id: "98dfvvv7g89df7g9df",
+    firstName: "Raymund",
+    lastName: "Teodoro",
+    email: "thechori@gmail.com",
+    phone: "+18326460869",
+    favoriteColor: "royal blue",
     dateOfBirth: "1988-12-20",
     address1: "14715 Barryknoll Ln",
     address2: "Apt 129",
@@ -30,12 +30,12 @@ const contacts: TContact[] = [
     zip: "77079",
   },
   {
-    id: "98dfvvv7g89df7g9df",
-    firstName: "Raymund",
-    lastName: "Teodoro",
-    email: "thechori@gmail.com",
-    phone: "+18326460869",
-    favoriteColor: "royal blue",
+    id: "1278sfvv78s6df67sdf",
+    firstName: "Patrick",
+    lastName: "Cambel",
+    email: "littlepenis@gmail.com",
+    phone: "+19793088159",
+    favoriteColor: "",
     dateOfBirth: "1988-12-20",
     address1: "14715 Barryknoll Ln",
     address2: "Apt 129",
@@ -43,7 +43,6 @@ const contacts: TContact[] = [
     state: "TX",
     zip: "77079",
   },
-
   {
     id: "sdf67vvs5df67s5d67f5s76",
     firstName: "Angela",

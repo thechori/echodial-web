@@ -7,6 +7,7 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
+import { Notifications } from "@mantine/notifications";
 //
 import "./index.css";
 import Landing from "./pages/landing";
@@ -36,6 +37,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <Provider store={store}>
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <StyleProvider>
+          <Notifications />
           <BrowserRouter>
             <Routes>
               <Route

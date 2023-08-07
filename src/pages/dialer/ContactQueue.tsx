@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 //
 import { Avatar, Group, ScrollArea, Table, Text, Title } from "@mantine/core";
 import { useAppSelector } from "../../store/hooks";
+import phoneFormatter from "../../utils/phone-formatter";
 
 const ContactQueueStyled = styled.div`
   .contact {
@@ -36,7 +37,7 @@ function ContactQueue() {
         </Group>
       </td>
       <td>
-        <Text size="sm">{c.phone}</Text>
+        <Text size="sm">{phoneFormatter(c.phone)}</Text>
       </td>
     </tr>
   ));
