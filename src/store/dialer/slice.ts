@@ -6,13 +6,20 @@ import { TContact } from "../contacts/types";
 import contacts from "../../pages/dialer/contacts";
 import { RootState } from "..";
 
-const buildInitialOptions = (): TDialerOptions => ({
-  maxCallTries: 3,
-  cooldownTimeInMilliseconds: 10000,
-  showAlphaDialer:
-    JSON.parse(localStorage.getItem("dialer__showAlphaDialer") || "null") ||
-    true,
-});
+const buildOptions = (): TDialerOptions => {
+  // Check for local storage
+  const cachedOptions = localStorage.getItem("dialer__options");
+
+  if (cachedOptions) {
+    return JSON.parse(cachedOptions);
+  }
+
+  return {
+    maxCallTries: 3,
+    cooldownTimeInMilliseconds: 10000,
+    showAlphaDialer: true,
+  };
+};
 
 type TDialerOptions = {
   maxCallTries: number;
@@ -52,7 +59,7 @@ const buildInitialState = (): IDialerState => ({
   activeContactIndex: null,
   contactQueue: contacts,
   //
-  options: buildInitialOptions(),
+  options: buildOptions(),
   showOptions: false,
 });
 
@@ -99,17 +106,14 @@ export const DialerSlice = createSlice({
     setStatus: (state, action) => {
       state.status = action.payload;
     },
-    setShowAlphaDialer: (state, action) => {
-      state.options.showAlphaDialer = action.payload;
-
-      // Persist in local storage
-      localStorage.setItem(
-        "dialer__showAlphaDialer",
-        JSON.stringify(action.payload)
-      );
-    },
     setShowOptions: (state, action) => {
       state.showOptions = action.payload;
+    },
+    setOptions: (state, action) => {
+      state.options = action.payload;
+
+      // Persist in local storage
+      localStorage.setItem("dialer__options", JSON.stringify(action.payload));
     },
   },
 });
@@ -127,8 +131,8 @@ export const {
   setActiveContactIndex,
   setIsMuted,
   setStatus,
-  setShowAlphaDialer,
   setShowOptions,
+  setOptions,
 } = DialerSlice.actions;
 
 export const selectIsCallActive = (state: RootState) => {

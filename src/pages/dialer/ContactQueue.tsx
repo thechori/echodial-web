@@ -22,7 +22,7 @@ import {
   setActiveContactIndex,
   setCall,
   setError,
-  setShowAlphaDialer,
+  setOptions,
   setShowOptions,
 } from "../../store/dialer/slice";
 import devices from "../../styles/devices";
@@ -58,8 +58,28 @@ const ContactQueueStyled = styled.div`
   }
 
   .call-buttons {
+    svg {
+      font-size: 1.75rem;
+
+      @media ${devices.tablet} {
+        font-size: 2rem;
+      }
+    }
+
     & > div {
-      padding: 0 0.5rem;
+      padding: 0 0.25rem;
+
+      @media ${devices.tablet} {
+        padding: 0 0.5rem;
+      }
+    }
+  }
+
+  .start-call-icon svg {
+    font-size: 2rem;
+
+    @media ${devices.tablet} {
+      font-size: 3rem;
     }
   }
 `;
@@ -142,35 +162,34 @@ function ContactQueue() {
             <Tooltip label="Show status bar">
               <div>
                 <BiShow
-                  fontSize="2rem"
                   className="hoverable"
-                  onClick={() => dispatch(setShowAlphaDialer(true))}
+                  onClick={() =>
+                    dispatch(setOptions({ ...options, showAlphaDialer: true }))
+                  }
                 />
               </div>
             </Tooltip>
           )}
           <Tooltip label="Import leads into queue">
             <div>
-              <BiImport className="hoverable" fontSize="2rem" />
+              <BiImport className="hoverable" />
             </div>
           </Tooltip>
           <Tooltip label="Call options">
             <div>
               <IoIosSettings
                 className="hoverable"
-                fontSize="2rem"
                 onClick={() => dispatch(setShowOptions(true))}
               />
             </div>
           </Tooltip>
-          <Box ml="sm">
+          <Box ml="xs">
             {call ? (
               <Tooltip label="End call">
                 <div>
                   <FaRegStopCircle
                     color="red"
                     className="hoverable"
-                    fontSize="2.5rem"
                     onClick={stopDialer}
                   />
                 </div>
@@ -180,8 +199,7 @@ function ContactQueue() {
                 <div>
                   <AiFillPlayCircle
                     color="green"
-                    className="hoverable"
-                    fontSize="2.5rem"
+                    className="start-call-icon hoverable"
                     disabled={!!call}
                     onClick={() => {
                       // Start from 0 UNLESS there is a currently selected index
