@@ -1,19 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
-import numbers from "../../configs/numbers";
+import { Device, Call } from "@twilio/voice-sdk";
 //
+import numbers from "../../configs/numbers";
 import { TContact } from "../contacts/types";
 import contacts from "../../pages/dialer/contacts";
 import { RootState } from "..";
-import { Device, Call } from "@twilio/voice-sdk";
 
-const initialOptions: TDialerOptions = {
+const buildInitialOptions = (): TDialerOptions => ({
   maxCallTries: 3,
   cooldownTimeInMilliseconds: 10000,
-};
+  showAlphaDialer:
+    JSON.parse(localStorage.getItem("dialer__showAlphaDialer") || "null") ||
+    true,
+});
 
 type TDialerOptions = {
   maxCallTries: number;
   cooldownTimeInMilliseconds: number;
+  showAlphaDialer: boolean;
 };
 
 interface IDialerState {
@@ -30,15 +34,17 @@ interface IDialerState {
   activeContactIndex: null | number;
   contactQueue: TContact[];
   options: TDialerOptions;
+  showOptions: boolean;
 }
 
-const initialState: IDialerState = {
+const buildInitialState = (): IDialerState => ({
   alphaDialerVisible: false,
   tokenLoading: false,
   device: null,
   call: null,
   muted: false,
-  fromNumber: numbers[2].value,
+  // TODO: Remove this hardcoded value in favor of values from API
+  fromNumber: localStorage.getItem("dialer__fromNumber") || numbers[2].value,
   error: "",
   status: "idle",
   token: null,
@@ -46,12 +52,13 @@ const initialState: IDialerState = {
   activeContactIndex: null,
   contactQueue: contacts,
   //
-  options: initialOptions,
-};
+  options: buildInitialOptions(),
+  showOptions: false,
+});
 
 export const DialerSlice = createSlice({
   name: "dialer",
-  initialState,
+  initialState: buildInitialState(),
   reducers: {
     setAlphaDialerVisible: (state, action) => {
       state.alphaDialerVisible = action.payload;
@@ -67,6 +74,9 @@ export const DialerSlice = createSlice({
     },
     setFromNumber: (state, action) => {
       state.fromNumber = action.payload;
+
+      // Persist in local storage
+      localStorage.setItem("dialer__fromNumber", action.payload);
     },
     setToken: (state, action) => {
       state.token = action.payload;
@@ -89,6 +99,18 @@ export const DialerSlice = createSlice({
     setStatus: (state, action) => {
       state.status = action.payload;
     },
+    setShowAlphaDialer: (state, action) => {
+      state.options.showAlphaDialer = action.payload;
+
+      // Persist in local storage
+      localStorage.setItem(
+        "dialer__showAlphaDialer",
+        JSON.stringify(action.payload)
+      );
+    },
+    setShowOptions: (state, action) => {
+      state.showOptions = action.payload;
+    },
   },
 });
 
@@ -105,6 +127,8 @@ export const {
   setActiveContactIndex,
   setIsMuted,
   setStatus,
+  setShowAlphaDialer,
+  setShowOptions,
 } = DialerSlice.actions;
 
 export const selectIsCallActive = (state: RootState) => {
@@ -125,5 +149,11 @@ export const selectActiveFullName = (state: RootState) => {
     ? `${contactQueue[activeContactIndex].firstName} ${contactQueue[activeContactIndex].lastName}`
     : undefined;
 };
+
+export const selectShowAlphaDialer = (state: RootState) =>
+  state.dialer.options.showAlphaDialer;
+
+export const selectIsDialerOptionsModalOpen = (state: RootState) =>
+  state.dialer.showOptions;
 
 export default DialerSlice.reducer;

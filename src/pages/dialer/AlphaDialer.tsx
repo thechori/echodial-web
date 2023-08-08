@@ -8,7 +8,7 @@ import {
   AiOutlineAudio,
 } from "react-icons/ai";
 import { FaRegStopCircle, FaUser } from "react-icons/fa";
-import { BiImport } from "react-icons/bi";
+import { BiHide, BiImport } from "react-icons/bi";
 import { styled } from "styled-components";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -18,6 +18,8 @@ import {
   selectActivePhoneNumber,
   selectActiveFullName,
   setActiveContactIndex,
+  selectShowAlphaDialer,
+  setShowAlphaDialer,
 } from "../../store/dialer/slice";
 import routes from "../../configs/routes";
 
@@ -30,20 +32,32 @@ const AlphaDialerStyled = styled.div`
   right: 0;
   bottom: 0;
   z-index: 100;
-  padding-left: 1rem;
-  padding-right: 1rem;
   width: 100vw;
-
   display: flex;
-  height: 120px;
+  height: 100px;
   align-items: center;
   justify-content: space-between;
+  padding-left: 1rem;
+  padding-right: 1rem;
 
   .details {
-    display: flex;
+    display: block;
     align-items: center;
 
+    @media ${devices.tablet} {
+      display: flex;
+    }
+
     .user-icon {
+      display: none;
+
+      @media ${devices.tablet} {
+        display: block;
+        font-size: 2rem;
+      }
+    }
+
+    .import-contact-button {
       font-size: 1.5rem;
 
       @media ${devices.tablet} {
@@ -52,7 +66,11 @@ const AlphaDialerStyled = styled.div`
     }
 
     .lead-details {
-      padding: 0 0.75rem;
+      padding: 0;
+
+      @media ${devices.tablet} {
+        padding: 0 0.75rem;
+      }
 
       div div {
         line-height: 1rem;
@@ -67,29 +85,21 @@ const AlphaDialerStyled = styled.div`
       padding: 0.25rem;
 
       svg {
-        font-size: 2rem;
-
-        @media ${devices.tablet} {
-          font-size: 2.5rem;
-        }
+        font-size: 2.5rem;
       }
 
       & > div {
         padding: 0 0.5rem;
-
-        @media ${devices.tablet} {
-          padding: 0 1rem;
-        }
       }
     }
 
     .call-details {
-      display: block;
+      display: flex;
 
-      @media ${devices.tablet} {
-        display: flex;
+      & > div {
+        padding: 0rem 0.5rem;
 
-        & > div {
+        @media ${devices.tablet} {
           padding: 0rem 1rem;
         }
       }
@@ -115,6 +125,9 @@ function AlphaDialer() {
 
   const phoneNumber = useAppSelector(selectActivePhoneNumber);
   const fullName = useAppSelector(selectActiveFullName);
+  const showAlphaDialer = useAppSelector(selectShowAlphaDialer);
+
+  if (!showAlphaDialer) return null;
 
   return (
     <AlphaDialerStyled>
@@ -217,7 +230,13 @@ function AlphaDialer() {
         </div>
       </Box>
 
-      <Box className="options"></Box>
+      <Box className="options">
+        <BiHide
+          fontSize="2rem"
+          className="hoverable"
+          onClick={() => dispatch(setShowAlphaDialer(false))}
+        />
+      </Box>
     </AlphaDialerStyled>
   );
 }

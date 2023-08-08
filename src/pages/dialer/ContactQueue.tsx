@@ -2,6 +2,8 @@ import { styled } from "styled-components";
 import { FaPhone } from "react-icons/fa";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { FaRegStopCircle } from "react-icons/fa";
+import { BiImport, BiShow } from "react-icons/bi";
+import { IoIosSettings } from "react-icons/io";
 //
 import {
   Avatar,
@@ -12,6 +14,7 @@ import {
   Table,
   Text,
   Title,
+  Tooltip,
 } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import phoneFormatter from "../../utils/phone-formatter";
@@ -19,7 +22,10 @@ import {
   setActiveContactIndex,
   setCall,
   setError,
+  setShowAlphaDialer,
+  setShowOptions,
 } from "../../store/dialer/slice";
+import devices from "../../styles/devices";
 
 const ContactQueueStyled = styled.div`
   .contact {
@@ -42,11 +48,25 @@ const ContactQueueStyled = styled.div`
       color: green;
     }
   }
+
+  .user-avatar {
+    display: none;
+
+    @media ${devices.desktop} {
+      display: block;
+    }
+  }
+
+  .call-buttons {
+    & > div {
+      padding: 0 0.5rem;
+    }
+  }
 `;
 
 function ContactQueue() {
   const dispatch = useAppDispatch();
-  const { contactQueue, activeContactIndex, call } = useAppSelector(
+  const { contactQueue, activeContactIndex, call, options } = useAppSelector(
     (state) => state.dialer
   );
 
@@ -87,7 +107,7 @@ function ContactQueue() {
         </td>
         <td>
           <Group spacing="sm">
-            <Avatar size={30} radius={30} />
+            <Avatar className="user-avatar" size={30} radius={30} />
             <Text fz="sm" fw={500}>
               {c.firstName} {c.lastName}
             </Text>
@@ -117,29 +137,64 @@ function ContactQueue() {
           Call Queue
         </Title>
 
-        <Box pr="lg">
-          {call ? (
-            <FaRegStopCircle
-              color="red"
-              className="hoverable"
-              fontSize="2.5rem"
-              onClick={stopDialer}
-            />
-          ) : (
-            <AiFillPlayCircle
-              color="green"
-              className="hoverable"
-              fontSize="2.5rem"
-              disabled={!!call}
-              onClick={() => {
-                // Start from 0 UNLESS there is a currently selected index
-                const index =
-                  activeContactIndex === null ? 0 : activeContactIndex;
-                dispatch(setActiveContactIndex(index));
-              }}
-            />
+        <Flex className="call-buttons" align="center">
+          {!options.showAlphaDialer && (
+            <Tooltip label="Show status bar">
+              <div>
+                <BiShow
+                  fontSize="2rem"
+                  className="hoverable"
+                  onClick={() => dispatch(setShowAlphaDialer(true))}
+                />
+              </div>
+            </Tooltip>
           )}
-        </Box>
+          <Tooltip label="Import leads into queue">
+            <div>
+              <BiImport className="hoverable" fontSize="2rem" />
+            </div>
+          </Tooltip>
+          <Tooltip label="Call options">
+            <div>
+              <IoIosSettings
+                className="hoverable"
+                fontSize="2rem"
+                onClick={() => dispatch(setShowOptions(true))}
+              />
+            </div>
+          </Tooltip>
+          <Box ml="sm">
+            {call ? (
+              <Tooltip label="End call">
+                <div>
+                  <FaRegStopCircle
+                    color="red"
+                    className="hoverable"
+                    fontSize="2.5rem"
+                    onClick={stopDialer}
+                  />
+                </div>
+              </Tooltip>
+            ) : (
+              <Tooltip label="Start call">
+                <div>
+                  <AiFillPlayCircle
+                    color="green"
+                    className="hoverable"
+                    fontSize="2.5rem"
+                    disabled={!!call}
+                    onClick={() => {
+                      // Start from 0 UNLESS there is a currently selected index
+                      const index =
+                        activeContactIndex === null ? 0 : activeContactIndex;
+                      dispatch(setActiveContactIndex(index));
+                    }}
+                  />
+                </div>
+              </Tooltip>
+            )}
+          </Box>
+        </Flex>
       </Flex>
 
       <ScrollArea h={400}>

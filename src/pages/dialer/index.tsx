@@ -157,7 +157,7 @@ function Dialer() {
 
   return (
     <DialerStyled>
-      <Container size="xl">
+      <Container fluid size="xl">
         <Flex justify={"space-between"} align={"center"} py="md">
           <Title order={1}>Dialer</Title>
           <Flex align="center">
