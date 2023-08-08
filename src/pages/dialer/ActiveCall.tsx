@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 import { useAppSelector } from "../../store/hooks";
 import { Box, Text, Title } from "@mantine/core";
 import phoneFormatter from "../../utils/phone-formatter";
+import { selectActivePhoneNumber } from "../../store/dialer/slice";
 
 const ActiveCallStyled = styled.div`
   .call {
@@ -11,9 +12,8 @@ const ActiveCallStyled = styled.div`
 
 const ActiveCall = () => {
   // const dispatch = useAppDispatch();
-  const { activeContact, status, error } = useAppSelector(
-    (state) => state.dialer
-  );
+  const { status, error } = useAppSelector((state) => state.dialer);
+  const phoneNumber = useAppSelector(selectActivePhoneNumber);
 
   // const showAlphaDialer = () => {
   //   dispatch(setAlphaDialerVisible(true));
@@ -25,7 +25,7 @@ const ActiveCall = () => {
 
       <Box py="md">
         <Text>Status: {status}</Text>
-        <Text>Phone number: {phoneFormatter(activeContact?.phone)}</Text>
+        <Text>Phone number: {phoneFormatter(phoneNumber)}</Text>
         <Text color="red">{error}</Text>
       </Box>
 

@@ -7,9 +7,9 @@ import {
   Title,
   Flex,
   Grid,
-  Text,
   Card,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 //
 import DialerStyled from "./Dialer.styles";
 import apiService from "../../services/api";
@@ -23,24 +23,19 @@ import {
   setStatus,
   setDevice,
   setCall,
+  setTokenLoading,
 } from "../../store/dialer/slice";
 import ActiveCall from "./ActiveCall";
 import ContactQueue from "./ContactQueue";
 
 function Dialer() {
   const dispatch = useAppDispatch();
-  const {
-    call,
-    device,
-    token,
-    fromNumber,
-    contactQueue,
-    error,
-    activeContactIndex,
-  } = useAppSelector((state) => state.dialer);
+  const { call, device, token, fromNumber, contactQueue, activeContactIndex } =
+    useAppSelector((state) => state.dialer);
 
   async function startupClient() {
     try {
+      dispatch(setTokenLoading(true));
       const { data } = await apiService("/dialer/token");
       const token = data.token;
       dispatch(setToken(token));
@@ -50,6 +45,8 @@ function Dialer() {
           "An error occurred. See your browser console for more information."
         )
       );
+    } finally {
+      dispatch(setTokenLoading(false));
     }
   }
 
@@ -61,15 +58,18 @@ function Dialer() {
       return;
     }
 
-    console.log("token", token);
-
     const device = new Device(token, {
       logLevel: 1,
       // @ts-ignore
       codecPreferences: ["opus", "pcmu"],
     });
 
-    device.on("incoming", () => alert("you've got an incoming call"));
+    device.on("incoming", () => {
+      notifications.show({
+        title: "Incoming call",
+        message: "Someone is calling your number.",
+      });
+    });
 
     // Device must be registered in order to receive incoming calls
     device.register();
@@ -87,10 +87,6 @@ function Dialer() {
     dispatch(setActiveContactIndex(null));
   }
 
-  /**
-   * Clicking this will take the first item in the `contacts` array, add
-   * them to the currentContact
-   */
   async function startDialer() {
     if (!device) {
       return dispatch(setError("No device found."));
@@ -104,32 +100,36 @@ function Dialer() {
       return dispatch(setError("No active contact found"));
     }
 
-    console.log(
-      "contactQueue[activeContactIndex].phone: ",
-      contactQueue[activeContactIndex].phone
-    );
-
     var params = {
       To: contactQueue[activeContactIndex].phone,
       From: fromNumber,
     };
+
+    console.log("params", params);
 
     // Start Call #1
     const call = await device.connect({ params });
 
     call.on("accept", () => {
       dispatch(setStatus("accepted"));
+      notifications.show({
+        title: "Call update",
+        message: "Accepted",
+      });
     });
 
     call.on("error", (error: unknown) => {
       console.log("error", error);
+      notifications.show({
+        title: "Call update",
+        message: "There was an error. Please try again.",
+      });
       dispatch(setError("There was an error. Please try again."));
       dispatch(setActiveContactIndex(null));
       dispatch(setCall(null));
     });
 
     dispatch(setCall(call));
-    dispatch(setActiveContactIndex(0));
   }
 
   // Initialize device once a token exists
@@ -139,8 +139,19 @@ function Dialer() {
     }
   }, [token]);
 
+  // Handle changing call index
   useEffect(() => {
-    console.log("activeContactIndex", activeContactIndex);
+    // End any existing
+    if (call) {
+      notifications.show({
+        title: "Call update",
+        message: "Disconnected",
+      });
+      call.disconnect();
+      dispatch(setCall(null));
+    }
+
+    // Start new dial
     if (activeContactIndex !== null) {
       startDialer();
     }
@@ -162,8 +173,13 @@ function Dialer() {
                   <Button
                     px="xs"
                     disabled={!!call}
-                    // TODO: extend this logic
-                    onClick={() => dispatch(setActiveContactIndex(0))}
+                    onClick={() => {
+                      // Start from 0 UNLESS there is a currently selected index
+                      const index =
+                        activeContactIndex === null ? 0 : activeContactIndex;
+                      console.log(`******** ${index} ********`);
+                      dispatch(setActiveContactIndex(index));
+                    }}
                   >
                     Start Dialer
                   </Button>
@@ -188,20 +204,16 @@ function Dialer() {
 
         <Grid>
           <Grid.Col xs={12} sm={12} md={6}>
-            <Card withBorder shadow="md">
+            <Card className={!token ? "disabled" : ""} withBorder shadow="md">
               <ActiveCall />
             </Card>
           </Grid.Col>
           <Grid.Col xs={12} sm={12} md={6}>
-            <Card withBorder shadow="md">
+            <Card className={!token ? "disabled" : ""} withBorder shadow="md">
               <ContactQueue />
             </Card>
           </Grid.Col>
         </Grid>
-
-        <Flex>
-          <Text>{error}</Text>
-        </Flex>
       </Container>
     </DialerStyled>
   );

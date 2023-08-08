@@ -1,8 +1,11 @@
 import { styled } from "styled-components";
+import { FaPhone } from "react-icons/fa";
+import { AiOutlineClose } from "react-icons/ai";
 //
 import { Avatar, Group, ScrollArea, Table, Text, Title } from "@mantine/core";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import phoneFormatter from "../../utils/phone-formatter";
+import { setActiveContactIndex } from "../../store/dialer/slice";
 
 const ContactQueueStyled = styled.div`
   .contact {
@@ -19,14 +22,29 @@ const ContactQueueStyled = styled.div`
     border: 2px solid green;
     background-color: #00800030;
   }
+
+  .call-icon {
+    &:hover {
+      color: green;
+    }
+  }
 `;
 
 function ContactQueue() {
-  const { contactQueue, activeContactIndex } = useAppSelector(
+  const dispatch = useAppDispatch();
+  const { contactQueue, activeContactIndex, call } = useAppSelector(
     (state) => state.dialer
   );
 
-  const rows = contactQueue.map((c) => {
+  function updateActiveContactIndex(index: number) {
+    dispatch(setActiveContactIndex(index));
+  }
+
+  function endCall() {
+    dispatch(setActiveContactIndex(null));
+  }
+
+  const rows = contactQueue.map((c, index) => {
     let active = false;
 
     if (
@@ -38,6 +56,21 @@ function ContactQueue() {
 
     return (
       <tr key={c.id} className={active ? "active" : ""}>
+        <td className="call-icon hoverable">
+          {call && active ? (
+            <AiOutlineClose
+              fontSize="1rem"
+              onClick={() => endCall()}
+              color="red"
+            />
+          ) : (
+            <FaPhone
+              fontSize="1rem"
+              onClick={() => updateActiveContactIndex(index)}
+              color={active ? "green" : ""}
+            />
+          )}
+        </td>
         <td>
           <Group spacing="sm">
             <Avatar size={30} radius={30} />
@@ -60,9 +93,10 @@ function ContactQueue() {
       </Title>
 
       <ScrollArea h={400}>
-        <Table verticalSpacing="sm">
+        <Table horizontalSpacing="xs" verticalSpacing="sm">
           <thead>
             <tr>
+              <th />
               <th>Contact</th>
               <th>Phone</th>
               <th />

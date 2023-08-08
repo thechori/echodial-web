@@ -4,7 +4,10 @@ import { styled } from "styled-components";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import phoneFormatter from "../../utils/phone-formatter";
 import devices from "../../styles/devices";
-import { setAlphaDialerVisible } from "../../store/dialer/slice";
+import {
+  selectActivePhoneNumber,
+  setAlphaDialerVisible,
+} from "../../store/dialer/slice";
 
 const AlphaDialerStyled = styled.div`
   .alphadialer {
@@ -50,9 +53,10 @@ function AlphaDialer() {
     // token,
     // identity,
     // fromNumber,
-    activeContact,
     contactQueue,
   } = useAppSelector((state) => state.dialer);
+
+  const phoneNumber = useAppSelector(selectActivePhoneNumber);
 
   const toggleAlphaDialer = () => {
     dispatch(setAlphaDialerVisible(!alphaDialerVisible));
@@ -68,7 +72,7 @@ function AlphaDialer() {
 
           <Box>
             <Title order={3}>Active Call</Title>
-            <Text>{phoneFormatter(activeContact?.phone)}</Text>
+            <Text>{phoneFormatter(phoneNumber)}</Text>
           </Box>
           <Box>
             <ScrollArea h="50%">
