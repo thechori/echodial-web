@@ -5,7 +5,7 @@
  */
 function phoneFormatter(number?: string) {
   // Handle undefined
-  if (!number) return "N/A";
+  if (!number) return null;
 
   // Remove all non-numeric characters from the input phone number
   const numericOnly = number.replace(/\D/g, "");

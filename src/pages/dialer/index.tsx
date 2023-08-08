@@ -24,8 +24,8 @@ import {
   setDevice,
   setCall,
   setTokenLoading,
+  setIsMuted,
 } from "../../store/dialer/slice";
-import ActiveCall from "./ActiveCall";
 import ContactQueue from "./ContactQueue";
 
 function Dialer() {
@@ -77,16 +77,6 @@ function Dialer() {
     dispatch(setDevice(device));
   }
 
-  function stopDialer() {
-    if (!call) {
-      return dispatch(setError("No call in progress"));
-    }
-
-    call.disconnect();
-    dispatch(setCall(null));
-    dispatch(setActiveContactIndex(null));
-  }
-
   async function startDialer() {
     if (!device) {
       return dispatch(setError("No device found."));
@@ -116,6 +106,14 @@ function Dialer() {
         title: "Call update",
         message: "Accepted",
       });
+    });
+
+    call.on("mute", (isMuted: boolean) => {
+      dispatch(setIsMuted(isMuted));
+    });
+
+    call.on("disconnect", () => {
+      dispatch(setIsMuted(false));
     });
 
     call.on("error", (error: unknown) => {
@@ -165,26 +163,6 @@ function Dialer() {
           <Flex align="center">
             {device ? (
               <Flex align="flex-end">
-                {call ? (
-                  <Button px="xs" disabled={!call} onClick={stopDialer}>
-                    Stop Dialer
-                  </Button>
-                ) : (
-                  <Button
-                    px="xs"
-                    disabled={!!call}
-                    onClick={() => {
-                      // Start from 0 UNLESS there is a currently selected index
-                      const index =
-                        activeContactIndex === null ? 0 : activeContactIndex;
-                      console.log(`******** ${index} ********`);
-                      dispatch(setActiveContactIndex(index));
-                    }}
-                  >
-                    Start Dialer
-                  </Button>
-                )}
-
                 <Select
                   px="xs"
                   label="Your number"
@@ -205,12 +183,12 @@ function Dialer() {
         <Grid>
           <Grid.Col xs={12} sm={12} md={6}>
             <Card className={!token ? "disabled" : ""} withBorder shadow="md">
-              <ActiveCall />
+              <ContactQueue />
             </Card>
           </Grid.Col>
           <Grid.Col xs={12} sm={12} md={6}>
             <Card className={!token ? "disabled" : ""} withBorder shadow="md">
-              <ContactQueue />
+              <Title order={2}>Call history</Title>
             </Card>
           </Grid.Col>
         </Grid>

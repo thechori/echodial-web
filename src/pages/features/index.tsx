@@ -35,7 +35,7 @@ function Features() {
                 </ThemeIcon>
               }
             >
-              <List.Item>Turbo Dialer ©</List.Item>
+              <List.Item>Automatic dialer</List.Item>
               <List.Item>
                 Verified calls with YOUR phone number (
                 <Text span italic weight={500} color="blue">
@@ -43,8 +43,10 @@ function Features() {
                 </Text>
                 )
               </List.Item>
-              <List.Item>SMS marketing</List.Item>
               <List.Item>Mobile friendly -- call on the go!</List.Item>
+              <List.Item>
+                1000 minutes included. Purchase more anytime
+              </List.Item>
               <List.Item>100% satisfaction guarantee</List.Item>
             </List>
           </Box>

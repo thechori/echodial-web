@@ -8,10 +8,12 @@ import { Device, Call } from "@twilio/voice-sdk";
 
 const initialOptions: TDialerOptions = {
   maxCallTries: 3,
+  cooldownTimeInMilliseconds: 10000,
 };
 
 type TDialerOptions = {
   maxCallTries: number;
+  cooldownTimeInMilliseconds: number;
 };
 
 interface IDialerState {
@@ -21,7 +23,6 @@ interface IDialerState {
   call: null | Call;
   status: "idle" | "calling" | "failed" | "stopped" | "connected";
   muted: boolean;
-  onHold: boolean;
   token: null | string;
   tokenLoading: boolean;
   identity: null | string;
@@ -36,11 +37,10 @@ const initialState: IDialerState = {
   tokenLoading: false,
   device: null,
   call: null,
+  muted: false,
   fromNumber: numbers[2].value,
   error: "",
   status: "idle",
-  muted: false,
-  onHold: false,
   token: null,
   identity: null,
   activeContactIndex: null,
@@ -83,11 +83,8 @@ export const DialerSlice = createSlice({
     setContactQueue: (state, action) => {
       state.contactQueue = action.payload;
     },
-    setMuted: (state, action) => {
+    setIsMuted: (state, action) => {
       state.muted = action.payload;
-    },
-    setOnHold: (state, action) => {
-      state.onHold = action.payload;
     },
     setStatus: (state, action) => {
       state.status = action.payload;
@@ -106,8 +103,7 @@ export const {
   setError,
   setContactQueue,
   setActiveContactIndex,
-  setMuted,
-  setOnHold,
+  setIsMuted,
   setStatus,
 } = DialerSlice.actions;
 
@@ -120,6 +116,13 @@ export const selectActivePhoneNumber = (state: RootState) => {
   const { activeContactIndex, contactQueue } = state.dialer;
   return activeContactIndex !== null
     ? contactQueue[activeContactIndex].phone
+    : undefined;
+};
+
+export const selectActiveFullName = (state: RootState) => {
+  const { activeContactIndex, contactQueue } = state.dialer;
+  return activeContactIndex !== null
+    ? `${contactQueue[activeContactIndex].firstName} ${contactQueue[activeContactIndex].lastName}`
     : undefined;
 };
 

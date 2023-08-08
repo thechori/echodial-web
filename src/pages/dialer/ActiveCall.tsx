@@ -11,29 +11,17 @@ const ActiveCallStyled = styled.div`
 `;
 
 const ActiveCall = () => {
-  // const dispatch = useAppDispatch();
   const { status, error } = useAppSelector((state) => state.dialer);
   const phoneNumber = useAppSelector(selectActivePhoneNumber);
-
-  // const showAlphaDialer = () => {
-  //   dispatch(setAlphaDialerVisible(true));
-  // };
 
   return (
     <ActiveCallStyled>
       <Title order={2}>Active Call</Title>
-
       <Box py="md">
         <Text>Status: {status}</Text>
         <Text>Phone number: {phoneFormatter(phoneNumber)}</Text>
         <Text color="red">{error}</Text>
       </Box>
-
-      {/* <Box>
-        <Button onClick={showAlphaDialer}>Open AlphaDialer</Button>
-      </Box>
-
-      <AlphaDialer /> */}
     </ActiveCallStyled>
   );
 };

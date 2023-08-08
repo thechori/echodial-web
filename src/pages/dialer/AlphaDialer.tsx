@@ -1,94 +1,223 @@
-import { Box, Button, ScrollArea, Text, Title } from "@mantine/core";
-import { IoMdPhoneLandscape } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
+import { Tooltip } from "@mantine/core";
+import { Box, Flex, Text } from "@mantine/core";
+import {
+  AiFillPlayCircle,
+  AiFillStepForward,
+  AiOutlineAudioMuted,
+  AiOutlineAudio,
+} from "react-icons/ai";
+import { FaRegStopCircle, FaUser } from "react-icons/fa";
+import { BiImport } from "react-icons/bi";
 import { styled } from "styled-components";
+//
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import phoneFormatter from "../../utils/phone-formatter";
 import devices from "../../styles/devices";
 import {
   selectActivePhoneNumber,
-  setAlphaDialerVisible,
+  selectActiveFullName,
+  setActiveContactIndex,
 } from "../../store/dialer/slice";
+import routes from "../../configs/routes";
 
 const AlphaDialerStyled = styled.div`
-  .alphadialer {
-    background-color: white;
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    z-index: 100;
-    border-left: 1px solid lightgrey;
+  background-color: black;
+  color: white;
+  border-top: 1px solid grey;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: 100vw;
 
-    padding: 1rem;
-    width: 100vw;
-    height: 80%;
-    box-shadow: -6px 4px 20px 0px #00000059;
+  display: flex;
+  height: 120px;
+  align-items: center;
+  justify-content: space-between;
 
-    @media ${devices.tablet} {
-      top: 0;
-      box-shadow: -6px 4px 20px 0px #00000059;
-      padding: 2rem;
-      width: 50%;
+  .details {
+    display: flex;
+    align-items: center;
+
+    .user-icon {
+      font-size: 1.5rem;
+
+      @media ${devices.tablet} {
+        font-size: 2rem;
+      }
     }
 
-    @media ${devices.desktop} {
-      width: 600px;
+    .lead-details {
+      padding: 0 0.75rem;
+
+      div div {
+        line-height: 1rem;
+      }
     }
+  }
+
+  .controls {
+    .control-buttons {
+      display: flex;
+
+      padding: 0.25rem;
+
+      svg {
+        font-size: 2rem;
+
+        @media ${devices.tablet} {
+          font-size: 2.5rem;
+        }
+      }
+
+      & > div {
+        padding: 0 0.5rem;
+
+        @media ${devices.tablet} {
+          padding: 0 1rem;
+        }
+      }
+    }
+
+    .call-details {
+      display: block;
+
+      @media ${devices.tablet} {
+        display: flex;
+
+        & > div {
+          padding: 0rem 1rem;
+        }
+      }
+    }
+  }
+
+  .options {
+  }
+
+  @media ${devices.tablet} {
+  }
+
+  @media ${devices.desktop} {
+    /* width: 600px; */
   }
 `;
 
-// Super dialer that will allow you to navigate around the app WHILE dialing
-// so that you can continue doing other things while you wait
-
 function AlphaDialer() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const {
-    // error,
-    alphaDialerVisible,
-    // device,
-    // call,
-    // status,
-    // muted,
-    // onHold,
-    // token,
-    // identity,
-    // fromNumber,
-    contactQueue,
-  } = useAppSelector((state) => state.dialer);
+  const { call, status, muted } = useAppSelector((state) => state.dialer);
 
   const phoneNumber = useAppSelector(selectActivePhoneNumber);
-
-  const toggleAlphaDialer = () => {
-    dispatch(setAlphaDialerVisible(!alphaDialerVisible));
-  };
+  const fullName = useAppSelector(selectActiveFullName);
 
   return (
     <AlphaDialerStyled>
-      {alphaDialerVisible && (
-        <div className="alphadialer">
+      <Box className="details">
+        <Box>
+          <FaUser className="user-icon" color="white" />
+        </Box>
+        <Box className="lead-details">
           <Box>
-            <Title order={2}>AlphaDialer</Title>
-          </Box>
-
-          <Box>
-            <Title order={3}>Active Call</Title>
-            <Text>{phoneFormatter(phoneNumber)}</Text>
+            <Text color="white">
+              {phoneFormatter(phoneNumber) || "No phone active"}
+            </Text>
           </Box>
           <Box>
-            <ScrollArea h="50%">
-              {contactQueue.map((c) => (
-                <div key={c.id}>{phoneFormatter(c.phone)}</div>
-              ))}
-            </ScrollArea>
+            <Text size="sm" color="grey">
+              {fullName || "No lead active"}
+            </Text>
           </Box>
-        </div>
-      )}
-
-      <Box pos="fixed" right="16px" bottom="16px" style={{ zIndex: 101 }}>
-        <Button onClick={toggleAlphaDialer}>
-          <IoMdPhoneLandscape />
-        </Button>
+        </Box>
+        <Box>
+          <Tooltip label="Open Dialer page">
+            <div>
+              <BiImport
+                className="import-contact-button hoverable"
+                onClick={() => navigate(routes.dialer)}
+              />
+            </div>
+          </Tooltip>
+        </Box>
       </Box>
+
+      <Box className="controls">
+        <Box>
+          <Flex align="center" justify="center">
+            <div className="control-buttons">
+              {!muted ? (
+                <Tooltip label="Mute">
+                  <div>
+                    <AiOutlineAudio
+                      fontSize="2.5rem"
+                      onClick={() => call?.mute()}
+                      className={`hoverable ${call ?? "disabled"}`}
+                    />
+                  </div>
+                </Tooltip>
+              ) : (
+                <Tooltip label="Unmute">
+                  <div>
+                    <AiOutlineAudioMuted
+                      fontSize="2.5rem"
+                      onClick={() => call?.mute()}
+                      className="hoverable"
+                      color="red"
+                    />
+                  </div>
+                </Tooltip>
+              )}
+
+              {call ? (
+                <Tooltip label="End call">
+                  <div>
+                    <FaRegStopCircle
+                      fontSize="2.5rem"
+                      className="hoverable"
+                      onClick={() => dispatch(setActiveContactIndex(null))}
+                    />
+                  </div>
+                </Tooltip>
+              ) : (
+                <Tooltip label="Start call">
+                  <div>
+                    <AiFillPlayCircle fontSize="2.5rem" className="hoverable" />
+                  </div>
+                </Tooltip>
+              )}
+
+              <Tooltip label="Skip to next Lead">
+                <div>
+                  <AiFillStepForward fontSize="2.5rem" className="hoverable" />
+                </div>
+              </Tooltip>
+            </div>
+          </Flex>
+        </Box>
+
+        <div className="call-details">
+          <Text size="sm">
+            Status:{" "}
+            <Text color="grey" span>
+              {status}
+            </Text>
+          </Text>
+
+          <Text size="sm">
+            Duration:{" "}
+            <Text color="grey" span>
+              0:00
+            </Text>
+          </Text>
+        </div>
+      </Box>
+
+      <Box className="options"></Box>
     </AlphaDialerStyled>
   );
 }

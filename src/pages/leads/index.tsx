@@ -28,11 +28,7 @@ function Leads() {
     {
       field: "phone",
       filter: true,
-      cellRenderer: (param: any) => {
-        console.log(param);
-
-        return phoneFormatter(param.value);
-      },
+      cellRenderer: (param: any) => phoneFormatter(param.value),
     },
     { field: "first_name", headerName: "First name", filter: true },
     { field: "last_name", headerName: "Last name", filter: true },

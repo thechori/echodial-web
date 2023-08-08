@@ -1,11 +1,25 @@
 import { styled } from "styled-components";
 import { FaPhone } from "react-icons/fa";
-import { AiOutlineClose } from "react-icons/ai";
+import { AiFillPlayCircle } from "react-icons/ai";
+import { FaRegStopCircle } from "react-icons/fa";
 //
-import { Avatar, Group, ScrollArea, Table, Text, Title } from "@mantine/core";
+import {
+  Avatar,
+  Box,
+  Flex,
+  Group,
+  ScrollArea,
+  Table,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import phoneFormatter from "../../utils/phone-formatter";
-import { setActiveContactIndex } from "../../store/dialer/slice";
+import {
+  setActiveContactIndex,
+  setCall,
+  setError,
+} from "../../store/dialer/slice";
 
 const ContactQueueStyled = styled.div`
   .contact {
@@ -58,7 +72,7 @@ function ContactQueue() {
       <tr key={c.id} className={active ? "active" : ""}>
         <td className="call-icon hoverable">
           {call && active ? (
-            <AiOutlineClose
+            <FaRegStopCircle
               fontSize="1rem"
               onClick={() => endCall()}
               color="red"
@@ -86,17 +100,53 @@ function ContactQueue() {
     );
   });
 
+  function stopDialer() {
+    if (!call) {
+      return dispatch(setError("No call in progress"));
+    }
+
+    call.disconnect();
+    dispatch(setCall(null));
+    dispatch(setActiveContactIndex(null));
+  }
+
   return (
     <ContactQueueStyled>
-      <Title order={2} mb={16}>
-        Call Queue
-      </Title>
+      <Flex justify="space-between" align="center">
+        <Title order={2} mb={16}>
+          Call Queue
+        </Title>
+
+        <Box pr="lg">
+          {call ? (
+            <FaRegStopCircle
+              color="red"
+              className="hoverable"
+              fontSize="2.5rem"
+              onClick={stopDialer}
+            />
+          ) : (
+            <AiFillPlayCircle
+              color="green"
+              className="hoverable"
+              fontSize="2.5rem"
+              disabled={!!call}
+              onClick={() => {
+                // Start from 0 UNLESS there is a currently selected index
+                const index =
+                  activeContactIndex === null ? 0 : activeContactIndex;
+                dispatch(setActiveContactIndex(index));
+              }}
+            />
+          )}
+        </Box>
+      </Flex>
 
       <ScrollArea h={400}>
         <Table horizontalSpacing="xs" verticalSpacing="sm">
           <thead>
             <tr>
-              <th />
+              <th style={{ width: 50 }} />
               <th>Contact</th>
               <th>Phone</th>
               <th />

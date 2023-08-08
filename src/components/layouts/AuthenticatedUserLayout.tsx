@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 //
 import Sidebar from "../sidebar";
 import devices from "../../styles/devices";
+import AlphaDialer from "../../pages/dialer/AlphaDialer";
 
 const Container = styled.div`
   display: block;
@@ -20,6 +21,7 @@ const AuthenticatedUserLayout = ({ children }: any) => {
     <Container>
       <Sidebar />
       <div className="content">{children}</div>
+      <AlphaDialer />
     </Container>
   );
 };
