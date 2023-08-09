@@ -75,8 +75,8 @@ const ContactQueueStyled = styled.div`
     }
   }
 
-  .start-call-icon svg {
-    font-size: 2rem;
+  svg.start-call-icon {
+    font-size: 3rem;
 
     @media ${devices.tablet} {
       font-size: 3rem;

@@ -1,0 +1,77 @@
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+export type Lead = {
+  id: number;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  phone: string;
+  address1: string | null;
+  address2: string | null;
+  city: string | null;
+  state: string | null;
+  zip: string | null;
+  source: string | null;
+  created_at: Date | null;
+  updated_at: Date | null;
+};
+
+const apiBaseUrl = import.meta.env.VITE_API_HOST;
+
+// Define a service using a base URL and expected endpoints
+export const leadApi = createApi({
+  reducerPath: "leadApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: apiBaseUrl,
+    prepareHeaders: (headers) => {
+      const jwt = localStorage.getItem("jwt");
+      if (jwt) {
+        headers.set("authorization", `Bearer ${jwt}`);
+      }
+    },
+  }),
+  endpoints: (builder) => ({
+    getLeads: builder.query<Lead, void>({
+      query: () => "lead",
+    }),
+    getLeadById: builder.query<Lead, string>({
+      query: (id) => `lead/${id}`,
+    }),
+    addLead: builder.mutation<Lead, Partial<Lead>>({
+      query(body) {
+        return {
+          url: `lead`,
+          method: "POST",
+          body,
+        };
+      },
+      // TODO: add this once you figure out how
+      // invalidatesTags: ['Leads'],
+    }),
+    updateLead: builder.mutation<Lead, Partial<Lead>>({
+      query(data) {
+        const { id, ...body } = data;
+        return {
+          url: `lead/${id}`,
+          method: "PUT",
+          body,
+        };
+      },
+      // invalidatesTags: (lead) => [{ type: 'Lead', id: lead?.id }],
+    }),
+    deleteLead: builder.mutation<{ success: boolean; id: number }, number>({
+      query(id) {
+        return {
+          url: `lead/${id}`,
+          method: "DELETE",
+        };
+      },
+      // invalidatesTags: (lead) => [{ type: 'Leads', id: lead?.id }],
+    }),
+  }),
+});
+
+// Export hooks for usage in functional components, which are
+// auto-generated based on the defined endpoints
+export const { useGetLeadByIdQuery, useGetLeadsQuery, useAddLeadMutation } =
+  leadApi;

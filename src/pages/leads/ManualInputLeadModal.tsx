@@ -1,14 +1,12 @@
-import { useState } from "react";
 import { useForm } from "@mantine/form";
 import { Box, Button, Center, Modal, Text, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
-import apiService from "../../services/api";
-import { extractErrorMessage } from "../../utils/error";
+import { useAddLeadMutation } from "../../services/lead";
 
 const ManualInputLeadModal = ({ opened, close }: any) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [addLead, { isLoading, error }] = useAddLeadMutation();
+
   const form = useForm({
     initialValues: {
       email: "",
@@ -46,25 +44,21 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
       phone,
     } = form.values;
 
-    setLoading(true);
-    try {
-      const res = await apiService.post("/lead", {
-        email,
-        first_name,
-        last_name,
-        phone,
-      });
-      console.log("res", res);
-      notifications.show({
-        title: "Success",
-        message: "Your lead was successfully created",
-      });
-      close();
-    } catch (error) {
-      setError(extractErrorMessage(error));
-    } finally {
-      setLoading(false);
-    }
+    addLead({
+      email,
+      first_name,
+      last_name,
+      phone,
+    });
+
+    notifications.show({
+      title: "Success",
+      message: "Your lead was successfully created",
+    });
+
+    form.reset();
+
+    close();
   }
 
   return (
@@ -81,13 +75,14 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
         </Box>
 
         <Center py="md">
-          <Button loading={loading} onClick={createLead}>
+          <Button loading={isLoading} onClick={createLead}>
             Create
           </Button>
         </Center>
 
         <Text w="100%" color="red">
-          {error}
+          {/* @ts-ignore */}
+          {error?.status} {JSON.stringify(error?.data)}
         </Text>
       </Modal.Body>
     </Modal>

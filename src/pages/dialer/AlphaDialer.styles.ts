@@ -86,6 +86,9 @@ const AlphaDialerStyled = styled.div`
   }
 
   .options {
+    @media ${devices.tablet} {
+      padding: 1rem;
+    }
   }
 
   @media ${devices.tablet} {
