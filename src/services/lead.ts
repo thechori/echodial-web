@@ -30,12 +30,15 @@ export const leadApi = createApi({
       }
     },
   }),
+  tagTypes: ["Lead"],
   endpoints: (builder) => ({
     getLeads: builder.query<Lead, void>({
       query: () => "lead",
+      providesTags: ["Lead"],
     }),
     getLeadById: builder.query<Lead, string>({
       query: (id) => `lead/${id}`,
+      providesTags: ["Lead"],
     }),
     addLead: builder.mutation<Lead, Partial<Lead>>({
       query(body) {
@@ -45,8 +48,7 @@ export const leadApi = createApi({
           body,
         };
       },
-      // TODO: add this once you figure out how
-      // invalidatesTags: ['Leads'],
+      invalidatesTags: ["Lead"],
     }),
     updateLead: builder.mutation<Lead, Partial<Lead>>({
       query(data) {
@@ -57,7 +59,7 @@ export const leadApi = createApi({
           body,
         };
       },
-      // invalidatesTags: (lead) => [{ type: 'Lead', id: lead?.id }],
+      invalidatesTags: (lead) => [{ type: "Lead", id: lead?.id }],
     }),
     deleteLead: builder.mutation<{ success: boolean; id: number }, number>({
       query(id) {
@@ -66,7 +68,7 @@ export const leadApi = createApi({
           method: "DELETE",
         };
       },
-      // invalidatesTags: (lead) => [{ type: 'Leads', id: lead?.id }],
+      invalidatesTags: (lead) => [{ type: "Lead", id: lead?.id }],
     }),
   }),
 });
