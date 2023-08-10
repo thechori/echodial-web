@@ -70,10 +70,37 @@ export const leadApi = createApi({
       },
       invalidatesTags: (lead) => [{ type: "Lead", id: lead?.id }],
     }),
+    deleteMultipleLeads: builder.mutation<
+      { success: boolean; ids: number[] },
+      number[]
+    >({
+      query(ids) {
+        return {
+          url: "lead/bulk-delete",
+          method: "POST",
+          body: {
+            ids,
+          },
+        };
+      },
+      invalidatesTags: (lead) => {
+        if (!lead) return [{ type: "Lead", id: undefined }];
+        return lead.ids.map((id) => ({
+          type: "Lead",
+          id,
+        }));
+      },
+    }),
   }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetLeadByIdQuery, useGetLeadsQuery, useAddLeadMutation } =
-  leadApi;
+export const {
+  useGetLeadByIdQuery,
+  useGetLeadsQuery,
+  useAddLeadMutation,
+  useDeleteLeadMutation,
+  useUpdateLeadMutation,
+  useDeleteMultipleLeadsMutation,
+} = leadApi;

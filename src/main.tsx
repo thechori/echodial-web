@@ -8,6 +8,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { Notifications } from "@mantine/notifications";
+import Sentry from "@sentry/react";
 //
 import "./index.css";
 import Landing from "./pages/landing";
@@ -31,6 +32,22 @@ import CallerIds from "./pages/caller-ids";
 import Reports from "./pages/reports";
 import Phases from "./pages/phases";
 import Billing from "./pages/billing";
+
+Sentry.init({
+  dsn: "https://8cc56131e046a73c78d21f51eaa7d72b@o4505682068242432.ingest.sentry.io/4505682074140672",
+  integrations: [
+    new Sentry.BrowserTracing({
+      // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
+      tracePropagationTargets: ["localhost", "https:yourserver.io/api/"],
+    }),
+    new Sentry.Replay(),
+  ],
+  // Performance Monitoring
+  tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!
+  // Session Replay
+  replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+  replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+});
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

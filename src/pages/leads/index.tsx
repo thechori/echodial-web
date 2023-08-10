@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { AgGridReact } from "ag-grid-react"; // the AG Grid React Component
 import { ColDef } from "ag-grid-community";
@@ -12,9 +12,20 @@ import NewLeadsMenu from "./NewLeadsMenu";
 import ManualInputLeadModal from "./ManualInputLeadModal";
 import phoneFormatter from "../../utils/phone-formatter";
 import { Lead, useGetLeadsQuery } from "../../services/lead";
+import EditLeadSelectionMenu from "./EditLeadSelectionMenu";
+import DeleteLeadConfirmationModal from "./DeleteLeadConfirmationModal";
+import EditLeadModal from "./EditLeadModal";
 
 const colDefs: ColDef<Lead>[] = [
-  { field: "id", headerName: "ID", filter: true, width: 100 },
+  {
+    field: "id",
+    headerName: "ID",
+    filter: true,
+    width: 100,
+    headerCheckboxSelection: true,
+    checkboxSelection: true,
+    showDisabledCheckboxes: true,
+  },
   {
     field: "phone",
     filter: true,
@@ -28,7 +39,14 @@ const colDefs: ColDef<Lead>[] = [
 
 function Leads() {
   const [opened, { open, close }] = useDisclosure(false);
+  const [selectedRows, setSelectedRows] = useState<any>([]);
   const [openedManual, { open: openManual, close: closeManual }] =
+    useDisclosure(false);
+  const [
+    openedDeleteConfirmationModal,
+    { open: openDeleteConfirmationModal, close: closeDeleteConfirmationModal },
+  ] = useDisclosure(false);
+  const [openedEditModal, { open: openEditModal, close: closeEditModal }] =
     useDisclosure(false);
   const gridRef = useRef<AgGridReact<Lead>>(null); // Optional - for accessing Grid's API
 
@@ -42,12 +60,32 @@ function Leads() {
     }
   }, [isLoading]);
 
+  const onSelectionChanged = useCallback(() => {
+    const selectedRows = gridRef?.current?.api.getSelectedRows();
+    setSelectedRows(selectedRows);
+  }, []);
+
+  function deleteLeads() {
+    openDeleteConfirmationModal();
+  }
+
+  function editLead() {
+    openEditModal();
+  }
+
   return (
     <LeadsStyled>
       <Container fluid py="xl">
         <Flex align="center" justify="space-between">
           <Title order={2}>Leads</Title>
-          <NewLeadsMenu onCsvUpload={open} onManualInput={openManual} />
+          <Flex>
+            <EditLeadSelectionMenu
+              rowsSelected={selectedRows}
+              onDelete={deleteLeads}
+              onEdit={editLead}
+            />
+            <NewLeadsMenu onCsvUpload={open} onManualInput={openManual} />
+          </Flex>
         </Flex>
 
         <Box className="ag-theme-alpine lead-grid-container" h={500} my="md">
@@ -58,6 +96,7 @@ function Leads() {
             columnDefs={colDefs} // Column Defs for Columns
             animateRows={true} // Optional - set to 'true' to have rows animate when sorted
             rowSelection="multiple" // Options - allows click selection of rows
+            onSelectionChanged={onSelectionChanged}
           />
         </Box>
 
@@ -69,6 +108,16 @@ function Leads() {
 
         <UploadLeadsViaCsvModal opened={opened} close={close} />
         <ManualInputLeadModal opened={openedManual} close={closeManual} />
+        <DeleteLeadConfirmationModal
+          rowsSelected={selectedRows}
+          opened={openedDeleteConfirmationModal}
+          close={closeDeleteConfirmationModal}
+        />
+        <EditLeadModal
+          rowSelected={selectedRows[0]}
+          opened={openedEditModal}
+          close={closeEditModal}
+        />
       </Container>
     </LeadsStyled>
   );
