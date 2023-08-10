@@ -8,7 +8,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { Notifications } from "@mantine/notifications";
-import Sentry from "@sentry/react";
+import * as Sentry from "@sentry/react";
 //
 import "./index.css";
 import Landing from "./pages/landing";
