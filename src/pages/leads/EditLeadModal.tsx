@@ -16,7 +16,6 @@ type TEditLeadModalProps = {
 };
 
 const EditLeadModal = ({ opened, close, rowSelected }: TEditLeadModalProps) => {
-  console.log("rowSelected", rowSelected);
   const [updateLead, { isLoading, error }] = useUpdateLeadMutation();
   const form = useForm({
     initialValues: rowSelected,

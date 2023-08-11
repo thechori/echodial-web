@@ -1,5 +1,5 @@
 import { Group, Text, useMantineTheme, rem } from "@mantine/core";
-import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
+import { IconFileUpload, IconFileCheck, IconX } from "@tabler/icons-react";
 import { Dropzone as DropzoneMantine, MIME_TYPES } from "@mantine/dropzone";
 
 function Dropzone({
@@ -26,7 +26,7 @@ function Dropzone({
         style={{ minHeight: rem(75), pointerEvents: "none" }}
       >
         <DropzoneMantine.Accept>
-          <IconUpload
+          <IconFileCheck
             size="3.2rem"
             stroke={1.5}
             color={
@@ -44,7 +44,7 @@ function Dropzone({
           />
         </DropzoneMantine.Reject>
         <DropzoneMantine.Idle>
-          <IconPhoto size="2.5rem" stroke={1.5} />
+          <IconFileUpload size="2.5rem" stroke={1.5} />
         </DropzoneMantine.Idle>
 
         <div>
