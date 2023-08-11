@@ -21,10 +21,10 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const form = useForm<{ source: string; files: null | FileWithPath[] }>({
+  const form = useForm<{ source: string; file: null | FileWithPath }>({
     initialValues: {
       source: "",
-      files: null,
+      file: null,
     },
   });
 
@@ -33,18 +33,22 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
     setError("");
 
     // Validation
-    if (!form.values.files) {
+    if (!form.values.file) {
       return setError("Upload file before submitting");
     }
 
     setLoading(true);
 
+    const formData = new FormData();
+    formData.append("file", form.values.file);
+    formData.append("source", form.values.source);
+
     try {
-      const res = await apiService.post("/lead/bulk", {
-        ...form.values,
-      });
+      console.log("form.values", form.values);
+      const res = await apiService.post("/lead/csv", formData);
 
       console.log("res", res);
+
       notifications.show({
         message: "Successfully uploaded leads",
       });
@@ -55,8 +59,14 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
     }
   }
 
+  function handleClose() {
+    form.reset();
+    setError("");
+    close();
+  }
+
   return (
-    <Modal opened={opened} onClose={close} title="Upload new leads">
+    <Modal opened={opened} onClose={handleClose} title="Upload new leads">
       <Modal.Body>
         <Text mb="md">
           In order to properly upload, ensure your column headers have the
@@ -81,10 +91,14 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
 
         <Box my="md">
           <Dropzone
-            onDrop={(files) => {
-              console.log("got files", files);
-              form.setFieldValue("files", files);
+            onDrop={(file) => {
+              setError("");
+              form.setFieldValue("file", file[0]);
             }}
+            onReject={(error: any) => {
+              setError(extractErrorMessage(error));
+            }}
+            filename={(form.values.file && form.values.file.name) || ""}
           />
         </Box>
 
@@ -93,11 +107,12 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
             label="Source (optional, but recommended)"
             placeholder="e.g., EverQuote"
             py="xs"
+            {...form.getInputProps("source")}
           />
           <Button loading={loading} onClick={handleSubmit}>
             Submit
           </Button>
-          <Text w="100%" color="red">
+          <Text w="100%" mt="sm" color="red">
             {error}
           </Text>
         </Box>

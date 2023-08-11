@@ -12,6 +12,7 @@ export type TJwtDecoded = {
   created_at: Date;
   iat: number;
   exp: number;
+  approved_for_beta: boolean;
 };
 
 export type TUserState = {

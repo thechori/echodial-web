@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Device } from "@twilio/voice-sdk";
 import {
   Button,
@@ -8,12 +8,13 @@ import {
   Flex,
   Grid,
   Card,
+  SelectItem,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
 import DialerStyled from "./Dialer.styles";
 import apiService from "../../services/api";
-import numbers from "../../configs/numbers";
+// import numbers from "../../configs/numbers";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   setActiveContactIndex,
@@ -27,11 +28,16 @@ import {
   setIsMuted,
 } from "../../store/dialer/slice";
 import ContactQueue from "./ContactQueue";
+import { useGetCallerIdsQuery } from "../../services/caller-id";
+import phoneFormatter from "../../utils/phone-formatter";
 
 function Dialer() {
   const dispatch = useAppDispatch();
+  const [callerIdItems, setCallerIdItems] = useState<SelectItem[]>([]);
   const { call, device, token, fromNumber, contactQueue, activeContactIndex } =
     useAppSelector((state) => state.dialer);
+
+  const { data: callerIds } = useGetCallerIdsQuery();
 
   async function startupClient() {
     try {
@@ -95,8 +101,6 @@ function Dialer() {
       From: fromNumber,
     };
 
-    console.log("params", params);
-
     // Start Call #1
     const call = await device.connect({ params });
 
@@ -155,6 +159,16 @@ function Dialer() {
     }
   }, [activeContactIndex]);
 
+  useEffect(() => {
+    if (callerIds) {
+      const items: SelectItem[] = callerIds.map((cid) => ({
+        value: cid.phone_number,
+        label: phoneFormatter(cid.phone_number) || "",
+      }));
+      setCallerIdItems(items);
+    }
+  }, [callerIds]);
+
   return (
     <DialerStyled>
       <Container fluid size="xl">
@@ -167,7 +181,7 @@ function Dialer() {
                   px="xs"
                   label="Your number"
                   placeholder="Pick one"
-                  data={numbers}
+                  data={callerIdItems}
                   value={fromNumber}
                   onChange={(number) => dispatch(setFromNumber(number))}
                 />

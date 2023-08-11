@@ -15,46 +15,57 @@ import {
 } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { BiPlus, BiRefresh } from "react-icons/bi";
+import { notifications } from "@mantine/notifications";
 //
 import PhoneNumbersStyled from "./PhoneNumbers.styles";
 import phoneFormatter from "../../utils/phone-formatter";
 import PhoneNumberMenu from "./PhoneNumberMenu";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
-import apiService from "../../services/api";
 import { extractErrorMessage } from "../../utils/error";
-
-type TPhoneNumber = {
-  id: string;
-  name: string;
-  description: string;
-  number: string;
-};
+import {
+  useAddCallerIdMutation,
+  useDeleteCallerIdMutation,
+  useGetCallerIdsQuery,
+  useLazyGetCallerIdsQuery,
+} from "../../services/caller-id";
 
 function PhoneNumbers() {
-  const userOwnedPhoneNumbers: TPhoneNumber[] = [];
-  const l34dsOwnedPhoneNumbers: TPhoneNumber[] = [];
+  const [
+    addCallerId,
+    { error: errorAddCallerId, isLoading: isLoadingAddCallerId },
+  ] = useAddCallerIdMutation();
+
+  const {
+    data: callerIds,
+    error: errorCallerIds,
+    isLoading: isLoadingCallerIds,
+  } = useGetCallerIdsQuery();
+
+  const [
+    deleteCallerId,
+    { isLoading: isLoadingDeleteCallerId, error: errorDeleteCallerId },
+  ] = useDeleteCallerIdMutation();
+
+  const [getCallerIds] = useLazyGetCallerIdsQuery();
 
   const [opened, { open, close }] = useDisclosure(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [agree, setAgree] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   async function handleSubmit() {
-    setLoading(true);
-    setError("");
-
     try {
-      const res = await apiService.post("/caller-id", {
-        phone_number: `+1${phoneNumber}`, // Hard code country code for better UX
+      await addCallerId(phoneNumber).unwrap(); // Using .unwrap to handle error HERE
+      notifications.show({
+        title: "Success",
+        message: "Check your phone!",
       });
-      console.log("success", res);
       close();
     } catch (error) {
-      setError(extractErrorMessage(error));
-    } finally {
-      setLoading(false);
+      notifications.show({
+        title: "Error",
+        message: extractErrorMessage(error),
+      });
     }
   }
 
@@ -73,7 +84,7 @@ function PhoneNumbers() {
               label="Phone number"
               miw={300}
               required
-              placeholder="e.g., 8321113333 (no dashes or spaces)"
+              placeholder="e.g., 832-111-3333"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
             />
@@ -86,15 +97,15 @@ function PhoneNumbers() {
             />
 
             <Button
-              disabled={!agree || phoneNumber.length !== 10}
-              loading={loading}
+              disabled={!agree || phoneNumber.length < 10}
+              loading={isLoadingAddCallerId}
               onClick={handleSubmit}
             >
               Submit
             </Button>
 
             <Text w="100%" color="red">
-              {error}
+              {extractErrorMessage(errorAddCallerId)}
             </Text>
           </Group>
         </Modal.Body>
@@ -107,13 +118,13 @@ function PhoneNumbers() {
               <Title order={2} mb={16}>
                 Personal
               </Title>
-              <Text>Your personal numbers you've verified with L34ds</Text>
+              <Text>Your personal numbers verified with us</Text>
 
               <Box p="lg">
-                {userOwnedPhoneNumbers.length ? (
-                  userOwnedPhoneNumbers.map((number) => (
+                {callerIds && callerIds.length ? (
+                  callerIds.map((cid) => (
                     <Flex
-                      key={number.id}
+                      key={cid.id}
                       py={4}
                       align="center"
                       justify="space-between"
@@ -122,11 +133,20 @@ function PhoneNumbers() {
                         <ThemeIcon color="teal" size={24} radius="xl">
                           <IconCircleCheck size="1rem" />
                         </ThemeIcon>
-                        <Box ml={16}>{phoneFormatter(number.number)}</Box>
+                        <Box ml={16}>{phoneFormatter(cid.phone_number)}</Box>
                       </Flex>
-                      <PhoneNumberMenu />
+                      <PhoneNumberMenu
+                        onDelete={() => deleteCallerId(cid.id)}
+                        isLoading={isLoadingDeleteCallerId}
+                      />
                     </Flex>
                   ))
+                ) : errorCallerIds ? (
+                  <Text color="red">{extractErrorMessage(errorCallerIds)}</Text>
+                ) : errorDeleteCallerId ? (
+                  <Text color="red">
+                    {extractErrorMessage(errorDeleteCallerId)}
+                  </Text>
                 ) : (
                   <Text size="sm" italic color="dimmed">
                     No numbers found
@@ -139,12 +159,18 @@ function PhoneNumbers() {
                   Add new
                 </Button>
 
-                <Button leftIcon={<BiRefresh />}>Refresh</Button>
+                <Button
+                  loading={isLoadingCallerIds}
+                  onClick={() => getCallerIds()}
+                  leftIcon={<BiRefresh />}
+                >
+                  Refresh
+                </Button>
               </Group>
             </Card>
           </Grid.Col>
 
-          <Grid.Col xs={12} sm={12}>
+          {/* <Grid.Col xs={12} sm={12}>
             <Card
               className="disabled"
               shadow="md"
@@ -153,9 +179,9 @@ function PhoneNumbers() {
               m="lg"
             >
               <Title order={2} mb={16}>
-                L34ds
+                {APP_NAME}
               </Title>
-              <Text>The numbers included with your L34ds subscription</Text>
+              <Text>Phone numbers purchased through subscription</Text>
               <Box p="lg">
                 {l34dsOwnedPhoneNumbers.length ? (
                   l34dsOwnedPhoneNumbers.map((number) => (
@@ -188,7 +214,7 @@ function PhoneNumbers() {
                 <Button leftIcon={<BiRefresh />}>Refresh</Button>
               </Group>{" "}
             </Card>
-          </Grid.Col>
+          </Grid.Col> */}
         </Grid>
       </Container>
     </PhoneNumbersStyled>

@@ -1,26 +1,29 @@
 import { Group, Text, useMantineTheme, rem } from "@mantine/core";
 import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
-import {
-  Dropzone as DropzoneMantine,
-  DropzoneProps,
-  MIME_TYPES,
-} from "@mantine/dropzone";
+import { Dropzone as DropzoneMantine, MIME_TYPES } from "@mantine/dropzone";
 
-function Dropzone(props: Partial<DropzoneProps>) {
+function Dropzone({
+  filename,
+  onDrop,
+  onReject,
+}: {
+  filename?: string;
+  onDrop: (files: any) => void;
+  onReject: (error: any) => void;
+}) {
   const theme = useMantineTheme();
   return (
     <DropzoneMantine
-      onDrop={(files) => console.log("accepted files", files)}
-      onReject={(files) => console.log("rejected files", files)}
+      onDrop={onDrop}
+      onReject={onReject}
       maxSize={3 * 1024 ** 2}
       accept={[MIME_TYPES.csv, MIME_TYPES.xls, MIME_TYPES.xlsx]}
-      {...props}
       maxFiles={1}
     >
       <Group
         position="center"
-        spacing="xl"
-        style={{ minHeight: rem(220), pointerEvents: "none" }}
+        spacing="lg"
+        style={{ minHeight: rem(75), pointerEvents: "none" }}
       >
         <DropzoneMantine.Accept>
           <IconUpload
@@ -41,16 +44,22 @@ function Dropzone(props: Partial<DropzoneProps>) {
           />
         </DropzoneMantine.Reject>
         <DropzoneMantine.Idle>
-          <IconPhoto size="3.2rem" stroke={1.5} />
+          <IconPhoto size="2.5rem" stroke={1.5} />
         </DropzoneMantine.Idle>
 
         <div>
-          <Text size="xl" inline>
-            Drag .CSV file here or click to select files
-          </Text>
-          <Text size="sm" color="dimmed" inline mt={7}>
-            Attach one file at a time (max 5mb)
-          </Text>
+          {filename ? (
+            <Text>{filename}</Text>
+          ) : (
+            <>
+              <Text size="md" inline align="center">
+                Drag .CSV file here or click to select files
+              </Text>
+              <Text size="xs" color="dimmed" inline mt={7} align="center">
+                Attach one file at a time (max 5mb)
+              </Text>
+            </>
+          )}
         </div>
       </Group>
     </DropzoneMantine>

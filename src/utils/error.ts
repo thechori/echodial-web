@@ -10,6 +10,7 @@ export const extractErrorMessage = (
   error: unknown,
   message = "There was an error. Please try again later."
 ) => {
+  if (error === null || error === undefined) return null;
   if (error instanceof AxiosError) {
     return error.response?.data?.message || error.response?.data || message;
   }

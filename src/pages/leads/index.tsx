@@ -25,6 +25,7 @@ const colDefs: ColDef<Lead>[] = [
     headerCheckboxSelection: true,
     checkboxSelection: true,
     showDisabledCheckboxes: true,
+    headerCheckboxSelectionFilteredOnly: true,
   },
   {
     field: "phone",
