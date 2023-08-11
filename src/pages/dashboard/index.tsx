@@ -14,26 +14,26 @@ function Dashboard() {
                 {
                   title: "EARNINGS",
                   diff: 41,
-                  icon: "discount",
+                  icon: "coin",
                   value: "$23,198.27",
                 },
                 {
-                  title: "CALLS SENT",
+                  title: "CALLS MADE",
                   diff: -6,
                   icon: "phone",
                   value: "2,198",
                 },
                 {
-                  title: "DEALS CLOSED",
+                  title: "CALLS ANSWERED",
                   diff: 23,
-                  icon: "coin",
-                  value: "$41,233.12",
+                  icon: "phone",
+                  value: "1,032",
                 },
                 {
-                  title: "MINUTE REMAINING",
+                  title: "AVERAGE CALL DURATION",
                   diff: -7,
                   icon: "clock",
-                  value: "612",
+                  value: "0:34",
                 },
               ]}
             />
