@@ -66,10 +66,10 @@ const Sidebar = () => {
                   <div>Phases</div>
                 </NavLink>
 
-                <NavLink to={routes.reports}>
+                {/* <NavLink to={routes.reports}>
                   <BiSolidReport fontSize="1.75rem" />
                   <div>Reports</div>
-                </NavLink>
+                </NavLink> */}
 
                 <NavLink to={routes.callerIds}>
                   <FaAddressBook fontSize="1.75rem" />
@@ -121,10 +121,10 @@ const Sidebar = () => {
             <div>Phases</div>
           </NavLink>
 
-          <NavLink to={routes.reports}>
+          {/* <NavLink to={routes.reports}>
             <BiSolidReport fontSize="1.75rem" />
             <div>Reports</div>
-          </NavLink>
+          </NavLink> */}
 
           <NavLink to={routes.callerIds}>
             <FaAddressBook fontSize="1.75rem" />
