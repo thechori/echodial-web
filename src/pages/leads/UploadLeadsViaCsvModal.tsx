@@ -14,12 +14,13 @@ import { IconCircleCheck } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 //
 import Dropzone from "./Dropzone";
-import apiService from "../../services/api";
 import { extractErrorMessage } from "../../utils/error";
+import { useAddLeadsViaCsvMutation } from "../../services/lead";
 
 const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [addLeadsViaCsv, { isLoading }] = useAddLeadsViaCsvMutation();
 
   const form = useForm<{ source: string; file: null | FileWithPath }>({
     initialValues: {
@@ -29,7 +30,6 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
   });
 
   async function handleSubmit() {
-    // Clear errors
     setError("");
 
     // Validation
@@ -37,25 +37,20 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
       return setError("Upload file before submitting");
     }
 
-    setLoading(true);
-
     const formData = new FormData();
     formData.append("file", form.values.file);
     formData.append("source", form.values.source);
 
     try {
-      console.log("form.values", form.values);
-      const res = await apiService.post("/lead/csv", formData);
-
-      console.log("res", res);
+      await addLeadsViaCsv(formData).unwrap();
 
       notifications.show({
         message: "Successfully uploaded leads",
       });
+
+      close();
     } catch (error) {
       setError(extractErrorMessage(error));
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -109,7 +104,7 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
             py="xs"
             {...form.getInputProps("source")}
           />
-          <Button loading={loading} onClick={handleSubmit}>
+          <Button loading={isLoading} onClick={handleSubmit}>
             Submit
           </Button>
           <Text w="100%" mt="sm" color="red">

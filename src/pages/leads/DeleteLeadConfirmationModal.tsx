@@ -1,4 +1,5 @@
-import { Button, Center, Modal, Text } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { Box, Button, Center, Group, Modal, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
 import { Lead, useDeleteMultipleLeadsMutation } from "../../services/lead";
@@ -15,39 +16,48 @@ const DeleteLeadConfirmationModal = ({
   close,
   rowsSelected,
 }: TDeleteLeadConfirmationModalProps) => {
-  const [deleteLeads, { isLoading, error }] = useDeleteMultipleLeadsMutation();
+  const [error, setError] = useState("");
+  const [deleteLeads, { isLoading }] = useDeleteMultipleLeadsMutation();
 
   async function handleDeleteLeads() {
     const ids = rowsSelected.map((lead) => lead.id);
     try {
-      const res = await deleteLeads(ids);
+      const res = await deleteLeads(ids).unwrap();
       console.log("res", res);
       notifications.show({
         title: "Success",
         message: "Deleted leads",
       });
-    } catch (error) {
-      notifications.show({
-        title: "Error",
-        message: extractErrorMessage(error),
-      });
+      close();
+    } catch (e) {
+      console.log("errrr", e);
+      setError(extractErrorMessage(e));
     }
   }
+
+  useEffect(() => {
+    setError("");
+  }, [rowsSelected]);
 
   return (
     <Modal opened={opened} onClose={close} title="Delete lead">
       <Modal.Body>
-        <Text mb="md">Are your sure you want to lead this lead(s)?</Text>
+        <Text mb="md">
+          Are you sure you want to delete ({rowsSelected.length}) lead
+          {rowsSelected.length > 1 ? "s" : ""}?
+        </Text>
 
-        <Center py="md">
-          <Button loading={isLoading} onClick={handleDeleteLeads}>
+        <Group py="md" position="center">
+          <Button color="red" loading={isLoading} onClick={handleDeleteLeads}>
             Confirm
           </Button>
-        </Center>
+          <Button variant="outline" onClick={close}>
+            Cancel
+          </Button>
+        </Group>
 
         <Text w="100%" color="red">
-          {/* @ts-ignore */}
-          {error?.status} {JSON.stringify(error?.data)}
+          {error}
         </Text>
       </Modal.Body>
     </Modal>

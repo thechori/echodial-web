@@ -50,6 +50,16 @@ export const leadApi = createApi({
       },
       invalidatesTags: ["Lead"],
     }),
+    addLeadsViaCsv: builder.mutation<Lead[], any>({
+      query(body) {
+        return {
+          url: `lead/csv`,
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: ["Lead"],
+    }),
     updateLead: builder.mutation<Lead, Partial<Lead>>({
       query(data) {
         const { id, ...body } = data;
@@ -61,17 +71,8 @@ export const leadApi = createApi({
       },
       invalidatesTags: (lead) => [{ type: "Lead", id: lead?.id }],
     }),
-    deleteLead: builder.mutation<{ success: boolean; id: number }, number>({
-      query(id) {
-        return {
-          url: `lead/${id}`,
-          method: "DELETE",
-        };
-      },
-      invalidatesTags: (lead) => [{ type: "Lead", id: lead?.id }],
-    }),
     deleteMultipleLeads: builder.mutation<
-      { success: boolean; ids: number[] },
+      { message: string; data: number[] },
       number[]
     >({
       query(ids) {
@@ -83,13 +84,7 @@ export const leadApi = createApi({
           },
         };
       },
-      invalidatesTags: (lead) => {
-        if (!lead) return [{ type: "Lead", id: undefined }];
-        return lead.ids.map((id) => ({
-          type: "Lead",
-          id,
-        }));
-      },
+      invalidatesTags: ["Lead"],
     }),
   }),
 });
@@ -100,7 +95,7 @@ export const {
   useGetLeadByIdQuery,
   useGetLeadsQuery,
   useAddLeadMutation,
-  useDeleteLeadMutation,
+  useAddLeadsViaCsvMutation,
   useUpdateLeadMutation,
   useDeleteMultipleLeadsMutation,
 } = leadApi;

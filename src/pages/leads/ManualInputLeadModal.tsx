@@ -3,6 +3,7 @@ import { Box, Button, Center, Modal, Text, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
 import { useAddLeadMutation } from "../../services/lead";
+import { extractErrorMessage } from "../../utils/error";
 
 const ManualInputLeadModal = ({ opened, close }: any) => {
   const [addLead, { isLoading, error }] = useAddLeadMutation();
@@ -44,21 +45,27 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
       phone,
     } = form.values;
 
-    addLead({
-      email,
-      first_name,
-      last_name,
-      phone,
-    });
+    try {
+      const a = await addLead({
+        email,
+        first_name,
+        last_name,
+        phone,
+      }).unwrap();
 
-    notifications.show({
-      title: "Success",
-      message: "Your lead was successfully created",
-    });
+      console.log("a", a);
 
-    form.reset();
+      notifications.show({
+        title: "Success",
+        message: "Your lead was successfully created",
+      });
 
-    close();
+      form.reset();
+
+      close();
+    } catch (e) {
+      console.error(extractErrorMessage(e));
+    }
   }
 
   return (

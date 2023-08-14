@@ -1,13 +1,14 @@
 import { Box, Button, Center, Modal, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-// import { notifications } from "@mantine/notifications";
+import { notifications } from "@mantine/notifications";
 //
 import {
   Lead,
-  // useDeleteLeadMutation,
   // useDeleteMultipleLeadsMutation,
-  // useUpdateLeadMutation,
+  useUpdateLeadMutation,
 } from "../../services/lead";
+import { extractErrorMessage } from "../../utils/error";
+import { useEffect } from "react";
 
 type TEditLeadModalProps = {
   opened: boolean;
@@ -16,40 +17,69 @@ type TEditLeadModalProps = {
 };
 
 const EditLeadModal = ({ opened, close, rowSelected }: TEditLeadModalProps) => {
-  // const [updateLead, { isLoading, error }] = useUpdateLeadMutation();
+  const [updateLead, { isLoading, error }] = useUpdateLeadMutation();
   const form = useForm({
     initialValues: rowSelected,
+    validate: {
+      // Allow blank, but validate if something has been entered
+      email: (val) => {
+        if (!val) return null;
+        return /^\S+@\S+$/.test(val) ? null : "Invalid email";
+      },
+      phone: (val) => {
+        if (!val) return "Phone number required";
+        // Trim and strip all non-numeric characters
+        const trimmedVal = val.trim();
+        const digits = trimmedVal.replace(/\D/g, "");
+        return digits.length === 10 ? null : "Invalid phone number";
+      },
+    },
   });
 
-  function editLead() {
-    console.log("editing", form.values);
+  async function editLead() {
+    form.validate();
 
-    // updateLead();
+    if (!form.isValid()) {
+      return;
+    }
+
+    try {
+      const a = await updateLead(form.values).unwrap();
+      console.log("a", a);
+      notifications.show({ message: "Successfully updated lead" });
+    } catch (e) {
+      console.error(extractErrorMessage(e));
+    }
   }
+
+  useEffect(() => {
+    if (rowSelected) {
+      form.setValues({
+        ...rowSelected,
+        phone: rowSelected ? rowSelected.phone.split("+1")[1] : "", // Remove +1 as not to confuse user
+      });
+    }
+  }, [rowSelected]);
 
   return (
     <Modal opened={opened} onClose={close} title="Edit lead">
       <Modal.Body>
-        <Text mb="md">Edit the following lead</Text>
-
         <Box>
           <TextInput label="Email address" {...form.getInputProps("email")} />
           <TextInput label="First name" {...form.getInputProps("first_name")} />
           <TextInput label="Last name" {...form.getInputProps("last_name")} />
-          <TextInput label="Phone" {...form.getInputProps("phone")} />
+          <TextInput label="Phone" required {...form.getInputProps("phone")} />
         </Box>
 
         <Center py="md">
-          <Button onClick={editLead}>
-            {/* <Button loading={isLoading} onClick={editLead}> */}
+          <Button loading={isLoading} onClick={editLead}>
             Update
           </Button>
         </Center>
 
-        <Text w="100%" color="red">
-          {/* @ts-ignore */}
+        {/* <Text w="100%" color="red">
           {error?.status} {JSON.stringify(error?.data)}
-        </Text>
+        </Text> */}
       </Modal.Body>
     </Modal>
   );
