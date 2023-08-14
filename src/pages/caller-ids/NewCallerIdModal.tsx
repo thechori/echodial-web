@@ -1,5 +1,4 @@
 import { Button, Checkbox, Group, Modal, Text, TextInput } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
 //
 import { useAddCallerIdMutation } from "../../services/caller-id";
 import { useState } from "react";
@@ -20,17 +19,10 @@ const NewCallerIdModal = ({ opened, close }: TNewCallerIdModalProps) => {
 
   async function handleSubmit() {
     try {
-      await addCallerId(phoneNumber).unwrap(); // Using .unwrap to handle error HERE
-      notifications.show({
-        title: "Success",
-        message: "Check your phone!",
-      });
+      await addCallerId(phoneNumber).unwrap();
       close();
-    } catch (error) {
-      notifications.show({
-        title: "Error",
-        message: extractErrorMessage(error),
-      });
+    } catch (e) {
+      console.error(e);
     }
   }
 

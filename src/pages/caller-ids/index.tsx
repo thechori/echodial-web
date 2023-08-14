@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -23,8 +24,10 @@ import {
   useLazyGetCallerIdsQuery,
 } from "../../services/caller-id";
 import NewCallerIdModal from "./NewCallerIdModal";
+import { extractErrorMessage } from "../../utils/error";
 
 function PhoneNumbers() {
+  const [error, setError] = useState("");
   const {
     data: callerIds,
     error: errorCallerIds,
@@ -40,7 +43,15 @@ function PhoneNumbers() {
 
   const [opened, { open, close }] = useDisclosure(false);
 
-  console.log("errors", errorCallerIds, errorDeleteCallerId);
+  useEffect(() => {
+    if (errorCallerIds) {
+      setError(extractErrorMessage(errorCallerIds));
+    } else if (errorDeleteCallerId) {
+      setError(extractErrorMessage(errorDeleteCallerId));
+    } else {
+      setError("");
+    }
+  }, [errorCallerIds, errorDeleteCallerId]);
 
   return (
     <PhoneNumbersStyled>
@@ -88,18 +99,7 @@ function PhoneNumbers() {
                 )}
               </Box>
 
-              <Text color="red">
-                {
-                  // @ts-ignore
-                  errorCallerIds?.status
-                }
-              </Text>
-              <Text color="red">
-                {
-                  // @ts-ignore
-                  errorDeleteCallerId?.status
-                }
-              </Text>
+              <Text color="red">{error}</Text>
 
               <Group>
                 <Button onClick={open} leftIcon={<BiPlus />}>
