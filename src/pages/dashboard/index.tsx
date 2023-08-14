@@ -12,10 +12,10 @@ function Dashboard() {
             <StatsGrid
               data={[
                 {
-                  title: "EARNINGS",
-                  diff: 41,
-                  icon: "coin",
-                  value: "$23,198.27",
+                  title: "Leads today",
+                  diff: 0,
+                  icon: "user",
+                  value: "0",
                 },
                 {
                   title: "CALLS MADE",

@@ -8,7 +8,6 @@ import {
 } from "react-icons/fa";
 import { IoIosSettings } from "react-icons/io";
 import { MdGroups } from "react-icons/md";
-import { BiSolidReport } from "react-icons/bi";
 import { AiOutlineMenu, AiOutlineDashboard } from "react-icons/ai";
 //
 import SidebarStyled from "./Sidebar.styles";

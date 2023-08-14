@@ -18,27 +18,27 @@ import EditLeadModal from "./EditLeadModal";
 
 const colDefs: ColDef<Lead>[] = [
   {
-    field: "id",
-    headerName: "ID",
     filter: true,
-    width: 100,
+    width: 10,
     headerCheckboxSelection: true,
     checkboxSelection: true,
     showDisabledCheckboxes: true,
     headerCheckboxSelectionFilteredOnly: true,
   },
+  { field: "first_name", headerName: "First name", filter: true },
+  { field: "last_name", headerName: "Last name", filter: true },
   {
     field: "phone",
     filter: true,
     cellRenderer: (param: any) => phoneFormatter(param.value),
   },
-  { field: "first_name", headerName: "First name", filter: true },
-  { field: "last_name", headerName: "Last name", filter: true },
   { field: "email", filter: true },
+  { field: "source", filter: true },
   { field: "created_at", headerName: "Created at", filter: true },
 ];
 
 function Leads() {
+  const { data: leads } = useGetLeadsQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedRows, setSelectedRows] = useState<any>([]);
   const [openedManual, { open: openManual, close: closeManual }] =
@@ -73,6 +73,11 @@ function Leads() {
   function editLead() {
     openEditModal();
   }
+
+  // Reset selection every time leads changes
+  useEffect(() => {
+    setSelectedRows([]);
+  }, [leads]);
 
   return (
     <LeadsStyled>

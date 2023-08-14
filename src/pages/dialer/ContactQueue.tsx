@@ -1,10 +1,8 @@
-import { styled } from "styled-components";
 import { FaPhone } from "react-icons/fa";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { FaRegStopCircle } from "react-icons/fa";
 import { BiImport, BiShow } from "react-icons/bi";
 import { IoIosSettings } from "react-icons/io";
-//
 import {
   Avatar,
   Box,
@@ -17,6 +15,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+//
 import phoneFormatter from "../../utils/phone-formatter";
 import {
   setActiveContactIndex,
@@ -25,64 +24,7 @@ import {
   setOptions,
   setShowOptions,
 } from "../../store/dialer/slice";
-import devices from "../../styles/devices";
-
-const ContactQueueStyled = styled.div`
-  .contact {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    display: flex;
-    padding: 0.25rem;
-
-    .phone {
-      margin-right: 1rem;
-    }
-  }
-
-  tr.active {
-    border: 2px solid green;
-    background-color: #00800030;
-  }
-
-  .call-icon {
-    &:hover {
-      color: green;
-    }
-  }
-
-  .user-avatar {
-    display: none;
-
-    @media ${devices.desktop} {
-      display: block;
-    }
-  }
-
-  .call-buttons {
-    svg {
-      font-size: 1.75rem;
-
-      @media ${devices.tablet} {
-        font-size: 2rem;
-      }
-    }
-
-    & > div {
-      padding: 0 0.25rem;
-
-      @media ${devices.tablet} {
-        padding: 0 0.5rem;
-      }
-    }
-  }
-
-  svg.start-call-icon {
-    font-size: 3rem;
-
-    @media ${devices.tablet} {
-      font-size: 3rem;
-    }
-  }
-`;
+import ContactQueueStyled from "./ContactQueue.styles";
 
 function ContactQueue() {
   const dispatch = useAppDispatch();

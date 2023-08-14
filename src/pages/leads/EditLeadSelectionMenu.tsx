@@ -1,5 +1,5 @@
 import { Menu, Button } from "@mantine/core";
-import { IconTrash, IconEdit, IconDots } from "@tabler/icons-react";
+import { IconTrash, IconEdit } from "@tabler/icons-react";
 
 type TEditLeadSelectionMenuProps = {
   rowsSelected: any[];
@@ -15,10 +15,7 @@ function EditLeadSelectionMenu({
   return (
     <Menu shadow="md" width={200}>
       <Menu.Target>
-        <Button
-          disabled={!rowsSelected.length}
-          leftIcon={<IconDots size="1rem" />}
-        >
+        <Button mr="xs" disabled={!rowsSelected.length}>
           Actions
         </Button>
       </Menu.Target>

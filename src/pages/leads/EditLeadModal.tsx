@@ -1,12 +1,12 @@
 import { Box, Button, Center, Modal, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { notifications } from "@mantine/notifications";
+// import { notifications } from "@mantine/notifications";
 //
 import {
   Lead,
-  useDeleteLeadMutation,
-  useDeleteMultipleLeadsMutation,
-  useUpdateLeadMutation,
+  // useDeleteLeadMutation,
+  // useDeleteMultipleLeadsMutation,
+  // useUpdateLeadMutation,
 } from "../../services/lead";
 
 type TEditLeadModalProps = {
@@ -16,7 +16,7 @@ type TEditLeadModalProps = {
 };
 
 const EditLeadModal = ({ opened, close, rowSelected }: TEditLeadModalProps) => {
-  const [updateLead, { isLoading, error }] = useUpdateLeadMutation();
+  // const [updateLead, { isLoading, error }] = useUpdateLeadMutation();
   const form = useForm({
     initialValues: rowSelected,
   });
@@ -40,7 +40,8 @@ const EditLeadModal = ({ opened, close, rowSelected }: TEditLeadModalProps) => {
         </Box>
 
         <Center py="md">
-          <Button loading={isLoading} onClick={editLead}>
+          <Button onClick={editLead}>
+            {/* <Button loading={isLoading} onClick={editLead}> */}
             Update
           </Button>
         </Center>

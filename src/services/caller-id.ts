@@ -38,14 +38,18 @@ export const callerIdApi = createApi({
       },
       invalidatesTags: ["CallerId"],
     }),
-    deleteCallerId: builder.mutation<{ success: boolean; id: number }, number>({
-      query(id) {
+    deleteCallerId: builder.mutation<void, { id: number; twilio_sid: string }>({
+      query(body) {
         return {
-          url: `caller-id/${id}`,
-          method: "DELETE",
+          url: "caller-id/delete",
+          method: "POST",
+          body: {
+            id: body.id,
+            twilio_sid: body.twilio_sid,
+          },
         };
       },
-      invalidatesTags: (callerId) => [{ type: "CallerId", id: callerId?.id }],
+      invalidatesTags: ["CallerId"],
     }),
   }),
 });
