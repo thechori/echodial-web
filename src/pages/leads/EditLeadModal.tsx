@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Box, Button, Center, Modal, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -8,7 +9,6 @@ import {
   useUpdateLeadMutation,
 } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
-import { useEffect } from "react";
 
 type TEditLeadModalProps = {
   opened: boolean;
@@ -17,7 +17,8 @@ type TEditLeadModalProps = {
 };
 
 const EditLeadModal = ({ opened, close, rowSelected }: TEditLeadModalProps) => {
-  const [updateLead, { isLoading, error }] = useUpdateLeadMutation();
+  const [error, setError] = useState("");
+  const [updateLead, { isLoading }] = useUpdateLeadMutation();
   const form = useForm({
     initialValues: rowSelected,
     validate: {
@@ -44,11 +45,11 @@ const EditLeadModal = ({ opened, close, rowSelected }: TEditLeadModalProps) => {
     }
 
     try {
-      const a = await updateLead(form.values).unwrap();
-      console.log("a", a);
+      await updateLead(form.values).unwrap();
       notifications.show({ message: "Successfully updated lead" });
+      close();
     } catch (e) {
-      console.error(extractErrorMessage(e));
+      setError(extractErrorMessage(e));
     }
   }
 
@@ -77,9 +78,9 @@ const EditLeadModal = ({ opened, close, rowSelected }: TEditLeadModalProps) => {
           </Button>
         </Center>
 
-        {/* <Text w="100%" color="red">
-          {error?.status} {JSON.stringify(error?.data)}
-        </Text> */}
+        <Text w="100%" color="red">
+          {error}
+        </Text>
       </Modal.Body>
     </Modal>
   );

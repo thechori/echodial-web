@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Center, Group, Modal, Text } from "@mantine/core";
+import { Button, Group, Modal, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
 import { Lead, useDeleteMultipleLeadsMutation } from "../../services/lead";
