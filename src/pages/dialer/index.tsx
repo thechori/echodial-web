@@ -14,7 +14,6 @@ import { notifications } from "@mantine/notifications";
 //
 import DialerStyled from "./Dialer.styles";
 import apiService from "../../services/api";
-// import numbers from "../../configs/numbers";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   setActiveContactIndex,
@@ -30,6 +29,7 @@ import {
 import ContactQueue from "./ContactQueue";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
 import phoneFormatter from "../../utils/phone-formatter";
+import CallHistory from "./CallHistory";
 
 function Dialer() {
   const dispatch = useAppDispatch();
@@ -202,7 +202,7 @@ function Dialer() {
           </Grid.Col>
           <Grid.Col xs={12} sm={12} md={6}>
             <Card className={!token ? "disabled" : ""} withBorder shadow="md">
-              <Title order={2}>Call history</Title>
+              <CallHistory />
             </Card>
           </Grid.Col>
         </Grid>

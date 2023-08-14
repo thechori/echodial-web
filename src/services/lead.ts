@@ -32,7 +32,7 @@ export const leadApi = createApi({
   }),
   tagTypes: ["Lead"],
   endpoints: (builder) => ({
-    getLeads: builder.query<Lead, void>({
+    getLeads: builder.query<Lead[], void>({
       query: () => "lead",
       providesTags: ["Lead"],
     }),

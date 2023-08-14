@@ -15,6 +15,7 @@ import { Lead, useGetLeadsQuery } from "../../services/lead";
 import EditLeadSelectionMenu from "./EditLeadSelectionMenu";
 import DeleteLeadConfirmationModal from "./DeleteLeadConfirmationModal";
 import EditLeadModal from "./EditLeadModal";
+import { extractErrorMessage } from "../../utils/error";
 
 const colDefs: ColDef<Lead>[] = [
   {
@@ -25,20 +26,37 @@ const colDefs: ColDef<Lead>[] = [
     showDisabledCheckboxes: true,
     headerCheckboxSelectionFilteredOnly: true,
   },
-  { field: "first_name", headerName: "First name", filter: true },
-  { field: "last_name", headerName: "Last name", filter: true },
+  {
+    field: "first_name",
+    headerName: "First name",
+    filter: true,
+    resizable: true,
+  },
+  {
+    field: "last_name",
+    headerName: "Last name",
+    filter: true,
+    resizable: true,
+  },
   {
     field: "phone",
     filter: true,
+    resizable: true,
     cellRenderer: (param: any) => phoneFormatter(param.value),
   },
-  { field: "email", filter: true },
-  { field: "source", filter: true },
-  { field: "created_at", headerName: "Created at", filter: true },
+  { field: "email", filter: true, resizable: true },
+  { field: "source", filter: true, headerName: "Lead vendor", resizable: true },
+  {
+    field: "created_at",
+    headerName: "Created at",
+    filter: true,
+    resizable: true,
+  },
 ];
 
 function Leads() {
-  const { data: leads } = useGetLeadsQuery();
+  const [error, setError] = useState("");
+  const { data: leads, error: leadsApiError, isLoading } = useGetLeadsQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedRows, setSelectedRows] = useState<any>([]);
   const [openedManual, { open: openManual, close: closeManual }] =
@@ -51,8 +69,6 @@ function Leads() {
     useDisclosure(false);
   const gridRef = useRef<AgGridReact<Lead>>(null); // Optional - for accessing Grid's API
 
-  const { data, error: leadsApiError, isLoading } = useGetLeadsQuery();
-
   useEffect(() => {
     if (isLoading) {
       gridRef.current?.api?.showLoadingOverlay();
@@ -60,6 +76,14 @@ function Leads() {
       gridRef.current?.api?.hideOverlay();
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    if (leadsApiError) {
+      setError(extractErrorMessage(leadsApiError));
+    } else {
+      setError("");
+    }
+  }, [leadsApiError]);
 
   const onSelectionChanged = useCallback(() => {
     const selectedRows = gridRef?.current?.api.getSelectedRows();
@@ -96,21 +120,16 @@ function Leads() {
 
         <Box className="ag-theme-alpine lead-grid-container" h={500} my="md">
           <AgGridReact<Lead>
-            ref={gridRef} // Ref for accessing Grid's API
-            // @ts-ignore
-            rowData={data} // Row Data for Rows
-            columnDefs={colDefs} // Column Defs for Columns
-            animateRows={true} // Optional - set to 'true' to have rows animate when sorted
-            rowSelection="multiple" // Options - allows click selection of rows
+            ref={gridRef}
+            rowData={leads}
+            columnDefs={colDefs}
+            animateRows={true}
+            rowSelection="multiple"
             onSelectionChanged={onSelectionChanged}
           />
         </Box>
 
-        <Text color="red">
-          {leadsApiError && "status" in leadsApiError
-            ? leadsApiError.status
-            : ""}
-        </Text>
+        <Text color="red">{error}</Text>
 
         <UploadLeadsViaCsvModal opened={opened} close={close} />
         <ManualInputLeadModal opened={openedManual} close={closeManual} />

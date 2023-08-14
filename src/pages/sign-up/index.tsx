@@ -21,6 +21,7 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
+import { APP_NAME } from "../../configs/names";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -81,7 +82,7 @@ function SignUp() {
 
           <Box py="md">
             <Title color="white" order={1} weight={200}>
-              Start building with L34DS for free.
+              Start calling with {APP_NAME} for free.
             </Title>
             <Title color="white" order={1} weight={200}>
               No credit card required.

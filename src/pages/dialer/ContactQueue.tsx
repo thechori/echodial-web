@@ -40,47 +40,55 @@ function ContactQueue() {
     dispatch(setActiveContactIndex(null));
   }
 
-  const rows = contactQueue.map((c, index) => {
-    let active = false;
+  const rows = contactQueue.length ? (
+    contactQueue.map((c, index) => {
+      let active = false;
 
-    if (
-      activeContactIndex !== null &&
-      contactQueue[activeContactIndex].id === c.id
-    ) {
-      active = true;
-    }
+      if (
+        activeContactIndex !== null &&
+        contactQueue[activeContactIndex].id === c.id
+      ) {
+        active = true;
+      }
 
-    return (
-      <tr key={c.id} className={active ? "active" : ""}>
-        <td className="call-icon hoverable">
-          {call && active ? (
-            <FaRegStopCircle
-              fontSize="1rem"
-              onClick={() => endCall()}
-              color="red"
-            />
-          ) : (
-            <FaPhone
-              fontSize="1rem"
-              onClick={() => updateActiveContactIndex(index)}
-              color={active ? "green" : ""}
-            />
-          )}
-        </td>
-        <td>
-          <Group spacing="sm">
-            <Avatar className="user-avatar" size={30} radius={30} />
-            <Text fz="sm" fw={500}>
-              {c.firstName} {c.lastName}
-            </Text>
-          </Group>
-        </td>
-        <td>
-          <Text size="sm">{phoneFormatter(c.phone)}</Text>
-        </td>
-      </tr>
-    );
-  });
+      return (
+        <tr key={c.id} className={active ? "active" : ""}>
+          <td className="call-icon hoverable">
+            {call && active ? (
+              <FaRegStopCircle
+                fontSize="1rem"
+                onClick={() => endCall()}
+                color="red"
+              />
+            ) : (
+              <FaPhone
+                fontSize="1rem"
+                onClick={() => updateActiveContactIndex(index)}
+                color={active ? "green" : ""}
+              />
+            )}
+          </td>
+          <td>
+            <Group spacing="sm">
+              <Avatar className="user-avatar" size={30} radius={30} />
+              <Text fz="sm" fw={500}>
+                {c.firstName} {c.lastName}
+              </Text>
+            </Group>
+          </td>
+          <td>
+            <Text size="sm">{phoneFormatter(c.phone)}</Text>
+          </td>
+        </tr>
+      );
+    })
+  ) : (
+    <tr>
+      <td></td>
+      <td>No calls queued</td>
+      <td></td>
+    </tr>
+  );
 
   function stopDialer() {
     if (!call) {

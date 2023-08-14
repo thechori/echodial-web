@@ -3,7 +3,6 @@ import { Device, Call } from "@twilio/voice-sdk";
 //
 import numbers from "../../configs/numbers";
 import { TContact } from "../contacts/types";
-import contacts from "../../pages/dialer/contacts";
 import { RootState } from "..";
 
 const buildOptions = (): TDialerOptions => {
@@ -57,7 +56,9 @@ const buildInitialState = (): IDialerState => ({
   token: null,
   identity: null,
   activeContactIndex: null,
-  contactQueue: contacts,
+  contactQueue: JSON.parse(
+    localStorage.getItem("dialer__contactQueue") || "[]"
+  ),
   //
   options: buildOptions(),
   showOptions: false,
@@ -99,6 +100,12 @@ export const DialerSlice = createSlice({
     },
     setContactQueue: (state, action) => {
       state.contactQueue = action.payload;
+
+      // Persist in local storage
+      localStorage.setItem(
+        "dialer__contactQueue",
+        JSON.stringify(action.payload)
+      );
     },
     setIsMuted: (state, action) => {
       state.muted = action.payload;
