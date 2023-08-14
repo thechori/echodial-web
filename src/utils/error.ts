@@ -10,13 +10,23 @@ export const extractErrorMessage = (
   error: unknown,
   message = "There was an error. Please try again later."
 ) => {
+  // Handle nothing
   if (error === null || error === undefined) return null;
+
+  // Axios errors
   if (error instanceof AxiosError) {
     return error.response?.data?.message || error.response?.data || message;
   }
+  // RTK Query errors
+  if (error && typeof error === "object" && "data" in error) {
+    return error.data;
+  }
+
+  // Generic TypeScript/JavaScript errors
   if (error instanceof Error) {
     return error.message;
   }
 
+  // Default
   return message;
 };
