@@ -4,11 +4,7 @@ import devices from "../../styles/devices";
 
 const SidebarStyled = styled.div`
   background: rgb(0, 17, 30);
-  background: linear-gradient(
-    90deg,
-    rgba(0, 17, 30, 1) 0%,
-    rgba(0, 22, 26, 1) 100%
-  );
+  background: linear-gradient(90deg, rgba(0, 17, 30, 1) 0%, #00153f 100%);
 
   color: white;
   position: sticky;
