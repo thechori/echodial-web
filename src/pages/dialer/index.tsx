@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Device } from "@twilio/voice-sdk";
+import { Call, Device } from "@twilio/voice-sdk";
 import {
   Button,
   Container,
@@ -30,10 +30,21 @@ import ContactQueue from "./ContactQueue";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
 import phoneFormatter from "../../utils/phone-formatter";
 import CallHistory from "./CallHistory";
+import {
+  TCall,
+  useAddCallMutation,
+  useUpdateCallViaTwilioCallSidMutation,
+} from "../../services/call";
+import { selectJwtDecoded } from "../../store/user/slice";
+import { extractErrorMessage } from "../../utils/error";
 
 function Dialer() {
   const dispatch = useAppDispatch();
+  const jwtDecoded = useAppSelector(selectJwtDecoded);
   const [callerIdItems, setCallerIdItems] = useState<SelectItem[]>([]);
+  const [addCall] = useAddCallMutation();
+  const [updateCall] = useUpdateCallViaTwilioCallSidMutation();
+
   const { call, device, token, fromNumber, contactQueue, activeContactIndex } =
     useAppSelector((state) => state.dialer);
 
@@ -101,39 +112,70 @@ function Dialer() {
       From: fromNumber,
     };
 
-    console.log("params", params);
-
     // Start Call #1
     const call = await device.connect({ params });
 
-    call.on("accept", () => {
+    call.on("accept", async (call: Call) => {
       dispatch(setStatus("accepted"));
       notifications.show({
         title: "Call update",
         message: "Accepted",
       });
+
+      const newCall: Partial<TCall> = {
+        user_id: jwtDecoded?.id,
+        lead_id: contactQueue[activeContactIndex].id,
+        twilio_call_sid: call.parameters["CallSid"],
+        from_number: fromNumber,
+        to_number: contactQueue[activeContactIndex].phone,
+        status: "Attempted",
+      };
+
+      try {
+        await addCall(newCall).unwrap();
+      } catch (e) {
+        notifications.show({
+          title: "Error",
+          message: extractErrorMessage(e),
+        });
+      }
+
+      notifications.show({ message: "New call registered in database" });
     });
 
     call.on("mute", (isMuted: boolean) => {
       dispatch(setIsMuted(isMuted));
     });
 
-    call.on("disconnect", () => {
+    call.on("disconnect", async (call: Call) => {
       dispatch(setIsMuted(false));
+      dispatch(setStatus("disconnected"));
+
+      try {
+        const callToUpdate: Partial<TCall> = {
+          twilio_call_sid: call.parameters["CallSid"],
+          status: "Disconnected",
+          // @ts-ignore
+          disconnected_at: new Date().toISOString(),
+        };
+        await updateCall(callToUpdate).unwrap();
+        notifications.show({
+          message: "Successfully updated call in database",
+        });
+      } catch (e) {
+        dispatch(setError(extractErrorMessage(e)));
+      }
     });
 
-    call.on("error", (error: unknown) => {
-      console.log("error", error);
+    call.on("error", async (e: unknown) => {
       notifications.show({
-        title: "Call update",
-        message: "There was an error. Please try again.",
+        title: "Call error",
+        message: extractErrorMessage(e),
       });
-      dispatch(setError("There was an error. Please try again."));
       dispatch(setActiveContactIndex(null));
       dispatch(setCall(null));
+      dispatch(setStatus("error"));
     });
-
-    dispatch(setCall(call));
   }
 
   // Initialize device once a token exists

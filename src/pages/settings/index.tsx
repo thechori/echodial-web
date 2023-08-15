@@ -50,7 +50,11 @@ function Settings() {
               <Group spacing="sm">
                 <TextInput miw={300} label="First name" value={firstName} />
                 <TextInput miw={300} label="Last name" value={lastName} />
-                <TextInput miw={300} label="Phone number" value={phone} />
+                <TextInput
+                  miw={300}
+                  label="Phone number"
+                  value={phone || "Error fetching phone number"}
+                />
 
                 <Button disabled>Update</Button>
               </Group>

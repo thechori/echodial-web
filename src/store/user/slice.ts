@@ -3,16 +3,22 @@ import jwt_decode from "jwt-decode";
 //
 import type { RootState } from "../";
 
-export type TJwtDecoded = {
+export type TUser = {
+  id: number;
   email: string;
   password_hash: string;
   first_name: string;
   last_name: string;
-  phone: string;
+  timezone: string | null;
+  phone: string | null;
   created_at: Date;
+  updated_at: Date;
+  approved_for_beta: boolean | null;
+};
+
+export type TJwtDecoded = TUser & {
   iat: number;
   exp: number;
-  approved_for_beta: boolean;
 };
 
 export type TUserState = {
@@ -33,6 +39,7 @@ export const UserSlice = createSlice({
       state.jwt = action.payload; // string
       const jwtDecoded = jwt_decode(action.payload) || null; //
       state.jwtDecoded = jwtDecoded as TJwtDecoded | null;
+      console.log("jwtDecoded", jwtDecoded);
 
       // Persist in local storage
       localStorage.setItem("jwt", action.payload);

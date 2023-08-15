@@ -2,12 +2,14 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export type TCall = {
   id: number;
+  twilio_call_sid: string;
   user_id: number;
   lead_id: number;
   duration_ms: number | null;
   notes: string | null;
   created_at: Date;
   updated_at: Date;
+  disconnected_at: Date | null;
   from_number: string;
   to_number: string;
   was_answered: boolean;
@@ -44,10 +46,13 @@ export const callApi = createApi({
       },
       invalidatesTags: ["Call"],
     }),
-    updateCall: builder.mutation<TCall, Partial<TCall>>({
+    updateCallViaTwilioCallSid: builder.mutation<
+      { message: string },
+      Partial<TCall>
+    >({
       query(call) {
         return {
-          url: `call/${call.id}`,
+          url: `call/twilio-call-sid/${call.twilio_call_sid}`,
           method: "PUT",
           body: call,
         };
@@ -68,5 +73,9 @@ export const callApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useAddCallMutation, useGetCallsQuery, useDeleteCallMutation } =
-  callApi;
+export const {
+  useAddCallMutation,
+  useUpdateCallViaTwilioCallSidMutation,
+  useGetCallsQuery,
+  useDeleteCallMutation,
+} = callApi;
