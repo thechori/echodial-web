@@ -13,9 +13,12 @@ import {
   IconCoin,
   IconArrowUpRight,
   IconArrowDownRight,
+  IconArrowRight,
   IconPhone,
   IconClock,
 } from "@tabler/icons-react";
+import { extractErrorMessage } from "../../utils/error";
+import { TMetricResolution } from "../../services/metric";
 
 const useStyles = createStyles((theme) => ({
   value: {
@@ -59,13 +62,38 @@ interface StatsGridProps {
     value: string;
     diff: number;
   }[];
+  error: unknown;
+  metricResolution: TMetricResolution;
 }
 
-function StatsGrid({ data }: StatsGridProps) {
+function StatsGrid({ data, error, metricResolution }: StatsGridProps) {
   const { classes } = useStyles();
+
+  function generateText() {
+    switch (metricResolution) {
+      case "day": {
+        return "Compared to yesterday";
+      }
+      case "week": {
+        return "Compared to last week";
+      }
+      case "month": {
+        return "Compared to last monthy";
+      }
+      default: {
+        return "";
+      }
+    }
+  }
+
   const stats = data.map((stat) => {
     const Icon = icons[stat.icon];
-    const DiffIcon = stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
+    const DiffIcon =
+      stat.diff === 0
+        ? IconArrowRight
+        : stat.diff > 0
+        ? IconArrowUpRight
+        : IconArrowDownRight;
 
     return (
       <Paper withBorder p="md" radius="md" key={stat.title}>
@@ -79,7 +107,7 @@ function StatsGrid({ data }: StatsGridProps) {
         <Group align="flex-end" spacing="xs" mt={25}>
           <Text className={classes.value}>{stat.value}</Text>
           <Text
-            color={stat.diff > 0 ? "teal" : "red"}
+            color={stat.diff === 0 ? "teal" : stat.diff > 0 ? "teal" : "red"}
             fz="sm"
             fw={500}
             className={classes.diff}
@@ -90,7 +118,11 @@ function StatsGrid({ data }: StatsGridProps) {
         </Group>
 
         <Text fz="xs" c="dimmed" mt={7}>
-          Compared to previous month
+          {generateText()}
+        </Text>
+
+        <Text fz="xs" c="red" mt={7}>
+          {extractErrorMessage(error)}
         </Text>
       </Paper>
     );

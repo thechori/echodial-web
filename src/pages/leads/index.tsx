@@ -5,6 +5,7 @@ import { ColDef } from "ag-grid-community";
 import { Box, Container, Flex, Text, Title } from "@mantine/core";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
+import { format } from "date-fns";
 //
 import LeadsStyled from "./Leads.styles";
 import UploadLeadsViaCsvModal from "./UploadLeadsViaCsvModal";
@@ -51,6 +52,7 @@ const colDefs: ColDef<TLead>[] = [
     headerName: "Created at",
     filter: true,
     resizable: true,
+    valueFormatter: (param) => format(new Date(param.value), "Pp"),
   },
 ];
 
