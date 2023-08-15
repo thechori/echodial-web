@@ -14,13 +14,13 @@ export const MetricSlice = createSlice({
   name: "metric",
   initialState,
   reducers: {
-    setResolution: (state, action) => {
+    setMetricResolution: (state, action) => {
       state.resolution = action.payload;
     },
   },
 });
 
-export const { setResolution } = MetricSlice.actions;
+export const { setMetricResolution } = MetricSlice.actions;
 
 export const selectMetricResolution = (state: RootState) =>
   state.metric.resolution;

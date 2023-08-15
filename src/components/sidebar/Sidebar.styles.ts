@@ -32,7 +32,7 @@ const SidebarStyled = styled.div`
   }
 
   .desktop {
-    width: 200px;
+    width: 180px;
     height: 100vh;
 
     display: none;
@@ -45,7 +45,7 @@ const SidebarStyled = styled.div`
   .header {
     display: flex;
     place-content: center;
-    padding: 2rem;
+    padding: 1.75rem;
 
     @media ${devices.tablet} {
       border-bottom: 1px solid white;

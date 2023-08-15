@@ -59,11 +59,21 @@ function PhoneNumbers() {
 
       <Container fluid py="lg">
         <Grid>
-          <Grid.Col xs={12} sm={12}>
+          <Grid.Col xs={12} sm={12} md={6}>
             <Card shadow="md" withBorder radius="md" m="lg">
-              <Title order={2} mb={16}>
-                Personal
-              </Title>
+              <Flex align="center" justify="space-between">
+                <Title order={3} mb={16}>
+                  Personal
+                </Title>
+                <Button
+                  loading={isLoadingCallerIds}
+                  onClick={() => getCallerIds()}
+                  leftIcon={<BiRefresh />}
+                  variant="outline"
+                >
+                  Refresh
+                </Button>
+              </Flex>
               <Text>Your personal numbers verified with us</Text>
 
               <Box p="lg">
@@ -74,6 +84,7 @@ function PhoneNumbers() {
                       py={4}
                       align="center"
                       justify="space-between"
+                      w={250}
                     >
                       <Flex align="center">
                         <ThemeIcon color="teal" size={24} radius="xl">
@@ -105,14 +116,6 @@ function PhoneNumbers() {
                 <Button onClick={open} leftIcon={<BiPlus />}>
                   Add new
                 </Button>
-
-                <Button
-                  loading={isLoadingCallerIds}
-                  onClick={() => getCallerIds()}
-                  leftIcon={<BiRefresh />}
-                >
-                  Refresh
-                </Button>
               </Group>
             </Card>
           </Grid.Col>
@@ -125,7 +128,7 @@ function PhoneNumbers() {
               radius="md"
               m="lg"
             >
-              <Title order={2} mb={16}>
+              <Title order={3} mb={16}>
                 {APP_NAME}
               </Title>
               <Text>Phone numbers purchased through subscription</Text>

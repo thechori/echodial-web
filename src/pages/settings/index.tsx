@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { IconCircleCheck } from "@tabler/icons-react";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -12,17 +13,26 @@ import {
 import routes from "../../configs/routes";
 import SettingsStyled from "./Settings.styles";
 import {
+  Anchor,
+  Box,
   Button,
   Card,
   Container,
+  Flex,
   Grid,
   Group,
+  List,
   Space,
+  Text,
   TextInput,
+  ThemeIcon,
   Title,
 } from "@mantine/core";
 import SubscriptionItem from "./SubscriptionItem";
-import { basic, pro } from "./settings-data";
+import { pro } from "./settings-data";
+import phoneFormatter from "../../utils/phone-formatter";
+
+const phoneNumberSupport = "+18328638635";
 
 function Settings() {
   const dispatch = useAppDispatch();
@@ -46,7 +56,7 @@ function Settings() {
         <Grid>
           <Grid.Col xs={12} sm={6}>
             <Card withBorder shadow="md" m="sm">
-              <Title order={2}>Account</Title>
+              <Title order={3}>Account</Title>
               <Group spacing="sm">
                 <TextInput miw={300} label="First name" value={firstName} />
                 <TextInput miw={300} label="Last name" value={lastName} />
@@ -66,7 +76,7 @@ function Settings() {
           </Grid.Col>
           <Grid.Col xs={12} sm={6}>
             <Card withBorder shadow="md" m="sm">
-              <Title order={2}>Security</Title>
+              <Title order={3}>Security</Title>
               <Group>
                 <TextInput
                   miw={300}
@@ -84,19 +94,11 @@ function Settings() {
         </Grid>
 
         <Card withBorder shadow="md" m="sm">
-          <Title order={2} mb="sm">
+          <Title order={3} mb="sm">
             Subscription
           </Title>
 
           <Grid>
-            <Grid.Col xs={6} sm={6}>
-              <SubscriptionItem
-                data={basic}
-                selected={plan === "basic"}
-                onSelect={() => setPlan("basic")}
-              />
-            </Grid.Col>
-
             <Grid.Col xs={6} sm={6}>
               <SubscriptionItem
                 data={pro}
@@ -106,13 +108,51 @@ function Settings() {
             </Grid.Col>
           </Grid>
 
-          <Button size="lg" variant="gradient" disabled>
-            Update
-          </Button>
+          <Flex align="center" justify="space-between">
+            <Button size="lg" mt="md" variant="gradient" disabled>
+              Update
+            </Button>
+            <Button
+              color="red"
+              onClick={() => alert("Please email us to complete this step")}
+            >
+              Cancel subscription
+            </Button>
+          </Flex>
         </Card>
 
-        <Card withBorder shadow="md" color="red">
-          <Title order={2} mb="sm">
+        <Card withBorder shadow="md" m="sm">
+          <Title order={3}>Support</Title>
+          <Box p="md">
+            <Text>Need help with something? Contact our support team:</Text>
+            <List
+              spacing="xs"
+              size="sm"
+              p="md"
+              center
+              icon={
+                <ThemeIcon color="teal" size={24} radius="xl">
+                  <IconCircleCheck size="1rem" />
+                </ThemeIcon>
+              }
+            >
+              <List.Item>
+                <Anchor href="mailto:support@l34ds.net">
+                  support@l34ds.net
+                </Anchor>
+              </List.Item>
+              <List.Item>
+                <Anchor mr="sm" href={`tel:${phoneNumberSupport}`}>
+                  {phoneFormatter(phoneNumberSupport)}
+                </Anchor>
+                (Monday-Friday 8:00am CST - 5:00pm CST)
+              </List.Item>
+            </List>
+          </Box>
+        </Card>
+
+        <Card withBorder shadow="md" color="red" m="sm">
+          <Title order={3} mb="sm">
             Danger zone
           </Title>
           <Space h="md" />

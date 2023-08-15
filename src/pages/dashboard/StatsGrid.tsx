@@ -34,10 +34,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   icon: {
-    color:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[3]
-        : theme.colors.gray[4],
+    color: theme.colors.yellow[6],
   },
 
   title: {
@@ -78,7 +75,7 @@ function StatsGrid({ data, error, metricResolution }: StatsGridProps) {
         return "Compared to last week";
       }
       case "month": {
-        return "Compared to last monthy";
+        return "Compared to last month";
       }
       default: {
         return "";

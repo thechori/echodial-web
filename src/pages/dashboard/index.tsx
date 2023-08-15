@@ -1,12 +1,17 @@
-import { Box, Card, Container, Grid, Title } from "@mantine/core";
+import { Box, Card, Container, Flex, Grid, Select, Title } from "@mantine/core";
 import DashboardStyled from "./Dashboard.styles";
 import StatsGrid from "./StatsGrid";
 import LineChartRechart from "./LineChartRechart";
 import { useGetDashboardMetricsQuery } from "../../services/metric";
-import { useAppSelector } from "../../store/hooks";
-import { selectMetricResolution } from "../../store/metric/slice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  selectMetricResolution,
+  setMetricResolution,
+} from "../../store/metric/slice";
+import deltaPercentageCalculator from "../../utils/delta-percentage-calculator";
 
 function Dashboard() {
+  const dispatch = useAppDispatch();
   const metricResolution = useAppSelector(selectMetricResolution);
   const { data, isLoading, error } =
     useGetDashboardMetricsQuery(metricResolution);
@@ -16,49 +21,109 @@ function Dashboard() {
       <Container fluid py="lg">
         <Grid>
           <Grid.Col>
+            <Flex align="center">
+              <Select
+                w={120}
+                data={[
+                  {
+                    value: "day",
+                    label: "Day",
+                  },
+                  {
+                    value: "week",
+                    label: "Week",
+                  },
+                  {
+                    value: "month",
+                    label: "Month",
+                  },
+                ]}
+                value={metricResolution}
+                onChange={(value) => dispatch(setMetricResolution(value))}
+              />
+            </Flex>
+          </Grid.Col>
+          <Grid.Col>
             <StatsGrid
               metricResolution={metricResolution}
               error={error}
               data={[
                 {
-                  title: "Leads today",
-                  diff: 0,
+                  title:
+                    metricResolution === "day"
+                      ? "Leads today"
+                      : metricResolution === "week"
+                      ? "Leads this week"
+                      : "Leads this month",
+                  diff:
+                    data &&
+                    data.leadsCreatedCurrentPeriod &&
+                    data.leadsCreatedPreviousPeriod
+                      ? deltaPercentageCalculator(
+                          parseInt(data.leadsCreatedPreviousPeriod),
+                          parseInt(data.leadsCreatedCurrentPeriod)
+                        )
+                      : 0,
                   icon: "user",
                   value: isLoading
                     ? "..."
-                    : data && data.leadsCreatedToday !== null
-                    ? data.leadsCreatedToday
-                    : "",
+                    : data && data.leadsCreatedCurrentPeriod !== null
+                    ? data.leadsCreatedCurrentPeriod
+                    : "0",
                 },
                 {
                   title: "CALLS MADE",
-                  diff: 0,
+                  diff:
+                    data &&
+                    data.callsMadeCurrentPeriod &&
+                    data.callsMadePreviousPeriod
+                      ? deltaPercentageCalculator(
+                          parseInt(data.callsMadePreviousPeriod),
+                          parseInt(data.callsMadeCurrentPeriod)
+                        )
+                      : 0,
                   icon: "phone",
                   value: isLoading
                     ? "..."
-                    : data && data.callsMadeToday !== null
-                    ? data.callsMadeToday
-                    : "",
+                    : data && data.callsMadeCurrentPeriod !== null
+                    ? data.callsMadeCurrentPeriod
+                    : "0",
                 },
                 {
                   title: "CALLS ANSWERED",
-                  diff: 0,
+                  diff:
+                    data &&
+                    data.callsAnsweredCurrentPeriod &&
+                    data.callsAnsweredPreviousPeriod
+                      ? deltaPercentageCalculator(
+                          parseInt(data.callsAnsweredPreviousPeriod),
+                          parseInt(data.callsAnsweredCurrentPeriod)
+                        )
+                      : 0,
                   icon: "phone",
                   value: isLoading
                     ? "..."
-                    : data && data.callsAnsweredToday !== null
-                    ? data.callsAnsweredToday
-                    : "",
+                    : data && data.callsAnsweredCurrentPeriod !== null
+                    ? data.callsAnsweredCurrentPeriod
+                    : "0",
                 },
                 {
                   title: "AVERAGE CALL DURATION",
-                  diff: 0,
+                  diff:
+                    data &&
+                    data.averageCallDurationCurrentPeriod &&
+                    data.averageCallDurationPreviousPeriod
+                      ? deltaPercentageCalculator(
+                          parseInt(data.averageCallDurationPreviousPeriod),
+                          parseInt(data.averageCallDurationCurrentPeriod)
+                        )
+                      : 0,
                   icon: "clock",
                   value: isLoading
                     ? "..."
-                    : data && data.averageCallDurationToday !== null
-                    ? data.averageCallDurationToday
-                    : "",
+                    : data && data.averageCallDurationCurrentPeriod !== null
+                    ? data.averageCallDurationCurrentPeriod
+                    : "0",
                 },
               ]}
             />
