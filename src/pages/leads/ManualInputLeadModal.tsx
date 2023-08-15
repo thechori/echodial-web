@@ -68,8 +68,13 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
     }
   }
 
+  function handleClose() {
+    form.reset();
+    close();
+  }
+
   return (
-    <Modal opened={opened} onClose={close} title="Create new lead">
+    <Modal opened={opened} onClose={handleClose} title="Create new lead">
       <Modal.Body>
         <Text mb="md">Manually create your new Lead via the form below:</Text>
 

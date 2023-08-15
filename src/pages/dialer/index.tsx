@@ -101,6 +101,8 @@ function Dialer() {
       From: fromNumber,
     };
 
+    console.log("params", params);
+
     // Start Call #1
     const call = await device.connect({ params });
 

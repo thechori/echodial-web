@@ -1,6 +1,6 @@
 import { FaPhone } from "react-icons/fa";
 import { AiFillPlayCircle } from "react-icons/ai";
-import { FaRegStopCircle } from "react-icons/fa";
+import { FaRegStopCircle, FaUndo } from "react-icons/fa";
 import { BiImport, BiShow } from "react-icons/bi";
 import { IoIosSettings } from "react-icons/io";
 import {
@@ -20,17 +20,22 @@ import phoneFormatter from "../../utils/phone-formatter";
 import {
   setActiveContactIndex,
   setCall,
+  setContactQueue,
   setError,
   setOptions,
   setShowOptions,
 } from "../../store/dialer/slice";
 import ContactQueueStyled from "./ContactQueue.styles";
+import { useGetLeadsQuery } from "../../services/lead";
 
 function ContactQueue() {
   const dispatch = useAppDispatch();
+
   const { contactQueue, activeContactIndex, call, options } = useAppSelector(
     (state) => state.dialer
   );
+
+  const { data: leads } = useGetLeadsQuery();
 
   function updateActiveContactIndex(index: number) {
     dispatch(setActiveContactIndex(index));
@@ -72,7 +77,7 @@ function ContactQueue() {
             <Group spacing="sm">
               <Avatar className="user-avatar" size={30} radius={30} />
               <Text fz="sm" fw={500}>
-                {c.firstName} {c.lastName}
+                {c.first_name} {c.last_name}
               </Text>
             </Group>
           </td>
@@ -100,6 +105,14 @@ function ContactQueue() {
     dispatch(setActiveContactIndex(null));
   }
 
+  function importLeadsIntoQueue() {
+    dispatch(setContactQueue(leads));
+  }
+
+  function clearLeadsFromQueue() {
+    dispatch(setContactQueue([]));
+  }
+
   return (
     <ContactQueueStyled>
       <Flex justify="space-between" align="center">
@@ -120,9 +133,18 @@ function ContactQueue() {
               </div>
             </Tooltip>
           )}
+          <Tooltip label="Clear leads from queue">
+            <div>
+              <FaUndo
+                size="1.2rem"
+                className="hoverable"
+                onClick={clearLeadsFromQueue}
+              />
+            </div>
+          </Tooltip>
           <Tooltip label="Import leads into queue">
             <div>
-              <BiImport className="hoverable" />
+              <BiImport className="hoverable" onClick={importLeadsIntoQueue} />
             </div>
           </Tooltip>
           <Tooltip label="Call options">

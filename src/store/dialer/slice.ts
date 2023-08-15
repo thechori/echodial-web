@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Device, Call } from "@twilio/voice-sdk";
 //
 import numbers from "../../configs/numbers";
-import { TContact } from "../contacts/types";
 import { RootState } from "..";
+import { TLead } from "../../services/lead";
 
 const buildOptions = (): TDialerOptions => {
   // Check for local storage
@@ -38,7 +38,7 @@ interface IDialerState {
   identity: null | string;
   fromNumber: string;
   activeContactIndex: null | number;
-  contactQueue: TContact[];
+  contactQueue: TLead[];
   options: TDialerOptions;
   showOptions: boolean;
 }
@@ -157,7 +157,7 @@ export const selectActivePhoneNumber = (state: RootState) => {
 export const selectActiveFullName = (state: RootState) => {
   const { activeContactIndex, contactQueue } = state.dialer;
   return activeContactIndex !== null
-    ? `${contactQueue[activeContactIndex].firstName} ${contactQueue[activeContactIndex].lastName}`
+    ? `${contactQueue[activeContactIndex].first_name} ${contactQueue[activeContactIndex].last_name}`
     : undefined;
 };
 

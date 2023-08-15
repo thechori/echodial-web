@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { Button, Group, Modal, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
-import { Lead, useDeleteMultipleLeadsMutation } from "../../services/lead";
+import { TLead, useDeleteMultipleLeadsMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
 
 type TDeleteLeadConfirmationModalProps = {
   opened: boolean;
   close: () => void;
-  rowsSelected: Lead[];
+  rowsSelected: TLead[];
 };
 
 const DeleteLeadConfirmationModal = ({
@@ -22,8 +22,7 @@ const DeleteLeadConfirmationModal = ({
   async function handleDeleteLeads() {
     const ids = rowsSelected.map((lead) => lead.id);
     try {
-      const res = await deleteLeads(ids).unwrap();
-      console.log("res", res);
+      await deleteLeads(ids).unwrap();
       notifications.show({
         title: "Success",
         message: "Deleted leads",

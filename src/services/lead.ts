@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export type Lead = {
+export type TLead = {
   id: number;
   first_name: string | null;
   last_name: string | null;
@@ -32,15 +32,15 @@ export const leadApi = createApi({
   }),
   tagTypes: ["Lead"],
   endpoints: (builder) => ({
-    getLeads: builder.query<Lead[], void>({
+    getLeads: builder.query<TLead[], void>({
       query: () => "lead",
       providesTags: ["Lead"],
     }),
-    getLeadById: builder.query<Lead, string>({
+    getLeadById: builder.query<TLead, string>({
       query: (id) => `lead/${id}`,
       providesTags: ["Lead"],
     }),
-    addLead: builder.mutation<Lead, Partial<Lead>>({
+    addLead: builder.mutation<TLead, Partial<TLead>>({
       query(body) {
         return {
           url: `lead`,
@@ -50,7 +50,7 @@ export const leadApi = createApi({
       },
       invalidatesTags: ["Lead"],
     }),
-    addLeadsViaCsv: builder.mutation<Lead[], any>({
+    addLeadsViaCsv: builder.mutation<TLead[], any>({
       query(body) {
         return {
           url: `lead/csv`,
@@ -60,7 +60,7 @@ export const leadApi = createApi({
       },
       invalidatesTags: ["Lead"],
     }),
-    updateLead: builder.mutation<Lead, Partial<Lead>>({
+    updateLead: builder.mutation<TLead, Partial<TLead>>({
       query(data) {
         const { id, ...body } = data;
         return {

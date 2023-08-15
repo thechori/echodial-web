@@ -26,8 +26,14 @@ const NewCallerIdModal = ({ opened, close }: TNewCallerIdModalProps) => {
     }
   }
 
+  function handleClose() {
+    setPhoneNumber("");
+    setAgree(false);
+    close();
+  }
+
   return (
-    <Modal opened={opened} onClose={close} title="Add Caller ID">
+    <Modal opened={opened} onClose={handleClose} title="Add Caller ID">
       <Modal.Body>
         <Text mb="md">
           In order to verify that you own this number, we'll send you a text
