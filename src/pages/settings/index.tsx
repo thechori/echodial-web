@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconCircleCheck } from "@tabler/icons-react";
+import { AiOutlineQuestionCircle } from "react-icons/ai";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -20,25 +20,22 @@ import {
   Container,
   Flex,
   Grid,
-  Group,
   List,
-  Space,
   Text,
   TextInput,
   ThemeIcon,
   Title,
+  Tooltip,
 } from "@mantine/core";
-import SubscriptionItem from "./SubscriptionItem";
-import { pro } from "./settings-data";
+//
 import phoneFormatter from "../../utils/phone-formatter";
+import { APP_NAME } from "../../configs/names";
 
 const phoneNumberSupport = "+18328638635";
 
 function Settings() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  const [plan, setPlan] = useState<"pro" | "basic">("pro");
 
   const email = useAppSelector(selectEmail);
   const phone = useAppSelector(selectPhone);
@@ -56,75 +53,88 @@ function Settings() {
         <Grid>
           <Grid.Col xs={12} sm={6}>
             <Card withBorder shadow="md" m="sm">
-              <Title order={3}>Account</Title>
-              <Group spacing="sm">
-                <TextInput miw={300} label="First name" value={firstName} />
-                <TextInput miw={300} label="Last name" value={lastName} />
+              <Flex align="center" justify="space-between">
+                <Title order={3}>Account</Title>
+                <Tooltip
+                  className="hoverable"
+                  label="This feature is currently under construction. Check back for an update soon!"
+                >
+                  <div>
+                    <AiOutlineQuestionCircle color="red" fontSize="1.4rem" />
+                  </div>
+                </Tooltip>
+              </Flex>
+              <Box>
                 <TextInput
-                  miw={300}
-                  label="Phone number"
-                  value={phone || "Error fetching phone number"}
+                  mt="sm"
+                  label="First name"
+                  value={firstName}
+                  readOnly
+                  disabled
                 />
-
+                <TextInput
+                  mt="sm"
+                  label="Last name"
+                  value={lastName}
+                  readOnly
+                  disabled
+                />
+                <TextInput
+                  mt="sm"
+                  label="Phone number"
+                  value={phone || undefined}
+                  readOnly
+                  disabled
+                />
+              </Box>
+              <Flex mt="md" align="center" justify="space-between">
                 <Button disabled>Update</Button>
-              </Group>
-              <Space h="md" />
-              <Button color="red" onClick={handleSignOut}>
-                Sign out
-              </Button>
+                <Button color="red" onClick={handleSignOut}>
+                  Sign out
+                </Button>
+              </Flex>
             </Card>
           </Grid.Col>
           <Grid.Col xs={12} sm={6}>
             <Card withBorder shadow="md" m="sm">
-              <Title order={3}>Security</Title>
-              <Group>
+              <Flex align="center" justify="space-between">
+                <Title order={3}>Security</Title>
+                <Tooltip
+                  className="hoverable"
+                  label="This feature is currently under construction. Check back for an update soon!"
+                >
+                  <div>
+                    <AiOutlineQuestionCircle color="red" fontSize="1.4rem" />
+                  </div>
+                </Tooltip>
+              </Flex>
+              <Box>
                 <TextInput
-                  miw={300}
+                  mt="sm"
                   label="Email"
                   readOnly
                   value={email}
                   disabled
                 />
-                <TextInput miw={300} label="New password" />
-                <TextInput miw={300} label="Confirm new password" />
+                <TextInput mt="sm" label="New password" readOnly disabled />
+                <TextInput
+                  mt="sm"
+                  label="Confirm new password"
+                  readOnly
+                  disabled
+                />
+              </Box>
+              <Box mt="md">
                 <Button disabled>Update</Button>
-              </Group>
+              </Box>
             </Card>
           </Grid.Col>
         </Grid>
 
         <Card withBorder shadow="md" m="sm">
-          <Title order={3} mb="sm">
-            Subscription
-          </Title>
-
-          <Grid>
-            <Grid.Col xs={6} sm={6}>
-              <SubscriptionItem
-                data={pro}
-                selected={plan === "pro"}
-                onSelect={() => setPlan("pro")}
-              />
-            </Grid.Col>
-          </Grid>
-
-          <Flex align="center" justify="space-between">
-            <Button size="lg" mt="md" variant="gradient" disabled>
-              Update
-            </Button>
-            <Button
-              color="red"
-              onClick={() => alert("Please email us to complete this step")}
-            >
-              Cancel subscription
-            </Button>
-          </Flex>
-        </Card>
-
-        <Card withBorder shadow="md" m="sm">
           <Title order={3}>Support</Title>
-          <Box p="md">
-            <Text>Need help with something? Contact our support team:</Text>
+          <Box py="md">
+            <Text>Need help with something? Contact our support team.</Text>
             <List
               spacing="xs"
               size="sm"
@@ -151,11 +161,35 @@ function Settings() {
           </Box>
         </Card>
 
+        <Card withBorder shadow="md" m="sm">
+          <Title order={3}>Subscription</Title>
+
+          <Box py="md">
+            <Text>
+              Need to pause your account? Put your account on hold to keep your
+              data for 60 days, free of charge.
+            </Text>
+            <Text italic size="sm">
+              Note: You can only do this once per year
+            </Text>
+          </Box>
+
+          <Flex align="center" justify="space-between">
+            <Button
+              color="red"
+              variant="outline"
+              onClick={() => alert("Please email us to complete this step")}
+            >
+              Pause subscription
+            </Button>
+          </Flex>
+        </Card>
+
         <Card withBorder shadow="md" color="red" m="sm">
-          <Title order={3} mb="sm">
-            Danger zone
-          </Title>
-          <Space h="md" />
+          <Title order={3}>Danger zone</Title>
+          <Text py="md">
+            Not happy with {APP_NAME} any more? Feel free to cancel at any time.
+          </Text>
           <Button color="red" onClick={handleSignOut}>
             Delete account
           </Button>

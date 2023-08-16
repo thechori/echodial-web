@@ -131,7 +131,7 @@ function Dashboard() {
 
           <Grid.Col xs={12}>
             <Card withBorder shadow="md" py="md">
-              <Title order={2} mb="md">
+              <Title order={3} mb="md">
                 Activity
               </Title>
               <Box h={400}>
