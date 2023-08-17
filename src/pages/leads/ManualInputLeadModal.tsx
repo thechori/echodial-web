@@ -46,7 +46,7 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
     } = form.values;
 
     try {
-      const a = await addLead({
+      await addLead({
         email,
         first_name,
         last_name,
