@@ -8,6 +8,9 @@ import {
   Center,
   rem,
   Text,
+  Box,
+  Flex,
+  Title,
 } from "@mantine/core";
 import {
   IconSelector,
@@ -122,67 +125,75 @@ export function CallHistory() {
   ));
 
   return (
-    <ScrollArea>
-      <Table
-        horizontalSpacing="md"
-        verticalSpacing="xs"
-        miw={700}
-        sx={{ tableLayout: "fixed" }}
-      >
-        <thead>
-          <tr>
-            <Th
-              sorted={sortBy === "created_at"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("created_at")}
-            >
-              Date
-            </Th>
-            <Th
-              sorted={sortBy === "from_number"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("from_number")}
-            >
-              From
-            </Th>
-            <Th
-              sorted={sortBy === "to_number"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("to_number")}
-            >
-              To
-            </Th>
-            <Th
-              sorted={sortBy === "status"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("status")}
-            >
-              Status
-            </Th>
-            <Th
-              sorted={sortBy === "duration_ms"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("duration_ms")}
-            >
-              Duration
-            </Th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.length > 0 ? (
-            rows
-          ) : (
+    <Box>
+      <Flex justify="space-between" align="center">
+        <Title order={2} mb={16}>
+          Call history
+        </Title>
+      </Flex>
+
+      <ScrollArea h={400}>
+        <Table
+          horizontalSpacing="md"
+          verticalSpacing="xs"
+          miw={700}
+          sx={{ tableLayout: "fixed" }}
+        >
+          <thead>
             <tr>
-              <td colSpan={Object.keys(calls ? calls[0] : {}).length}>
-                <Text weight={500} align="center">
-                  Nothing found
-                </Text>
-              </td>
+              <Th
+                sorted={sortBy === "created_at"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("created_at")}
+              >
+                Date
+              </Th>
+              <Th
+                sorted={sortBy === "from_number"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("from_number")}
+              >
+                From
+              </Th>
+              <Th
+                sorted={sortBy === "to_number"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("to_number")}
+              >
+                To
+              </Th>
+              <Th
+                sorted={sortBy === "status"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("status")}
+              >
+                Status
+              </Th>
+              <Th
+                sorted={sortBy === "duration_ms"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("duration_ms")}
+              >
+                Duration
+              </Th>
             </tr>
-          )}
-        </tbody>
-      </Table>
-    </ScrollArea>
+          </thead>
+          <tbody>
+            {rows.length > 0 ? (
+              rows
+            ) : (
+              <tr>
+                <td colSpan={Object.keys(calls ? calls[0] : {}).length}>
+                  <Text weight={500} align="center">
+                    Nothing found
+                  </Text>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </ScrollArea>
+    </Box>
   );
 }
 

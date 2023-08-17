@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from "@mantine/core";
 import { Box, Flex, Text } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import {
   AiFillPlayCircle,
   AiFillStepForward,
@@ -26,13 +27,29 @@ function AlphaDialer() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { call, status, muted, activeContactIndex, options } = useAppSelector(
-    (state) => state.dialer
-  );
+  const { call, status, muted, activeContactIndex, options, contactQueue } =
+    useAppSelector((state) => state.dialer);
 
   const phoneNumber = useAppSelector(selectActivePhoneNumber);
   const fullName = useAppSelector(selectActiveFullName);
   const showAlphaDialer = useAppSelector(selectShowAlphaDialer);
+
+  function handleNextLead() {
+    // Check for null active index
+    if (activeContactIndex === null) {
+      return notifications.show({
+        message: "Please select a lead before attempting to go to the next.",
+      });
+    }
+
+    // Check if we're at the last index of the queue
+    if (activeContactIndex === contactQueue.length - 1) {
+      // Reset to first index
+      dispatch(setActiveContactIndex(0));
+    } else {
+      dispatch(setActiveContactIndex(activeContactIndex + 1));
+    }
+  }
 
   if (!showAlphaDialer) return null;
 
@@ -122,7 +139,11 @@ function AlphaDialer() {
 
               <Tooltip label="Skip to next Lead">
                 <div>
-                  <AiFillStepForward fontSize="2.5rem" className="hoverable" />
+                  <AiFillStepForward
+                    fontSize="2.5rem"
+                    className="hoverable"
+                    onClick={handleNextLead}
+                  />
                 </div>
               </Tooltip>
             </div>

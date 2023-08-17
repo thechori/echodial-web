@@ -117,7 +117,7 @@ function ContactQueue() {
     <ContactQueueStyled>
       <Flex justify="space-between" align="center">
         <Title order={2} mb={16}>
-          Call Queue
+          Call queue
         </Title>
 
         <Flex className="call-buttons" align="center">
