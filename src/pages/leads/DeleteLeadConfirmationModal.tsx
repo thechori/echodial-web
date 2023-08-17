@@ -29,7 +29,6 @@ const DeleteLeadConfirmationModal = ({
       });
       close();
     } catch (e) {
-      console.log("errrr", e);
       setError(extractErrorMessage(e));
     }
   }

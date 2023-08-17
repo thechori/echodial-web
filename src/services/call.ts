@@ -30,6 +30,7 @@ export const callApi = createApi({
       }
     },
   }),
+
   tagTypes: ["Call"],
   endpoints: (builder) => ({
     getCalls: builder.query<TCall[], void>({

@@ -39,7 +39,6 @@ export const UserSlice = createSlice({
       state.jwt = action.payload; // string
       const jwtDecoded = jwt_decode(action.payload) || null; //
       state.jwtDecoded = jwtDecoded as TJwtDecoded | null;
-      console.log("jwtDecoded", jwtDecoded);
 
       // Persist in local storage
       localStorage.setItem("jwt", action.payload);

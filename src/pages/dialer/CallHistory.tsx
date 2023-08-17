@@ -1,41 +1,4 @@
-import { TCall, useGetCallsQuery } from "../../services/call";
-import CallHistoryStyled from "./CallHistory.styles";
-import { extractErrorMessage } from "../../utils/error";
-import phoneFormatter from "../../utils/phone-formatter";
-
-// const CallHistory = () => {
-//   const { data: calls, error, isLoading } = useGetCallsQuery();
-
-//   return (
-//     <CallHistoryStyled>
-//       <Title order={2}>Call history</Title>
-
-//       <Box p="md">
-//         {isLoading ? (
-//           <Text>Loading...</Text>
-//         ) : error ? (
-//           <Text>{extractErrorMessage(error)}</Text>
-//         ) : calls && calls.length ? (
-//           <List p="md">
-//             {calls.map((c) => (
-//               <List.Item key={c.id}>
-//                 Lead #{c.lead_id} .. From: {phoneFormatter(c.from_number)} ..
-//                 To: {phoneFormatter(c.to_number)} (
-//                 {new Date(c.created_at).toDateString()})
-//               </List.Item>
-//             ))}
-//           </List>
-//         ) : (
-//           <Text>No calls found</Text>
-//         )}
-//       </Box>
-//     </CallHistoryStyled>
-//   );
-// };
-
-// export default CallHistory;
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   createStyles,
   Table,
@@ -43,17 +6,16 @@ import {
   UnstyledButton,
   Group,
   Center,
-  TextInput,
   rem,
   Text,
 } from "@mantine/core";
-import { keys } from "@mantine/utils";
 import {
   IconSelector,
   IconChevronDown,
   IconChevronUp,
-  IconSearch,
 } from "@tabler/icons-react";
+//
+import { TCall, useGetCallsQuery } from "../../services/call";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -78,10 +40,6 @@ const useStyles = createStyles((theme) => ({
     borderRadius: rem(21),
   },
 }));
-
-interface TableSortProps {
-  data: TCall[];
-}
 
 interface ThProps {
   children: React.ReactNode;
@@ -115,43 +73,26 @@ function Th({ children, reversed, sorted, onSort }: ThProps) {
   );
 }
 
-function filterData(data: TCall[], search: string) {
-  const query = search.toLowerCase().trim();
-  return data.filter((item) =>
-    keys(data[0]).some((key) => {
-      if (!item || key === null || item[key] === null) return false;
+function sortData(
+  data: TCall[],
+  payload: { sortBy: keyof TCall | null; reversed: boolean }
+) {
+  const { sortBy } = payload;
 
-      // item[key].toLowerCase().includes(query)
-    })
-  );
+  return [...data].sort((a, b) => {
+    if (payload.reversed) {
+      // @ts-ignore
+      return b[sortBy].localeCompare(a[sortBy]);
+    }
+
+    // @ts-ignore
+    return a[sortBy].localeCompare(b[sortBy]);
+  });
 }
 
-// function sortData(
-//   data: TCall[],
-//   payload: { sortBy: keyof TCall | null; reversed: boolean; search: string }
-// ) {
-//   const { sortBy } = payload;
-
-//   if (!sortBy) {
-//     return filterData(data, payload.search);
-//   }
-
-//   return filterData(
-//     [...data].sort((a, b) => {
-//       if (payload.reversed) {
-//         // return b[sortBy].localeCompare(a[sortBy]);
-//       }
-
-//       return a[sortBy].localeCompare(b[sortBy]);
-//     }),
-//     payload.search
-//   );
-// }
-
 export function CallHistory() {
-  const { data } = useGetCallsQuery();
-  const [search, setSearch] = useState("");
-  const [sortedData, setSortedData] = useState(data);
+  const { data: calls } = useGetCallsQuery();
+  const [sortedData, setSortedData] = useState(calls || []);
   const [sortBy, setSortBy] = useState<keyof TCall | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
@@ -159,36 +100,27 @@ export function CallHistory() {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
     setSortBy(field);
-    // setSortedData(sortData(data, { sortBy: field, reversed, search }));
+    setSortedData(sortData(calls || [], { sortBy: field, reversed }));
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.currentTarget;
-    setSearch(value);
-    // setSortedData();
-    // sortData(data, { sortBy, reversed: reverseSortDirection, search: value })
-  };
+  useEffect(() => {
+    if (calls) {
+      setSortedData(calls);
+    }
+  }, [calls]);
 
-  // const rows = sortedData.map((row) => (
-  //   <tr key={row.id}>
-  //     <td>{row.lead_id}</td>
-  //     <td>{row.from_number}</td>
-  //     <td>{row.to_number}</td>
-  //     <td>{row.status}</td>
-  //     <td>{row.duration_ms}</td>
-  //     <td>{new Date(row.created_at).toDateString()}</td>
-  //   </tr>
-  // ));
+  const rows = sortedData.map((row) => (
+    <tr key={row.id}>
+      <td>{new Date(row.created_at).toDateString()}</td>
+      <td>{row.from_number}</td>
+      <td>{row.to_number}</td>
+      <td>{row.status}</td>
+      <td>{row.duration_ms}</td>
+    </tr>
+  ));
 
   return (
     <ScrollArea>
-      <TextInput
-        placeholder="Search by any field"
-        mb="md"
-        icon={<IconSearch size="0.9rem" stroke={1.5} />}
-        value={search}
-        onChange={handleSearchChange}
-      />
       <Table
         horizontalSpacing="md"
         verticalSpacing="xs"
@@ -198,11 +130,11 @@ export function CallHistory() {
         <thead>
           <tr>
             <Th
-              sorted={sortBy === "lead_id"}
+              sorted={sortBy === "created_at"}
               reversed={reverseSortDirection}
-              onSort={() => setSorting("lead_id")}
+              onSort={() => setSorting("created_at")}
             >
-              Lead ID
+              Date
             </Th>
             <Th
               sorted={sortBy === "from_number"}
@@ -232,28 +164,21 @@ export function CallHistory() {
             >
               Duration
             </Th>
-            <Th
-              sorted={sortBy === "created_at"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("created_at")}
-            >
-              Date
-            </Th>
           </tr>
         </thead>
-        {/* <tbody>
+        <tbody>
           {rows.length > 0 ? (
             rows
           ) : (
             <tr>
-              <td colSpan={Object.keys(data[0]).length}>
+              <td colSpan={Object.keys(calls ? calls[0] : {}).length}>
                 <Text weight={500} align="center">
                   Nothing found
                 </Text>
               </td>
             </tr>
           )}
-        </tbody> */}
+        </tbody>
       </Table>
     </ScrollArea>
   );

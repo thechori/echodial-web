@@ -9,8 +9,6 @@ import { selectJwtDecoded } from "../../store/user/slice";
 const ProtectedBetaModal = () => {
   const jwtDecoded = useAppSelector(selectJwtDecoded);
 
-  console.log(jwtDecoded);
-
   if (!jwtDecoded || jwtDecoded.approved_for_beta) {
     return null;
   }

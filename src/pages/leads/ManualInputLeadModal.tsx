@@ -53,8 +53,6 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
         phone,
       }).unwrap();
 
-      console.log("a", a);
-
       notifications.show({
         title: "Success",
         message: "Your lead was successfully created",
