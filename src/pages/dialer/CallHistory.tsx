@@ -16,6 +16,7 @@ import {
 } from "@tabler/icons-react";
 //
 import { TCall, useGetCallsQuery } from "../../services/call";
+import phoneFormatter from "../../utils/phone-formatter";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -112,8 +113,8 @@ export function CallHistory() {
   const rows = sortedData.map((row) => (
     <tr key={row.id}>
       <td>{new Date(row.created_at).toDateString()}</td>
-      <td>{row.from_number}</td>
-      <td>{row.to_number}</td>
+      <td>{phoneFormatter(row.from_number)}</td>
+      <td>{phoneFormatter(row.to_number)}</td>
       <td>{row.status}</td>
       <td>{row.duration_ms}</td>
     </tr>
