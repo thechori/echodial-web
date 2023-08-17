@@ -49,7 +49,7 @@ function Settings() {
 
   return (
     <SettingsStyled>
-      <Container fluid py="lg">
+      <Container fluid py="md">
         <Grid>
           <Grid.Col xs={12} sm={6}>
             <Card withBorder shadow="md" m="sm">

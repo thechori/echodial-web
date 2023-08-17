@@ -107,7 +107,7 @@ function Leads() {
 
   return (
     <LeadsStyled>
-      <Container fluid py="xl">
+      <Container fluid size="xl" py="md">
         <Flex align="center" justify="space-between">
           <Title order={2}>Leads</Title>
           <Flex>

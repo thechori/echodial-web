@@ -12,6 +12,12 @@ const colors = {
   lightBackground: "#F4F6F9",
   fontOnDarkBackground: "#fff",
   surface: "#efefef",
+
+  //
+
+  // Design system
+  appBlue: "#00153F",
+  appYellow: "#FFB545",
 };
 
 export default colors;

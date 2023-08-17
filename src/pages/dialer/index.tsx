@@ -40,14 +40,15 @@ import { extractErrorMessage } from "../../utils/error";
 
 function Dialer() {
   const dispatch = useAppDispatch();
-  const jwtDecoded = useAppSelector(selectJwtDecoded);
+  //
   const [callerIdItems, setCallerIdItems] = useState<SelectItem[]>([]);
-  const [addCall] = useAddCallMutation();
-  const [updateCall] = useUpdateCallViaTwilioCallSidMutation();
-
+  //
+  const jwtDecoded = useAppSelector(selectJwtDecoded);
   const { call, device, token, fromNumber, contactQueue, activeContactIndex } =
     useAppSelector((state) => state.dialer);
-
+  //
+  const [addCall] = useAddCallMutation();
+  const [updateCall] = useUpdateCallViaTwilioCallSidMutation();
   const { data: callerIds } = useGetCallerIdsQuery();
 
   async function startupClient() {
@@ -215,9 +216,9 @@ function Dialer() {
 
   return (
     <DialerStyled>
-      <Container fluid size="xl">
-        <Flex justify={"space-between"} align={"center"} py="md">
-          <Title order={1}>Dialer</Title>
+      <Container fluid py="md">
+        <Flex justify={"space-between"} align={"center"} mb="md">
+          <Title order={2}>Dialer</Title>
           <Flex align="center">
             {device ? (
               <Flex align="flex-end">

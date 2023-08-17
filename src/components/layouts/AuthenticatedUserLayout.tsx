@@ -9,6 +9,7 @@ import {
   selectIsDialerOptionsModalOpen,
   setShowOptions,
 } from "../../store/dialer/slice";
+import ProtectedBetaModal from "../protected-beta-modal";
 
 const Container = styled.div`
   display: block;
@@ -38,6 +39,7 @@ const AuthenticatedUserLayout = ({ children }: any) => {
         opened={isDialerOptionsModalOpen}
         onClose={() => dispatch(setShowOptions(false))}
       />
+      <ProtectedBetaModal />
     </Container>
   );
 };

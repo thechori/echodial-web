@@ -18,7 +18,7 @@ function Dashboard() {
 
   return (
     <DashboardStyled>
-      <Container fluid py="lg">
+      <Container fluid py="md">
         <Grid>
           <Grid.Col>
             <Flex align="center">
