@@ -16,7 +16,6 @@ import DialerStyled from "./Dialer.styles";
 import apiService from "../../services/api";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
-  setActiveContactIndex,
   setFromNumber,
   setToken,
   setError,
@@ -25,6 +24,7 @@ import {
   setCall,
   setTokenLoading,
   setIsMuted,
+  setIsCalling,
 } from "../../store/dialer/slice";
 import ContactQueue from "./ContactQueue";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
@@ -93,7 +93,7 @@ function Dialer() {
     device.on("incoming", () => {
       notifications.show({
         title: "Incoming call",
-        message: "Someone is calling your number.",
+        message: "Someone is calling your number",
       });
     });
 
@@ -103,11 +103,55 @@ function Dialer() {
     dispatch(setDevice(device));
   }
 
+  // should be invoked:
+  // - manually when hang up button is pressed
+  async function endDialer() {
+    console.log("endDialer()");
+
+    // Ensure a Call exists before proceeding
+    if (!call) {
+      dispatch(setStatus("error"));
+      dispatch(setError("No call to end found"));
+      return;
+    }
+
+    call.disconnect();
+
+    notifications.show({
+      title: "Call update",
+      message: "Disconnected",
+    });
+
+    try {
+      const callToUpdate: Partial<TCall> = {
+        twilio_call_sid: call.parameters["CallSid"],
+        status: "Disconnected",
+        // @ts-ignore
+        disconnected_at: new Date().toISOString(),
+      };
+      await updateCall(callToUpdate).unwrap();
+      notifications.show({
+        message: "Successfully updated call in database",
+      });
+
+      dispatch(setStatus("disconnected"));
+    } catch (e) {
+      dispatch(setError(extractErrorMessage(e)));
+      dispatch(setStatus("error"));
+    } finally {
+      dispatch(setCall(null));
+      dispatch(setIsMuted(false));
+    }
+  }
+
   async function startDialer() {
     console.log("startDialer()");
 
+    if (call) {
+    }
+
     if (!device) {
-      return dispatch(setError("No device found."));
+      return dispatch(setError("No device found"));
     }
 
     if (!contactQueue.length) {
@@ -123,11 +167,13 @@ function Dialer() {
       From: fromNumber,
     };
 
-    // Start Call #1
-    const call = await device.connect({ params });
+    // Start Call
+    const c = await device.connect({ params });
+    console.log(c);
 
-    call.on("accept", async (call: Call) => {
+    c.on("accept", async (call: Call) => {
       dispatch(setStatus("accepted"));
+
       notifications.show({
         title: "Call update",
         message: "Accepted",
@@ -154,41 +200,25 @@ function Dialer() {
       notifications.show({ message: "New call registered in database" });
     });
 
-    call.on("mute", (isMuted: boolean) => {
+    c.on("mute", (isMuted: boolean) => {
       dispatch(setIsMuted(isMuted));
     });
 
-    call.on("disconnect", async (call: Call) => {
-      dispatch(setIsMuted(false));
-      dispatch(setStatus("disconnected"));
-
-      try {
-        const callToUpdate: Partial<TCall> = {
-          twilio_call_sid: call.parameters["CallSid"],
-          status: "Disconnected",
-          // @ts-ignore
-          disconnected_at: new Date().toISOString(),
-        };
-        await updateCall(callToUpdate).unwrap();
-        notifications.show({
-          message: "Successfully updated call in database",
-        });
-      } catch (e) {
-        dispatch(setError(extractErrorMessage(e)));
-      }
+    c.on("disconnect", async () => {
+      dispatch(setIsCalling(false));
     });
 
-    call.on("error", async (e: unknown) => {
+    c.on("error", async (e: unknown) => {
       notifications.show({
         title: "Call error",
         message: extractErrorMessage(e),
       });
-      dispatch(setActiveContactIndex(null));
-      dispatch(setCall(null));
       dispatch(setStatus("error"));
+      dispatch(setIsCalling(false));
     });
 
-    dispatch(setCall(call));
+    console.log("setCall", c);
+    dispatch(setCall(c));
   }
 
   // Initialize device once a token exists
@@ -198,38 +228,13 @@ function Dialer() {
     }
   }, [token]);
 
-  // TODO: Fix bug here -- infinite loop that thousands of calls
   // Handle start/stop call
-  // call can change
-  // activeContactIndex can change
-  // if call is set to null, the call should stop
-  // if activeContactIndex is set to null
-  // how do we end a call?
   useEffect(() => {
-    console.log("activeContactIndex changed: ", activeContactIndex);
-    console.log("call", call);
-
     if (isCalling) {
-      // start call
       startDialer();
     } else {
-      // end call
+      endDialer();
     }
-
-    // End existing call
-    if (call) {
-      notifications.show({
-        title: "Call update",
-        message: "Disconnected",
-      });
-      call.disconnect();
-      dispatch(setCall(null));
-    }
-
-    // Start new dial
-    // if (activeContactIndex !== null) {
-    //   startDialer();
-    // }
   }, [isCalling]);
 
   useEffect(() => {

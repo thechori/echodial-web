@@ -22,6 +22,7 @@ import {
   setCall,
   setContactQueue,
   setError,
+  setIsCalling,
   setOptions,
   setShowOptions,
 } from "../../store/dialer/slice";
@@ -31,18 +32,18 @@ import { useGetLeadsQuery } from "../../services/lead";
 function ContactQueue() {
   const dispatch = useAppDispatch();
 
-  const { contactQueue, activeContactIndex, call, options } = useAppSelector(
-    (state) => state.dialer
-  );
+  const { contactQueue, activeContactIndex, call, isCalling, options } =
+    useAppSelector((state) => state.dialer);
 
   const { data: leads } = useGetLeadsQuery();
 
-  function updateActiveContactIndex(index: number) {
+  function startCall(index: number) {
     dispatch(setActiveContactIndex(index));
+    dispatch(setIsCalling(true));
   }
 
   function endCall() {
-    dispatch(setActiveContactIndex(null));
+    dispatch(setIsCalling(false));
   }
 
   const rows = contactQueue.length ? (
@@ -59,16 +60,12 @@ function ContactQueue() {
       return (
         <tr key={c.id} className={active ? "active" : ""}>
           <td className="call-icon hoverable">
-            {call && active ? (
-              <FaRegStopCircle
-                fontSize="1rem"
-                onClick={() => endCall()}
-                color="red"
-              />
+            {isCalling && active ? (
+              <FaRegStopCircle fontSize="1rem" onClick={endCall} color="red" />
             ) : (
               <FaPhone
                 fontSize="1rem"
-                onClick={() => updateActiveContactIndex(index)}
+                onClick={() => startCall(index)}
                 color={active ? "green" : ""}
               />
             )}
@@ -177,7 +174,7 @@ function ContactQueue() {
                       // Start from 0 UNLESS there is a currently selected index
                       const index =
                         activeContactIndex === null ? 0 : activeContactIndex;
-                      dispatch(setActiveContactIndex(index));
+                      startCall(index);
                     }}
                   />
                 </div>
