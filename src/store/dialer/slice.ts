@@ -30,6 +30,7 @@ interface IDialerState {
   error: string;
   alphaDialerVisible: boolean;
   device: any | Device;
+  isCalling: boolean;
   call: null | Call;
   status: "idle" | "calling" | "failed" | "stopped" | "connected";
   muted: boolean;
@@ -48,6 +49,7 @@ const buildInitialState = (): IDialerState => ({
   tokenLoading: false,
   device: null,
   call: null,
+  isCalling: false,
   muted: false,
   // TODO: Remove this hardcoded value in favor of values from API
   fromNumber: localStorage.getItem("dialer__fromNumber") || numbers[2].value,
@@ -122,12 +124,16 @@ export const DialerSlice = createSlice({
       // Persist in local storage
       localStorage.setItem("dialer__options", JSON.stringify(action.payload));
     },
+    setIsCalling: (state, action) => {
+      state.isCalling = action.payload;
+    },
   },
 });
 
 export const {
   setAlphaDialerVisible,
   setCall,
+  setIsCalling,
   setDevice,
   setTokenLoading,
   setFromNumber,
@@ -142,10 +148,7 @@ export const {
   setOptions,
 } = DialerSlice.actions;
 
-export const selectIsCallActive = (state: RootState) => {
-  const { status } = state.dialer;
-  return status === "calling" || status === "connected";
-};
+export const selectIsCallActive = (state: RootState) => state.dialer.isCalling;
 
 export const selectActivePhoneNumber = (state: RootState) => {
   const { activeContactIndex, contactQueue } = state.dialer;

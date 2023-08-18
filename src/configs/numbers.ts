@@ -1,11 +1,5 @@
 const numbers = [
   {
-    value: "+18326460869",
-    label: "(832) 646-0869 (personal)",
-    city: "Houston",
-    state: "TX",
-  },
-  {
     value: "+8328638635",
     label: "(832) 863-8635 (business)",
     city: "Houston",

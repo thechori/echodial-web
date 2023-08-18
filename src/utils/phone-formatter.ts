@@ -13,7 +13,7 @@ function phoneFormatter(number?: string) {
   // Check if the numericOnly string has 11 digits (valid USA phone number will lead with "1")
   if (numericOnly.length !== 11) {
     console.error(
-      "Invalid USA-based phone number. Please provide a 10-digit number."
+      "Invalid USA-based phone number. Please provide a 10-digit number"
     );
     return number;
   }

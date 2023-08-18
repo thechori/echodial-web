@@ -37,6 +37,7 @@ import {
 } from "../../services/call";
 import { selectJwtDecoded } from "../../store/user/slice";
 import { extractErrorMessage } from "../../utils/error";
+import numbers from "../../configs/numbers";
 
 function Dialer() {
   const dispatch = useAppDispatch();
@@ -44,8 +45,15 @@ function Dialer() {
   const [callerIdItems, setCallerIdItems] = useState<SelectItem[]>([]);
   //
   const jwtDecoded = useAppSelector(selectJwtDecoded);
-  const { call, device, token, fromNumber, contactQueue, activeContactIndex } =
-    useAppSelector((state) => state.dialer);
+  const {
+    call,
+    isCalling,
+    device,
+    token,
+    fromNumber,
+    contactQueue,
+    activeContactIndex,
+  } = useAppSelector((state) => state.dialer);
   //
   const [addCall] = useAddCallMutation();
   const [updateCall] = useUpdateCallViaTwilioCallSidMutation();
@@ -96,6 +104,8 @@ function Dialer() {
   }
 
   async function startDialer() {
+    console.log("startDialer()");
+
     if (!device) {
       return dispatch(setError("No device found."));
     }
@@ -177,6 +187,8 @@ function Dialer() {
       dispatch(setCall(null));
       dispatch(setStatus("error"));
     });
+
+    dispatch(setCall(call));
   }
 
   // Initialize device once a token exists
@@ -186,9 +198,25 @@ function Dialer() {
     }
   }, [token]);
 
-  // Handle changing call index
+  // TODO: Fix bug here -- infinite loop that thousands of calls
+  // Handle start/stop call
+  // call can change
+  // activeContactIndex can change
+  // if call is set to null, the call should stop
+  // if activeContactIndex is set to null
+  // how do we end a call?
   useEffect(() => {
-    // End any existing
+    console.log("activeContactIndex changed: ", activeContactIndex);
+    console.log("call", call);
+
+    if (isCalling) {
+      // start call
+      startDialer();
+    } else {
+      // end call
+    }
+
+    // End existing call
     if (call) {
       notifications.show({
         title: "Call update",
@@ -199,10 +227,10 @@ function Dialer() {
     }
 
     // Start new dial
-    if (activeContactIndex !== null) {
-      startDialer();
-    }
-  }, [activeContactIndex]);
+    // if (activeContactIndex !== null) {
+    //   startDialer();
+    // }
+  }, [isCalling]);
 
   useEffect(() => {
     if (callerIds) {
@@ -210,7 +238,7 @@ function Dialer() {
         value: cid.phone_number,
         label: phoneFormatter(cid.phone_number) || "",
       }));
-      setCallerIdItems(items);
+      setCallerIdItems([...items, ...numbers]);
     }
   }, [callerIds]);
 

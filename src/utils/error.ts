@@ -8,7 +8,7 @@ import { AxiosError } from "axios";
  */
 export const extractErrorMessage = (
   error: unknown,
-  message = "There was an error. Please try again later."
+  message = "There was an error. Please try again later"
 ) => {
   // Handle nothing
   if (error === null || error === undefined) return null;

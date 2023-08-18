@@ -94,7 +94,7 @@ function StatsGrid({ data, error, metricResolution }: StatsGridProps) {
 
     return (
       <Paper withBorder p="md" radius="md" key={stat.title}>
-        <Group position="apart">
+        <Group position="apart" style={{ flexWrap: "nowrap" }}>
           <Text size="xs" color="dimmed" className={classes.title}>
             {stat.title}
           </Text>

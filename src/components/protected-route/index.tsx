@@ -16,9 +16,7 @@ const ProtectedRoute = ({ children }: any) => {
   // Politely handle expired JWT
   const currentTime = new Date().getTime() / 1000;
   if (currentTime > jwtDecoded.exp) {
-    alert(
-      "Your session has ended. For security reasons, please sign in again."
-    );
+    alert("Your session has ended. For security reasons, please sign in again");
     dispatch(signOut());
     return <Navigate to="/sign-in" replace />;
   }

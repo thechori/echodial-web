@@ -17,7 +17,7 @@ const ProtectedBetaModal = () => {
     <Modal
       opened
       onClose={() =>
-        console.info("Please contact us to request access to the beta.")
+        console.info("Please contact us to request access to the beta")
       }
       withCloseButton={false}
       centered

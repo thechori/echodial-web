@@ -38,7 +38,7 @@ function AlphaDialer() {
     // Check for null active index
     if (activeContactIndex === null) {
       return notifications.show({
-        message: "Please select a lead before attempting to go to the next.",
+        message: "Please select a lead first",
       });
     }
 
