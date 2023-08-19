@@ -31,6 +31,7 @@ interface IDialerState {
   alphaDialerVisible: boolean;
   device: any | Device;
   isCalling: boolean;
+  currentDialAttempts: null | number;
   call: null | Call;
   status: "idle" | "calling" | "failed" | "stopped" | "connected";
   muted: boolean;
@@ -50,6 +51,7 @@ const buildInitialState = (): IDialerState => ({
   device: null,
   call: null,
   isCalling: false,
+  currentDialAttempts: null,
   muted: false,
   // TODO: Remove this hardcoded value in favor of values from API
   fromNumber: localStorage.getItem("dialer__fromNumber") || numbers[2].value,
@@ -127,6 +129,9 @@ export const DialerSlice = createSlice({
     setIsCalling: (state, action) => {
       state.isCalling = action.payload;
     },
+    setCurrentDialAttempts: (state, action) => {
+      state.currentDialAttempts = action.payload;
+    },
     moveLeadUpInQueue: (state, action) => {
       const id = action.payload;
       const indexFound = state.contactQueue.findIndex((lead) => lead.id === id);
@@ -167,6 +172,29 @@ export const DialerSlice = createSlice({
 
       state.contactQueue = queue;
     },
+    deleteLeadFromQueue: (state, action) => {
+      state.contactQueue = state.contactQueue.filter(
+        (lead) => lead.id !== action.payload
+      );
+    },
+    continueToNextLead: (state) => {
+      const { activeContactIndex, contactQueue } = state;
+
+      // Check for null active index
+      if (activeContactIndex === null) {
+        return console.error("No active contact index found");
+      }
+
+      // Stop if we're at the last index of the queue
+      if (activeContactIndex === contactQueue.length - 1) {
+        return console.info("No more leads to dial");
+      }
+
+      // Reset dial attempts counter
+      state.currentDialAttempts = 1;
+
+      state.activeContactIndex = activeContactIndex + 1;
+    },
   },
 });
 
@@ -174,6 +202,7 @@ export const {
   setAlphaDialerVisible,
   setCall,
   setIsCalling,
+  setCurrentDialAttempts,
   setDevice,
   setTokenLoading,
   setFromNumber,
@@ -188,6 +217,8 @@ export const {
   setOptions,
   moveLeadUpInQueue,
   moveLeadDownInQueue,
+  deleteLeadFromQueue,
+  continueToNextLead,
 } = DialerSlice.actions;
 
 export const selectIsCallActive = (state: RootState) => state.dialer.isCalling;

@@ -1,7 +1,13 @@
 import { FaPhone } from "react-icons/fa";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { FaRegStopCircle, FaUndo } from "react-icons/fa";
-import { BiDownArrow, BiImport, BiShow, BiUpArrow } from "react-icons/bi";
+import {
+  BiDownArrow,
+  BiImport,
+  BiShow,
+  BiTrash,
+  BiUpArrow,
+} from "react-icons/bi";
 import { IoIosSettings } from "react-icons/io";
 import {
   ActionIcon,
@@ -19,12 +25,11 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 //
 import phoneFormatter from "../../utils/phone-formatter";
 import {
+  deleteLeadFromQueue,
   moveLeadDownInQueue,
   moveLeadUpInQueue,
   setActiveContactIndex,
-  setCall,
   setContactQueue,
-  setError,
   setIsCalling,
   setOptions,
   setShowOptions,
@@ -35,8 +40,14 @@ import { useGetLeadsQuery } from "../../services/lead";
 function ContactQueue() {
   const dispatch = useAppDispatch();
 
-  const { contactQueue, activeContactIndex, call, isCalling, options } =
-    useAppSelector((state) => state.dialer);
+  const {
+    contactQueue,
+    activeContactIndex,
+    call,
+    isCalling,
+    currentDialAttempts,
+    options,
+  } = useAppSelector((state) => state.dialer);
 
   const { data: leads } = useGetLeadsQuery();
 
@@ -64,13 +75,23 @@ function ContactQueue() {
         <tr key={c.id} className={active ? "active" : ""}>
           <td className="call-icon hoverable">
             {isCalling && active ? (
-              <FaRegStopCircle fontSize="1rem" onClick={endCall} color="red" />
+              <Box ta="center">
+                <FaRegStopCircle
+                  fontSize="1rem"
+                  onClick={endCall}
+                  color="red"
+                />
+                <Text size="xs">{currentDialAttempts}</Text>
+              </Box>
             ) : (
-              <FaPhone
-                fontSize="1rem"
-                onClick={() => startCall(index)}
-                color={active ? "green" : ""}
-              />
+              <Box ta="center">
+                <FaPhone
+                  fontSize="1rem"
+                  onClick={() => startCall(index)}
+                  color={active ? "green" : ""}
+                />
+                <Text size="xs">{"???"}</Text>
+              </Box>
             )}
           </td>
           <td>
@@ -85,16 +106,25 @@ function ContactQueue() {
             <Text size="sm">{phoneFormatter(c.phone)}</Text>
           </td>
           <td>
-            <Box>
-              <ActionIcon onClick={() => dispatch(moveLeadUpInQueue(c.id))}>
-                <BiUpArrow />
-              </ActionIcon>
+            <Flex align="center">
+              <Box mr={8}>
+                <ActionIcon onClick={() => dispatch(moveLeadUpInQueue(c.id))}>
+                  <BiUpArrow />
+                </ActionIcon>
+                <ActionIcon>
+                  <BiDownArrow
+                    onClick={() => dispatch(moveLeadDownInQueue(c.id))}
+                  />
+                </ActionIcon>
+              </Box>
               <ActionIcon>
-                <BiDownArrow
-                  onClick={() => dispatch(moveLeadDownInQueue(c.id))}
+                <BiTrash
+                  color="red"
+                  fontSize="1.2rem"
+                  onClick={() => dispatch(deleteLeadFromQueue(c.id))}
                 />
               </ActionIcon>
-            </Box>
+            </Flex>
           </td>
         </tr>
       );
@@ -108,13 +138,7 @@ function ContactQueue() {
   );
 
   function stopDialer() {
-    if (!call) {
-      return dispatch(setError("No call in progress"));
-    }
-
-    call.disconnect();
-    dispatch(setCall(null));
-    dispatch(setActiveContactIndex(null));
+    dispatch(setIsCalling(false));
   }
 
   function importLeadsIntoQueue() {
@@ -168,7 +192,7 @@ function ContactQueue() {
             </div>
           </Tooltip>
           <Box ml="xs">
-            {call ? (
+            {isCalling ? (
               <Tooltip label="End call">
                 <div>
                   <FaRegStopCircle

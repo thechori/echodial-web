@@ -25,6 +25,7 @@ import {
   setTokenLoading,
   setIsMuted,
   setIsCalling,
+  setCurrentDialAttempts,
 } from "../../store/dialer/slice";
 import ContactQueue from "./ContactQueue";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
@@ -106,8 +107,6 @@ function Dialer() {
   // should be invoked:
   // - manually when hang up button is pressed
   async function endDialer() {
-    console.log("endDialer()");
-
     // Ensure a Call exists before proceeding
     if (!call) {
       dispatch(setStatus("error"));
@@ -117,11 +116,6 @@ function Dialer() {
 
     call.disconnect();
 
-    notifications.show({
-      title: "Call update",
-      message: "Disconnected",
-    });
-
     try {
       const callToUpdate: Partial<TCall> = {
         twilio_call_sid: call.parameters["CallSid"],
@@ -130,9 +124,6 @@ function Dialer() {
         disconnected_at: new Date().toISOString(),
       };
       await updateCall(callToUpdate).unwrap();
-      notifications.show({
-        message: "Successfully updated call in database",
-      });
 
       dispatch(setStatus("disconnected"));
     } catch (e) {
@@ -145,8 +136,6 @@ function Dialer() {
   }
 
   async function startDialer() {
-    console.log("startDialer()");
-
     // End call before continuing (necessary for skipping to next active index)
     if (call) {
       try {
@@ -176,13 +165,10 @@ function Dialer() {
     // Start Call
     const c = await device.connect({ params });
 
+    dispatch(setCurrentDialAttempts(1));
+
     c.on("accept", async (call: Call) => {
       dispatch(setStatus("accepted"));
-
-      notifications.show({
-        title: "Call update",
-        message: "Accepted",
-      });
 
       const newCall: Partial<TCall> = {
         user_id: jwtDecoded?.id,
@@ -201,8 +187,6 @@ function Dialer() {
           message: extractErrorMessage(e),
         });
       }
-
-      notifications.show({ message: "New call registered in database" });
     });
 
     c.on("mute", (isMuted: boolean) => {
@@ -222,6 +206,7 @@ function Dialer() {
       dispatch(setIsCalling(false));
     });
 
+    console.log("setting call", c);
     dispatch(setCall(c));
   }
 

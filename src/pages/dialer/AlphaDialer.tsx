@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from "@mantine/core";
 import { Box, Flex, Text } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
 import {
   AiFillPlayCircle,
   AiFillStepForward,
@@ -19,6 +18,7 @@ import {
   setActiveContactIndex,
   selectShowAlphaDialer,
   setOptions,
+  continueToNextLead,
 } from "../../store/dialer/slice";
 import routes from "../../configs/routes";
 import AlphaDialerStyled from "./AlphaDialer.styles";
@@ -27,7 +27,7 @@ function AlphaDialer() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { call, status, muted, activeContactIndex, options, contactQueue } =
+  const { call, isCalling, status, muted, activeContactIndex, options } =
     useAppSelector((state) => state.dialer);
 
   const phoneNumber = useAppSelector(selectActivePhoneNumber);
@@ -35,20 +35,7 @@ function AlphaDialer() {
   const showAlphaDialer = useAppSelector(selectShowAlphaDialer);
 
   function handleNextLead() {
-    // Check for null active index
-    if (activeContactIndex === null) {
-      return notifications.show({
-        message: "Please select a lead first",
-      });
-    }
-
-    // Check if we're at the last index of the queue
-    if (activeContactIndex === contactQueue.length - 1) {
-      // Reset to first index
-      dispatch(setActiveContactIndex(0));
-    } else {
-      dispatch(setActiveContactIndex(activeContactIndex + 1));
-    }
+    dispatch(continueToNextLead());
   }
 
   if (!showAlphaDialer) return null;
@@ -110,7 +97,7 @@ function AlphaDialer() {
                 </Tooltip>
               )}
 
-              {call ? (
+              {isCalling ? (
                 <Tooltip label="End call">
                   <div>
                     <FaRegStopCircle
