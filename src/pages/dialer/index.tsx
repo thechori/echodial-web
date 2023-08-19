@@ -147,7 +147,13 @@ function Dialer() {
   async function startDialer() {
     console.log("startDialer()");
 
+    // End call before continuing (necessary for skipping to next active index)
     if (call) {
+      try {
+        await endDialer();
+      } catch (e) {
+        dispatch(setError(extractErrorMessage(e)));
+      }
     }
 
     if (!device) {
@@ -169,7 +175,6 @@ function Dialer() {
 
     // Start Call
     const c = await device.connect({ params });
-    console.log(c);
 
     c.on("accept", async (call: Call) => {
       dispatch(setStatus("accepted"));
@@ -217,7 +222,6 @@ function Dialer() {
       dispatch(setIsCalling(false));
     });
 
-    console.log("setCall", c);
     dispatch(setCall(c));
   }
 
@@ -235,7 +239,7 @@ function Dialer() {
     } else {
       endDialer();
     }
-  }, [isCalling]);
+  }, [isCalling, activeContactIndex]);
 
   useEffect(() => {
     if (callerIds) {

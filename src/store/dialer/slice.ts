@@ -127,6 +127,46 @@ export const DialerSlice = createSlice({
     setIsCalling: (state, action) => {
       state.isCalling = action.payload;
     },
+    moveLeadUpInQueue: (state, action) => {
+      const id = action.payload;
+      const indexFound = state.contactQueue.findIndex((lead) => lead.id === id);
+
+      if (indexFound === -1) {
+        console.error("Lead index not found");
+        return;
+      }
+
+      // If at the top, do nothing
+      if (indexFound === 0) {
+        return;
+      }
+
+      const queue = [...state.contactQueue];
+      const item = queue.splice(indexFound, 1)[0];
+      queue.splice(indexFound - 1, 0, item);
+
+      state.contactQueue = queue;
+    },
+    moveLeadDownInQueue: (state, action) => {
+      const id = action.payload;
+      const indexFound = state.contactQueue.findIndex((lead) => lead.id === id);
+
+      if (indexFound === -1) {
+        console.error("Lead index not found");
+        return;
+      }
+
+      // If at the bottom, do nothing
+      if (indexFound === state.contactQueue.length - 1) {
+        return;
+      }
+
+      const queue = [...state.contactQueue];
+      const item = queue.splice(indexFound, 1)[0];
+      queue.splice(indexFound + 1, 0, item);
+
+      state.contactQueue = queue;
+    },
   },
 });
 
@@ -146,6 +186,8 @@ export const {
   setStatus,
   setShowOptions,
   setOptions,
+  moveLeadUpInQueue,
+  moveLeadDownInQueue,
 } = DialerSlice.actions;
 
 export const selectIsCallActive = (state: RootState) => state.dialer.isCalling;
@@ -171,3 +213,12 @@ export const selectIsDialerOptionsModalOpen = (state: RootState) =>
   state.dialer.showOptions;
 
 export default DialerSlice.reducer;
+
+// First, create the thunk
+// const startCalling = createAsyncThunk(
+//   "dialer/startCalling",
+//   async (userId: number, thunkAPI) => {
+//     // const response = await userAPI.fetchById(userId)
+//     // return response.data
+//   }
+// );

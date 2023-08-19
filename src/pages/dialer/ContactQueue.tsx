@@ -1,9 +1,10 @@
 import { FaPhone } from "react-icons/fa";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { FaRegStopCircle, FaUndo } from "react-icons/fa";
-import { BiImport, BiShow } from "react-icons/bi";
+import { BiDownArrow, BiImport, BiShow, BiUpArrow } from "react-icons/bi";
 import { IoIosSettings } from "react-icons/io";
 import {
+  ActionIcon,
   Avatar,
   Box,
   Flex,
@@ -18,6 +19,8 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 //
 import phoneFormatter from "../../utils/phone-formatter";
 import {
+  moveLeadDownInQueue,
+  moveLeadUpInQueue,
   setActiveContactIndex,
   setCall,
   setContactQueue,
@@ -80,6 +83,18 @@ function ContactQueue() {
           </td>
           <td>
             <Text size="sm">{phoneFormatter(c.phone)}</Text>
+          </td>
+          <td>
+            <Box>
+              <ActionIcon onClick={() => dispatch(moveLeadUpInQueue(c.id))}>
+                <BiUpArrow />
+              </ActionIcon>
+              <ActionIcon>
+                <BiDownArrow
+                  onClick={() => dispatch(moveLeadDownInQueue(c.id))}
+                />
+              </ActionIcon>
+            </Box>
           </td>
         </tr>
       );
