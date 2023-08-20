@@ -11,7 +11,7 @@ function Pricing() {
           Pricing
         </Title>
         <Title order={3} weight={300} my="lg">
-          $100/mo
+          $70 per month
         </Title>
         <Space h="2rem" />
         <Link to={routes.signUp}>

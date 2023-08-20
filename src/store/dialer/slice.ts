@@ -31,6 +31,7 @@ interface IDialerState {
   alphaDialerVisible: boolean;
   device: any | Device;
   isCalling: boolean;
+  wasCallConnected: null | boolean;
   currentDialAttempts: null | number;
   call: null | Call;
   status: "idle" | "calling" | "failed" | "stopped" | "connected";
@@ -51,6 +52,7 @@ const buildInitialState = (): IDialerState => ({
   device: null,
   call: null,
   isCalling: false,
+  wasCallConnected: null,
   currentDialAttempts: null,
   muted: false,
   // TODO: Remove this hardcoded value in favor of values from API
@@ -177,8 +179,33 @@ export const DialerSlice = createSlice({
         (lead) => lead.id !== action.payload
       );
     },
+    // [ ] Should retry call if no answer AND under option.maxAttempts
+    // [ ] Should continue to next call if nobody answered AND over option.maxAttempts
+    // [ ] Should stop if a call connects (maybe they want to write notes, update Lead data, etc)
+    // [ ] Should stop if an error exists? Or retry?
+    determineFollowingAction: (state) => {
+      const { currentDialAttempts, options } = state;
+
+      if (currentDialAttempts === null) {
+        return console.error("Current dial attempts not found");
+      }
+
+      // Check attempts against options
+      const { maxCallTries } = options;
+
+      if (currentDialAttempts < maxCallTries) {
+        // Retry call by incrementing dial attempt
+        state.currentDialAttempts = currentDialAttempts + 1;
+      } else {
+        // Continue to next Lead
+        continueToNextLead();
+      }
+    },
     continueToNextLead: (state) => {
       const { activeContactIndex, contactQueue } = state;
+
+      // Reset attempt count
+      state.currentDialAttempts = 1;
 
       // Check for null active index
       if (activeContactIndex === null) {
@@ -218,6 +245,7 @@ export const {
   moveLeadUpInQueue,
   moveLeadDownInQueue,
   deleteLeadFromQueue,
+  determineFollowingAction,
   continueToNextLead,
 } = DialerSlice.actions;
 

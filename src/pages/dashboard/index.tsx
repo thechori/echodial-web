@@ -51,10 +51,10 @@ function Dashboard() {
                 {
                   title:
                     metricResolution === "day"
-                      ? "Leads today"
+                      ? "LEADS TODAY"
                       : metricResolution === "week"
-                      ? "Leads this week"
-                      : "Leads this month",
+                      ? "LEADS THIS WEEK"
+                      : "LEADS THIS MONTH",
                   diff:
                     data &&
                     data.leadsCreatedCurrentPeriod &&
@@ -90,7 +90,7 @@ function Dashboard() {
                     : "0",
                 },
                 {
-                  title: "CALLS ANSWERED",
+                  title: "LEADS SOLD",
                   diff:
                     data &&
                     data.callsAnsweredCurrentPeriod &&
@@ -100,7 +100,7 @@ function Dashboard() {
                           parseInt(data.callsAnsweredCurrentPeriod)
                         )
                       : 0,
-                  icon: "phone",
+                  icon: "coin",
                   value: isLoading
                     ? "..."
                     : data && data.callsAnsweredCurrentPeriod !== null

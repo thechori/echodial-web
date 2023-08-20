@@ -98,7 +98,7 @@ function sortData(
 export function CallHistory() {
   const { data: calls } = useGetCallsQuery();
   const [sortedData, setSortedData] = useState(calls || []);
-  const [sortBy, setSortBy] = useState<keyof TCall | null>(null);
+  const [sortBy, setSortBy] = useState<keyof TCall | null>("created_at");
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
   const setSorting = (field: keyof TCall) => {
@@ -110,7 +110,9 @@ export function CallHistory() {
 
   useEffect(() => {
     if (calls) {
-      setSortedData(calls);
+      setSortedData(
+        sortData(calls || [], { sortBy, reversed: !reverseSortDirection })
+      );
     }
   }, [calls]);
 

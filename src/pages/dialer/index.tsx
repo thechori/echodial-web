@@ -24,8 +24,8 @@ import {
   setCall,
   setTokenLoading,
   setIsMuted,
-  setIsCalling,
   setCurrentDialAttempts,
+  determineFollowingAction,
 } from "../../store/dialer/slice";
 import ContactQueue from "./ContactQueue";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
@@ -54,6 +54,7 @@ function Dialer() {
     fromNumber,
     contactQueue,
     activeContactIndex,
+    currentDialAttempts,
   } = useAppSelector((state) => state.dialer);
   //
   const [addCall] = useAddCallMutation();
@@ -165,9 +166,17 @@ function Dialer() {
     // Start Call
     const c = await device.connect({ params });
 
-    dispatch(setCurrentDialAttempts(1));
+    // [x] Verified
+    c.on("ringing", async (isRinging: boolean) => {
+      console.log("call.on('ringing')", isRinging);
+    });
 
+    // Fires when the call is answered by the end user ..
+    // Fires when voicemail is trigered `_status`: "open"
+    // [x] Verified
     c.on("accept", async (call: Call) => {
+      console.log("call.on('accept')", call);
+      console.log("call.status(): ", call.status());
       dispatch(setStatus("accepted"));
 
       const newCall: Partial<TCall> = {
@@ -189,21 +198,29 @@ function Dialer() {
       }
     });
 
+    // [x] Verified
     c.on("mute", (isMuted: boolean) => {
+      console.log("call.on('mute')");
       dispatch(setIsMuted(isMuted));
     });
 
-    c.on("disconnect", async () => {
-      dispatch(setIsCalling(false));
+    // [x] Verified
+    c.on("disconnect", async (call: any) => {
+      console.log("call.on('disconnect')", call);
+      console.log("call.status(): ", call.status());
+      // Check to see if we need to continue to next Lead or retry current
+      dispatch(determineFollowingAction());
     });
 
+    // [x] Verified
     c.on("error", async (e: unknown) => {
+      console.log("call.on('mute')", e);
       notifications.show({
         title: "Call error",
         message: extractErrorMessage(e),
       });
       dispatch(setStatus("error"));
-      dispatch(setIsCalling(false));
+      dispatch(determineFollowingAction());
     });
 
     console.log("setting call", c);
@@ -220,11 +237,14 @@ function Dialer() {
   // Handle start/stop call
   useEffect(() => {
     if (isCalling) {
+      if (currentDialAttempts === null) {
+        dispatch(setCurrentDialAttempts(1));
+      }
       startDialer();
     } else {
       endDialer();
     }
-  }, [isCalling, activeContactIndex]);
+  }, [isCalling, activeContactIndex, currentDialAttempts]);
 
   useEffect(() => {
     if (callerIds) {

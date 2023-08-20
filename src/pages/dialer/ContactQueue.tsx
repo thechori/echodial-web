@@ -66,7 +66,8 @@ function ContactQueue() {
 
       if (
         activeContactIndex !== null &&
-        contactQueue[activeContactIndex].id === c.id
+        contactQueue[activeContactIndex].id === c.id &&
+        isCalling
       ) {
         active = true;
       }
