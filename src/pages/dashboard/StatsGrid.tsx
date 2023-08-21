@@ -101,7 +101,7 @@ function StatsGrid({ data, error, metricResolution }: StatsGridProps) {
           <Icon className={classes.icon} size="1.4rem" stroke={1.5} />
         </Group>
 
-        <Group align="flex-end" spacing="xs" mt={25}>
+        <Group align="flex-end" spacing="xs" mt={16}>
           <Text className={classes.value}>{stat.value}</Text>
           <Text
             color={stat.diff === 0 ? "teal" : stat.diff > 0 ? "teal" : "red"}

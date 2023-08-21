@@ -1,4 +1,13 @@
-import { Box, Card, Container, Flex, Grid, Select, Title } from "@mantine/core";
+import {
+  Box,
+  Card,
+  Container,
+  Flex,
+  Grid,
+  Select,
+  Title,
+  Tooltip,
+} from "@mantine/core";
 import DashboardStyled from "./Dashboard.styles";
 import StatsGrid from "./StatsGrid";
 import LineChartRechart from "./LineChartRechart";
@@ -10,6 +19,7 @@ import {
 } from "../../store/metric/slice";
 import deltaPercentageCalculator from "../../utils/delta-percentage-calculator";
 import secondsFormatter from "../../utils/seconds-formatter";
+import { BiInfoCircle } from "react-icons/bi";
 
 function Dashboard() {
   const dispatch = useAppDispatch();
@@ -54,10 +64,10 @@ function Dashboard() {
                 {
                   title:
                     metricResolution === "day"
-                      ? "LEADS TODAY"
+                      ? "LEADS CREATED TODAY"
                       : metricResolution === "week"
-                      ? "LEADS THIS WEEK"
-                      : "LEADS THIS MONTH",
+                      ? "LEADS CREATED THIS WEEK"
+                      : "LEADS CREATED THIS MONTH",
                   diff:
                     data &&
                     data.leadsCreatedCountCurrentPeriod !== null &&
@@ -75,7 +85,12 @@ function Dashboard() {
                     : "0",
                 },
                 {
-                  title: "CALLS MADE",
+                  title:
+                    metricResolution === "day"
+                      ? "CALLS MADE TODAY"
+                      : metricResolution === "week"
+                      ? "CALLS MADE THIS WEEK"
+                      : "CALLS MADE THIS MONTH",
                   diff:
                     data &&
                     data.callsMadeCurrentPeriod !== null &&
@@ -93,7 +108,12 @@ function Dashboard() {
                     : "0",
                 },
                 {
-                  title: "CALLS CONNECTED",
+                  title:
+                    metricResolution === "day"
+                      ? "CALLS CONNECTED TODAY"
+                      : metricResolution === "week"
+                      ? "CALLS CONNECTED THIS WEEK"
+                      : "CALLS CONNECTED THIS MONTH",
                   diff:
                     data &&
                     data.callsAnsweredCountCurrentPeriod !== null &&
@@ -111,7 +131,12 @@ function Dashboard() {
                     : "0",
                 },
                 {
-                  title: "AVERAGE CALL DURATION",
+                  title:
+                    metricResolution === "day"
+                      ? "AVG. CALL DURATION TODAY"
+                      : metricResolution === "week"
+                      ? "AVG. CALL DURATION THIS WEEK"
+                      : "AVG. CALL DURATION THIS MONTH",
                   diff:
                     data &&
                     data.averageCallDurationInSecondsCurrentPeriod !== null &&
@@ -137,9 +162,18 @@ function Dashboard() {
 
           <Grid.Col xs={12}>
             <Card withBorder shadow="md" py="md">
-              <Title order={3} mb="md">
-                Activity
-              </Title>
+              <Flex align="center" mb="md">
+                <Title order={3} mr="xs">
+                  Call activity
+                </Title>
+
+                <Tooltip label="This is not real data">
+                  <Flex align="center">
+                    <BiInfoCircle fontSize="1.25rem" />
+                  </Flex>
+                </Tooltip>
+              </Flex>
+
               <Box h={400}>
                 <LineChartRechart />
               </Box>
