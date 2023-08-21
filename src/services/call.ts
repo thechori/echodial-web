@@ -47,10 +47,7 @@ export const callApi = createApi({
       },
       invalidatesTags: ["Call"],
     }),
-    updateCallViaTwilioCallSid: builder.mutation<
-      { message: string },
-      Partial<TCall>
-    >({
+    updateCallViaTwilioCallSid: builder.mutation<TCall, Partial<TCall>>({
       query(call) {
         return {
           url: `call/twilio-call-sid/${call.twilio_call_sid}`,
@@ -60,7 +57,25 @@ export const callApi = createApi({
       },
       invalidatesTags: ["Call"],
     }),
-    deleteCall: builder.mutation<void, number>({
+    updateCallViaId: builder.mutation<TCall, Partial<TCall>>({
+      query(call) {
+        return {
+          url: `call/${call.id}`,
+          method: "PUT",
+          body: call,
+        };
+      },
+      invalidatesTags: ["Call"],
+    }),
+    endCall: builder.mutation<TCall, number>({
+      query(id) {
+        return {
+          url: `call/${id}/end`,
+          method: "GET",
+        };
+      },
+    }),
+    deleteCall: builder.mutation<TCall, number>({
       query(id) {
         return {
           url: `call/${id}`,
@@ -77,6 +92,8 @@ export const callApi = createApi({
 export const {
   useAddCallMutation,
   useUpdateCallViaTwilioCallSidMutation,
+  useUpdateCallViaIdMutation,
   useGetCallsQuery,
+  useEndCallMutation,
   useDeleteCallMutation,
 } = callApi;

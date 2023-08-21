@@ -1,19 +1,17 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { TCall } from "./call";
 
 export type TMetricResolution = "day" | "week" | "month";
 
 export type TMetrics = {
-  leadsCreatedPreviousPeriod: string | null;
-  leadsCreatedCurrentPeriod: string | null;
-
-  callsMadePreviousPeriod: string | null;
-  callsMadeCurrentPeriod: string | null;
-
-  callsAnsweredPreviousPeriod: string | null;
-  callsAnsweredCurrentPeriod: string | null;
-
-  averageCallDurationPreviousPeriod: string | null;
-  averageCallDurationCurrentPeriod: string | null;
+  leadsCreatedCountPreviousPeriod: number | null;
+  leadsCreatedCountCurrentPeriod: number | null;
+  callsMadePreviousPeriod: TCall[];
+  callsMadeCurrentPeriod: TCall[];
+  callsAnsweredCountPreviousPeriod: number | null;
+  callsAnsweredCountCurrentPeriod: number | null;
+  averageCallDurationInSecondsPreviousPeriod: number | null;
+  averageCallDurationInSecondsCurrentPeriod: number | null;
 };
 
 const apiBaseUrl = import.meta.env.VITE_API_HOST;

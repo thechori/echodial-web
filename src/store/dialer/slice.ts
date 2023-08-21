@@ -31,9 +31,11 @@ interface IDialerState {
   alphaDialerVisible: boolean;
   device: any | Device;
   isCalling: boolean;
+  isCallBeingCreated: boolean;
   wasCallConnected: null | boolean;
   currentDialAttempts: null | number;
   call: null | Call;
+  currentCallId: null | number;
   status: "idle" | "calling" | "failed" | "stopped" | "connected";
   muted: boolean;
   token: null | string;
@@ -51,7 +53,9 @@ const buildInitialState = (): IDialerState => ({
   tokenLoading: false,
   device: null,
   call: null,
+  currentCallId: null,
   isCalling: false,
+  isCallBeingCreated: false,
   wasCallConnected: null,
   currentDialAttempts: null,
   muted: false,
@@ -85,6 +89,12 @@ export const DialerSlice = createSlice({
     },
     setCall: (state, action) => {
       state.call = action.payload;
+    },
+    setCurrentCallId: (state, action) => {
+      state.currentCallId = action.payload;
+    },
+    setIsCallBeingCreated: (state, action) => {
+      state.isCallBeingCreated = action.payload;
     },
     setFromNumber: (state, action) => {
       state.fromNumber = action.payload;
@@ -228,7 +238,9 @@ export const DialerSlice = createSlice({
 export const {
   setAlphaDialerVisible,
   setCall,
+  setCurrentCallId,
   setIsCalling,
+  setIsCallBeingCreated,
   setCurrentDialAttempts,
   setDevice,
   setTokenLoading,

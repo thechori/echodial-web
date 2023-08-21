@@ -9,12 +9,15 @@ import {
   setMetricResolution,
 } from "../../store/metric/slice";
 import deltaPercentageCalculator from "../../utils/delta-percentage-calculator";
+import secondsFormatter from "../../utils/seconds-formatter";
 
 function Dashboard() {
   const dispatch = useAppDispatch();
   const metricResolution = useAppSelector(selectMetricResolution);
   const { data, isLoading, error } =
     useGetDashboardMetricsQuery(metricResolution);
+
+  console.log("data", data);
 
   return (
     <DashboardStyled>
@@ -57,18 +60,18 @@ function Dashboard() {
                       : "LEADS THIS MONTH",
                   diff:
                     data &&
-                    data.leadsCreatedCurrentPeriod &&
-                    data.leadsCreatedPreviousPeriod
+                    data.leadsCreatedCountCurrentPeriod &&
+                    data.leadsCreatedCountPreviousPeriod
                       ? deltaPercentageCalculator(
-                          parseInt(data.leadsCreatedPreviousPeriod),
-                          parseInt(data.leadsCreatedCurrentPeriod)
+                          data.leadsCreatedCountPreviousPeriod,
+                          data.leadsCreatedCountCurrentPeriod
                         )
                       : 0,
                   icon: "user",
                   value: isLoading
                     ? "..."
-                    : data && data.leadsCreatedCurrentPeriod !== null
-                    ? data.leadsCreatedCurrentPeriod
+                    : data && data.leadsCreatedCountCurrentPeriod !== null
+                    ? data.leadsCreatedCountCurrentPeriod.toString()
                     : "0",
                 },
                 {
@@ -78,51 +81,54 @@ function Dashboard() {
                     data.callsMadeCurrentPeriod &&
                     data.callsMadePreviousPeriod
                       ? deltaPercentageCalculator(
-                          parseInt(data.callsMadePreviousPeriod),
-                          parseInt(data.callsMadeCurrentPeriod)
+                          data.callsMadePreviousPeriod.length,
+                          data.callsMadeCurrentPeriod.length
                         )
                       : 0,
                   icon: "phone",
                   value: isLoading
                     ? "..."
                     : data && data.callsMadeCurrentPeriod !== null
-                    ? data.callsMadeCurrentPeriod
+                    ? data.callsMadeCurrentPeriod.length.toString()
                     : "0",
                 },
                 {
-                  title: "LEADS SOLD",
+                  title: "CALLS CONNECTED",
                   diff:
                     data &&
-                    data.callsAnsweredCurrentPeriod &&
-                    data.callsAnsweredPreviousPeriod
+                    data.callsAnsweredCountCurrentPeriod &&
+                    data.callsAnsweredCountPreviousPeriod
                       ? deltaPercentageCalculator(
-                          parseInt(data.callsAnsweredPreviousPeriod),
-                          parseInt(data.callsAnsweredCurrentPeriod)
+                          data.callsAnsweredCountPreviousPeriod,
+                          data.callsAnsweredCountCurrentPeriod
                         )
                       : 0,
                   icon: "coin",
                   value: isLoading
                     ? "..."
-                    : data && data.callsAnsweredCurrentPeriod !== null
-                    ? data.callsAnsweredCurrentPeriod
+                    : data && data.callsAnsweredCountCurrentPeriod !== null
+                    ? data.callsAnsweredCountCurrentPeriod.toString()
                     : "0",
                 },
                 {
                   title: "AVERAGE CALL DURATION",
                   diff:
                     data &&
-                    data.averageCallDurationCurrentPeriod &&
-                    data.averageCallDurationPreviousPeriod
+                    data.averageCallDurationInSecondsCurrentPeriod &&
+                    data.averageCallDurationInSecondsPreviousPeriod
                       ? deltaPercentageCalculator(
-                          parseInt(data.averageCallDurationPreviousPeriod),
-                          parseInt(data.averageCallDurationCurrentPeriod)
+                          data.averageCallDurationInSecondsPreviousPeriod,
+                          data.averageCallDurationInSecondsCurrentPeriod
                         )
                       : 0,
                   icon: "clock",
                   value: isLoading
                     ? "..."
-                    : data && data.averageCallDurationCurrentPeriod !== null
-                    ? data.averageCallDurationCurrentPeriod
+                    : data &&
+                      data.averageCallDurationInSecondsCurrentPeriod !== null
+                    ? secondsFormatter(
+                        data.averageCallDurationInSecondsCurrentPeriod
+                      )
                     : "0",
                 },
               ]}

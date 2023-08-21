@@ -26,6 +26,8 @@ import {
   setIsMuted,
   setCurrentDialAttempts,
   determineFollowingAction,
+  setCurrentCallId,
+  setIsCallBeingCreated,
 } from "../../store/dialer/slice";
 import ContactQueue from "./ContactQueue";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
@@ -34,7 +36,8 @@ import CallHistory from "./CallHistory";
 import {
   TCall,
   useAddCallMutation,
-  useUpdateCallViaTwilioCallSidMutation,
+  useEndCallMutation,
+  useUpdateCallViaIdMutation,
 } from "../../services/call";
 import { selectJwtDecoded } from "../../store/user/slice";
 import { extractErrorMessage } from "../../utils/error";
@@ -48,6 +51,7 @@ function Dialer() {
   const jwtDecoded = useAppSelector(selectJwtDecoded);
   const {
     call,
+    currentCallId,
     isCalling,
     device,
     token,
@@ -55,10 +59,12 @@ function Dialer() {
     contactQueue,
     activeContactIndex,
     currentDialAttempts,
+    isCallBeingCreated,
   } = useAppSelector((state) => state.dialer);
   //
   const [addCall] = useAddCallMutation();
-  const [updateCall] = useUpdateCallViaTwilioCallSidMutation();
+  const [updateCallViaId] = useUpdateCallViaIdMutation();
+  const [endCallViaId] = useEndCallMutation();
   const { data: callerIds } = useGetCallerIdsQuery();
 
   async function startupClient() {
@@ -117,23 +123,10 @@ function Dialer() {
 
     call.disconnect();
 
-    try {
-      const callToUpdate: Partial<TCall> = {
-        twilio_call_sid: call.parameters["CallSid"],
-        status: "Disconnected",
-        // @ts-ignore
-        disconnected_at: new Date().toISOString(),
-      };
-      await updateCall(callToUpdate).unwrap();
-
-      dispatch(setStatus("disconnected"));
-    } catch (e) {
-      dispatch(setError(extractErrorMessage(e)));
-      dispatch(setStatus("error"));
-    } finally {
-      dispatch(setCall(null));
-      dispatch(setIsMuted(false));
-    }
+    dispatch(setStatus("disconnected"));
+    dispatch(setCall(null));
+    dispatch(setCurrentCallId(null));
+    dispatch(setIsMuted(false));
   }
 
   async function startDialer() {
@@ -166,30 +159,40 @@ function Dialer() {
     // Start Call
     const c = await device.connect({ params });
 
-    // [x] Verified
+    // Occurs when:
+    // - Call begins (initially returns as `false`)
     c.on("ringing", async (isRinging: boolean) => {
       console.log("call.on('ringing')", isRinging);
+      dispatch(setStatus("attempting"));
+
+      if (isCallBeingCreated) {
+        console.info(
+          "currentCallId exists, skipping creation of new Call record"
+        );
+        return;
+      } else {
+        dispatch(setIsCallBeingCreated(true));
+      }
     });
 
-    // Fires when the call is answered by the end user ..
-    // Fires when voicemail is trigered `_status`: "open"
-    // [x] Verified
+    // Occurs when:
+    // - Lead answers the call
+    // - Call goes to voicemail
     c.on("accept", async (call: Call) => {
       console.log("call.on('accept')", call);
-      console.log("call.status(): ", call.status());
       dispatch(setStatus("accepted"));
 
-      const newCall: Partial<TCall> = {
-        user_id: jwtDecoded?.id,
-        lead_id: contactQueue[activeContactIndex].id,
-        twilio_call_sid: call.parameters["CallSid"],
-        from_number: fromNumber,
-        to_number: contactQueue[activeContactIndex].phone,
-        status: "Attempted",
-      };
-
       try {
-        await addCall(newCall).unwrap();
+        if (currentCallId === null) {
+          throw "No call ID found";
+        }
+
+        await updateCallViaId({
+          id: currentCallId,
+          twilio_call_sid: call.parameters["CallSid"],
+          status: "Accepted",
+          was_answered: true,
+        }).unwrap();
       } catch (e) {
         notifications.show({
           title: "Error",
@@ -198,34 +201,110 @@ function Dialer() {
       }
     });
 
-    // [x] Verified
+    // Occurs when:
+    // - User mutes the call
     c.on("mute", (isMuted: boolean) => {
-      console.log("call.on('mute')");
       dispatch(setIsMuted(isMuted));
     });
 
-    // [x] Verified
+    // Occurs when:
+    // - Call ends (user hangs up, lead hangs up, voicemail ends)
+    // - Call errors
     c.on("disconnect", async (call: any) => {
       console.log("call.on('disconnect')", call);
-      console.log("call.status(): ", call.status());
+
+      if (currentCallId === null) {
+        console.info("No Call ID found");
+      } else {
+        try {
+          await endCallViaId(currentCallId).unwrap();
+        } catch (e) {
+          notifications.show({
+            title: "Error",
+            message: extractErrorMessage(e),
+          });
+        }
+      }
+
+      // Reset flag
+      dispatch(setIsCallBeingCreated(false));
+
       // Check to see if we need to continue to next Lead or retry current
       dispatch(determineFollowingAction());
     });
 
-    // [x] Verified
+    // Occurs when:
+    // - An error is thrown
     c.on("error", async (e: unknown) => {
       console.log("call.on('mute')", e);
       notifications.show({
         title: "Call error",
         message: extractErrorMessage(e),
       });
+
+      if (currentCallId !== null) {
+        try {
+          await updateCallViaId({
+            id: currentCallId,
+            status: "Error",
+          }).unwrap();
+        } catch (e) {
+          notifications.show({
+            title: "Error",
+            message: extractErrorMessage(e),
+          });
+        }
+      }
+
       dispatch(setStatus("error"));
+      dispatch(setIsCallBeingCreated(false));
       dispatch(determineFollowingAction());
     });
 
-    console.log("setting call", c);
     dispatch(setCall(c));
   }
+
+  async function createNewCallRecord() {
+    console.log("createNewCallRecord!");
+
+    if (currentCallId !== null) {
+      console.info(
+        "currentCallId exists, skipping creation of new Call record"
+      );
+      return;
+    }
+
+    if (activeContactIndex === null) {
+      console.error("activeContactIndex is not set");
+      return;
+    }
+
+    const newCall: Partial<TCall> = {
+      user_id: jwtDecoded?.id,
+      lead_id: contactQueue[activeContactIndex].id,
+      from_number: fromNumber,
+      to_number: contactQueue[activeContactIndex].phone,
+      status: "Attempted",
+    };
+
+    try {
+      const a = await addCall(newCall).unwrap();
+      dispatch(setCurrentCallId(a.id));
+    } catch (e) {
+      notifications.show({
+        title: "Error",
+        message: extractErrorMessage(e),
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (!isCallBeingCreated) {
+      createNewCallRecord();
+    } else {
+      dispatch(setIsCallBeingCreated(true));
+    }
+  }, [isCallBeingCreated]);
 
   // Initialize device once a token exists
   useEffect(() => {
