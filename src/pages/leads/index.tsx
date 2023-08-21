@@ -12,13 +12,14 @@ import UploadLeadsViaCsvModal from "./UploadLeadsViaCsvModal";
 import NewLeadsMenu from "./NewLeadsMenu";
 import ManualInputLeadModal from "./ManualInputLeadModal";
 import phoneFormatter from "../../utils/phone-formatter";
-import { TLead, useGetLeadsQuery } from "../../services/lead";
+import { useGetLeadsQuery } from "../../services/lead";
 import EditLeadSelectionMenu from "./EditLeadSelectionMenu";
 import DeleteLeadConfirmationModal from "./DeleteLeadConfirmationModal";
 import EditLeadModal from "./EditLeadModal";
 import { extractErrorMessage } from "../../utils/error";
+import { Lead } from "../../types";
 
-const colDefs: ColDef<TLead>[] = [
+const colDefs: ColDef<Lead>[] = [
   {
     filter: true,
     width: 10,
@@ -69,7 +70,7 @@ function Leads() {
   ] = useDisclosure(false);
   const [openedEditModal, { open: openEditModal, close: closeEditModal }] =
     useDisclosure(false);
-  const gridRef = useRef<AgGridReact<TLead>>(null); // Optional - for accessing Grid's API
+  const gridRef = useRef<AgGridReact<Lead>>(null); // Optional - for accessing Grid's API
 
   useEffect(() => {
     if (isLoading) {
@@ -121,7 +122,7 @@ function Leads() {
         </Flex>
 
         <Box className="ag-theme-alpine lead-grid-container" h={500} my="md">
-          <AgGridReact<TLead>
+          <AgGridReact<Lead>
             ref={gridRef}
             rowData={leads}
             columnDefs={colDefs}

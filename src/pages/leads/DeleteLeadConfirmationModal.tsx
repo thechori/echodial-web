@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { Button, Group, Modal, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
-import { TLead, useDeleteMultipleLeadsMutation } from "../../services/lead";
+import { useDeleteMultipleLeadsMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
+import { Lead } from "../../types";
 
 type TDeleteLeadConfirmationModalProps = {
   opened: boolean;
   close: () => void;
-  rowsSelected: TLead[];
+  rowsSelected: Lead[];
 };
 
 const DeleteLeadConfirmationModal = ({

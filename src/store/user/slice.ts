@@ -2,21 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import jwt_decode from "jwt-decode";
 //
 import type { RootState } from "../";
+import { User } from "../../types";
 
-export type TUser = {
-  id: number;
-  email: string;
-  password_hash: string;
-  first_name: string;
-  last_name: string;
-  timezone: string | null;
-  phone: string | null;
-  created_at: Date;
-  updated_at: Date;
-  approved_for_beta: boolean | null;
-};
-
-export type TJwtDecoded = TUser & {
+export type TJwtDecoded = User & {
   iat: number;
   exp: number;
 };

@@ -17,10 +17,11 @@ import {
   IconChevronDown,
   IconChevronUp,
 } from "@tabler/icons-react";
-//
 import { format } from "date-fns";
-import { TCall, useGetCallsQuery } from "../../services/call";
+//
+import { useGetCallsQuery } from "../../services/call";
 import phoneFormatter from "../../utils/phone-formatter";
+import { Call } from "../../types";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -79,8 +80,8 @@ function Th({ children, reversed, sorted, onSort }: ThProps) {
 }
 
 function sortData(
-  data: TCall[],
-  payload: { sortBy: keyof TCall | null; reversed: boolean }
+  data: Call[],
+  payload: { sortBy: keyof Call | null; reversed: boolean }
 ) {
   const { sortBy } = payload;
 
@@ -98,10 +99,10 @@ function sortData(
 export function CallHistory() {
   const { data: calls } = useGetCallsQuery();
   const [sortedData, setSortedData] = useState(calls || []);
-  const [sortBy, setSortBy] = useState<keyof TCall | null>("created_at");
+  const [sortBy, setSortBy] = useState<keyof Call | null>("created_at");
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
-  const setSorting = (field: keyof TCall) => {
+  const setSorting = (field: keyof Call) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
     setSortBy(field);

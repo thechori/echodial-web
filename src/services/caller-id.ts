@@ -1,10 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-export type CallerId = {
-  id: number;
-  twilio_sid: string;
-  phone_number: string;
-};
+//
+import { CallerId } from "../types";
 
 const apiBaseUrl = import.meta.env.VITE_API_HOST;
 

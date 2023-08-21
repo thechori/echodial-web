@@ -1,13 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { TCall } from "./call";
+//
+import { Call } from "../types";
 
 export type TMetricResolution = "day" | "week" | "month";
 
 export type TMetrics = {
   leadsCreatedCountPreviousPeriod: number | null;
   leadsCreatedCountCurrentPeriod: number | null;
-  callsMadePreviousPeriod: TCall[];
-  callsMadeCurrentPeriod: TCall[];
+  callsMadePreviousPeriod: Call[];
+  callsMadeCurrentPeriod: Call[];
   callsAnsweredCountPreviousPeriod: number | null;
   callsAnsweredCountCurrentPeriod: number | null;
   averageCallDurationInSecondsPreviousPeriod: number | null;

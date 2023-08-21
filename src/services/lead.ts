@@ -1,20 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-export type TLead = {
-  id: number;
-  first_name: string | null;
-  last_name: string | null;
-  email: string | null;
-  phone: string;
-  address1: string | null;
-  address2: string | null;
-  city: string | null;
-  state: string | null;
-  zip: string | null;
-  source: string | null;
-  created_at: Date | null;
-  updated_at: Date | null;
-};
+//
+import { Lead } from "../types";
 
 const apiBaseUrl = import.meta.env.VITE_API_HOST;
 
@@ -32,15 +18,15 @@ export const leadApi = createApi({
   }),
   tagTypes: ["Lead"],
   endpoints: (builder) => ({
-    getLeads: builder.query<TLead[], void>({
+    getLeads: builder.query<Lead[], void>({
       query: () => "lead",
       providesTags: ["Lead"],
     }),
-    getLeadById: builder.query<TLead, string>({
+    getLeadById: builder.query<Lead, string>({
       query: (id) => `lead/${id}`,
       providesTags: ["Lead"],
     }),
-    addLead: builder.mutation<TLead, Partial<TLead>>({
+    addLead: builder.mutation<Lead, Partial<Lead>>({
       query(body) {
         return {
           url: `lead`,
@@ -50,7 +36,7 @@ export const leadApi = createApi({
       },
       invalidatesTags: ["Lead"],
     }),
-    addLeadsViaCsv: builder.mutation<TLead[], any>({
+    addLeadsViaCsv: builder.mutation<Lead[], any>({
       query(body) {
         return {
           url: `lead/csv`,
@@ -60,7 +46,7 @@ export const leadApi = createApi({
       },
       invalidatesTags: ["Lead"],
     }),
-    updateLead: builder.mutation<TLead, Partial<TLead>>({
+    updateLead: builder.mutation<Lead, Partial<Lead>>({
       query(data) {
         const { id, ...body } = data;
         return {

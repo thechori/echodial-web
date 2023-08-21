@@ -3,7 +3,7 @@ import { Device, Call } from "@twilio/voice-sdk";
 //
 import numbers from "../../configs/numbers";
 import { RootState } from "..";
-import { TLead } from "../../services/lead";
+import { Lead } from "../../types";
 
 const buildOptions = (): TDialerOptions => {
   // Check for local storage
@@ -43,7 +43,7 @@ interface IDialerState {
   identity: null | string;
   fromNumber: string;
   activeContactIndex: null | number;
-  contactQueue: TLead[];
+  contactQueue: Lead[];
   options: TDialerOptions;
   showOptions: boolean;
 }

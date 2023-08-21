@@ -3,13 +3,14 @@ import { Box, Button, Center, Modal, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 //
-import { TLead, useUpdateLeadMutation } from "../../services/lead";
+import { useUpdateLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
+import { Lead } from "../../types";
 
 type TEditLeadModalProps = {
   opened: boolean;
   close: () => void;
-  rowSelected: TLead;
+  rowSelected: Lead;
 };
 
 const EditLeadModal = ({ opened, close, rowSelected }: TEditLeadModalProps) => {

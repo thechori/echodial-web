@@ -1,20 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-export type TCall = {
-  id: number;
-  twilio_call_sid: string;
-  user_id: number;
-  lead_id: number;
-  duration_ms: number | null;
-  notes: string | null;
-  created_at: Date;
-  updated_at: Date;
-  disconnected_at: Date | null;
-  from_number: string;
-  to_number: string;
-  was_answered: boolean;
-  status: string | null;
-};
+//
+import { Call } from "../types";
 
 const apiBaseUrl = import.meta.env.VITE_API_HOST;
 
@@ -33,11 +19,11 @@ export const callApi = createApi({
 
   tagTypes: ["Call"],
   endpoints: (builder) => ({
-    getCalls: builder.query<TCall[], void>({
+    getCalls: builder.query<Call[], void>({
       query: () => "call",
       providesTags: ["Call"],
     }),
-    addCall: builder.mutation<TCall, Partial<TCall>>({
+    addCall: builder.mutation<Call, Partial<Call>>({
       query(call) {
         return {
           url: `call`,
@@ -47,7 +33,7 @@ export const callApi = createApi({
       },
       invalidatesTags: ["Call"],
     }),
-    updateCallViaTwilioCallSid: builder.mutation<TCall, Partial<TCall>>({
+    updateCallViaTwilioCallSid: builder.mutation<Call, Partial<Call>>({
       query(call) {
         return {
           url: `call/twilio-call-sid/${call.twilio_call_sid}`,
@@ -57,7 +43,7 @@ export const callApi = createApi({
       },
       invalidatesTags: ["Call"],
     }),
-    updateCallViaId: builder.mutation<TCall, Partial<TCall>>({
+    updateCallViaId: builder.mutation<Call, Partial<Call>>({
       query(call) {
         return {
           url: `call/${call.id}`,
@@ -67,7 +53,7 @@ export const callApi = createApi({
       },
       invalidatesTags: ["Call"],
     }),
-    endCall: builder.mutation<TCall, number>({
+    endCall: builder.mutation<Call, number>({
       query(id) {
         return {
           url: `call/${id}/end`,
@@ -75,7 +61,7 @@ export const callApi = createApi({
         };
       },
     }),
-    deleteCall: builder.mutation<TCall, number>({
+    deleteCall: builder.mutation<Call, number>({
       query(id) {
         return {
           url: `call/${id}`,

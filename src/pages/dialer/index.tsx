@@ -34,7 +34,6 @@ import { useGetCallerIdsQuery } from "../../services/caller-id";
 import phoneFormatter from "../../utils/phone-formatter";
 import CallHistory from "./CallHistory";
 import {
-  TCall,
   useAddCallMutation,
   useEndCallMutation,
   useUpdateCallViaIdMutation,
@@ -42,6 +41,7 @@ import {
 import { selectJwtDecoded } from "../../store/user/slice";
 import { extractErrorMessage } from "../../utils/error";
 import numbers from "../../configs/numbers";
+import { Call as TCall } from "../../types";
 
 function Dialer() {
   const dispatch = useAppDispatch();
