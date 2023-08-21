@@ -60,8 +60,8 @@ function Dashboard() {
                       : "LEADS THIS MONTH",
                   diff:
                     data &&
-                    data.leadsCreatedCountCurrentPeriod &&
-                    data.leadsCreatedCountPreviousPeriod
+                    data.leadsCreatedCountCurrentPeriod !== null &&
+                    data.leadsCreatedCountPreviousPeriod !== null
                       ? deltaPercentageCalculator(
                           data.leadsCreatedCountPreviousPeriod,
                           data.leadsCreatedCountCurrentPeriod
@@ -78,8 +78,8 @@ function Dashboard() {
                   title: "CALLS MADE",
                   diff:
                     data &&
-                    data.callsMadeCurrentPeriod &&
-                    data.callsMadePreviousPeriod
+                    data.callsMadeCurrentPeriod !== null &&
+                    data.callsMadePreviousPeriod !== null
                       ? deltaPercentageCalculator(
                           data.callsMadePreviousPeriod.length,
                           data.callsMadeCurrentPeriod.length
@@ -96,8 +96,8 @@ function Dashboard() {
                   title: "CALLS CONNECTED",
                   diff:
                     data &&
-                    data.callsAnsweredCountCurrentPeriod &&
-                    data.callsAnsweredCountPreviousPeriod
+                    data.callsAnsweredCountCurrentPeriod !== null &&
+                    data.callsAnsweredCountPreviousPeriod !== null
                       ? deltaPercentageCalculator(
                           data.callsAnsweredCountPreviousPeriod,
                           data.callsAnsweredCountCurrentPeriod
@@ -114,8 +114,8 @@ function Dashboard() {
                   title: "AVERAGE CALL DURATION",
                   diff:
                     data &&
-                    data.averageCallDurationInSecondsCurrentPeriod &&
-                    data.averageCallDurationInSecondsPreviousPeriod
+                    data.averageCallDurationInSecondsCurrentPeriod !== null &&
+                    data.averageCallDurationInSecondsPreviousPeriod !== null
                       ? deltaPercentageCalculator(
                           data.averageCallDurationInSecondsPreviousPeriod,
                           data.averageCallDurationInSecondsCurrentPeriod
