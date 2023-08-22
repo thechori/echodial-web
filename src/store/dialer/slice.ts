@@ -14,6 +14,7 @@ const buildOptions = (): TDialerOptions => {
   }
 
   return {
+    maxRingTimeInMilliseconds: 3000,
     maxCallTries: 3,
     cooldownTimeInMilliseconds: 10000,
     showAlphaDialer: true,
@@ -21,6 +22,7 @@ const buildOptions = (): TDialerOptions => {
 };
 
 type TDialerOptions = {
+  maxRingTimeInMilliseconds: number;
   maxCallTries: number;
   cooldownTimeInMilliseconds: number;
   showAlphaDialer: boolean;
@@ -36,6 +38,7 @@ interface IDialerState {
   currentDialAttempts: null | number;
   call: null | Call;
   currentCallId: null | number;
+  currentCallTimer: any;
   status: "idle" | "calling" | "failed" | "stopped" | "connected";
   muted: boolean;
   token: null | string;
@@ -58,6 +61,7 @@ const buildInitialState = (): IDialerState => ({
   isCallBeingCreated: false,
   wasCallConnected: null,
   currentDialAttempts: null,
+  currentCallTimer: null,
   muted: false,
   // TODO: Remove this hardcoded value in favor of values from API
   fromNumber: localStorage.getItem("dialer__fromNumber") || numbers[2].value,
@@ -143,6 +147,9 @@ export const DialerSlice = createSlice({
     },
     setCurrentDialAttempts: (state, action) => {
       state.currentDialAttempts = action.payload;
+    },
+    setCurrentCallTimer: (state, action) => {
+      state.currentCallTimer = action.payload;
     },
     moveLeadUpInQueue: (state, action) => {
       const id = action.payload;
@@ -242,6 +249,7 @@ export const {
   setIsCalling,
   setIsCallBeingCreated,
   setCurrentDialAttempts,
+  setCurrentCallTimer,
   setDevice,
   setTokenLoading,
   setFromNumber,

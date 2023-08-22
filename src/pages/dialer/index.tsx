@@ -28,6 +28,9 @@ import {
   determineFollowingAction,
   setCurrentCallId,
   setIsCallBeingCreated,
+  setCurrentCallTimer,
+  setIsCalling,
+  continueToNextLead,
 } from "../../store/dialer/slice";
 import ContactQueue from "./ContactQueue";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
@@ -60,6 +63,9 @@ function Dialer() {
     activeContactIndex,
     currentDialAttempts,
     isCallBeingCreated,
+    wasCallConnected,
+    currentCallTimer,
+    options,
   } = useAppSelector((state) => state.dialer);
   //
   const [addCall] = useAddCallMutation();
@@ -163,7 +169,6 @@ function Dialer() {
     // - Call begins (initially returns as `false`)
     c.on("ringing", async (isRinging: boolean) => {
       console.log("call.on('ringing')", isRinging);
-      dispatch(setStatus("attempting"));
 
       if (isCallBeingCreated) {
         console.info(
@@ -256,8 +261,18 @@ function Dialer() {
         }
       }
 
+      // End call if it exists
+      if (call) {
+        console.info("Disconnecting call due to an error");
+        call.disconnect();
+      }
+
+      // Reset states
       dispatch(setStatus("error"));
       dispatch(setIsCallBeingCreated(false));
+      dispatch(setCall(null));
+      dispatch(setCurrentCallId(null));
+      dispatch(setIsCalling(false));
       dispatch(determineFollowingAction());
     });
 
@@ -301,7 +316,42 @@ function Dialer() {
   useEffect(() => {
     if (isCalling && !isCallBeingCreated) {
       createNewCallRecord();
-    } else {
+
+      dispatch(setStatus("attempting"));
+
+      // Start timer that will check to see if:
+      // - Call has connected or not
+      // - Current attempts is beneath options.maxAttempts
+      // - If there is another Lead in the Queue to continue to
+      const timer = setTimeout(() => {
+        console.log("maxRingTimeInMilliseconds hit! moving on...");
+
+        // Check to see if connected or not
+        if (wasCallConnected) {
+          console.log("Call seems to have connected, clearing the timer!");
+          clearTimeout(currentCallTimer);
+          dispatch(setCurrentCallTimer(null));
+        }
+
+        // Check for null value in currentDialAttempts
+        if (currentDialAttempts === null) {
+          console.error("currentDialAttempts is null");
+          return;
+        }
+
+        // Call has gone past allowed time, determine if retrying or continuing
+        if (currentDialAttempts > options.maxCallTries) {
+          console.log("Max attempts reached, moving to next Lead...");
+          dispatch(continueToNextLead());
+        }
+
+        // Retry lead!
+        console.log("Calling Lead again...");
+        dispatch(setCurrentDialAttempts(currentDialAttempts + 1));
+      }, options.maxRingTimeInMilliseconds);
+
+      dispatch(setCurrentCallTimer(timer));
+    } else if (isCalling) {
       dispatch(setIsCallBeingCreated(true));
     }
   }, [isCallBeingCreated, isCalling]);

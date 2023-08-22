@@ -22,7 +22,11 @@ type TDialerOptionsModalProps = {
 const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
   const dispatch = useAppDispatch();
   const { options } = useAppSelector((state) => state.dialer);
-  const { maxCallTries, cooldownTimeInMilliseconds } = options;
+  const {
+    maxCallTries,
+    cooldownTimeInMilliseconds,
+    maxRingTimeInMilliseconds,
+  } = options;
 
   return (
     <Modal opened={opened} onClose={onClose} title="Call options">
@@ -32,6 +36,33 @@ const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
       </Text>
 
       <Group spacing="md" p="md">
+        <NumberInput
+          label={
+            <Flex align="center" justify="space-between">
+              <Text pr="xs">Max ringing time (in milliseconds)</Text>
+              <Tooltip
+                label="Amount of time to ring before hanging up and moving to the next action"
+                position="top-end"
+                withArrow
+                transitionProps={{ transition: "pop-bottom-right" }}
+              >
+                <Text color="dimmed" sx={{ cursor: "help" }}>
+                  <Center>
+                    <IconInfoCircle size="1.1rem" stroke={1.5} />
+                  </Center>
+                </Text>
+              </Tooltip>
+            </Flex>
+          }
+          placeholder="Pick one"
+          value={maxRingTimeInMilliseconds}
+          onChange={(newValue) => {
+            dispatch(
+              setOptions({ ...options, maxRingTimeInMilliseconds: newValue })
+            );
+          }}
+        />
+
         <NumberInput
           label={
             <Flex align="center" justify="space-between">

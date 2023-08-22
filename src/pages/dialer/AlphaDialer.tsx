@@ -108,7 +108,7 @@ function AlphaDialer() {
                   </div>
                 </Tooltip>
               ) : (
-                <Tooltip label="Start call">
+                <Tooltip label="Start dialing">
                   <div>
                     <AiFillPlayCircle
                       fontSize="2.5rem"

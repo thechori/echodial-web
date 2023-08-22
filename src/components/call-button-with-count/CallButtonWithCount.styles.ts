@@ -12,20 +12,21 @@ const CallButtonWithCountStyled = styled.div<{ active: boolean }>`
 
   svg {
     fill: white;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   .call-count {
     width: 24px;
     height: 24px;
     border-radius: 24px;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
     position: absolute;
     top: -8px;
     right: -8px;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: 600;
     background-color: ${(props) => (props.active ? "green" : "red")};
     color: white;
