@@ -1,4 +1,3 @@
-import { FaPhone } from "react-icons/fa";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { FaRegStopCircle, FaUndo } from "react-icons/fa";
 import {
@@ -36,18 +35,13 @@ import {
 } from "../../store/dialer/slice";
 import ContactQueueStyled from "./ContactQueue.styles";
 import { useGetLeadsQuery } from "../../services/lead";
+import CallButtonWithCount from "../../components/call-button-with-count";
 
 function ContactQueue() {
   const dispatch = useAppDispatch();
 
-  const {
-    contactQueue,
-    activeContactIndex,
-    call,
-    isCalling,
-    currentDialAttempts,
-    options,
-  } = useAppSelector((state) => state.dialer);
+  const { contactQueue, activeContactIndex, call, isCalling, options } =
+    useAppSelector((state) => state.dialer);
 
   const { data: leads } = useGetLeadsQuery();
 
@@ -75,25 +69,12 @@ function ContactQueue() {
       return (
         <tr key={c.id} className={active ? "active" : ""}>
           <td className="call-icon hoverable">
-            {isCalling && active ? (
-              <Box ta="center">
-                <FaRegStopCircle
-                  fontSize="1rem"
-                  onClick={endCall}
-                  color="red"
-                />
-                <Text size="xs">{currentDialAttempts}</Text>
-              </Box>
-            ) : (
-              <Box ta="center">
-                <FaPhone
-                  fontSize="1rem"
-                  onClick={() => startCall(index)}
-                  color={active ? "green" : ""}
-                />
-                <Text size="xs">{"???"}</Text>
-              </Box>
-            )}
+            <CallButtonWithCount
+              callCount={c.call_count}
+              active={!(isCalling && active)}
+              onInactiveClick={endCall}
+              onActiveClick={() => startCall(index)}
+            />
           </td>
           <td>
             <Group spacing="sm">

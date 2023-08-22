@@ -299,12 +299,12 @@ function Dialer() {
   }
 
   useEffect(() => {
-    if (!isCallBeingCreated) {
+    if (isCalling && !isCallBeingCreated) {
       createNewCallRecord();
     } else {
       dispatch(setIsCallBeingCreated(true));
     }
-  }, [isCallBeingCreated]);
+  }, [isCallBeingCreated, isCalling]);
 
   // Initialize device once a token exists
   useEffect(() => {

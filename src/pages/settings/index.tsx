@@ -190,7 +190,10 @@ function Settings() {
           <Text py="md">
             Not happy with {APP_NAME} any more? Feel free to cancel at any time.
           </Text>
-          <Button color="red" onClick={handleSignOut}>
+          <Button
+            color="red"
+            onClick={() => alert("Please email us to complete this step")}
+          >
             Delete account
           </Button>
         </Card>
