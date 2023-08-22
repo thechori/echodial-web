@@ -17,7 +17,7 @@ const CallButtonWithCount = ({
 }: TCallButtonWithCountProps) => {
   if (!active) {
     return (
-      <CallButtonWithCountStyled active={active}>
+      <CallButtonWithCountStyled $active={active}>
         <FaRegStopCircle fontSize="1rem" onClick={onInactiveClick} />
         <Text className="call-count" size="xs">
           {callCount}
@@ -27,7 +27,7 @@ const CallButtonWithCount = ({
   }
 
   return (
-    <CallButtonWithCountStyled active={active}>
+    <CallButtonWithCountStyled $active={active}>
       <FaPhone fontSize="1rem" onClick={onActiveClick} />
       <Text className="call-count" size="xs">
         {callCount}

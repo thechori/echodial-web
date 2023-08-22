@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 
-const CallButtonWithCountStyled = styled.div<{ active: boolean }>`
-  background-color: ${(props) => (props.active ? "green" : "red")};
+const CallButtonWithCountStyled = styled.div<{ $active: boolean }>`
+  background-color: ${(props) => (props.$active ? "green" : "red")};
   width: 50px;
   height: 50px;
   border-radius: 50px;
@@ -28,7 +28,7 @@ const CallButtonWithCountStyled = styled.div<{ active: boolean }>`
     right: -8px;
     font-size: 0.75rem;
     font-weight: 600;
-    background-color: ${(props) => (props.active ? "green" : "red")};
+    background-color: ${(props) => (props.$active ? "green" : "red")};
     color: white;
   }
 `;
