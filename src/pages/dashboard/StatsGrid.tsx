@@ -17,8 +17,8 @@ import {
   IconPhone,
   IconClock,
 } from "@tabler/icons-react";
-import { extractErrorMessage } from "../../utils/error";
 import { TMetricResolution } from "../../services/metric";
+import { extractErrorMessage } from "../../utils/error";
 
 const useStyles = createStyles((theme) => ({
   value: {

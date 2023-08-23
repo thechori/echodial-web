@@ -130,7 +130,7 @@ export function CallHistory() {
   return (
     <Box>
       <Flex justify="space-between" align="center">
-        <Title order={2} mb={16}>
+        <Title order={3} mb={16}>
           Call history
         </Title>
       </Flex>

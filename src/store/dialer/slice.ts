@@ -32,7 +32,7 @@ interface IDialerState {
   error: string;
   alphaDialerVisible: boolean;
   device: any | Device;
-  isCalling: boolean;
+  isDialing: boolean;
   isCallBeingCreated: boolean;
   wasCallConnected: null | boolean;
   currentDialAttempts: null | number;
@@ -45,8 +45,8 @@ interface IDialerState {
   tokenLoading: boolean;
   identity: null | string;
   fromNumber: string;
-  activeContactIndex: null | number;
-  contactQueue: Lead[];
+  currentDialIndex: null | number;
+  dialQueue: Lead[];
   options: TDialerOptions;
   showOptions: boolean;
 }
@@ -57,7 +57,7 @@ const buildInitialState = (): IDialerState => ({
   device: null,
   call: null,
   currentCallId: null,
-  isCalling: false,
+  isDialing: false,
   isCallBeingCreated: false,
   wasCallConnected: null,
   currentDialAttempts: null,
@@ -69,10 +69,8 @@ const buildInitialState = (): IDialerState => ({
   status: "idle",
   token: null,
   identity: null,
-  activeContactIndex: null,
-  contactQueue: JSON.parse(
-    localStorage.getItem("dialer__contactQueue") || "[]"
-  ),
+  currentDialIndex: null,
+  dialQueue: JSON.parse(localStorage.getItem("dialer__contactQueue") || "[]"),
   //
   options: buildOptions(),
   showOptions: false,
@@ -115,11 +113,11 @@ export const DialerSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
-    setActiveContactIndex: (state, action) => {
-      state.activeContactIndex = action.payload;
+    setCurrentDialIndex: (state, action) => {
+      state.currentDialIndex = action.payload;
     },
-    setContactQueue: (state, action) => {
-      state.contactQueue = action.payload;
+    setDialQueue: (state, action) => {
+      state.dialQueue = action.payload;
 
       // Persist in local storage
       localStorage.setItem(
@@ -142,8 +140,8 @@ export const DialerSlice = createSlice({
       // Persist in local storage
       localStorage.setItem("dialer__options", JSON.stringify(action.payload));
     },
-    setIsCalling: (state, action) => {
-      state.isCalling = action.payload;
+    setIsDialing: (state, action) => {
+      state.isDialing = action.payload;
     },
     setCurrentDialAttempts: (state, action) => {
       state.currentDialAttempts = action.payload;
@@ -153,7 +151,7 @@ export const DialerSlice = createSlice({
     },
     moveLeadUpInQueue: (state, action) => {
       const id = action.payload;
-      const indexFound = state.contactQueue.findIndex((lead) => lead.id === id);
+      const indexFound = state.dialQueue.findIndex((lead) => lead.id === id);
 
       if (indexFound === -1) {
         console.error("Lead index not found");
@@ -165,15 +163,15 @@ export const DialerSlice = createSlice({
         return;
       }
 
-      const queue = [...state.contactQueue];
+      const queue = [...state.dialQueue];
       const item = queue.splice(indexFound, 1)[0];
       queue.splice(indexFound - 1, 0, item);
 
-      state.contactQueue = queue;
+      state.dialQueue = queue;
     },
     moveLeadDownInQueue: (state, action) => {
       const id = action.payload;
-      const indexFound = state.contactQueue.findIndex((lead) => lead.id === id);
+      const indexFound = state.dialQueue.findIndex((lead) => lead.id === id);
 
       if (indexFound === -1) {
         console.error("Lead index not found");
@@ -181,21 +179,32 @@ export const DialerSlice = createSlice({
       }
 
       // If at the bottom, do nothing
-      if (indexFound === state.contactQueue.length - 1) {
+      if (indexFound === state.dialQueue.length - 1) {
         return;
       }
 
-      const queue = [...state.contactQueue];
+      const queue = [...state.dialQueue];
       const item = queue.splice(indexFound, 1)[0];
       queue.splice(indexFound + 1, 0, item);
 
-      state.contactQueue = queue;
+      state.dialQueue = queue;
     },
     deleteLeadFromQueue: (state, action) => {
-      state.contactQueue = state.contactQueue.filter(
+      state.dialQueue = state.dialQueue.filter(
         (lead) => lead.id !== action.payload
       );
     },
+
+    // startDialer: (state, action: PayloadAction<number | undefined>) => {
+
+    // },
+
+    // Ends the current call and maintains place in queue
+    endDialer: (state, action) => {},
+
+    // Resets all of the items in the dialer
+    resetDialer: (state, action) => {},
+
     // [ ] Should retry call if no answer AND under option.maxAttempts
     // [ ] Should continue to next call if nobody answered AND over option.maxAttempts
     // [ ] Should stop if a call connects (maybe they want to write notes, update Lead data, etc)
@@ -219,25 +228,70 @@ export const DialerSlice = createSlice({
       }
     },
     continueToNextLead: (state) => {
-      const { activeContactIndex, contactQueue } = state;
+      console.log("continuing");
+
+      const { currentDialIndex, dialQueue } = state;
 
       // Reset attempt count
       state.currentDialAttempts = 1;
 
       // Check for null active index
-      if (activeContactIndex === null) {
+      if (currentDialIndex === null) {
         return console.error("No active contact index found");
       }
 
       // Stop if we're at the last index of the queue
-      if (activeContactIndex === contactQueue.length - 1) {
+      if (currentDialIndex === dialQueue.length - 1) {
         return console.info("No more leads to dial");
       }
 
       // Reset dial attempts counter
       state.currentDialAttempts = 1;
 
-      state.activeContactIndex = activeContactIndex + 1;
+      state.currentDialIndex = currentDialIndex + 1;
+
+      // Start new timer
+    },
+    startCallTimer: (state) => {
+      const {
+        wasCallConnected,
+        currentCallTimer,
+        currentDialAttempts,
+        options,
+      } = state;
+      // Start timer that will check to see if:
+      // - Call has connected or not
+      // - Current attempts is beneath options.maxAttempts
+      // - If there is another Lead in the Queue to continue to
+      const timer = setTimeout(() => {
+        console.log("maxRingTimeInMilliseconds hit! moving on...");
+
+        // Check to see if connected or not
+        if (wasCallConnected) {
+          console.log("Call seems to have connected, clearing the timer!");
+          clearTimeout(currentCallTimer);
+          setCurrentCallTimer(null);
+        }
+
+        // BUG HERE
+        // Check for null value in currentDialAttempts
+        if (currentDialAttempts === null) {
+          console.error("currentDialAttempts is null");
+          return;
+        }
+
+        // Call has gone past allowed time, determine if retrying or continuing
+        if (currentDialAttempts > options.maxCallTries) {
+          console.log("Max attempts reached, moving to next Lead...");
+          continueToNextLead();
+        }
+
+        // Retry lead!
+        console.log("Calling Lead again...");
+        setCurrentDialAttempts(currentDialAttempts + 1);
+      }, options.maxRingTimeInMilliseconds);
+
+      setCurrentCallTimer(timer);
     },
   },
 });
@@ -246,7 +300,7 @@ export const {
   setAlphaDialerVisible,
   setCall,
   setCurrentCallId,
-  setIsCalling,
+  setIsDialing,
   setIsCallBeingCreated,
   setCurrentDialAttempts,
   setCurrentCallTimer,
@@ -256,8 +310,8 @@ export const {
   setIdentity,
   setToken,
   setError,
-  setContactQueue,
-  setActiveContactIndex,
+  setDialQueue,
+  setCurrentDialIndex,
   setIsMuted,
   setStatus,
   setShowOptions,
@@ -267,21 +321,22 @@ export const {
   deleteLeadFromQueue,
   determineFollowingAction,
   continueToNextLead,
+  startCallTimer,
 } = DialerSlice.actions;
 
-export const selectIsCallActive = (state: RootState) => state.dialer.isCalling;
+export const selectIsCallActive = (state: RootState) => state.dialer.isDialing;
 
 export const selectActivePhoneNumber = (state: RootState) => {
-  const { activeContactIndex, contactQueue } = state.dialer;
-  return activeContactIndex !== null
-    ? contactQueue[activeContactIndex].phone
+  const { currentDialIndex, dialQueue } = state.dialer;
+  return currentDialIndex !== null
+    ? dialQueue[currentDialIndex].phone
     : undefined;
 };
 
 export const selectActiveFullName = (state: RootState) => {
-  const { activeContactIndex, contactQueue } = state.dialer;
-  return activeContactIndex !== null
-    ? `${contactQueue[activeContactIndex].first_name} ${contactQueue[activeContactIndex].last_name}`
+  const { currentDialIndex, dialQueue } = state.dialer;
+  return currentDialIndex !== null
+    ? `${dialQueue[currentDialIndex].first_name} ${dialQueue[currentDialIndex].last_name}`
     : undefined;
 };
 
@@ -292,12 +347,3 @@ export const selectIsDialerOptionsModalOpen = (state: RootState) =>
   state.dialer.showOptions;
 
 export default DialerSlice.reducer;
-
-// First, create the thunk
-// const startCalling = createAsyncThunk(
-//   "dialer/startCalling",
-//   async (userId: number, thunkAPI) => {
-//     // const response = await userAPI.fetchById(userId)
-//     // return response.data
-//   }
-// );

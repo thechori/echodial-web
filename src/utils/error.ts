@@ -19,6 +19,10 @@ export const extractErrorMessage = (
   }
   // RTK Query errors
   if (error && typeof error === "object" && "data" in error) {
+    // @ts-ignore
+    if ("message" in error.data) {
+      return error.data.message;
+    }
     return error.data;
   }
 

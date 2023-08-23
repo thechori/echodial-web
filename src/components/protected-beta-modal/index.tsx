@@ -9,8 +9,16 @@ import { selectJwtDecoded } from "../../store/user/slice";
 const ProtectedBetaModal = () => {
   const jwtDecoded = useAppSelector(selectJwtDecoded);
 
+  // Show modal if they explicitly have no access
   if (!jwtDecoded || jwtDecoded.approved_for_beta) {
     return null;
+  }
+
+  // Clear JWT within local storage after showing message to allow for a new token
+  // to be retrieved to avoid seeing modal again
+  if (jwtDecoded && !jwtDecoded.approved_for_beta) {
+    console.info("Clearing local storage...");
+    localStorage.clear();
   }
 
   return (

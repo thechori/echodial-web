@@ -27,8 +27,6 @@ function Dashboard() {
   const { data, isLoading, error } =
     useGetDashboardMetricsQuery(metricResolution);
 
-  console.log("data", data);
-
   return (
     <DashboardStyled>
       <Container fluid py="md">

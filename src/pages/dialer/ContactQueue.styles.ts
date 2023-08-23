@@ -13,8 +13,11 @@ const ContactQueueStyled = styled.div`
   }
 
   tr.active {
-    border: 2px solid green;
     background-color: #00800030;
+  }
+
+  tr.active-index {
+    border: 2px solid green;
   }
 
   .call-icon {

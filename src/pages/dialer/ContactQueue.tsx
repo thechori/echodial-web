@@ -27,58 +27,68 @@ import {
   deleteLeadFromQueue,
   moveLeadDownInQueue,
   moveLeadUpInQueue,
-  setActiveContactIndex,
-  setContactQueue,
-  setIsCalling,
+  setCurrentDialIndex,
+  setDialQueue,
+  setIsDialing,
   setOptions,
   setShowOptions,
 } from "../../store/dialer/slice";
 import ContactQueueStyled from "./ContactQueue.styles";
 import { useGetLeadsQuery } from "../../services/lead";
 import CallButtonWithCount from "../../components/call-button-with-count";
+import clsx from "clsx";
 
 function ContactQueue() {
   const dispatch = useAppDispatch();
 
-  const { contactQueue, activeContactIndex, call, isCalling, options } =
+  const { dialQueue, currentDialIndex, call, isDialing, options } =
     useAppSelector((state) => state.dialer);
 
   const { data: leads } = useGetLeadsQuery();
 
   function startCall(index: number) {
-    dispatch(setActiveContactIndex(index));
-    dispatch(setIsCalling(true));
+    dispatch(setCurrentDialIndex(index));
+    dispatch(setIsDialing(true));
   }
 
   function endCall() {
-    dispatch(setIsCalling(false));
+    dispatch(setIsDialing(false));
   }
 
-  const rows = contactQueue.length ? (
-    contactQueue.map((c, index) => {
+  const rows = dialQueue.length ? (
+    dialQueue.map((c, index) => {
       let active = false;
+      let activeIndex = false;
 
       if (
-        activeContactIndex !== null &&
-        contactQueue[activeContactIndex].id === c.id &&
-        isCalling
+        currentDialIndex !== null &&
+        dialQueue[currentDialIndex].id === c.id
       ) {
+        activeIndex = true;
+      }
+
+      if (activeIndex && isDialing) {
         active = true;
       }
 
       return (
-        <tr key={c.id} className={active ? "active" : ""}>
+        <tr
+          key={c.id}
+          className={clsx({
+            ["active"]: active,
+            ["active-index"]: activeIndex,
+          })}
+        >
           <td className="call-icon hoverable">
             <CallButtonWithCount
               callCount={c.call_count}
-              active={!(isCalling && active)}
+              active={!(isDialing && active)}
               onInactiveClick={endCall}
               onActiveClick={() => startCall(index)}
             />
           </td>
           <td>
             <Group spacing="sm">
-              <Avatar className="user-avatar" size={30} radius={30} />
               <Text fz="sm" fw={500}>
                 {c.first_name} {c.last_name}
               </Text>
@@ -120,21 +130,21 @@ function ContactQueue() {
   );
 
   function stopDialer() {
-    dispatch(setIsCalling(false));
+    dispatch(setIsDialing(false));
   }
 
   function importLeadsIntoQueue() {
-    dispatch(setContactQueue(leads));
+    dispatch(setDialQueue(leads));
   }
 
   function clearLeadsFromQueue() {
-    dispatch(setContactQueue([]));
+    dispatch(setDialQueue([]));
   }
 
   return (
     <ContactQueueStyled>
       <Flex justify="space-between" align="center">
-        <Title order={2} mb={16}>
+        <Title order={3} mb={16}>
           Call queue
         </Title>
 
@@ -174,7 +184,7 @@ function ContactQueue() {
             </div>
           </Tooltip>
           <Box ml="xs">
-            {isCalling ? (
+            {isDialing ? (
               <Tooltip label="End call">
                 <div>
                   <FaRegStopCircle
@@ -194,7 +204,7 @@ function ContactQueue() {
                     onClick={() => {
                       // Start from 0 UNLESS there is a currently selected index
                       const index =
-                        activeContactIndex === null ? 0 : activeContactIndex;
+                        currentDialIndex === null ? 0 : currentDialIndex;
                       startCall(index);
                     }}
                   />
@@ -209,8 +219,8 @@ function ContactQueue() {
         <Table horizontalSpacing="xs" verticalSpacing="sm">
           <thead>
             <tr>
-              <th style={{ width: 50 }} />
-              <th>Contact</th>
+              <th style={{ width: 75 }} />
+              <th>Full name</th>
               <th>Phone</th>
               <th />
             </tr>
