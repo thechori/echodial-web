@@ -28,7 +28,21 @@ type TDialerOptions = {
   showAlphaDialer: boolean;
 };
 
+type TRequestAction =
+  | null
+  | "init"
+  | "startDialer"
+  | "startCall"
+  | "determineNextAction"
+  | "stopDialer"
+  | "resetDialer"
+  | "error";
+
 interface IDialerState {
+  // This variable is to manage the state across the app, while being explicit about the ONE thing the
+  // dialer component should be doing to make the state more approachable
+  requestAction: TRequestAction;
+  //
   error: string;
   alphaDialerVisible: boolean;
   device: any | Device;
@@ -52,6 +66,8 @@ interface IDialerState {
 }
 
 const buildInitialState = (): IDialerState => ({
+  requestAction: null,
+  //
   alphaDialerVisible: false,
   tokenLoading: false,
   device: null,
@@ -80,6 +96,9 @@ export const DialerSlice = createSlice({
   name: "dialer",
   initialState: buildInitialState(),
   reducers: {
+    setRequestAction: (state, action) => {
+      state.requestAction = action.payload;
+    },
     setAlphaDialerVisible: (state, action) => {
       state.alphaDialerVisible = action.payload;
     },
@@ -127,6 +146,9 @@ export const DialerSlice = createSlice({
     },
     setIsMuted: (state, action) => {
       state.muted = action.payload;
+    },
+    setWasCallConnected: (state, action) => {
+      state.wasCallConnected = action.payload;
     },
     setStatus: (state, action) => {
       state.status = action.payload;
@@ -194,109 +216,11 @@ export const DialerSlice = createSlice({
         (lead) => lead.id !== action.payload
       );
     },
-
-    // startDialer: (state, action: PayloadAction<number | undefined>) => {
-
-    // },
-
-    // Ends the current call and maintains place in queue
-    endDialer: (state, action) => {},
-
-    // Resets all of the items in the dialer
-    resetDialer: (state, action) => {},
-
-    // [ ] Should retry call if no answer AND under option.maxAttempts
-    // [ ] Should continue to next call if nobody answered AND over option.maxAttempts
-    // [ ] Should stop if a call connects (maybe they want to write notes, update Lead data, etc)
-    // [ ] Should stop if an error exists? Or retry?
-    determineFollowingAction: (state) => {
-      const { currentDialAttempts, options } = state;
-
-      if (currentDialAttempts === null) {
-        return console.error("Current dial attempts not found");
-      }
-
-      // Check attempts against options
-      const { maxCallTries } = options;
-
-      if (currentDialAttempts < maxCallTries) {
-        // Retry call by incrementing dial attempt
-        state.currentDialAttempts = currentDialAttempts + 1;
-      } else {
-        // Continue to next Lead
-        continueToNextLead();
-      }
-    },
-    continueToNextLead: (state) => {
-      console.log("continuing");
-
-      const { currentDialIndex, dialQueue } = state;
-
-      // Reset attempt count
-      state.currentDialAttempts = 1;
-
-      // Check for null active index
-      if (currentDialIndex === null) {
-        return console.error("No active contact index found");
-      }
-
-      // Stop if we're at the last index of the queue
-      if (currentDialIndex === dialQueue.length - 1) {
-        return console.info("No more leads to dial");
-      }
-
-      // Reset dial attempts counter
-      state.currentDialAttempts = 1;
-
-      state.currentDialIndex = currentDialIndex + 1;
-
-      // Start new timer
-    },
-    startCallTimer: (state) => {
-      const {
-        wasCallConnected,
-        currentCallTimer,
-        currentDialAttempts,
-        options,
-      } = state;
-      // Start timer that will check to see if:
-      // - Call has connected or not
-      // - Current attempts is beneath options.maxAttempts
-      // - If there is another Lead in the Queue to continue to
-      const timer = setTimeout(() => {
-        console.log("maxRingTimeInMilliseconds hit! moving on...");
-
-        // Check to see if connected or not
-        if (wasCallConnected) {
-          console.log("Call seems to have connected, clearing the timer!");
-          clearTimeout(currentCallTimer);
-          setCurrentCallTimer(null);
-        }
-
-        // BUG HERE
-        // Check for null value in currentDialAttempts
-        if (currentDialAttempts === null) {
-          console.error("currentDialAttempts is null");
-          return;
-        }
-
-        // Call has gone past allowed time, determine if retrying or continuing
-        if (currentDialAttempts > options.maxCallTries) {
-          console.log("Max attempts reached, moving to next Lead...");
-          continueToNextLead();
-        }
-
-        // Retry lead!
-        console.log("Calling Lead again...");
-        setCurrentDialAttempts(currentDialAttempts + 1);
-      }, options.maxRingTimeInMilliseconds);
-
-      setCurrentCallTimer(timer);
-    },
   },
 });
 
 export const {
+  setRequestAction,
   setAlphaDialerVisible,
   setCall,
   setCurrentCallId,
@@ -322,6 +246,7 @@ export const {
   determineFollowingAction,
   continueToNextLead,
   startCallTimer,
+  setWasCallConnected,
 } = DialerSlice.actions;
 
 export const selectIsCallActive = (state: RootState) => state.dialer.isDialing;

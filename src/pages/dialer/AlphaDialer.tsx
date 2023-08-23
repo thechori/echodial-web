@@ -42,6 +42,9 @@ import {
   setCurrentDialAttempts,
   determineFollowingAction,
   setIsDialing,
+  setRequestAction,
+  setCurrentCallTimer,
+  setWasCallConnected,
 } from "../../store/dialer/slice";
 import routes from "../../configs/routes";
 import AlphaDialerStyled from "./AlphaDialer.styles";
@@ -55,6 +58,7 @@ function AlphaDialer() {
   //
   const jwtDecoded = useAppSelector(selectJwtDecoded);
   const {
+    requestAction,
     call,
     device,
     currentCallId,
@@ -67,6 +71,8 @@ function AlphaDialer() {
     isCallBeingCreated,
     muted,
     options,
+    wasCallConnected,
+    currentCallTimer,
   } = useAppSelector((state) => state.dialer);
   //
   const [addCall] = useAddCallMutation();
@@ -76,10 +82,6 @@ function AlphaDialer() {
   const phoneNumber = useAppSelector(selectActivePhoneNumber);
   const fullName = useAppSelector(selectActiveFullName);
   const showAlphaDialer = useAppSelector(selectShowAlphaDialer);
-
-  function handleNextLead() {
-    dispatch(continueToNextLead());
-  }
 
   async function initializeDevice() {
     dispatch(setError(""));
@@ -199,11 +201,20 @@ function AlphaDialer() {
       dispatch(setCurrentDialIndex(indexToDial));
     }
 
-    // Use current index to set for dialer
-    indexToDial = currentDialIndex;
+    startCall();
+  }
+
+  async function startCall() {
+    if (currentDialIndex === null) {
+      notifications.show({
+        message:
+          "Dialer index not defined. Try selecting a lead and calling again",
+      });
+      return;
+    }
 
     const params = {
-      To: dialQueue[indexToDial as number].phone,
+      To: dialQueue[currentDialIndex].phone,
       From: fromNumber,
     };
 
@@ -216,7 +227,7 @@ function AlphaDialer() {
     c.on("ringing", async (isRinging: boolean) => {
       console.log("call.on('ringing')", isRinging);
 
-      if (isRinging && isCallBeingCreated) {
+      if (isRinging && !isCallBeingCreated) {
         dispatch(setIsCallBeingCreated(true));
       }
     });
@@ -271,17 +282,13 @@ function AlphaDialer() {
         }
       }
 
-      // Reset flag
-      dispatch(setIsCallBeingCreated(false));
-
       // Check to see if we need to continue to next Lead or retry current
-      dispatch(determineFollowingAction());
+      determineNextAction();
     });
 
     // Occurs when:
     // - An error is thrown
     c.on("error", async (e: unknown) => {
-      console.log("call.on('mute')", e);
       notifications.show({
         title: "Call error",
         message: extractErrorMessage(e),
@@ -319,46 +326,202 @@ function AlphaDialer() {
     dispatch(setCall(c));
   }
 
+  async function startCallTimer() {
+    // Start timer that will check to see if:
+    // - Call has connected or not
+    // - Current attempts is beneath options.maxAttempts
+    // - If there is another Lead in the Queue to continue to
+    const timer = setTimeout(() => {
+      console.log("maxRingTimeInMilliseconds hit! moving on...");
+
+      // Check to see if connected or not
+      if (wasCallConnected) {
+        console.log("Call seems to have connected, clearing the timer!");
+        clearTimeout(currentCallTimer);
+        setCurrentCallTimer(null);
+      }
+
+      // BUG HERE
+      // Check for null value in currentDialAttempts
+      if (currentDialAttempts === null) {
+        console.error("currentDialAttempts is null");
+        return;
+      }
+
+      // Call has gone past allowed time, determine if retrying or continuing
+      if (currentDialAttempts > options.maxCallTries) {
+        console.log("Max attempts reached, moving to next Lead...");
+        continueToNextLead();
+      }
+
+      // Retry lead!
+      console.log("Calling Lead again...");
+      setCurrentDialAttempts(currentDialAttempts + 1);
+    }, options.maxRingTimeInMilliseconds);
+
+    setCurrentCallTimer(timer);
+  }
+
+  // [ ] Should retry call if no answer AND under option.maxAttempts
+  // [ ] Should continue to next call if nobody answered AND over option.maxAttempts
+  // [ ] Should stop if a call connects (maybe they want to write notes, update Lead data, etc)
+  // [ ] Should stop if an error exists? Or retry?
+  async function determineNextAction() {
+    // Reset flag
+    dispatch(setIsCallBeingCreated(false));
+
+    if (currentDialAttempts === null) {
+      return console.error("Current dial attempts not found");
+    }
+
+    // Check attempts against options
+    const { maxCallTries } = options;
+
+    if (currentDialAttempts < maxCallTries) {
+      // Retry call by incrementing dial attempt
+      dispatch(setCurrentDialAttempts(currentDialAttempts + 1));
+    } else {
+      // Continue to next Lead
+      continueToNextLead();
+    }
+  }
+
+  // Invoked when:
+  // - Next arrow is click
+  async function continueToNextLead() {
+    console.log("continuing");
+
+    // TODO: check for existing next index before proceeding
+    if (currentDialIndex === dialQueue.length - 1) {
+      notifications.show({
+        message: "No more leads in the queue. Stopping the dialer",
+      });
+      return;
+    }
+
+    // Check for null dial index
+    if (currentDialIndex === null) {
+      notifications.show({
+        message:
+          "Dial index is null. Try selecting a different lead and trying again",
+      });
+      return;
+    }
+
+    // Point to the next Lead in the queue
+    dispatch(setCurrentDialIndex(currentDialIndex + 1));
+
+    // Reset attempt count
+    dispatch(setCurrentDialAttempts(1));
+
+    // Check for null active index
+    if (currentDialIndex === null) {
+      return console.error("No active contact index found");
+    }
+
+    // Stop if we're at the last index of the queue
+    if (currentDialIndex === dialQueue.length - 1) {
+      return console.info("No more leads to dial");
+    }
+
+    // Start new timer
+  }
+
+  // Invoked when:
+  // - Stop button is clicked
+  // - An error occurs
+  // - Call disconnects ?
+  async function stopCall() {}
+
+  async function stopDialer() {}
+
+  async function resetDialer() {
+    // Check for call
+    if (call) {
+      call.disconnect();
+    }
+
+    dispatch(setError(""));
+    dispatch(setIsDialing(false));
+    dispatch(setIsCallBeingCreated(false));
+    dispatch(setIsMuted(false));
+    dispatch(setCurrentCallId(null));
+    dispatch(setCall(null));
+    dispatch(setCurrentCallTimer(null));
+    dispatch(setCurrentDialIndex(null));
+    dispatch(setWasCallConnected(null));
+    dispatch(setCurrentDialAttempts(null));
+  }
+
+  async function handleError() {}
+
   //////////////////////// HOOKS ///////////////////////////
+
+  // Main logic MUST happen in these React components, unfortunately
 
   // What are the main events?
   // [ ] Initializing
   // [ ] Start dialer (with or without index)
+  // [ ] Start call (at current index)
   // [ ] Determine next in-dial action (retry or continue)
   // [ ] Stop dialer
   // [ ] Reset dialer
   // [ ] Error
 
   useEffect(() => {
-    if (isDialing && !isCallBeingCreated) {
-      createNewCallRecord();
-
-      // Start call timer
-      dispatch(startCallTimer());
-    } else if (isDialing) {
-      dispatch(setIsCallBeingCreated(true));
+    if (!requestAction) {
+      console.info("No request action found, skipping...");
+      return;
     }
-  }, [isCallBeingCreated, isDialing]);
 
-  // Initialize device once a token exists
-  useEffect(() => {
-    if (token) {
-      initializeDevice();
-    }
-  }, [token]);
-
-  // Handle start/stop call
-  useEffect(() => {
-    if (isDialing) {
-      if (currentDialAttempts === null) {
-        console.log("setting dial attempts = 1");
-        dispatch(setCurrentDialAttempts(1));
+    switch (requestAction) {
+      case "init": {
+        initializeDevice();
+        dispatch(setRequestAction(null));
+        break;
       }
-      startDialer();
-    } else {
-      endDialer();
+
+      case "startDialer": {
+        startDialer();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      case "startCall": {
+        startCall();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      case "determineNextAction": {
+        determineNextAction();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      case "stopDialer": {
+        stopDialer();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      case "resetDialer": {
+        resetDialer();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      case "error": {
+        handleError();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      default: {
+        dispatch(setRequestAction(null));
+      }
     }
-  }, [isDialing, currentDialIndex, currentDialAttempts]);
+  }, [requestAction]);
 
   if (!showAlphaDialer) return null;
 
@@ -453,7 +616,7 @@ function AlphaDialer() {
                   <AiFillStepForward
                     fontSize="2.5rem"
                     className="hoverable"
-                    onClick={handleNextLead}
+                    onClick={continueToNextLead}
                   />
                 </div>
               </Tooltip>

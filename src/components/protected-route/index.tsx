@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+import { notifications } from "@mantine/notifications";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectJwt, selectJwtDecoded, signOut } from "../../store/user/slice";
@@ -16,7 +17,7 @@ const ProtectedRoute = ({ children }: any) => {
   // Politely handle expired JWT
   const currentTime = new Date().getTime() / 1000;
   if (currentTime > jwtDecoded.exp) {
-    alert("Your session has ended. For security reasons, please sign in again");
+    notifications.show({ message: "Session expired. Please log in again" });
     dispatch(signOut());
     return <Navigate to="/sign-in" replace />;
   }
