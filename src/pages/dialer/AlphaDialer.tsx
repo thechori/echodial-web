@@ -159,11 +159,10 @@ function AlphaDialer() {
     }
   }
 
-  // TODO: find a way to automatically call this when beginning a phone call?
-  // Or maybe even just running all the time in the app?
+  // TODO: Reevaluate for performance enhancements
   // Consider: lags that happens when opening websocket
   // Consider: lag to init start up client before call (even more delay before call - users not happy)
-  async function startupClient() {
+  async function fetchToken() {
     try {
       dispatch(setTokenLoading(true));
       const { data } = await apiService("/dialer/token");
@@ -467,6 +466,25 @@ function AlphaDialer() {
   // [ ] Stop dialer
   // [ ] Reset dialer
   // [ ] Error
+
+  // Initialize the device
+  // Get token
+  // Create device instance
+  useEffect(() => {
+    console.log("initializing device...");
+
+    // No token found, get it
+    if (!token) {
+      fetchToken();
+      return;
+    }
+
+    // Token found but no device, initialize it
+    if (token && !device) {
+      initializeDevice();
+      return;
+    }
+  }, [token, device]);
 
   useEffect(() => {
     if (!requestAction) {
