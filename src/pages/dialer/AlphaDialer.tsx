@@ -48,6 +48,7 @@ import { Call as TCall } from "../../types";
 function AlphaDialer() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
   //
   const jwtDecoded = useAppSelector(selectJwtDecoded);
   const {
@@ -165,6 +166,8 @@ function AlphaDialer() {
     // assuming that ringing will get to `true` since the initial (and only returned value now)
     // is `false` ... address this in  the future if issues occur
     c.once("ringing", async () => {
+      console.log("********************* ringing *********************");
+
       if (currentCallId !== null) {
         console.info(
           "currentCallId exists, skipping creation of new Call record"
@@ -256,6 +259,8 @@ function AlphaDialer() {
   // - Current attempts is beneath options.maxAttempts
   // - If there is another Lead in the Queue to continue to
   async function startCallTimer() {
+    console.log("starting new call timer!");
+
     const timer = setTimeout(async () => {
       console.log("maxRingTimeInMilliseconds hit! moving on...");
 
@@ -271,7 +276,8 @@ function AlphaDialer() {
         console.log("wasCallConnected is FALSE...");
       }
 
-      dispatch(setRequestAction("determineNextAction"));
+      // dispatch(setRequestAction("determineNextAction"));
+      determineNextAction();
     }, options.maxRingTimeInMilliseconds);
 
     dispatch(setCurrentCallTimer(timer));
@@ -282,7 +288,7 @@ function AlphaDialer() {
   // [ ] Should stop if a call connects (maybe they want to write notes, update Lead data, etc)
   // [x] Should stop if an error exists
   async function determineNextAction() {
-    console.log("call", call);
+    console.log("determining next action", call);
 
     // End call
     await stopCall(call);
@@ -355,7 +361,7 @@ function AlphaDialer() {
   async function stopCall(call: Call | null) {
     // Ensure a Call exists before proceeding
     if (!call) {
-      console.warn("No call to end found");
+      console.info("No call to end found");
     }
 
     // Bug: no call is found when this gets invoked
@@ -366,11 +372,12 @@ function AlphaDialer() {
 
     // Stop timer
     if (currentCallTimer) {
+      console.log("found a call timer, clearing it..");
       clearTimeout(currentCallTimer);
     }
 
     if (currentCallId === null) {
-      console.warn("No Call ID found");
+      console.info("No Call ID found");
     } else {
       try {
         const res = await endCallViaId(currentCallId).unwrap();
@@ -437,9 +444,12 @@ function AlphaDialer() {
   // [ ] Reset dialer
   // [ ] Error
 
+  // BUG: Infinite loop here!
   // Get token
   // Create device instance
   useEffect(() => {
+    // console.log("hi", token, device);
+
     // No token found, get it
     if (!token) {
       fetchToken();
@@ -451,11 +461,11 @@ function AlphaDialer() {
       initializeDevice();
       return;
     }
+    // }, []);
   }, [token, device, fetchToken, initializeDevice]);
 
   useEffect(() => {
     if (!requestAction) {
-      console.info("No request action found, skipping...");
       return;
     }
 
