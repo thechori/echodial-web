@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconCircleCheck } from "@tabler/icons-react";
 //
@@ -35,7 +35,7 @@ function SignUp() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleFormSubmit(e: React.FormEvent) {
+  async function handleFormSubmit(e: FormEvent) {
     e.preventDefault();
 
     // Clear errors
@@ -122,7 +122,7 @@ function SignUp() {
                 name="firstName"
                 placeholder="First name *"
                 value={firstName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setFirstName(e.target.value)
                 }
               />
@@ -134,7 +134,7 @@ function SignUp() {
                 name="lastName"
                 placeholder="Last name *"
                 value={lastName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setLastName(e.target.value)
                 }
               />
@@ -145,7 +145,7 @@ function SignUp() {
                 type="email"
                 placeholder="Email address *"
                 value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setEmail(e.target.value)
                 }
               />
@@ -156,7 +156,7 @@ function SignUp() {
                 type="password"
                 placeholder="Password *"
                 value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setPassword(e.target.value)
                 }
               />
@@ -166,7 +166,7 @@ function SignUp() {
                   pr="sm"
                   required
                   checked={acceptTerms}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setAcceptTerms(e.target.checked)
                   }
                 />

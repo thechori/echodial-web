@@ -1,3 +1,4 @@
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Button,
@@ -11,7 +12,7 @@ import {
 import SignInStyled from "./SignIn.styles";
 import l34dsLogo from "../../assets/l34ds-logo-full-inverted.png";
 import routes from "../../configs/routes";
-import { useEffect, useState } from "react";
+
 import { extractErrorMessage } from "../../utils/error";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectJwt, setJwt } from "../../store/user/slice";
@@ -29,7 +30,7 @@ function SignIn() {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  async function handleFormSubmit(e: React.FormEvent) {
+  async function handleFormSubmit(e: FormEvent) {
     e.preventDefault();
 
     setError("");
@@ -99,7 +100,7 @@ function SignIn() {
               <TextInput
                 label="Email"
                 value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setEmail(e.target.value)
                 }
               />
@@ -110,7 +111,7 @@ function SignIn() {
                 type="password"
                 label="Password"
                 value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setPassword(e.target.value)
                 }
               />

@@ -1,4 +1,4 @@
-import React from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -50,7 +50,7 @@ Sentry.init({
 });
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
+  <StrictMode>
     <Provider store={store}>
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <StyleProvider>
@@ -180,5 +180,5 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         </StyleProvider>
       </MantineProvider>
     </Provider>
-  </React.StrictMode>
+  </StrictMode>
 );

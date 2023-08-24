@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaPhone,
@@ -18,7 +18,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
 
-  const handleClickOff = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleClickOff = (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     setExpanded(false);
   };

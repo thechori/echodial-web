@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineMenu } from "react-icons/ai";
 import { Box, Button } from "@mantine/core";
@@ -14,7 +14,7 @@ const Header = () => {
   const navigate = useNavigate();
   const jwt = useAppSelector(selectJwt);
 
-  const handleClickOff = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleClickOff = (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     setExpanded(false);
   };

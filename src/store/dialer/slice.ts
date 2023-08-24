@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Device, Call } from "@twilio/voice-sdk";
 //
 import numbers from "../../configs/numbers";
@@ -21,20 +21,20 @@ const buildOptions = (): TDialerOptions => {
   };
 };
 
-type TDialerOptions = {
+export type TDialerOptions = {
   maxRingTimeInMilliseconds: number;
   maxCallTries: number;
   cooldownTimeInMilliseconds: number;
   showAlphaDialer: boolean;
 };
 
-type TRequestAction =
+export type TRequestAction =
   | null
-  | "init"
-  | "startDialer"
+  | "startDialing"
   | "startCall"
+  | "stopCall"
+  | "stopDialing"
   | "determineNextAction"
-  | "stopDialer"
   | "resetDialer"
   | "error";
 
@@ -46,8 +46,6 @@ interface IDialerState {
   error: string;
   alphaDialerVisible: boolean;
   device: any | Device;
-  isDialing: boolean;
-  isCallBeingCreated: boolean;
   wasCallConnected: null | boolean;
   currentDialAttempts: null | number;
   call: null | Call;
@@ -73,8 +71,6 @@ const buildInitialState = (): IDialerState => ({
   device: null,
   call: null,
   currentCallId: null,
-  isDialing: false,
-  isCallBeingCreated: false,
   wasCallConnected: null,
   currentDialAttempts: null,
   currentCallTimer: null,
@@ -96,7 +92,7 @@ export const DialerSlice = createSlice({
   name: "dialer",
   initialState: buildInitialState(),
   reducers: {
-    setRequestAction: (state, action) => {
+    setRequestAction: (state, action: PayloadAction<TRequestAction>) => {
       state.requestAction = action.payload;
     },
     setAlphaDialerVisible: (state, action) => {
@@ -113,9 +109,6 @@ export const DialerSlice = createSlice({
     },
     setCurrentCallId: (state, action) => {
       state.currentCallId = action.payload;
-    },
-    setIsCallBeingCreated: (state, action) => {
-      state.isCallBeingCreated = action.payload;
     },
     setFromNumber: (state, action) => {
       state.fromNumber = action.payload;
@@ -161,9 +154,6 @@ export const DialerSlice = createSlice({
 
       // Persist in local storage
       localStorage.setItem("dialer__options", JSON.stringify(action.payload));
-    },
-    setIsDialing: (state, action) => {
-      state.isDialing = action.payload;
     },
     setCurrentDialAttempts: (state, action) => {
       state.currentDialAttempts = action.payload;
@@ -224,8 +214,6 @@ export const {
   setAlphaDialerVisible,
   setCall,
   setCurrentCallId,
-  setIsDialing,
-  setIsCallBeingCreated,
   setCurrentDialAttempts,
   setCurrentCallTimer,
   setDevice,
@@ -243,13 +231,10 @@ export const {
   moveLeadUpInQueue,
   moveLeadDownInQueue,
   deleteLeadFromQueue,
-  determineFollowingAction,
-  continueToNextLead,
-  startCallTimer,
   setWasCallConnected,
 } = DialerSlice.actions;
 
-export const selectIsCallActive = (state: RootState) => state.dialer.isDialing;
+export const selectIsCallActive = (state: RootState) => state.dialer.call;
 
 export const selectActivePhoneNumber = (state: RootState) => {
   const { currentDialIndex, dialQueue } = state.dialer;

@@ -10,7 +10,6 @@ import {
 import { IoIosSettings } from "react-icons/io";
 import {
   ActionIcon,
-  Avatar,
   Box,
   Flex,
   Group,
@@ -20,8 +19,9 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import clsx from "clsx";
 //
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import phoneFormatter from "../../utils/phone-formatter";
 import {
   deleteLeadFromQueue,
@@ -29,30 +29,30 @@ import {
   moveLeadUpInQueue,
   setCurrentDialIndex,
   setDialQueue,
-  setIsDialing,
   setOptions,
+  setRequestAction,
   setShowOptions,
 } from "../../store/dialer/slice";
 import ContactQueueStyled from "./ContactQueue.styles";
 import { useGetLeadsQuery } from "../../services/lead";
 import CallButtonWithCount from "../../components/call-button-with-count";
-import clsx from "clsx";
 
 function ContactQueue() {
   const dispatch = useAppDispatch();
 
-  const { dialQueue, currentDialIndex, call, isDialing, options } =
-    useAppSelector((state) => state.dialer);
+  const { dialQueue, currentDialIndex, call, options } = useAppSelector(
+    (state) => state.dialer
+  );
 
   const { data: leads } = useGetLeadsQuery();
 
   function startCall(index: number) {
     dispatch(setCurrentDialIndex(index));
-    dispatch(setIsDialing(true));
+    dispatch(setRequestAction("startCall"));
   }
 
-  function endCall() {
-    dispatch(setIsDialing(false));
+  function stopCall() {
+    dispatch(setRequestAction("stopCall"));
   }
 
   const rows = dialQueue.length ? (
@@ -67,7 +67,7 @@ function ContactQueue() {
         activeIndex = true;
       }
 
-      if (activeIndex && isDialing) {
+      if (activeIndex && call) {
         active = true;
       }
 
@@ -82,8 +82,8 @@ function ContactQueue() {
           <td className="call-icon hoverable">
             <CallButtonWithCount
               callCount={c.call_count}
-              active={!(isDialing && active)}
-              onInactiveClick={endCall}
+              active={!(call && active)}
+              onInactiveClick={stopCall}
               onActiveClick={() => startCall(index)}
             />
           </td>
@@ -128,10 +128,6 @@ function ContactQueue() {
       <td></td>
     </tr>
   );
-
-  function stopDialer() {
-    dispatch(setIsDialing(false));
-  }
 
   function importLeadsIntoQueue() {
     dispatch(setDialQueue(leads));
@@ -184,13 +180,13 @@ function ContactQueue() {
             </div>
           </Tooltip>
           <Box ml="xs">
-            {isDialing ? (
+            {call ? (
               <Tooltip label="End call">
                 <div>
                   <FaRegStopCircle
                     color="red"
                     className="hoverable"
-                    onClick={stopDialer}
+                    onClick={stopCall}
                   />
                 </div>
               </Tooltip>

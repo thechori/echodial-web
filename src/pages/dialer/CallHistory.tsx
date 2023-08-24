@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   createStyles,
   Table,
@@ -48,7 +48,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface ThProps {
-  children: React.ReactNode;
+  children: ReactNode;
   reversed: boolean;
   sorted: boolean;
   onSort(): void;
