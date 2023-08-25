@@ -45,12 +45,12 @@ interface IDialerState {
   //
   error: string;
   alphaDialerVisible: boolean;
+  isDialing: boolean;
   device: any | Device;
   wasCallConnected: null | boolean;
   currentDialAttempts: null | number;
   call: null | Call;
   currentCallId: null | number;
-  currentCallTimer: any;
   status: "idle" | "calling" | "failed" | "stopped" | "connected";
   muted: boolean;
   token: null | string;
@@ -69,11 +69,11 @@ const buildInitialState = (): IDialerState => ({
   alphaDialerVisible: false,
   tokenLoading: false,
   device: null,
+  isDialing: false,
   call: null,
   currentCallId: null,
   wasCallConnected: null,
   currentDialAttempts: null,
-  currentCallTimer: null,
   muted: false,
   // TODO: Remove this hardcoded value in favor of values from API
   fromNumber: localStorage.getItem("dialer__fromNumber") || numbers[2].value,
@@ -103,6 +103,9 @@ export const DialerSlice = createSlice({
     },
     setTokenLoading: (state, action) => {
       state.tokenLoading = action.payload;
+    },
+    setIsDialing: (state, action) => {
+      state.isDialing = action.payload;
     },
     setCall: (state, action) => {
       state.call = action.payload;
@@ -158,9 +161,6 @@ export const DialerSlice = createSlice({
     setCurrentDialAttempts: (state, action) => {
       state.currentDialAttempts = action.payload;
     },
-    setCurrentCallTimer: (state, action) => {
-      state.currentCallTimer = action.payload;
-    },
     moveLeadUpInQueue: (state, action) => {
       const id = action.payload;
       const indexFound = state.dialQueue.findIndex((lead) => lead.id === id);
@@ -180,6 +180,11 @@ export const DialerSlice = createSlice({
       queue.splice(indexFound - 1, 0, item);
 
       state.dialQueue = queue;
+
+      // Update dial index, if active
+      if (state.currentDialIndex !== null) {
+        state.currentDialIndex--;
+      }
     },
     moveLeadDownInQueue: (state, action) => {
       const id = action.payload;
@@ -200,6 +205,11 @@ export const DialerSlice = createSlice({
       queue.splice(indexFound + 1, 0, item);
 
       state.dialQueue = queue;
+
+      // Update dial index, if active
+      if (state.currentDialIndex !== null) {
+        state.currentDialIndex++;
+      }
     },
     deleteLeadFromQueue: (state, action) => {
       state.dialQueue = state.dialQueue.filter(
@@ -212,10 +222,10 @@ export const DialerSlice = createSlice({
 export const {
   setRequestAction,
   setAlphaDialerVisible,
+  setIsDialing,
   setCall,
   setCurrentCallId,
   setCurrentDialAttempts,
-  setCurrentCallTimer,
   setDevice,
   setTokenLoading,
   setFromNumber,
