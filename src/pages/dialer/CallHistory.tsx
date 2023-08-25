@@ -186,7 +186,11 @@ export function CallHistory() {
               rows
             ) : (
               <tr>
-                <td colSpan={Object.keys(calls ? calls[0] : {}).length}>
+                <td
+                  colSpan={
+                    calls && calls.length ? Object.keys(calls[0]).length : 1
+                  }
+                >
                   <Text weight={500} align="center">
                     Nothing found
                   </Text>

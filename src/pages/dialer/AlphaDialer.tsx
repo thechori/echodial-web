@@ -371,6 +371,8 @@ function AlphaDialer() {
       notifications.show({
         message: "No more leads in the queue. Stopping the dialer",
       });
+      await stopDialing();
+      await resetDialer();
       return;
     }
 
@@ -459,6 +461,8 @@ function AlphaDialer() {
 
     // Reset states
     console.log("clearing call via redux state");
+    dispatch(setIsDialing(false));
+    callRef.current.isDialing = false;
     dispatch(setCall(null));
     callRef.current.call = null;
     dispatch(setCurrentCallId(null));
