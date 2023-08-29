@@ -1,13 +1,6 @@
 import { AiFillPlayCircle } from "react-icons/ai";
-import { FaRegStopCircle, FaUndo } from "react-icons/fa";
-import {
-  BiDownArrow,
-  BiImport,
-  BiShow,
-  BiTrash,
-  BiUpArrow,
-} from "react-icons/bi";
-import { IoIosSettings } from "react-icons/io";
+import { FaRegStopCircle } from "react-icons/fa";
+import { BiDownArrow, BiShow, BiTrash, BiUpArrow } from "react-icons/bi";
 import {
   ActionIcon,
   Box,
@@ -28,10 +21,8 @@ import {
   moveLeadDownInQueue,
   moveLeadUpInQueue,
   setCurrentDialIndex,
-  setDialQueue,
   setOptions,
   setRequestAction,
-  setShowOptions,
 } from "../../store/dialer/slice";
 import ContactQueueStyled from "./ContactQueue.styles";
 import { useGetLeadsQuery } from "../../services/lead";
@@ -40,11 +31,10 @@ import CallButtonWithCount from "../../components/call-button-with-count";
 function ContactQueue() {
   const dispatch = useAppDispatch();
 
-  const { dialQueue, currentDialIndex, call, options } = useAppSelector(
+  const { data: leads } = useGetLeadsQuery();
+  const { currentDialIndex, call, options } = useAppSelector(
     (state) => state.dialer
   );
-
-  const { data: leads } = useGetLeadsQuery();
 
   function startCall(index: number) {
     dispatch(setCurrentDialIndex(index));
@@ -55,15 +45,12 @@ function ContactQueue() {
     dispatch(setRequestAction("stopCall"));
   }
 
-  const rows = dialQueue.length ? (
-    dialQueue.map((c, index) => {
+  const rows = leads?.length ? (
+    leads.map((c, index) => {
       let active = false;
       let activeIndex = false;
 
-      if (
-        currentDialIndex !== null &&
-        dialQueue[currentDialIndex].id === c.id
-      ) {
+      if (currentDialIndex !== null && leads[currentDialIndex].id === c.id) {
         activeIndex = true;
       }
 
@@ -129,13 +116,13 @@ function ContactQueue() {
     </tr>
   );
 
-  function importLeadsIntoQueue() {
-    dispatch(setDialQueue(leads));
-  }
+  // function importLeadsIntoQueue() {
+  //   dispatch(setDialQueue(leads));
+  // }
 
-  function clearLeadsFromQueue() {
-    dispatch(setDialQueue([]));
-  }
+  // function clearLeadsFromQueue() {
+  //   dispatch(setDialQueue([]));
+  // }
 
   return (
     <ContactQueueStyled>
@@ -157,7 +144,7 @@ function ContactQueue() {
               </div>
             </Tooltip>
           )}
-          <Tooltip label="Clear leads from queue">
+          {/* <Tooltip label="Clear leads from queue">
             <div>
               <FaUndo
                 size="1.2rem"
@@ -165,8 +152,8 @@ function ContactQueue() {
                 onClick={clearLeadsFromQueue}
               />
             </div>
-          </Tooltip>
-          <Tooltip label="Import leads into queue">
+          </Tooltip> */}
+          {/* <Tooltip label="Import leads into queue">
             <div>
               <BiImport className="hoverable" onClick={importLeadsIntoQueue} />
             </div>
@@ -178,7 +165,7 @@ function ContactQueue() {
                 onClick={() => dispatch(setShowOptions(true))}
               />
             </div>
-          </Tooltip>
+          </Tooltip> */}
           <Box ml="xs">
             {call ? (
               <Tooltip label="End call">

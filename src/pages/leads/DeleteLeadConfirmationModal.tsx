@@ -4,24 +4,25 @@ import { notifications } from "@mantine/notifications";
 //
 import { useDeleteMultipleLeadsMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
-import { Lead } from "../../types";
+import { useAppSelector } from "../../store/hooks";
 
 type TDeleteLeadConfirmationModalProps = {
   opened: boolean;
   close: () => void;
-  rowsSelected: Lead[];
 };
 
 const DeleteLeadConfirmationModal = ({
   opened,
   close,
-  rowsSelected,
 }: TDeleteLeadConfirmationModalProps) => {
   const [error, setError] = useState("");
+  //
+  const { selectedRows } = useAppSelector((state) => state.leads);
+  //
   const [deleteLeads, { isLoading }] = useDeleteMultipleLeadsMutation();
 
   async function handleDeleteLeads() {
-    const ids = rowsSelected.map((lead) => lead.id);
+    const ids = selectedRows.map((lead) => lead.id);
     try {
       await deleteLeads(ids).unwrap();
       notifications.show({
@@ -36,14 +37,14 @@ const DeleteLeadConfirmationModal = ({
 
   useEffect(() => {
     setError("");
-  }, [rowsSelected]);
+  }, [selectedRows]);
 
   return (
     <Modal opened={opened} onClose={close} title="Delete lead">
       <Modal.Body>
         <Text mb="md">
-          Are you sure you want to delete ({rowsSelected.length}) lead
-          {rowsSelected.length > 1 ? "s" : ""}?
+          Are you sure you want to delete ({selectedRows.length}) lead
+          {selectedRows.length > 1 ? "s" : ""}?
         </Text>
 
         <Group py="md" position="center">

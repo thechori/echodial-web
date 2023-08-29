@@ -459,8 +459,10 @@ function AlphaDialer() {
       }
     }
 
-    // Reset states
-    console.log("clearing call via redux state");
+    resetDialerState();
+  }
+
+  function resetDialerState() {
     dispatch(setIsDialing(false));
     callRef.current.isDialing = false;
     dispatch(setCall(null));

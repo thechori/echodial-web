@@ -17,7 +17,7 @@ export const callApi = createApi({
     },
   }),
 
-  tagTypes: ["Call"],
+  tagTypes: ["Call", "Lead"],
   endpoints: (builder) => ({
     getCalls: builder.query<Call[], void>({
       query: () => "call",
@@ -31,7 +31,7 @@ export const callApi = createApi({
           body: call,
         };
       },
-      invalidatesTags: ["Call"],
+      invalidatesTags: ["Call", "Lead"],
     }),
     updateCallViaTwilioCallSid: builder.mutation<Call, Partial<Call>>({
       query(call) {
@@ -41,7 +41,7 @@ export const callApi = createApi({
           body: call,
         };
       },
-      invalidatesTags: ["Call"],
+      invalidatesTags: ["Call", "Lead"],
     }),
     updateCallViaId: builder.mutation<Call, Partial<Call>>({
       query(call) {
@@ -51,7 +51,7 @@ export const callApi = createApi({
           body: call,
         };
       },
-      invalidatesTags: ["Call"],
+      invalidatesTags: ["Call", "Lead"],
     }),
     endCall: builder.mutation<Call, number>({
       query(id) {
@@ -60,6 +60,7 @@ export const callApi = createApi({
           method: "GET",
         };
       },
+      invalidatesTags: ["Call", "Lead"],
     }),
     deleteCall: builder.mutation<Call, number>({
       query(id) {

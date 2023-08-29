@@ -6,25 +6,30 @@ import { notifications } from "@mantine/notifications";
 import { useUpdateLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
 import { Lead } from "../../types";
+import { useAppSelector } from "../../store/hooks";
 
 type TEditLeadModalProps = {
   opened: boolean;
   close: () => void;
-  rowSelected: Lead;
 };
 
-const EditLeadModal = ({ opened, close, rowSelected }: TEditLeadModalProps) => {
+const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
   const [error, setError] = useState("");
+  const [lead, setLead] = useState<Lead | null>(null);
+  //
+  const { selectedRows } = useAppSelector((state) => state.leads);
+  //
   const [updateLead, { isLoading }] = useUpdateLeadMutation();
+  //
   const form = useForm({
-    initialValues: rowSelected,
+    initialValues: lead,
     validate: {
       // Allow blank, but validate if something has been entered
-      email: (val) => {
+      email: (val: string | null) => {
         if (!val) return null;
         return /^\S+@\S+$/.test(val) ? null : "Invalid email";
       },
-      phone: (val) => {
+      phone: (val: string | null) => {
         if (!val) return "Phone number required";
         // Trim and strip all non-numeric characters
         const trimmedVal = val.trim();
@@ -38,6 +43,12 @@ const EditLeadModal = ({ opened, close, rowSelected }: TEditLeadModalProps) => {
     form.validate();
 
     if (!form.isValid()) {
+      console.error("Form is not valid");
+      return;
+    }
+
+    if (!form.values) {
+      console.error("No lead found");
       return;
     }
 
@@ -51,13 +62,19 @@ const EditLeadModal = ({ opened, close, rowSelected }: TEditLeadModalProps) => {
   }
 
   useEffect(() => {
-    if (rowSelected) {
+    if (selectedRows.length) {
+      setLead(selectedRows[0]);
+    }
+  }, [selectedRows]);
+
+  useEffect(() => {
+    if (lead) {
       form.setValues({
-        ...rowSelected,
-        phone: rowSelected ? rowSelected.phone.split("+1")[1] : "", // Remove +1 as not to confuse user
+        ...lead,
+        phone: lead ? lead.phone.split("+1")[1] : "", // Remove +1 as not to confuse user
       });
     }
-  }, [rowSelected]);
+  }, [lead]);
 
   return (
     <Modal opened={opened} onClose={close} title="Edit lead">

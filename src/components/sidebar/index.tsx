@@ -6,6 +6,7 @@ import {
   FaCreditCard,
   FaAddressBook,
 } from "react-icons/fa";
+import { GoHistory } from "react-icons/go";
 import { IoIosSettings } from "react-icons/io";
 import { MdGroups } from "react-icons/md";
 import { AiOutlineMenu, AiOutlineDashboard } from "react-icons/ai";
@@ -50,25 +51,25 @@ const Sidebar = () => {
                   <div>Dashboard</div>
                 </NavLink>
 
+                <NavLink to={routes.leads}>
+                  <MdGroups fontSize="1.5rem" />
+                  <div>Leads</div>
+                </NavLink>
+
                 <NavLink to={routes.dialer}>
                   <FaPhone fontSize="1.5rem" />
                   <div>Dialer</div>
                 </NavLink>
 
-                <NavLink to={routes.leads}>
-                  <MdGroups fontSize="1.5rem" />
-                  <div>Leads</div>
+                <NavLink to={routes.callHistory}>
+                  <GoHistory fontSize="1.5rem" />
+                  <div>Call History</div>
                 </NavLink>
 
                 <NavLink to={routes.phases}>
                   <FaFolderOpen fontSize="1.5rem" />
                   <div>Phases</div>
                 </NavLink>
-
-                {/* <NavLink to={routes.reports}>
-                  <BiSolidReport fontSize="1.5rem" />
-                  <div>Reports</div>
-                </NavLink> */}
 
                 <NavLink to={routes.callerIds}>
                   <FaAddressBook fontSize="1.5rem" />
@@ -105,14 +106,19 @@ const Sidebar = () => {
             <div>Dashboard</div>
           </NavLink>
 
+          <NavLink to={routes.leads}>
+            <MdGroups fontSize="1.5rem" />
+            <div>Leads</div>
+          </NavLink>
+
           <NavLink to={routes.dialer}>
             <FaPhone fontSize="1.5rem" />
             <div>Dialer</div>
           </NavLink>
 
-          <NavLink to={routes.leads}>
-            <MdGroups fontSize="1.5rem" />
-            <div>Leads</div>
+          <NavLink to={routes.callHistory}>
+            <GoHistory fontSize="1.5rem" />
+            <div>Call History</div>
           </NavLink>
 
           <NavLink to={routes.phases}>

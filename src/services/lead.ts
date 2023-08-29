@@ -57,6 +57,7 @@ export const leadApi = createApi({
       },
       invalidatesTags: (lead) => [{ type: "Lead", id: lead?.id }],
     }),
+
     deleteMultipleLeads: builder.mutation<
       { message: string; data: number[] },
       number[]

@@ -19,6 +19,8 @@ export const extractErrorMessage = (
   }
   // RTK Query errors
   if (error && typeof error === "object" && "data" in error) {
+    // TODO: Fix bug here -- caused an app crash when DB connection timed out during
+    // initial dashboard load
     // @ts-ignore
     if ("message" in error.data) {
       return error.data.message;

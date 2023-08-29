@@ -32,6 +32,7 @@ import CallerIds from "./pages/caller-ids";
 import Reports from "./pages/reports";
 import Phases from "./pages/phases";
 import Billing from "./pages/billing";
+import CallHistory from "./pages/call-history";
 
 Sentry.init({
   dsn: "https://8cc56131e046a73c78d21f51eaa7d72b@o4505682068242432.ingest.sentry.io/4505682074140672",
@@ -107,6 +108,16 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   <ProtectedRoute>
                     <AuthenticatedUserLayout>
                       <Dialer />
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.callHistory}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
+                      <CallHistory />
                     </AuthenticatedUserLayout>
                   </ProtectedRoute>
                 }

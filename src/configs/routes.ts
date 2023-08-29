@@ -10,6 +10,7 @@ const routes = {
   // Protected
   dashboard: "/dashboard",
   dialer: "/dialer",
+  callHistory: "/call-history",
   settings: "/settings",
   signUp: "/sign-up",
   leads: "/leads",

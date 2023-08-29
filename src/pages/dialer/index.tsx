@@ -15,7 +15,6 @@ import { setFromNumber } from "../../store/dialer/slice";
 import ContactQueue from "./ContactQueue";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
 import phoneFormatter from "../../utils/phone-formatter";
-import CallHistory from "./CallHistory";
 import numbers from "../../configs/numbers";
 
 function Dialer() {
@@ -57,14 +56,9 @@ function Dialer() {
         </Flex>
 
         <Grid>
-          <Grid.Col xs={12} sm={12} md={6}>
+          <Grid.Col xs={12} sm={12} md={12}>
             <Card className={!token ? "disabled" : ""} withBorder shadow="md">
               <ContactQueue />
-            </Card>
-          </Grid.Col>
-          <Grid.Col xs={12} sm={12} md={6}>
-            <Card className={!token ? "disabled" : ""} withBorder shadow="md">
-              <CallHistory />
             </Card>
           </Grid.Col>
         </Grid>

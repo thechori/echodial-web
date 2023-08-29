@@ -68,7 +68,7 @@ export function FeaturesGrid() {
           <Title className={classes.title} order={2}>
             We specialize in dialing.
           </Title>
-          <Text c="dimmed">
+          <Text c="dimmed" maw={600}>
             Other CRMs specialize in nothing, because they try to do too much.
             With {APP_NAME}, you can get more done by becoming a super-human
             multi tasker.

@@ -16,7 +16,7 @@ function Landing() {
           <div className="hero-subcontainer">
             <div className="left">
               <Title weight={400} color="white">
-                Automatic dialing –
+                Autonomous dialing –
               </Title>
 
               <Title weight={600} color="gold">
