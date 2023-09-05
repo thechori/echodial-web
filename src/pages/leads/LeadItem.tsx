@@ -56,9 +56,9 @@ const LeadItem = ({
 
   async function handleSave() {
     try {
-      const res = await updateLead(form.values).unwrap();
-      console.log("res", res);
+      const updatedLead = await updateLead(form.values).unwrap();
       setEditing(false);
+      form.setValues(updatedLead);
     } catch (e) {
       notifications.show({ message: extractErrorMessage(e) });
     }
@@ -80,8 +80,6 @@ const LeadItem = ({
     call_count,
   } = form.values;
 
-  console.log("originalLead", originalLead);
-
   if (editing) {
     return (
       <Box className="lead-item">
@@ -93,17 +91,20 @@ const LeadItem = ({
                 size="sm"
                 readOnly={!editing}
                 {...form.getInputProps("first_name")}
+                placeholder="First name"
               />
               <TextInput
                 size="sm"
                 readOnly={!editing}
                 {...form.getInputProps("last_name")}
+                placeholder="Last name"
               />
             </Flex>
             <TextInput
               readOnly={!editing}
               size="sm"
               {...form.getInputProps("phone")}
+              placeholder="Phone"
             />
 
             <Box>
