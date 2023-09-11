@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { IconCircleCheck } from "@tabler/icons-react";
 //
 import SignUpStyled from "./SignUp.styles";
-import l34dsLogo from "../../assets/l34ds-logo-full.png";
+import echodialLogo from "../../assets/EchoDial-temp-logo-full.png";
 import routes from "../../configs/routes";
 import { extractErrorMessage } from "../../utils/error";
 import { useAppDispatch } from "../../store/hooks";
@@ -77,7 +77,7 @@ function SignUp() {
             className="logo-container hoverable"
             onClick={() => navigate(routes.landing)}
           >
-            <img src={l34dsLogo} alt="L34ds logo" />
+            <img src={echodialLogo} alt="EchoDial logo" />
           </Box>
 
           <Box py="md">
@@ -93,7 +93,7 @@ function SignUp() {
         <div className="card">
           <div className="left">
             <div className="value-proposition">
-              <div className="title">With L34ds you can:</div>
+              <div className="title">With EchoDial you can:</div>
               <List
                 spacing="xs"
                 size="sm"
@@ -171,8 +171,8 @@ function SignUp() {
                   }
                 />
                 <Text size="xs">
-                  I accept the <a href="#">L34ds Terms of Service</a> and have
-                  read the <a href="#">L34ds Privacy Notice</a>.
+                  I accept the <a href="#">EchoDial Terms of Service</a> and
+                  have read the <a href="#">EchoDial Privacy Notice</a>.
                 </Text>
               </Flex>
 

@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 //
 import devices from "../../styles/devices";
 
-const TryL34dsStyled = styled.div`
+const SignUpStyled = styled.div`
   width: 100vw;
   min-height: 100vh;
   background: linear-gradient(
@@ -109,4 +109,4 @@ const TryL34dsStyled = styled.div`
   }
 `;
 
-export default TryL34dsStyled;
+export default SignUpStyled;

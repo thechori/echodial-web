@@ -13,7 +13,7 @@ import { AiOutlineMenu, AiOutlineDashboard } from "react-icons/ai";
 //
 import SidebarStyled from "./Sidebar.styles";
 import routes from "../../configs/routes";
-import logo from "../../assets/l34ds-logo-full.png";
+import logo from "../../assets/EchoDial-temp-logo-full.png";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const Sidebar = () => {
           <img
             className="hoverable"
             src={logo}
-            alt="L34ds logo"
+            alt="EchoDial logo"
             onClick={() => navigate(routes.landing)}
           />
           <div
@@ -94,7 +94,7 @@ const Sidebar = () => {
         <div className="header">
           <img
             src={logo}
-            alt="L34ds logo"
+            alt="EchoDial logo"
             className="hoverable"
             onClick={() => navigate(routes.landing)}
           />

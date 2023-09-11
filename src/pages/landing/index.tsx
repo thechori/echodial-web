@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 //
 import LandingStyled from "./Landing.styles";
-import l34dsScreenshot from "../../assets/l34ds-screenshot.png";
+import dashboardScreenshot from "../../assets/dashboard-screenshot.png";
 import routes from "../../configs/routes";
 import { Button, Container, Text, Title } from "@mantine/core";
 import { FeaturesGrid } from "../features/FeaturesGrid";
@@ -42,8 +42,8 @@ function Landing() {
             <div className="right">
               <img
                 className="screenshot"
-                src={l34dsScreenshot}
-                alt="L34ds dashboard screenshot"
+                src={dashboardScreenshot}
+                alt="EchoDial dashboard screenshot"
               />
             </div>
           </div>

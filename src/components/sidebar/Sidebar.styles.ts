@@ -45,7 +45,7 @@ const SidebarStyled = styled.div`
   .header {
     display: flex;
     place-content: center;
-    padding: 1.75rem;
+    padding: 1.25rem;
 
     @media ${devices.tablet} {
       border-bottom: 1px solid white;

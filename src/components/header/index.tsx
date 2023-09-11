@@ -4,7 +4,7 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { Box, Button } from "@mantine/core";
 //
 import HeaderStyled from "./Header.styles";
-import leadsLogoFull from "../../assets/l34ds-logo-full.png";
+import echodialLogoFull from "../../assets/EchoDial-temp-logo-full.png";
 import routes from "../../configs/routes";
 import { useAppSelector } from "../../store/hooks";
 import { selectJwt } from "../../store/user/slice";
@@ -27,7 +27,7 @@ const Header = () => {
             className="logo hoverable"
             onClick={() => navigate(routes.landing)}
           >
-            <img src={leadsLogoFull} alt="L34ds company logo" />
+            <img src={echodialLogoFull} alt="EchoDial company logo" />
           </div>
           <div className="links">
             <div

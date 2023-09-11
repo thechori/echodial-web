@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 //
 import SignInStyled from "./SignIn.styles";
-import l34dsLogo from "../../assets/l34ds-logo-full-inverted.png";
+import echodialLogo from "../../assets/EchoDial-temp-logo-full.png";
 import routes from "../../configs/routes";
 
 import { extractErrorMessage } from "../../utils/error";
@@ -92,7 +92,7 @@ function SignIn() {
             className="logo-container hoverable"
             onClick={() => navigate(routes.landing)}
           >
-            <img src={l34dsLogo} alt="L34ds logo" />
+            <img src={echodialLogo} alt="EchoDial logo" />
           </div>
 
           <form onSubmit={handleFormSubmit}>

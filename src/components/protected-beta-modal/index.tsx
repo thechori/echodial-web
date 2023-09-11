@@ -1,7 +1,7 @@
 import { Anchor, Box, Flex, Image, Modal, Text, Title } from "@mantine/core";
 //
 import { APP_NAME } from "../../configs/names";
-import logo from "../../assets/l34ds-logo-full.png";
+import logo from "../../assets/EchoDial-temp-logo-full.png";
 import colors from "../../styles/colors";
 import { useAppSelector } from "../../store/hooks";
 import { selectJwtDecoded } from "../../store/user/slice";
@@ -36,8 +36,8 @@ const ProtectedBetaModal = () => {
           <Text>{APP_NAME} is still in active development.</Text>
           <Text>
             If you'd like free VIP access to our beta, contact{" "}
-            <Anchor href="mailto:ryan@l34ds.net">ryan@l34ds.net</Anchor> to set
-            up your account.
+            <Anchor href="mailto:ryan@echodial.com">ryan@echodial.com</Anchor>{" "}
+            to set up your account.
           </Text>
         </Box>
 

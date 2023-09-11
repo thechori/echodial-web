@@ -133,8 +133,8 @@ function PhoneNumbers() {
               </Title>
               <Text>Phone numbers purchased through subscription</Text>
               <Box p="lg">
-                {l34dsOwnedPhoneNumbers.length ? (
-                  l34dsOwnedPhoneNumbers.map((number) => (
+                {echodialOwnedPhoneNumbers.length ? (
+                  echodialOwnedPhoneNumbers.map((number) => (
                     <Flex
                       key={number.id}
                       py={4}

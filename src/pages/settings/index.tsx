@@ -147,8 +147,8 @@ function Settings() {
               }
             >
               <List.Item>
-                <Anchor href="mailto:support@l34ds.net">
-                  support@l34ds.net
+                <Anchor href="mailto:support@echodial.com">
+                  support@echodial.com
                 </Anchor>
               </List.Item>
               <List.Item>

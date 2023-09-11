@@ -1,1 +1,1 @@
-export const APP_NAME = "L34DS";
+export const APP_NAME = "EchoDial";

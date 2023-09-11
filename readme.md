@@ -1,4 +1,4 @@
-# L34ds (Web)
+# EchoDial (Web)
 
 React app (Vite) built for the frontend of the app
 
