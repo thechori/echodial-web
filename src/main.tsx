@@ -35,7 +35,7 @@ import Billing from "./pages/billing";
 import CallHistory from "./pages/call-history";
 
 Sentry.init({
-  dsn: "https://8cc56131e046a73c78d21f51eaa7d72b@o4505682068242432.ingest.sentry.io/4505682074140672",
+  dsn: "https://dbc6c090143fce815721f48b790b3810@o4505859893231616.ingest.sentry.io/4505859896442880",
   integrations: [
     new Sentry.BrowserTracing({
       // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
