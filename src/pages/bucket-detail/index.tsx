@@ -1,22 +1,22 @@
 import { useNavigate, useParams } from "react-router-dom";
 //
 import { useAppSelector } from "../../store/hooks";
-import { selectPhases } from "../../store/buckets/slice";
+import { selectBuckets } from "../../store/buckets/slice";
 import { Box, Button, Container, Text, Title } from "@mantine/core";
 import routes from "../../configs/routes";
 import { useEffect, useState } from "react";
-import { TPhase } from "../../store/buckets/types";
+import { TBucket } from "../../store/buckets/types";
 
-function PhaseDetail() {
+function BucketDetail() {
   const navigate = useNavigate();
 
-  const [p, setP] = useState<null | TPhase>(null);
-  const phases = useAppSelector(selectPhases);
+  const [p, setP] = useState<null | TBucket>(null);
+  const buckets = useAppSelector(selectBuckets);
 
-  const { phaseId } = useParams();
+  const { bucketId } = useParams();
 
-  if (!phaseId) {
-    alert("No phase found");
+  if (!bucketId) {
+    alert("No bucket found");
   }
 
   function goBack() {
@@ -33,20 +33,20 @@ function PhaseDetail() {
         </>
       );
     }
-    return <Text>No phase found</Text>;
+    return <Text>No bucket found</Text>;
   }
 
   useEffect(() => {
-    if (!phaseId || !phases) return;
-    const selectedPhase = phases.find((p) => p.id === phaseId);
-    setP(selectedPhase || null);
-  }, [phases, phaseId]);
+    if (!bucketId || !buckets) return;
+    const selectedBucket = buckets.find((p) => p.id === bucketId);
+    setP(selectedBucket || null);
+  }, [buckets, bucketId]);
 
   return (
     <Box>
       <Container>
-        <Title order={2}>Phase Detail</Title>
-        <Text>Here are some Phases</Text>
+        <Title order={2}>Bucket Detail</Title>
+        <Text>Here are some Buckets</Text>
 
         {renderDetails()}
 
@@ -56,4 +56,4 @@ function PhaseDetail() {
   );
 }
 
-export default PhaseDetail;
+export default BucketDetail;
