@@ -12,7 +12,7 @@ import {
   IconBrandInstagram,
 } from "@tabler/icons-react";
 //
-import logo from "../../assets/EchoDial-temp-logo-full.png";
+import logo from "../../assets/EchoDial-temp-logo-full-dark.png";
 import { APP_NAME } from "../../configs/names";
 
 const useStyles = createStyles((theme) => ({

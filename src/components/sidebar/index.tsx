@@ -2,10 +2,10 @@ import { MouseEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaPhone,
-  FaFolderOpen,
   FaCreditCard,
   FaAddressBook,
-} from "react-icons/fa";
+  FaBucket,
+} from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
 import { IoIosSettings } from "react-icons/io";
 import { MdGroups } from "react-icons/md";
@@ -61,19 +61,19 @@ const Sidebar = () => {
                   <div>Dialer</div>
                 </NavLink>
 
-                <NavLink to={routes.callHistory}>
-                  <GoHistory fontSize="1.5rem" />
-                  <div>Call History</div>
-                </NavLink>
-
                 <NavLink to={routes.phases}>
-                  <FaFolderOpen fontSize="1.5rem" />
-                  <div>Phases</div>
+                  <FaBucket fontSize="1.5rem" />
+                  <div>Buckets</div>
                 </NavLink>
 
                 <NavLink to={routes.callerIds}>
                   <FaAddressBook fontSize="1.5rem" />
                   <div>Caller IDs</div>
+                </NavLink>
+
+                <NavLink to={routes.callHistory}>
+                  <GoHistory fontSize="1.5rem" />
+                  <div>Call History</div>
                 </NavLink>
 
                 <NavLink to={routes.billing}>
@@ -116,24 +116,19 @@ const Sidebar = () => {
             <div>Dialer</div>
           </NavLink>
 
-          <NavLink to={routes.callHistory}>
-            <GoHistory fontSize="1.5rem" />
-            <div>Call History</div>
-          </NavLink>
-
           <NavLink to={routes.phases}>
-            <FaFolderOpen fontSize="1.5rem" />
-            <div>Phases</div>
+            <FaBucket fontSize="1.5rem" />
+            <div>Buckets</div>
           </NavLink>
-
-          {/* <NavLink to={routes.reports}>
-            <BiSolidReport fontSize="1.5rem" />
-            <div>Reports</div>
-          </NavLink> */}
 
           <NavLink to={routes.callerIds}>
             <FaAddressBook fontSize="1.5rem" />
             <div>Caller IDs</div>
+          </NavLink>
+
+          <NavLink to={routes.callHistory}>
+            <GoHistory fontSize="1.5rem" />
+            <div>Call History</div>
           </NavLink>
 
           <NavLink to={routes.billing}>

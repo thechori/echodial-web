@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 //
 import SignInStyled from "./SignIn.styles";
-import echodialLogo from "../../assets/EchoDial-temp-logo-full.png";
+import echodialLogo from "../../assets/EchoDial-temp-logo-full-dark.png";
 import routes from "../../configs/routes";
 
 import { extractErrorMessage } from "../../utils/error";
