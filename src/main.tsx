@@ -30,7 +30,7 @@ import AuthenticatedUserLayout from "./components/layouts/AuthenticatedUserLayou
 import Leads from "./pages/leads";
 import CallerIds from "./pages/caller-ids";
 import Reports from "./pages/reports";
-import Phases from "./pages/phases";
+import Phases from "./pages/buckets";
 import Billing from "./pages/billing";
 import CallHistory from "./pages/call-history";
 
@@ -152,9 +152,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   </ProtectedRoute>
                 }
               />
-              <Route path={routes.phases}>
+              <Route path={routes.buckets}>
                 <Route
-                  path={routes.phases}
+                  path={routes.buckets}
                   element={
                     <ProtectedRoute>
                       <AuthenticatedUserLayout>
@@ -163,7 +163,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                     </ProtectedRoute>
                   }
                 />
-                <Route path={`${routes.phases}/:phaseId`} />
+                <Route path={`${routes.buckets}/:phaseId`} />
               </Route>
               <Route
                 path={routes.billing}

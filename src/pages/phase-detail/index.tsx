@@ -1,11 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
 //
 import { useAppSelector } from "../../store/hooks";
-import { selectPhases } from "../../store/phases/slice";
+import { selectPhases } from "../../store/buckets/slice";
 import { Box, Button, Container, Text, Title } from "@mantine/core";
 import routes from "../../configs/routes";
 import { useEffect, useState } from "react";
-import { TPhase } from "../../store/phases/types";
+import { TPhase } from "../../store/buckets/types";
 
 function PhaseDetail() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ function PhaseDetail() {
   }
 
   function goBack() {
-    navigate(routes.phases);
+    navigate(routes.buckets);
   }
 
   function renderDetails() {

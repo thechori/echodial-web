@@ -2,22 +2,22 @@ import { useNavigate } from "react-router-dom";
 //
 import { useAppSelector } from "../../store/hooks";
 import routes from "../../configs/routes";
-import PhasesStyled from "./Phases.styles";
-import { selectPhases } from "../../store/phases/slice";
+import BucketsStyled from "./Buckets.styles";
+import { selectBuckets } from "../../store/buckets/slice";
 import { Box, Card, Container, Text, Title } from "@mantine/core";
 
-function Phases() {
+function Buckets() {
   const navigate = useNavigate();
 
-  const phases = useAppSelector(selectPhases);
+  const buckets = useAppSelector(selectBuckets);
 
   return (
-    <PhasesStyled>
+    <BucketsStyled>
       <Container fluid py="lg">
         <Box>
-          {phases.map((p) => (
+          {buckets.map((p) => (
             <Card
-              onClick={() => navigate(`${routes.phases}/${p.id}`)}
+              onClick={() => navigate(`${routes.buckets}/${p.id}`)}
               key={p.id}
               className="hoverable"
               withBorder
@@ -30,8 +30,8 @@ function Phases() {
           ))}
         </Box>
       </Container>
-    </PhasesStyled>
+    </BucketsStyled>
   );
 }
 
-export default Phases;
+export default Buckets;

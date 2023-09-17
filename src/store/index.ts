@@ -3,7 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 //
 import userReducer from "./user/slice";
 import dialerReducer from "./dialer/slice";
-import phaseReducer from "./phases/slice";
+import bucketReducer from "./buckets/slice";
 import metricReducer from "./metric/slice";
 import leadReducer from "./leads/slice";
 import { leadApi } from "../services/lead";
@@ -15,7 +15,7 @@ const store = configureStore({
   reducer: {
     user: userReducer,
     dialer: dialerReducer,
-    phase: phaseReducer,
+    buckets: bucketReducer,
     metric: metricReducer,
     leads: leadReducer,
     [leadApi.reducerPath]: leadApi.reducer,

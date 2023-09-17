@@ -61,7 +61,7 @@ const Sidebar = () => {
                   <div>Dialer</div>
                 </NavLink>
 
-                <NavLink to={routes.phases}>
+                <NavLink to={routes.buckets}>
                   <FaBucket fontSize="1.5rem" />
                   <div>Buckets</div>
                 </NavLink>
@@ -116,7 +116,7 @@ const Sidebar = () => {
             <div>Dialer</div>
           </NavLink>
 
-          <NavLink to={routes.phases}>
+          <NavLink to={routes.buckets}>
             <FaBucket fontSize="1.5rem" />
             <div>Buckets</div>
           </NavLink>

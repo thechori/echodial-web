@@ -14,7 +14,7 @@ const routes = {
   settings: "/settings",
   signUp: "/sign-up",
   leads: "/leads",
-  phases: "/phases",
+  buckets: "/buckets",
   reports: "/reports",
   callerIds: "/caller-ids",
   billing: "/billing",

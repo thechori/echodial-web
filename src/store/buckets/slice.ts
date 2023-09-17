@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 //
-import type { RootState } from "../";
-import { TPhaseState } from "./types";
+import type { RootState } from "..";
+import { TBucketsState } from "./types";
 
-const initialState: TPhaseState = {
-  phases: [
+const initialState: TBucketsState = {
+  buckets: [
     {
       id: "sdfsdg67sg2837678268fd8fs",
       name: "Fresh Leads",
@@ -24,18 +24,18 @@ const initialState: TPhaseState = {
   ],
 };
 
-export const PhaseSlice = createSlice({
-  name: "phase",
+export const BucketsSlice = createSlice({
+  name: "buckets",
   initialState,
   reducers: {
-    setPhases: (state, action) => {
-      state.phases = action.payload;
+    setBuckets: (state, action) => {
+      state.buckets = action.payload;
     },
   },
 });
 
-export const { setPhases } = PhaseSlice.actions;
+export const { setBuckets } = BucketsSlice.actions;
 
-export const selectPhases = (state: RootState) => state.phase.phases;
+export const selectBuckets = (state: RootState) => state.buckets.buckets;
 
-export default PhaseSlice.reducer;
+export default BucketsSlice.reducer;
