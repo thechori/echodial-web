@@ -142,6 +142,7 @@ function SignUp() {
               <TextInput
                 py="sm"
                 required
+                name="email"
                 type="email"
                 placeholder="Email address *"
                 value={email}
@@ -153,6 +154,7 @@ function SignUp() {
               <TextInput
                 py="sm"
                 required
+                name="password"
                 type="password"
                 placeholder="Password *"
                 value={password}

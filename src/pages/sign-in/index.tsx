@@ -99,6 +99,7 @@ function SignIn() {
             <div className="input-field">
               <TextInput
                 label="Email"
+                name="email"
                 value={email}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setEmail(e.target.value)
@@ -108,6 +109,7 @@ function SignIn() {
 
             <div className="input-field">
               <TextInput
+                name="password"
                 type="password"
                 label="Password"
                 value={password}
