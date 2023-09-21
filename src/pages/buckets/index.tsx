@@ -17,7 +17,7 @@ import {
 } from "@mantine/core";
 import { BsPersonCircle } from "react-icons/bs";
 import phoneFormatter from "../../utils/phone-formatter";
-import { IconPhone, IconSettings } from "@tabler/icons-react";
+import { IconExternalLink, IconPhone, IconSettings } from "@tabler/icons-react";
 
 function Buckets() {
   const navigate = useNavigate();
@@ -35,19 +35,19 @@ function Buckets() {
             </Box>
           ) : (
             buckets.map((b) => (
-              <Card
-                onClick={() => navigate(`${routes.buckets}/${b.id}`)}
-                key={b.id}
-                className="bucket"
-                withBorder
-                shadow="md"
-                m="md"
-              >
+              <Card key={b.id} className="bucket" withBorder shadow="md" m="md">
                 <Flex align="center" justify="space-between">
                   <Tooltip label={b.description}>
-                    <Title className="hoverable" order={3}>
-                      {b.name}
-                    </Title>
+                    <Flex
+                      align="center"
+                      className="hoverable"
+                      onClick={() => navigate(`${routes.buckets}/${b.id}`)}
+                    >
+                      <Title color="blue" order={3} mr={4}>
+                        {b.name}
+                      </Title>
+                      <IconExternalLink color="grey" size="1rem" />
+                    </Flex>
                   </Tooltip>
 
                   <Flex>
@@ -55,16 +55,20 @@ function Buckets() {
                       <IconSettings size="1.5rem" />
                     </ActionIcon>
                     <ActionIcon>
-                      <IconPhone size="1.5rem" />
+                      <IconPhone
+                        fill="lightgreen"
+                        color="green"
+                        size="1.5rem"
+                      />
                     </ActionIcon>
                   </Flex>
                 </Flex>
-                <Box p="md">
+                <Box p="md" h={300} style={{ overflowY: "scroll" }}>
                   {b.leads.length === 0 ? (
                     <Text color="dimmed">No leads</Text>
                   ) : (
                     b.leads.map((l) => (
-                      <Flex align="center" justify="space-between">
+                      <Flex key={l.id} align="center" justify="space-between">
                         <Box>
                           <BsPersonCircle fontSize="1.5rem" />
                         </Box>
@@ -76,7 +80,11 @@ function Buckets() {
                         </Box>
                         <Box>
                           <ActionIcon>
-                            <IconPhone size="1.25rem" />
+                            <IconPhone
+                              fill="lightgreen"
+                              color="green"
+                              size="1.25rem"
+                            />
                           </ActionIcon>
                         </Box>
                       </Flex>
