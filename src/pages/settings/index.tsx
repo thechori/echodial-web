@@ -29,7 +29,7 @@ import {
 } from "@mantine/core";
 //
 import phoneFormatter from "../../utils/phone-formatter";
-import { APP_NAME } from "../../configs/names";
+import { APP_NAME } from "../../configs/constants";
 
 const phoneNumberSupport = "+18328638635";
 

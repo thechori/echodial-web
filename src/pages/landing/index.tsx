@@ -5,6 +5,7 @@ import dashboardScreenshot from "../../assets/dashboard-screenshot.png";
 import routes from "../../configs/routes";
 import { Button, Container, Text, Title } from "@mantine/core";
 import { FeaturesGrid } from "../features/FeaturesGrid";
+import { APP_MOTTO } from "../../configs/constants";
 
 function Landing() {
   const navigate = useNavigate();
@@ -15,20 +16,31 @@ function Landing() {
         <Container>
           <div className="hero-subcontainer">
             <div className="left">
-              <Title weight={400} color="white">
-                Autonomous dialing –
+              <Title
+                size="2.5rem"
+                lh="2.5rem"
+                weight={600}
+                // color="white"
+                variant="gradient"
+                gradient={{ from: "gold", to: "orange", deg: 90 }}
+                // gradient={{ from: "orange", to: "gold", deg: 90 }}
+              >
+                {APP_MOTTO}
               </Title>
 
-              <Title weight={600} color="gold">
-                it's like magic 🪄
-              </Title>
-              <Title order={2} weight={300} color="dimmed" py="sm">
+              <Title
+                size="1.5rem"
+                lh="2rem"
+                weight={300}
+                color="dimmed"
+                py="sm"
+              >
                 Spend your time doing better things while we take care of the
                 calling
               </Title>
-              <Text color="white" py="sm" size="1.2rem">
-                Use your own phone number -- <i>never</i> get marked as a spam
-                risk again
+              <Text color="white" py="sm" size="1.1rem">
+                Simple and user-friendly, you'll never dread cold-calling ever
+                again
               </Text>
               <Button
                 size="xl"
@@ -36,7 +48,7 @@ function Landing() {
                 onClick={() => navigate(routes.signUp)}
                 my="md"
               >
-                Sign up free
+                Try for free
               </Button>
             </div>
             <div className="right">

@@ -4,7 +4,7 @@ import {
   IconExchange,
   IconFreeRights,
 } from "@tabler/icons-react";
-import { APP_NAME } from "../../configs/names";
+import { APP_NAME } from "../../configs/constants";
 
 const features = [
   {

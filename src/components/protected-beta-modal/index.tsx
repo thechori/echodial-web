@@ -1,6 +1,6 @@
 import { Anchor, Box, Flex, Image, Modal, Text, Title } from "@mantine/core";
 //
-import { APP_NAME } from "../../configs/names";
+import { APP_NAME } from "../../configs/constants";
 import logo from "../../assets/EchoDial-temp-logo-full.png";
 import colors from "../../styles/colors";
 import { useAppSelector } from "../../store/hooks";

@@ -21,7 +21,7 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { APP_NAME } from "../../configs/names";
+import { APP_NAME } from "../../configs/constants";
 
 function SignUp() {
   const navigate = useNavigate();

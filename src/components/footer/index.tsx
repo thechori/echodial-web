@@ -13,7 +13,7 @@ import {
 } from "@tabler/icons-react";
 //
 import logo from "../../assets/EchoDial-temp-logo-full-dark.png";
-import { APP_NAME } from "../../configs/names";
+import { APP_MOTTO, APP_NAME } from "../../configs/constants";
 
 const useStyles = createStyles((theme) => ({
   footer: {
@@ -154,7 +154,7 @@ export function Footer({ data }: TFooterProps) {
         <div className={classes.logo}>
           <img src={logo} width="150px" />
           <Text size="xs" color="dimmed" className={classes.description}>
-            Automatic dialing like the world has never seen before.
+            {APP_MOTTO}
           </Text>
         </div>
         <div className={classes.groups}>{groups}</div>
