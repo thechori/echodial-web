@@ -1,36 +1,91 @@
 import BillingStyled from "./Billing.styles";
-import { Box, Card, Container, Grid, Title } from "@mantine/core";
-import SimpleAreaChart from "../../components/charts/simple-area";
+import { 
+  Container,
+  Card, 
+  Grid, 
+  Progress,
+  Flex,
+  Accordion
+} from "@mantine/core";
 
 function Billing() {
+  const currentUsage = 450;
+  const maxUsage = 1000;
+  const progressPercentage = (currentUsage/maxUsage) * 100;
+
   return (
     <BillingStyled>
-      <Container fluid py="lg">
+      <Container fluid py="lg" px="lg">
         <h1>Billing</h1>
-        <p>Here are some Billing</p>
+        
         <Grid>
-          <Grid.Col xs={12} sm={6} lg={4}>
-            <Card>
-              <Title order={2} mb={16}>
-                Balance History
-              </Title>
-              <Box h={300} w={400}>
-                <SimpleAreaChart />
-              </Box>
+          <Grid.Col>
+            <Card withBorder py="md">
+              <h3>
+                Plan Usage
+              </h3>
+              <Flex align="center" justify="space-between">
+                <p>
+                  Your plan includes 1000 minutes of voice calling per month
+                </p>
+                <p>
+                  {currentUsage} min used of {maxUsage} min
+                </p>
+              </Flex>
+              
+              <Progress radius="xs" size="lg" value={progressPercentage} />
+              <p>
+                Last month you used {currentUsage} minutes
+              </p>
+              <Accordion variant="filled" radius="xs" chevronPosition="left">
+                <Accordion.Item key={1} value={"hello"}>
+                  <Accordion.Control>How Does this work?</Accordion.Control>
+                  <Accordion.Panel>idk</Accordion.Panel>
+                </Accordion.Item>
+              </Accordion>
             </Card>
           </Grid.Col>
 
-          <Grid.Col xs={12} sm={6} lg={4}>
-            <Card>
-              <Title order={2} mb={16}>
-                Usage History
-              </Title>
-
-              <Box h={300} w={400}>
-                <SimpleAreaChart />
-              </Box>
+          <Grid.Col span={6}>
+            <Card withBorder py="md">
+              <h3>
+                Billing Information
+              </h3>
             </Card>
           </Grid.Col>
+
+          <Grid.Col span={6}>
+            <Card withBorder py="md">
+              <h3>
+                Usage Summary
+              </h3>
+            </Card>
+          </Grid.Col>
+
+          <Grid.Col>
+            <Card withBorder py="md">
+              <h3>
+                Payment Methods
+              </h3>
+            </Card>
+          </Grid.Col>
+            
+          <Grid.Col>
+            <Card withBorder py="md">
+              <h3>
+                Billing Settings
+              </h3>
+            </Card>
+          </Grid.Col>
+
+          <Grid.Col>
+            <Card withBorder py="md">
+              <h3>
+                Billing History
+              </h3>
+            </Card>
+          </Grid.Col>
+          
         </Grid>
       </Container>
     </BillingStyled>
