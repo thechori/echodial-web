@@ -3,7 +3,7 @@ name: Node.js CI
 on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -12,4 +12,5 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20.x"
+      - run: npm install
       - run: npm test
