@@ -7,19 +7,19 @@ const footerData: TFooterProps = {
       links: [
         {
           label: "Features",
-          link: "",
+          link: "/features",
         },
         {
           label: "Pricing",
-          link: "",
+          link: "/pricing",
         },
         {
           label: "Support",
-          link: "",
+          link: "/support",
         },
         {
           label: "FAQ",
-          link: "",
+          link: "/faw",
         },
       ],
     },
@@ -29,15 +29,15 @@ const footerData: TFooterProps = {
       links: [
         {
           label: "Meet the team",
-          link: "",
+          link: "/team",
         },
         {
           label: "Our mission",
-          link: "",
+          link: "/mission",
         },
         {
           label: "Careers",
-          link: "",
+          link: "/careers",
         },
       ],
     },

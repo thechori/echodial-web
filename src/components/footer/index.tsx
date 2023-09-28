@@ -5,6 +5,7 @@ import {
   ActionIcon,
   Group,
   rem,
+  Anchor,
 } from "@mantine/core";
 import {
   IconBrandTwitter,
@@ -129,15 +130,14 @@ export function Footer({ data }: TFooterProps) {
 
   const groups = data.map((group) => {
     const links = group.links.map((link, index) => (
-      <Text<"a">
+      <Anchor
         key={index}
         className={classes.link}
         component="a"
         href={link.link}
-        onClick={(event) => event.preventDefault()}
       >
         {link.label}
-      </Text>
+      </Anchor>
     ));
 
     return (
