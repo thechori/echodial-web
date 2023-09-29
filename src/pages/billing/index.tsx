@@ -4,22 +4,18 @@ import BillingHistory from "./BillingHistory";
 import BillingSettings from "./BillingSettings";
 import PaymentMethods from "./PaymentMethods";
 import BillingUsage from "./BillingUsage";
-import { 
-  Container,
-} from "@mantine/core";
+import { Container } from "@mantine/core";
 
 function Billing() {
-  
-
   return (
     <BillingStyled>
       <Container fluid py="lg" px="lg">
         <h1>Billing</h1>
-        <PlanUsage/>
-        <BillingUsage/>
-        <PaymentMethods/>
-        <BillingSettings/>
-        <BillingHistory/>
+        <PlanUsage />
+        <BillingUsage />
+        <PaymentMethods />
+        <BillingSettings />
+        <BillingHistory />
       </Container>
     </BillingStyled>
   );

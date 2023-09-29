@@ -1,78 +1,64 @@
-import {
-    Grid,
-    Card,
-    Flex,
-    Title,
-    Table,
-    Select,
-    Button
-} from '@mantine/core';
+import { Grid, Card, Flex, Title, Table, Select, Button } from "@mantine/core";
 function BillingUsage() {
-    var currentBalance = 25.1111;
-    var roundedBalance = currentBalance.toFixed(4);
-    return (
-        <Grid>
-            <Grid.Col xs={12} md={6}>
-                <Card withBorder py="md" h='100%'>
-                <Title order={3} mb="sm">
-                    Billing Information
-                </Title>
-                <p>
-                    Current Balance
-                </p>
-                <p>
-                    ${roundedBalance}
-                </p>
-                <Button variant="light" radius="xs">Add Funds</Button>
-                <p>
-                    Invoice
-                </p>
-                </Card>
-            </Grid.Col>
+  var currentBalance = 25.1111;
+  var roundedBalance = currentBalance.toFixed(4);
+  return (
+    <Grid py="sm">
+      <Grid.Col xs={12} md={6}>
+        <Card withBorder py="md" h="100%">
+          <Title order={3} mb="sm">
+            Billing Information
+          </Title>
+          <p>Current Balance</p>
+          <p>${roundedBalance}</p>
+          <Button variant="light" radius="xs">
+            Add Funds
+          </Button>
+          <p>Invoice</p>
+        </Card>
+      </Grid.Col>
 
-            <Grid.Col xs={12} md={6} >
-                <Card withBorder py="md" h='100%'>   
-                <Flex justify="space-between" align='center' mb="sm">
-                    <Title order={3}>
-                    Usage Summary
-                    </Title>
-                                        
-                    <Select
-                    placeholder="Month"
-                    data={['January', 'February']}
-                    px="xs"
-                    />
-                </Flex>
+      <Grid.Col xs={12} md={6}>
+        <Card withBorder py="md" h="100%">
+          <Flex justify="space-between" align="center" mb="sm">
+            <Title order={3}>Usage Summary</Title>
 
-                <Table highlightOnHover>
-                    <thead>
-                        <tr>
-                        <th>Product</th>
-                        <th>Costs</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>Total Costs</td>
-                        <td>0</td>
-                    </tr>
-                    <tr>
-                        <td>Sales Tax</td>
-                        <td>0</td>
-                    </tr>
-                    <tr>
-                        <td>Programmable Voice</td>
-                        <td>0</td>
-                    </tr>
-                    <tr>
-                        <td>Phone Numbers</td>
-                        <td>0</td>
-                    </tr>                 
-                    </tbody>               
-                </Table>
-                </Card>
-            </Grid.Col>
-        </Grid>
-    );
+            <Select
+              placeholder="Month"
+              data={["January", "February"]}
+              px="xs"
+            />
+          </Flex>
+
+          <Table highlightOnHover>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Costs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Total Costs</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>Sales Tax</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>Programmable Voice</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>Phone Numbers</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </Table>
+        </Card>
+      </Grid.Col>
+    </Grid>
+  );
 }
 export default BillingUsage;
