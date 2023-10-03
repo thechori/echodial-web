@@ -9,9 +9,6 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { Notifications } from "@mantine/notifications";
 import * as Sentry from "@sentry/react";
-// import { Elements } from "@stripe/react-stripe-js";
-// import { loadStripe } from "@stripe/stripe-js";
-
 //
 import "./index.css";
 import Landing from "./pages/landing";
@@ -37,18 +34,6 @@ import Buckets from "./pages/buckets";
 import Billing from "./pages/billing";
 import CallHistory from "./pages/call-history";
 
-// Make sure to call `loadStripe` outside of a component’s render to avoid
-// recreating the `Stripe` object on every render.
-// const stripePromise = loadStripe(
-//   "pk_test_51NuQqqKGxd0U3zJwVV9srRPHPjDymyZqN47liciLCMcxjT82FP4NNCPHvggXcjp4sZmbq65lTLSASyCXlLZZKTBs00lvjnvtZi"
-// );
-
-// const options = {
-//   // passing the client secret obtained from the server
-//   clientSecret:
-//     "sk_test_51NuQqqKGxd0U3zJw9rKjQ2nAHAZeRboY7LGWnvPJjEX3JM7s8Wr8y7z2uVvUvWkGfksTJuixPd1XgYQVKxxCJJsc00wgzzejcs",
-// };
-
 Sentry.init({
   dsn: "https://dbc6c090143fce815721f48b790b3810@o4505859893231616.ingest.sentry.io/4505859896442880",
   integrations: [
@@ -67,7 +52,6 @@ Sentry.init({
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
-    {/* <Elements stripe={stripePromise} options={options}> */}
     <Provider store={store}>
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <StyleProvider>
@@ -207,6 +191,5 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         </StyleProvider>
       </MantineProvider>
     </Provider>
-    {/* </Elements> */}
   </StrictMode>
 );

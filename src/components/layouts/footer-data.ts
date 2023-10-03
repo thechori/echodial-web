@@ -19,7 +19,7 @@ const footerData: TFooterProps = {
         },
         {
           label: "FAQ",
-          link: "/faw",
+          link: "/faq",
         },
       ],
     },
