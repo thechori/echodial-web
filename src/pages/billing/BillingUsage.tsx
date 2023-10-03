@@ -1,8 +1,7 @@
 import { Grid, Card, Flex, Title, Table, Select, Button } from "@mantine/core";
 import { useAppSelector } from "../../store/hooks";
-import { BillingSlice } from "../../store/billing/slice";
 function BillingUsage() {
-  const billing = useAppSelector(BillingSlice.getInitialState);
+  const billing = useAppSelector((state) => state.billing);
   var currentBalance = billing.currentBalance;
   var roundedBalance = currentBalance.toFixed(4);
   return (

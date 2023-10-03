@@ -8,10 +8,9 @@ import {
   Text,
 } from "@mantine/core";
 import { useAppSelector } from "../../store/hooks";
-import { BillingSlice } from "../../store/billing/slice";
 
 function PlanUsage() {
-  const billing = useAppSelector(BillingSlice.getInitialState);
+  const billing = useAppSelector((state) => state.billing);
 
   const currentUsage = billing.currentMinutes;
   const maxUsage = billing.maxLimit;
