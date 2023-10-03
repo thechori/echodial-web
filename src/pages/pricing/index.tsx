@@ -1,24 +1,27 @@
-import { Button, Container, Space, Title } from "@mantine/core";
-import routes from "../../configs/routes";
+import { Box, Container, Text, Title } from "@mantine/core";
+//
 import PricingStyled from "./Pricing.styles";
-import { Link } from "react-router-dom";
+import StripePricingTable from "./StripePricingTable";
 
 function Pricing() {
   return (
     <PricingStyled>
-      <Container py="xl">
-        <Title order={1} weight={200} mb="md">
+      <Container fluid p={0}>
+        <Title order={1} weight={300}>
           Pricing
         </Title>
-        <Title order={3} weight={300} my="lg">
-          $70 per month
-        </Title>
-        <Space h="2rem" />
-        <Link to={routes.signUp}>
-          <Button variant="gradient" size="xl">
-            Try for free
-          </Button>
-        </Link>
+
+        <Box mx="auto" py="md" maw={500}>
+          <Text py={4}>All plans include full access to our platform.</Text>
+          <Text py={4}>
+            Avoid the headaches of constantly having to top-off your account
+            balances with our straightforward price structures.
+          </Text>
+        </Box>
+
+        <Box py="md">
+          <StripePricingTable />
+        </Box>
       </Container>
     </PricingStyled>
   );
