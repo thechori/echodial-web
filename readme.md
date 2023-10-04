@@ -34,6 +34,8 @@ _TODO: Update docs once multiple environments are setup_
 
 - Database migrations are used to update the Postgres schema via knex. When these are completed, be sure to also run the npm script (npm run generate-types:dev) in order to properly update the generates types within the app (output will be at src/types/index.ts)
 
+- Whenever new environment variables are added to the `.env.local` file, corresponding environment variables must be added to the Digital Ocean App settings
+
 ## Developer Guide
 
 - Git branches are _preferred_ to named using the Jira namespace and issue number separated by a dash as the prefix, followed by an underscore, followed by a dash-separated short description of the purpose of the branch
