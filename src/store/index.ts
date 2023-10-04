@@ -5,6 +5,7 @@ import userReducer from "./user/slice";
 import dialerReducer from "./dialer/slice";
 import bucketReducer from "./buckets/slice";
 import metricReducer from "./metric/slice";
+import billingReducer from "./billing/slice";
 import leadReducer from "./leads/slice";
 import { leadApi } from "../services/lead";
 import { callerIdApi } from "../services/caller-id";
@@ -18,6 +19,7 @@ const store = configureStore({
     buckets: bucketReducer,
     metric: metricReducer,
     leads: leadReducer,
+    billing: billingReducer,
     [leadApi.reducerPath]: leadApi.reducer,
     [callerIdApi.reducerPath]: callerIdApi.reducer,
     [callApi.reducerPath]: callApi.reducer,

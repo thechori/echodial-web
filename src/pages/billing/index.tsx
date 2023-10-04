@@ -1,37 +1,23 @@
 import BillingStyled from "./Billing.styles";
-import { Box, Card, Container, Grid, Title } from "@mantine/core";
-import SimpleAreaChart from "../../components/charts/simple-area";
+import PlanUsage from "./PlanUsage";
+import BillingHistory from "./BillingHistory";
+import BillingSettings from "./BillingSettings";
+import PaymentMethods from "./PaymentMethods";
+import BillingUsage from "./BillingUsage";
+import { Container, Title } from "@mantine/core";
 
 function Billing() {
   return (
     <BillingStyled>
-      <Container fluid py="lg">
-        <h1>Billing</h1>
-        <p>Here are some Billing</p>
-        <Grid>
-          <Grid.Col xs={12} sm={6} lg={4}>
-            <Card>
-              <Title order={2} mb={16}>
-                Balance History
-              </Title>
-              <Box h={300} w={400}>
-                <SimpleAreaChart />
-              </Box>
-            </Card>
-          </Grid.Col>
-
-          <Grid.Col xs={12} sm={6} lg={4}>
-            <Card>
-              <Title order={2} mb={16}>
-                Usage History
-              </Title>
-
-              <Box h={300} w={400}>
-                <SimpleAreaChart />
-              </Box>
-            </Card>
-          </Grid.Col>
-        </Grid>
+      <Container fluid py="lg" px="lg">
+        <Title order={1} py="md">
+          Billing
+        </Title>
+        <PlanUsage />
+        <BillingUsage />
+        <PaymentMethods />
+        <BillingSettings />
+        <BillingHistory />
       </Container>
     </BillingStyled>
   );
