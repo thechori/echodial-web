@@ -1,3 +1,4 @@
+import { useState, ChangeEvent } from "react";
 import {
   Box,
   Button,
@@ -8,11 +9,45 @@ import {
   Title,
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import { notifications } from "@mantine/notifications";
 //
 import logo from "../../assets/EchoDial-temp-logo-full-dark.png";
+import apiService from "../../services/api";
+import { extractErrorMessage } from "../../utils/error";
 
 function ResetPasswordRequest() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function resetPassword() {
+    setError("");
+
+    try {
+      setLoading(true);
+
+      await apiService.post("/auth/reset-password-request", {
+        email,
+      });
+
+      // Show success
+      notifications.show({
+        title: "Password reset request successful",
+        message:
+          "If we're able to find your account using the email address provided, you should receive following instructions in your inbox on how to reset your password.",
+        autoClose: false,
+      });
+
+      // Reroute
+      navigate(-1);
+    } catch (e) {
+      setError(extractErrorMessage(e));
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <Container
       maw={500}
@@ -32,8 +67,17 @@ function ResetPasswordRequest() {
           password.
         </Text>
         <Box maw={300} mx="auto" py="md">
-          <TextInput my="xs" type="email" label="Email address" />
-          <Button my="xs" fullWidth>
+          <TextInput
+            my="xs"
+            type="email"
+            label="Email address"
+            value={email}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
+            error={error}
+          />
+          <Button my="xs" fullWidth onClick={resetPassword} loading={loading}>
             Submit
           </Button>
           <Button
