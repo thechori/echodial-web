@@ -33,6 +33,7 @@ import Reports from "./pages/reports";
 import Buckets from "./pages/buckets";
 import Billing from "./pages/billing";
 import CallHistory from "./pages/call-history";
+import ForgotPassword from "./pages/forgot-password";
 
 Sentry.init({
   dsn: "https://dbc6c090143fce815721f48b790b3810@o4505859893231616.ingest.sentry.io/4505859896442880",
@@ -91,6 +92,10 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                     <Faq />
                   </Layout>
                 }
+              />
+              <Route
+                path={routes.forgotPassword}
+                element={<ForgotPassword />}
               />
               <Route
                 path={routes.dashboard}
