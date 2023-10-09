@@ -6,6 +6,7 @@ const routes = {
   pricing: "/pricing",
   faq: "/faq",
   forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password",
 
   // Protected
   dashboard: "/dashboard",
