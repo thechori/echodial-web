@@ -93,7 +93,7 @@ function SignUp() {
         <div className="card">
           <div className="left">
             <div className="value-proposition">
-              <div className="title">With EchoDial you can:</div>
+              <div className="title">With EchoDial you get:</div>
               <List
                 spacing="xs"
                 size="sm"
@@ -104,12 +104,15 @@ function SignUp() {
                   </ThemeIcon>
                 }
               >
-                <List.Item>SMS Marketing</List.Item>
-                <List.Item>Autodialer</List.Item>
-                <List.Item>Triple simultaneous dialing</List.Item>
-                <List.Item>Instantaneous call handoffs</List.Item>
-                <List.Item>On-hold functionality</List.Item>
-                <List.Item>Free leads every month</List.Item>
+                <List.Item>The world's first truly autonomous dialer</List.Item>
+                <List.Item>Best-in-class user interface</List.Item>
+                <List.Item>High-quality voice calls</List.Item>
+                <List.Item>
+                  1500 voice call minutes per month (minimum)
+                </List.Item>
+                <List.Item>Access to premium support</List.Item>
+                <List.Item>24-hour free trial (unlimited access)</List.Item>
+                <List.Item>100% satisfaction guaranteed</List.Item>
               </List>
             </div>
           </div>
