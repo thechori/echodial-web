@@ -21,7 +21,7 @@ function ResetPasswordRequest() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function resetPassword() {
+  async function resetPasswordRequest() {
     setError("");
 
     try {
@@ -77,7 +77,12 @@ function ResetPasswordRequest() {
             }
             error={error}
           />
-          <Button my="xs" fullWidth onClick={resetPassword} loading={loading}>
+          <Button
+            my="xs"
+            fullWidth
+            onClick={resetPasswordRequest}
+            loading={loading}
+          >
             Submit
           </Button>
           <Button

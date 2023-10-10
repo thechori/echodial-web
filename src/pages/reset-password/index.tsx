@@ -50,20 +50,22 @@ function ResetPassword() {
     try {
       setLoading(true);
 
-      await apiService.post("/auth/reset-password-request", {
+      await apiService.post("/auth/reset-password", {
         email,
+        password,
+        token: resetPasswordToken,
       });
 
       // Show success
       notifications.show({
-        title: "Password reset request successful",
+        title: "Password reset successful",
         message:
-          "If we're able to find your account using the email address provided, you should receive following instructions in your inbox on how to reset your password.",
-        autoClose: false,
+          "Your password was successfully changed. Please sign in using your new credentials.",
+        variant: "success",
       });
 
       // Reroute
-      navigate(-1);
+      navigate("/sign-in");
     } catch (e) {
       setError(extractErrorMessage(e));
     } finally {
@@ -109,43 +111,47 @@ function ResetPassword() {
           password.
         </Text>
         <Box maw={300} mx="auto" py="md">
-          <TextInput
-            my="xs"
-            type="email"
-            label="Email address"
-            readOnly
-            disabled
-            value={email}
-          />
-          <TextInput
-            my="xs"
-            type="password"
-            label="password"
-            value={password}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setPassword(e.target.value)
-            }
-          />
-          <TextInput
-            my="xs"
-            type="password"
-            label="Confirm password"
-            value={passwordConfirmation}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setPasswordConfirmation(e.target.value)
-            }
-          />
-          <Text color="red">{error}</Text>
-          <Button my="xs" fullWidth onClick={resetPassword} loading={loading}>
-            Submit
-          </Button>
+          <form autoComplete="off">
+            <TextInput
+              my="xs"
+              type="email"
+              label="Email address"
+              readOnly
+              disabled
+              value={email}
+            />
+            <TextInput
+              my="xs"
+              label="New password"
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
+            />
+            <TextInput
+              my="xs"
+              label="Confirm password"
+              type="password"
+              autoComplete="new-password"
+              value={passwordConfirmation}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setPasswordConfirmation(e.target.value)
+              }
+            />
+            <Text color="red">{error}</Text>
+            <Button my="xs" fullWidth onClick={resetPassword} loading={loading}>
+              Submit
+            </Button>
+          </form>
           <Button
             my="xs"
             fullWidth
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/")}
             variant="white"
           >
-            Back
+            Cancel
           </Button>
         </Box>
       </Box>
