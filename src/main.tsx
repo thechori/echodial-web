@@ -40,6 +40,7 @@ Sentry.init({
   dsn: "https://dbc6c090143fce815721f48b790b3810@o4505859893231616.ingest.sentry.io/4505859896442880",
   integrations: [
     new Sentry.BrowserTracing({
+      // TODO: update these values to be proper or remove
       // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
       tracePropagationTargets: ["localhost", "https:yourserver.io/api/"],
     }),

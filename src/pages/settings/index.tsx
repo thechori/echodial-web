@@ -28,10 +28,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 //
-import phoneFormatter from "../../utils/phone-formatter";
 import { APP_NAME } from "../../configs/constants";
-
-const phoneNumberSupport = "+18328638635";
 
 function Settings() {
   const dispatch = useAppDispatch();
@@ -134,7 +131,10 @@ function Settings() {
         <Card withBorder shadow="md" m="sm">
           <Title order={3}>Support</Title>
           <Box py="md">
-            <Text>Need help with something? Contact our support team.</Text>
+            <Text>
+              Need help with something? Contact our support team and one of our
+              agents should have a response for you within 24 hours.
+            </Text>
             <List
               spacing="xs"
               size="sm"
@@ -151,12 +151,13 @@ function Settings() {
                   support@echodial.com
                 </Anchor>
               </List.Item>
-              <List.Item>
+              {/* Note: hiding phone for now until this is ready to be fully supported */}
+              {/* <List.Item>
                 <Anchor mr="sm" href={`tel:${phoneNumberSupport}`}>
                   {phoneFormatter(phoneNumberSupport)}
                 </Anchor>
                 (Monday-Friday 8:00am CST - 5:00pm CST)
-              </List.Item>
+              </List.Item> */}
             </List>
           </Box>
         </Card>

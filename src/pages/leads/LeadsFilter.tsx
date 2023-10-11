@@ -8,6 +8,7 @@ import UploadLeadsViaCsvModal from "./UploadLeadsViaCsvModal";
 import ManualInputLeadModal from "./ManualInputLeadModal";
 import DeleteLeadConfirmationModal from "./DeleteLeadConfirmationModal";
 import EditLeadModal from "./EditLeadModal";
+import LeadsStatusFilter from "./LeadsStatusFilter";
 
 const LeadsFilter = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -44,7 +45,9 @@ const LeadsFilter = () => {
         </Flex>
       </Flex>
 
-      <Box></Box>
+      <Box>
+        <LeadsStatusFilter />
+      </Box>
 
       {/* Modals */}
       <UploadLeadsViaCsvModal opened={opened} close={close} />
