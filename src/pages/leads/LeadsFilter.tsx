@@ -1,6 +1,6 @@
-import { Box, Card, Flex, ThemeIcon, Title } from "@mantine/core";
+import { Card, Flex, ThemeIcon, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconFilter } from "@tabler/icons-react";
+import { MdGroups } from "react-icons/md";
 //
 import NewLeadsMenu from "./NewLeadsMenu";
 import EditLeadSelectionMenu from "./EditLeadSelectionMenu";
@@ -8,7 +8,6 @@ import UploadLeadsViaCsvModal from "./UploadLeadsViaCsvModal";
 import ManualInputLeadModal from "./ManualInputLeadModal";
 import DeleteLeadConfirmationModal from "./DeleteLeadConfirmationModal";
 import EditLeadModal from "./EditLeadModal";
-import LeadsStatusFilter from "./LeadsStatusFilter";
 
 const LeadsFilter = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -30,13 +29,14 @@ const LeadsFilter = () => {
   }
 
   return (
-    <Card withBorder>
+    // Note: `overflow: visible` is required to support menu bleeding outside of Card bounds (before, it would cut off and not be visible)
+    <Card withBorder mb="md" style={{ overflow: "visible" }}>
       <Flex align="center" justify="space-between">
         <Flex align="center">
           <ThemeIcon radius="xl" size="xl" mr="xs">
-            <IconFilter style={{ width: "70%", height: "70%" }} />
+            <MdGroups style={{ width: "70%", height: "70%" }} />
           </ThemeIcon>
-          <Title order={2}>Filter</Title>
+          <Title order={2}>Leads</Title>
         </Flex>
 
         <Flex align="center">
@@ -44,10 +44,6 @@ const LeadsFilter = () => {
           <NewLeadsMenu onCsvUpload={open} onManualInput={openManual} />
         </Flex>
       </Flex>
-
-      <Box>
-        <LeadsStatusFilter />
-      </Box>
 
       {/* Modals */}
       <UploadLeadsViaCsvModal opened={opened} close={close} />
