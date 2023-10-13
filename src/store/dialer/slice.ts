@@ -17,7 +17,6 @@ const buildOptions = (): TDialerOptions => {
     maxRingTimeInMilliseconds: 3000,
     maxCallTries: 3,
     cooldownTimeInMilliseconds: 10000,
-    showAlphaDialer: true,
   };
 };
 
@@ -25,7 +24,6 @@ export type TDialerOptions = {
   maxRingTimeInMilliseconds: number;
   maxCallTries: number;
   cooldownTimeInMilliseconds: number;
-  showAlphaDialer: boolean;
 };
 
 export type TRequestAction =
@@ -96,6 +94,7 @@ export const DialerSlice = createSlice({
       state.requestAction = action.payload;
     },
     setAlphaDialerVisible: (state, action) => {
+      console.log("updating visibility: ", action.payload);
       state.alphaDialerVisible = action.payload;
     },
     setDevice: (state, action) => {
@@ -261,7 +260,7 @@ export const selectActiveFullName = (state: RootState) => {
 };
 
 export const selectShowAlphaDialer = (state: RootState) =>
-  state.dialer.options.showAlphaDialer;
+  state.dialer.alphaDialerVisible;
 
 export const selectIsDialerOptionsModalOpen = (state: RootState) =>
   state.dialer.showOptions;

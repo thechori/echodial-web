@@ -34,11 +34,11 @@ const AuthenticatedUserLayout = ({ children }: any) => {
     <Container>
       <Sidebar />
       <div className="content">{children}</div>
-      <AlphaDialer />
       <DialerOptionsModal
         opened={isDialerOptionsModalOpen}
         onClose={() => dispatch(setShowOptions(false))}
       />
+      <AlphaDialer />
       <ProtectedBetaModal />
     </Container>
   );

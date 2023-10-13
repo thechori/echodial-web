@@ -102,6 +102,8 @@ function LeadsFilteredList() {
             data={availableStatuses}
             value={selectedStatuses}
             onChange={(values) => setSelectedStatuses(values)}
+            clearButtonProps={{ "aria-label": "Clear selection" }}
+            clearable
           />
         </Flex>
 

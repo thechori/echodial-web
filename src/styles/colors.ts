@@ -16,7 +16,7 @@ const colors = {
   //
 
   // Design system
-  appBlue: "#00153F",
+  appBlue: "#228be6",
   appYellow: "#FFB545",
 };
 

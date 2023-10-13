@@ -2,22 +2,16 @@ import { styled } from "styled-components";
 //
 import devices from "../../styles/devices";
 
-const AlphaDialerStyled = styled.div`
-  background-color: black;
-  color: white;
-  border-top: 1px solid grey;
+const AlphaDialerStyled = styled.div<{ isvisible: boolean }>`
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 100;
-  width: 100vw;
-  display: flex;
-  height: 100px;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  top: 0px;
+  right: ${(props) => (props.isvisible ? "0px" : "-300px")};
+  bottom: 0px;
+  transition: all 0.2s ease;
+
+  background-color: lightyellow;
+  height: 100vh;
+  width: 300px;
 
   .details {
     display: block;

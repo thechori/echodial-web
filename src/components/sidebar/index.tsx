@@ -1,10 +1,10 @@
 import { MouseEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
-  FaPhone,
   FaCreditCard,
   FaAddressBook,
-  FaBucket,
+  // FaBucket,
+  // FaPhone,
 } from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
 import { IoIosSettings } from "react-icons/io";
@@ -56,15 +56,15 @@ const Sidebar = () => {
                   <div>Leads</div>
                 </NavLink>
 
-                <NavLink to={routes.dialer}>
+                {/* <NavLink to={routes.dialer}>
                   <FaPhone fontSize="1.5rem" />
                   <div>Dialer</div>
-                </NavLink>
+                </NavLink> */}
 
-                <NavLink to={routes.buckets}>
+                {/* <NavLink to={routes.buckets}>
                   <FaBucket fontSize="1.5rem" />
                   <div>Buckets</div>
-                </NavLink>
+                </NavLink> */}
 
                 <NavLink to={routes.callerIds}>
                   <FaAddressBook fontSize="1.5rem" />
@@ -111,15 +111,15 @@ const Sidebar = () => {
             <div>Leads</div>
           </NavLink>
 
-          <NavLink to={routes.dialer}>
+          {/* <NavLink to={routes.dialer}>
             <FaPhone fontSize="1.5rem" />
             <div>Dialer</div>
-          </NavLink>
+          </NavLink> */}
 
-          <NavLink to={routes.buckets}>
+          {/* <NavLink to={routes.buckets}>
             <FaBucket fontSize="1.5rem" />
             <div>Buckets</div>
-          </NavLink>
+          </NavLink> */}
 
           <NavLink to={routes.callerIds}>
             <FaAddressBook fontSize="1.5rem" />

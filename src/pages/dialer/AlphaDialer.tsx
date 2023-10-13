@@ -9,6 +9,7 @@ import {
   AiOutlineAudioMuted,
   AiOutlineAudio,
 } from "react-icons/ai";
+
 import { FaRegStopCircle, FaUser } from "react-icons/fa";
 import { BiHide, BiImport } from "react-icons/bi";
 import { notifications } from "@mantine/notifications";
@@ -27,8 +28,6 @@ import {
   selectActivePhoneNumber,
   selectActiveFullName,
   setCurrentDialIndex,
-  selectShowAlphaDialer,
-  setOptions,
   setError,
   setDevice,
   setCall,
@@ -39,6 +38,7 @@ import {
   setRequestAction,
   setWasCallConnected,
   setIsDialing,
+  setAlphaDialerVisible,
 } from "../../store/dialer/slice";
 import routes from "../../configs/routes";
 import AlphaDialerStyled from "./AlphaDialer.styles";
@@ -87,10 +87,10 @@ function AlphaDialer() {
     currentDialIndex,
     muted,
     options,
+    alphaDialerVisible,
   } = useAppSelector((state) => state.dialer);
   const phoneNumber = useAppSelector(selectActivePhoneNumber);
   const fullName = useAppSelector(selectActiveFullName);
-  const showAlphaDialer = useAppSelector(selectShowAlphaDialer);
   //
   const [addCall] = useAddCallMutation();
   const [updateCallViaId] = useUpdateCallViaIdMutation();
@@ -591,10 +591,8 @@ function AlphaDialer() {
     stopDialing,
   ]);
 
-  if (!showAlphaDialer) return null;
-
   return (
-    <AlphaDialerStyled>
+    <AlphaDialerStyled isvisible={alphaDialerVisible}>
       <Box className="details">
         <Box>
           <FaUser className="user-icon" color="white" />
@@ -710,14 +708,12 @@ function AlphaDialer() {
       </Box>
 
       <Box className="options">
-        <Tooltip label="Hide status bar">
+        <Tooltip label="Hide call pane">
           <div>
             <BiHide
               fontSize="2rem"
               className="hoverable"
-              onClick={() =>
-                dispatch(setOptions({ ...options, showAlphaDialer: false }))
-              }
+              onClick={() => dispatch(setAlphaDialerVisible(false))}
             />
           </div>
         </Tooltip>
