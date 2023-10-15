@@ -94,7 +94,6 @@ export const DialerSlice = createSlice({
       state.requestAction = action.payload;
     },
     setAlphaDialerVisible: (state, action) => {
-      console.log("updating visibility: ", action.payload);
       state.alphaDialerVisible = action.payload;
     },
     setDevice: (state, action) => {

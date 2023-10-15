@@ -1,5 +1,5 @@
 import { Tooltip } from "@mantine/core";
-import { PiPhone } from "react-icons/pi";
+import { PiPhone, PiPhoneFill } from "react-icons/pi";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setAlphaDialerVisible } from "../../store/dialer/slice";
@@ -10,19 +10,29 @@ const AlphaDialerFab = () => {
 
   const isVisible = useAppSelector((state) => state.dialer.alphaDialerVisible);
 
-  console.log("hi");
-
-  if (isVisible) return null;
-
-  console.log("im here");
-
   return (
-    <AlphaDialerFabStyled onClick={() => dispatch(setAlphaDialerVisible(true))}>
-      <Tooltip label="Show call pane">
-        <div>
-          <PiPhone size={40} color="white" />
-        </div>
-      </Tooltip>
+    <AlphaDialerFabStyled>
+      {isVisible ? (
+        <Tooltip label="Hide call pane">
+          <div>
+            <PiPhoneFill
+              size={40}
+              color="white"
+              onClick={() => dispatch(setAlphaDialerVisible(false))}
+            />
+          </div>
+        </Tooltip>
+      ) : (
+        <Tooltip label="Show call pane">
+          <div>
+            <PiPhone
+              size={40}
+              color="white"
+              onClick={() => dispatch(setAlphaDialerVisible(true))}
+            />
+          </div>
+        </Tooltip>
+      )}
     </AlphaDialerFabStyled>
   );
 };

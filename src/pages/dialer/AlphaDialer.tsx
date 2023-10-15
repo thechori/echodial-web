@@ -11,7 +11,7 @@ import {
 } from "react-icons/ai";
 
 import { FaRegStopCircle, FaUser } from "react-icons/fa";
-import { BiHide, BiImport } from "react-icons/bi";
+import { BiImport } from "react-icons/bi";
 import { notifications } from "@mantine/notifications";
 //
 import {
@@ -38,7 +38,6 @@ import {
   setRequestAction,
   setWasCallConnected,
   setIsDialing,
-  setAlphaDialerVisible,
 } from "../../store/dialer/slice";
 import routes from "../../configs/routes";
 import AlphaDialerStyled from "./AlphaDialer.styles";
@@ -705,18 +704,6 @@ function AlphaDialer() {
             </Text>
           </Text>
         </div>
-      </Box>
-
-      <Box className="options">
-        <Tooltip label="Hide call pane">
-          <div>
-            <BiHide
-              fontSize="2rem"
-              className="hoverable"
-              onClick={() => dispatch(setAlphaDialerVisible(false))}
-            />
-          </div>
-        </Tooltip>
       </Box>
     </AlphaDialerStyled>
   );
