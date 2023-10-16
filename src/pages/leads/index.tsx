@@ -7,7 +7,7 @@ import LeadsFilteredList from "./LeadsFilteredList";
 function Leads() {
   return (
     <LeadsStyled>
-      <Container fluid size="xl" py="md">
+      <Container fluid size="xl">
         <LeadsFilter />
         <LeadsFilteredList />
       </Container>

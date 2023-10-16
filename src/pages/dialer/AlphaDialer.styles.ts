@@ -3,15 +3,10 @@ import { styled } from "styled-components";
 import devices from "../../styles/devices";
 
 const AlphaDialerStyled = styled.div<{ isvisible: boolean }>`
-  position: fixed;
-  top: 0px;
-  right: ${(props) => (props.isvisible ? "0px" : "-300px")};
-  bottom: 0px;
-  transition: all 0.2s ease;
-
+  transition: width 0.2s ease;
+  overflow: ${(props) => (props.isvisible ? "unset" : "hidden")};
   background-color: lightyellow;
-  height: 100vh;
-  width: 300px;
+  width: ${(props) => (props.isvisible ? "900px" : "0px")};
 
   .details {
     display: block;

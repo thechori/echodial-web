@@ -46,10 +46,10 @@ function Settings() {
 
   return (
     <SettingsStyled>
-      <Container fluid py="md">
+      <Container fluid px="md">
         <Grid>
           <Grid.Col xs={12} sm={6}>
-            <Card withBorder shadow="md" m="sm">
+            <Card withBorder shadow="md" mb="md">
               <Flex align="center" justify="space-between">
                 <Title order={3}>Account</Title>
                 <Tooltip
@@ -93,7 +93,7 @@ function Settings() {
             </Card>
           </Grid.Col>
           <Grid.Col xs={12} sm={6}>
-            <Card withBorder shadow="md" m="sm">
+            <Card withBorder shadow="md" mb="md">
               <Flex align="center" justify="space-between">
                 <Title order={3}>Security</Title>
                 <Tooltip
@@ -128,7 +128,7 @@ function Settings() {
           </Grid.Col>
         </Grid>
 
-        <Card withBorder shadow="md" m="sm">
+        <Card withBorder shadow="md" my="md">
           <Title order={3}>Support</Title>
           <Box py="md">
             <Text>
@@ -162,7 +162,7 @@ function Settings() {
           </Box>
         </Card>
 
-        <Card withBorder shadow="md" m="sm">
+        <Card withBorder shadow="md" my="md">
           <Title order={3}>Subscription</Title>
 
           <Box py="md">
@@ -186,7 +186,7 @@ function Settings() {
           </Flex>
         </Card>
 
-        <Card withBorder shadow="md" color="red" m="sm">
+        <Card withBorder shadow="md" color="red" my="md">
           <Title order={3}>Danger zone</Title>
           <Text py="md">
             Not happy with {APP_NAME} any more? Feel free to cancel at any time.

@@ -700,7 +700,7 @@ function AlphaDialer() {
           <Text size="sm">
             Duration:{" "}
             <Text color="grey" span>
-              0:00
+              0:00:00
             </Text>
           </Text>
         </div>

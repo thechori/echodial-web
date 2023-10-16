@@ -57,10 +57,10 @@ function PhoneNumbers() {
     <PhoneNumbersStyled>
       <NewCallerIdModal opened={opened} close={close} />
 
-      <Container fluid py="lg">
+      <Container fluid>
         <Grid>
           <Grid.Col xs={12} sm={12} md={6}>
-            <Card shadow="md" withBorder radius="md" m="lg">
+            <Card shadow="md" withBorder radius="md">
               <Flex align="center" justify="space-between">
                 <Title order={3} mb={16}>
                   Personal

@@ -11,41 +11,75 @@ import phoneFormatter from "../../utils/phone-formatter";
 import { useMemo, useState } from "react";
 import { createSelector } from "@reduxjs/toolkit";
 import { useGetLeadsQuery } from "../../services/lead";
+import { PiPhoneFill } from "react-icons/pi";
+import { capitalizeFirstLetter } from "../../utils/string-formatters";
 
 const colDefs: ColDef<Lead>[] = [
   {
     filter: true,
     width: 10,
+    sortable: true,
     headerCheckboxSelection: true,
     checkboxSelection: true,
     showDisabledCheckboxes: true,
     headerCheckboxSelectionFilteredOnly: true,
   },
   {
+    colId: "actions",
+    width: 100,
+    cellRenderer: () => {
+      // Determine if this lead is being called to change icon
+      console.log("determining");
+
+      return (
+        <div>
+          <Button variant="outline" size="xs" leftIcon={<PiPhoneFill />}>
+            Call
+          </Button>
+        </div>
+      );
+    },
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    valueFormatter: (val) => capitalizeFirstLetter(val.value),
+  },
+  {
     field: "first_name",
     headerName: "First name",
     filter: true,
+    sortable: true,
     resizable: true,
   },
   {
     field: "last_name",
     headerName: "Last name",
     filter: true,
+    sortable: true,
     resizable: true,
   },
   {
     field: "phone",
     filter: true,
+    sortable: true,
     resizable: true,
     cellRenderer: (param: any) => phoneFormatter(param.value),
   },
-  { field: "email", filter: true, resizable: true },
-  { field: "source", filter: true, headerName: "Lead vendor", resizable: true },
+  { field: "email", filter: true, resizable: true, sortable: true },
+  {
+    field: "source",
+    filter: true,
+    headerName: "Lead vendor",
+    resizable: true,
+    sortable: true,
+  },
   {
     field: "created_at",
     headerName: "Created at",
     filter: true,
     resizable: true,
+    sortable: true,
     valueFormatter: (param) => format(new Date(param.value), "Pp"),
   },
 ];
@@ -85,9 +119,9 @@ function LeadsFilteredList() {
     }),
   });
 
-  function onSelectionChanged(e: any) {
-    console.log("e", e);
-  }
+  // function onSelectionChanged(e: any) {
+  //   console.log("e", e);
+  // }
 
   console.log("filteredLeads", filteredLeads);
 
@@ -96,7 +130,7 @@ function LeadsFilteredList() {
       <Flex align="center" justify="space-between">
         <Flex align="center">
           <MultiSelect
-            w={300}
+            w={200}
             label="Status"
             placeholder="Choose a status"
             data={availableStatuses}
@@ -123,8 +157,8 @@ function LeadsFilteredList() {
           <Button mx={6} variant="light">
             Action 2
           </Button>
-          <Button mx={6} variant="outline">
-            Action 3
+          <Button mx={6} variant="outline" leftIcon={<PiPhoneFill />}>
+            Start calling
           </Button>
         </Flex>
       </Flex>
@@ -135,9 +169,9 @@ function LeadsFilteredList() {
           rowData={filteredLeads}
           columnDefs={colDefs}
           quickFilterText={keyword}
-          animateRows={true}
+          // animateRows={true}
           rowSelection="multiple"
-          onSelectionChanged={onSelectionChanged}
+          // onSelectionChanged={onSelectionChanged}
         />
       </Box>
     </Card>

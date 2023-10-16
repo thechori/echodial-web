@@ -29,7 +29,7 @@ const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
   } = options;
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Call options">
+    <Modal opened={opened} onClose={onClose} title="Dialer options">
       <Text>
         Configure your call settings to maximize productivity in your unique
         situation.

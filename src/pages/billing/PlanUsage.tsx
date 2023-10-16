@@ -16,7 +16,7 @@ function PlanUsage() {
   const maxUsage = billing.maxLimit;
   const progressPercentage = (currentUsage / maxUsage) * 100;
   return (
-    <Grid py="sm">
+    <Grid>
       <Grid.Col>
         <Card withBorder py="md" h="100%">
           <Title order={3}>Plan Usage</Title>
