@@ -30,7 +30,15 @@ const LeadsFilter = () => {
 
   return (
     // Note: `overflow: visible` is required to support menu bleeding outside of Card bounds (before, it would cut off and not be visible)
-    <Card withBorder mb="md" style={{ overflow: "visible" }}>
+    <Card
+      withBorder
+      style={{
+        overflow: "visible",
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+        borderBottom: "none",
+      }}
+    >
       <Flex align="center" justify="space-between">
         <Flex align="center">
           <ThemeIcon radius="xl" size="xl" mr="xs">

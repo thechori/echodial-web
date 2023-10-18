@@ -2,24 +2,50 @@ import { createSlice } from "@reduxjs/toolkit";
 //
 import { Lead } from "../../types";
 
-export type TFilterTag =
-  | "call"
-  | "not-called"
-  | "sold"
-  | "not-sold"
-  | "created-today";
+export const availableFilters: TFilter[] = [
+  {
+    value: "hasAppointment",
+    label: "Has appointment",
+    type: "boolean",
+    fn: (lead) => {
+      if (lead.appointment_at) {
+        return true;
+      }
+      return false;
+    },
+  },
+  {
+    value: "hasBeenCalled",
+    label: "Has been called",
+    type: "boolean",
+    fn: (lead) => {
+      if (lead.call_count > 0) {
+        return true;
+      }
+      return false;
+    },
+  },
+];
+
+type TFilterType = "boolean" | "number" | "string";
+type TFilter = {
+  type: TFilterType;
+  value: boolean | number | string;
+  label: string;
+  fn: (lead: Lead) => boolean;
+};
 
 export type TLeadsState = {
   keyword: string;
   filteredRows: Lead[];
-  filterTags: TFilterTag[];
+  filters: TFilter[];
   selectedRows: Lead[];
 };
 
 const initialState: TLeadsState = {
   keyword: "",
   filteredRows: [],
-  filterTags: [],
+  filters: [],
   selectedRows: [],
 };
 
@@ -36,13 +62,17 @@ export const LeadsSlice = createSlice({
     setSelectedRows: (state, action) => {
       state.selectedRows = action.payload;
     },
-    setFilterTags: (state, action) => {
-      state.filterTags = action.payload;
+    setAdvancedFilters: (state, action) => {
+      state.filters = action.payload;
     },
   },
 });
 
-export const { setKeyword, setFilterTags, setFilteredRows, setSelectedRows } =
-  LeadsSlice.actions;
+export const {
+  setKeyword,
+  setAdvancedFilters,
+  setFilteredRows,
+  setSelectedRows,
+} = LeadsSlice.actions;
 
 export default LeadsSlice.reducer;

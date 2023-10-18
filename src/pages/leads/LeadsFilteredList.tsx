@@ -1,88 +1,18 @@
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import { AgGridReact } from "ag-grid-react";
-import { ColDef } from "ag-grid-community";
 import { Box, Button, Card, Flex, MultiSelect, TextInput } from "@mantine/core";
-import { format } from "date-fns";
 //
 import { Lead } from "../../types";
-import phoneFormatter from "../../utils/phone-formatter";
-// import { useAppSelector } from "../../store/hooks";
-import { useMemo, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { createSelector } from "@reduxjs/toolkit";
 import { useGetLeadsQuery } from "../../services/lead";
-import { PiPhoneFill } from "react-icons/pi";
-import { capitalizeFirstLetter } from "../../utils/string-formatters";
 
-const colDefs: ColDef<Lead>[] = [
-  {
-    filter: true,
-    width: 10,
-    sortable: true,
-    headerCheckboxSelection: true,
-    checkboxSelection: true,
-    showDisabledCheckboxes: true,
-    headerCheckboxSelectionFilteredOnly: true,
-  },
-  {
-    colId: "actions",
-    width: 100,
-    cellRenderer: () => {
-      // Determine if this lead is being called to change icon
-      console.log("determining");
-
-      return (
-        <div>
-          <Button variant="outline" size="xs" leftIcon={<PiPhoneFill />}>
-            Call
-          </Button>
-        </div>
-      );
-    },
-  },
-  {
-    field: "status",
-    headerName: "Status",
-    valueFormatter: (val) => capitalizeFirstLetter(val.value),
-  },
-  {
-    field: "first_name",
-    headerName: "First name",
-    filter: true,
-    sortable: true,
-    resizable: true,
-  },
-  {
-    field: "last_name",
-    headerName: "Last name",
-    filter: true,
-    sortable: true,
-    resizable: true,
-  },
-  {
-    field: "phone",
-    filter: true,
-    sortable: true,
-    resizable: true,
-    cellRenderer: (param: any) => phoneFormatter(param.value),
-  },
-  { field: "email", filter: true, resizable: true, sortable: true },
-  {
-    field: "source",
-    filter: true,
-    headerName: "Lead vendor",
-    resizable: true,
-    sortable: true,
-  },
-  {
-    field: "created_at",
-    headerName: "Created at",
-    filter: true,
-    resizable: true,
-    sortable: true,
-    valueFormatter: (param) => format(new Date(param.value), "Pp"),
-  },
-];
+import { IconFilter } from "@tabler/icons-react";
+import LeadsFilterDrawer from "./LeadsFilterDrawer";
+import { leadColDefs } from "./leadColDefs";
+import { setSelectedRows } from "../../store/leads/slice";
 
 type TOption = {
   value: string;
@@ -99,8 +29,13 @@ function LeadsFilteredList() {
     { value: "attemptedToContact", label: "Attempted to contact" },
   ];
 
+  const dispatch = useAppDispatch();
+  const gridRef = useRef<any>(); // TODO: type this properly
   const [keyword, setKeyword] = useState("");
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+
+  const { filters } = useAppSelector((state) => state.leads);
 
   const selectFilteredLeads = useMemo(() => {
     // Return a unique selector instance for this page so that
@@ -119,16 +54,21 @@ function LeadsFilteredList() {
     }),
   });
 
-  // function onSelectionChanged(e: any) {
-  //   console.log("e", e);
-  // }
-
-  console.log("filteredLeads", filteredLeads);
+  const onSelectionChanged = useCallback(() => {
+    const selectedRows = gridRef.current.api.getSelectedRows();
+    dispatch(setSelectedRows(selectedRows));
+  }, []);
 
   return (
-    <Card withBorder>
-      <Flex align="center" justify="space-between">
-        <Flex align="center">
+    <Card
+      withBorder
+      style={{
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+      }}
+    >
+      <Flex align="flex-end" justify="space-between">
+        <Flex align="flex-end">
           <MultiSelect
             w={200}
             label="Status"
@@ -149,31 +89,30 @@ function LeadsFilteredList() {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
         />
-
-        <Flex>
-          <Button mx={6} variant="subtle">
-            Action 1
-          </Button>
-          <Button mx={6} variant="light">
-            Action 2
-          </Button>
-          <Button mx={6} variant="outline" leftIcon={<PiPhoneFill />}>
-            Start calling
-          </Button>
-        </Flex>
+        <Button
+          variant={filters.length ? "light" : "subtle"}
+          onClick={() => setFilterDrawerOpen(!filterDrawerOpen)}
+          leftIcon={<IconFilter />}
+        >
+          Filters
+        </Button>
       </Flex>
       <Box className="ag-theme-alpine lead-grid-container" h={500} my="md">
         <AgGridReact<Lead>
-          // ref={gridRef}
+          ref={gridRef}
           // @ts-ignore
           rowData={filteredLeads}
-          columnDefs={colDefs}
+          columnDefs={leadColDefs}
           quickFilterText={keyword}
           // animateRows={true}
           rowSelection="multiple"
-          // onSelectionChanged={onSelectionChanged}
+          onSelectionChanged={onSelectionChanged}
         />
       </Box>
+      <LeadsFilterDrawer
+        opened={filterDrawerOpen}
+        onClose={() => setFilterDrawerOpen(false)}
+      />
     </Card>
   );
 }

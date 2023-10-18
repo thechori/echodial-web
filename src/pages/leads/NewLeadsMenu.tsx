@@ -1,4 +1,4 @@
-import { Menu, Button } from "@mantine/core";
+import { Button, Flex } from "@mantine/core";
 import { IconUpload, IconPlus } from "@tabler/icons-react";
 
 type TNewLeadsMenuProps = {
@@ -8,20 +8,19 @@ type TNewLeadsMenuProps = {
 
 function NewLeadsMenu({ onCsvUpload, onManualInput }: TNewLeadsMenuProps) {
   return (
-    <Menu shadow="md" width={200}>
-      <Menu.Target>
-        <Button leftIcon={<IconPlus size="1rem" />}>New Leads</Button>
-      </Menu.Target>
-
-      <Menu.Dropdown>
-        <Menu.Item onClick={onCsvUpload} icon={<IconUpload size={14} />}>
-          Upload CSV
-        </Menu.Item>
-        <Menu.Item onClick={onManualInput} icon={<IconPlus size={14} />}>
-          Manually input
-        </Menu.Item>
-      </Menu.Dropdown>
-    </Menu>
+    <Flex>
+      <Button
+        mx={4}
+        variant="subtle"
+        onClick={onCsvUpload}
+        leftIcon={<IconUpload size={14} />}
+      >
+        Import
+      </Button>
+      <Button mx={4} onClick={onManualInput} leftIcon={<IconPlus size={14} />}>
+        Create lead
+      </Button>
+    </Flex>
   );
 }
 
