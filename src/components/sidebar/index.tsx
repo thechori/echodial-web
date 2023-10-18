@@ -1,11 +1,6 @@
 import { MouseEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import {
-  FaCreditCard,
-  FaAddressBook,
-  // FaBucket,
-  // FaPhone,
-} from "react-icons/fa6";
+import { FaCreditCard, FaAddressBook } from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
 import { IoIosSettings } from "react-icons/io";
 import { MdGroups } from "react-icons/md";
@@ -32,7 +27,7 @@ const Sidebar = () => {
             className="hoverable"
             src={logo}
             alt="EchoDial logo"
-            onClick={() => navigate(routes.landing)}
+            onClick={() => navigate(routes.leads)}
           />
           <div
             className="hamburger-menu"
@@ -50,16 +45,6 @@ const Sidebar = () => {
                   <MdGroups fontSize="1.5rem" />
                   <div>Leads</div>
                 </NavLink>
-
-                {/* <NavLink to={routes.dialer}>
-                  <FaPhone fontSize="1.5rem" />
-                  <div>Dialer</div>
-                </NavLink> */}
-
-                {/* <NavLink to={routes.buckets}>
-                  <FaBucket fontSize="1.5rem" />
-                  <div>Buckets</div>
-                </NavLink> */}
 
                 <NavLink to={routes.callerIds}>
                   <FaAddressBook fontSize="1.5rem" />
@@ -91,7 +76,7 @@ const Sidebar = () => {
             src={logo}
             alt="EchoDial logo"
             className="hoverable"
-            onClick={() => navigate(routes.landing)}
+            onClick={() => navigate(routes.leads)}
           />
         </div>
 
@@ -100,16 +85,6 @@ const Sidebar = () => {
             <MdGroups fontSize="1.5rem" />
             <div>Leads</div>
           </NavLink>
-
-          {/* <NavLink to={routes.dialer}>
-            <FaPhone fontSize="1.5rem" />
-            <div>Dialer</div>
-          </NavLink> */}
-
-          {/* <NavLink to={routes.buckets}>
-            <FaBucket fontSize="1.5rem" />
-            <div>Buckets</div>
-          </NavLink> */}
 
           <NavLink to={routes.callerIds}>
             <FaAddressBook fontSize="1.5rem" />
