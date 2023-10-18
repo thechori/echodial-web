@@ -1,12 +1,22 @@
 import { useForm } from "@mantine/form";
-import { Box, Button, Flex, Modal, Text, TextInput } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Flex,
+  Modal,
+  Select,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
 import { useAddLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
+import { useGetLeadStatusesQuery } from "../../services/lead-status";
 
 const ManualInputLeadModal = ({ opened, close }: any) => {
   const [addLead, { isLoading, error }] = useAddLeadMutation();
+  const { data: availableStatuses } = useGetLeadStatusesQuery();
 
   const form = useForm({
     initialValues: {
@@ -101,6 +111,17 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
             {...form.getInputProps("lastName")}
           />
           <TextInput pb="xs" label="Email" {...form.getInputProps("email")} />
+          <Select
+            label="Status"
+            required
+            {...form.getInputProps("status")}
+            data={
+              availableStatuses?.map((s) => ({
+                value: s.value,
+                label: s.label,
+              })) || []
+            }
+          />
         </Box>
 
         <Flex pt="md" align="center" justify="center">
