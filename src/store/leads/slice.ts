@@ -68,6 +68,8 @@ export const LeadsSlice = createSlice({
   },
 });
 
+// const selectFilteredLeads = createSelector()
+
 export const {
   setKeyword,
   setAdvancedFilters,

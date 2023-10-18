@@ -24,7 +24,7 @@ import { setSelectedRows } from "../../store/leads/slice";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
 
 function LeadsFilteredList() {
-  const { data } = useGetLeadStatusesQuery();
+  const { data: leadStatuses } = useGetLeadStatusesQuery();
 
   const dispatch = useAppDispatch();
   const gridRef = useRef<any>(); // TODO: type this properly
@@ -34,14 +34,31 @@ function LeadsFilteredList() {
 
   const { filters } = useAppSelector((state) => state.leads);
 
+  // Filter based on status
+  // Filter based on filters (e.g., has been called)
   const selectFilteredLeads = useMemo(() => {
     // Return a unique selector instance for this page so that
     // the filtered results are correctly memoized
     return createSelector(
       (res) => res.data,
-      (data) => data
+      (leads) => {
+        // Handle undefined data
+        if (!leads) return;
+
+        // Handle no status filters
+        if (selectedStatuses.length === 0) return leads;
+
+        // Handle lead filtering
+        // @ts-ignore
+        return leads.filter((l) => {
+          if (selectedStatuses.includes(l.status)) {
+            return true;
+          }
+          return false;
+        });
+      }
     );
-  }, []);
+  }, [selectedStatuses]);
 
   // Use the same posts query, but extract only part of its data
   const { filteredLeads } = useGetLeadsQuery(undefined, {
@@ -56,8 +73,8 @@ function LeadsFilteredList() {
     dispatch(setSelectedRows(selectedRows));
   }, []);
 
-  const selectItems: SelectItem[] = data
-    ? data.map((leadStatus) => ({
+  const selectItems: SelectItem[] = leadStatuses
+    ? leadStatuses.map((leadStatus) => ({
         value: leadStatus.value,
         label: leadStatus.label,
       }))

@@ -21,9 +21,6 @@ export const leadColDefs: ColDef<Lead>[] = [
     colId: "actions",
     width: 100,
     cellRenderer: () => {
-      // Determine if this lead is being called to change icon
-      console.log("determining");
-
       return (
         <div>
           <Button variant="outline" size="xs" leftIcon={<PiPhoneFill />}>

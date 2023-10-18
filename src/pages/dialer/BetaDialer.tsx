@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Box,
   Button,
   Card,
   Flex,
@@ -39,11 +38,6 @@ const BetaDialer = () => {
             <PiPhone style={{ width: "70%", height: "70%" }} />
           </ThemeIcon>
           <Title order={2}>Dialer</Title>
-        </Flex>
-
-        <Flex align="center">
-          <Box>Ryan Teodoro</Box>
-          <Box>0:00:00</Box>
         </Flex>
 
         <Flex align="center">
