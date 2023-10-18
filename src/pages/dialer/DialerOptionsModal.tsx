@@ -22,11 +22,7 @@ type TDialerOptionsModalProps = {
 const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
   const dispatch = useAppDispatch();
   const { options } = useAppSelector((state) => state.dialer);
-  const {
-    maxCallTries,
-    cooldownTimeInMilliseconds,
-    maxRingTimeInMilliseconds,
-  } = options;
+  const { maxCallTries, cooldownTimeInSeconds, maxRingTimeInSeconds } = options;
 
   return (
     <Modal opened={opened} onClose={onClose} title="Dialer options">
@@ -39,7 +35,7 @@ const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
         <NumberInput
           label={
             <Flex align="center" justify="space-between">
-              <Text pr="xs">Max ringing time (in milliseconds)</Text>
+              <Text pr="xs">Max ringing time (in seconds)</Text>
               <Tooltip
                 label="Amount of time to ring before hanging up and moving to the next action"
                 position="top-end"
@@ -55,10 +51,10 @@ const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
             </Flex>
           }
           placeholder="Pick one"
-          value={maxRingTimeInMilliseconds}
+          value={maxRingTimeInSeconds}
           onChange={(newValue) => {
             dispatch(
-              setOptions({ ...options, maxRingTimeInMilliseconds: newValue })
+              setOptions({ ...options, maxRingTimeInSeconds: newValue })
             );
           }}
         />
@@ -91,7 +87,7 @@ const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
         <NumberInput
           label={
             <Flex align="center" justify="space-between">
-              <Text pr="xs">Cooldown time (in milliseconds)</Text>
+              <Text pr="xs">Cooldown time (in seconds)</Text>
               <Tooltip
                 label="Amount of time the dialer will wait before making the next call"
                 position="top-end"
@@ -106,10 +102,10 @@ const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
               </Tooltip>
             </Flex>
           }
-          value={cooldownTimeInMilliseconds}
+          value={cooldownTimeInSeconds}
           onChange={(newValue) => {
             dispatch(
-              setOptions({ ...options, cooldownTimeInMilliseconds: newValue })
+              setOptions({ ...options, cooldownTimeInSeconds: newValue })
             );
           }}
         />

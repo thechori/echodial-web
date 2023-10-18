@@ -300,7 +300,7 @@ function AlphaDialer() {
     console.log("starting new call timer!");
 
     const timer = setTimeout(async () => {
-      console.log("maxRingTimeInMilliseconds hit! moving on...");
+      console.log("maxRingTimeInSeconds hit! moving on...");
 
       // When time expires, check to see if connected or not
       if (callRef.current.wasCallConnected) {
@@ -315,7 +315,7 @@ function AlphaDialer() {
       }
 
       dispatch(setRequestAction("determineNextAction"));
-    }, options.maxRingTimeInMilliseconds);
+    }, options.maxRingTimeInSeconds * 1000);
 
     callRef.current.currentCallTimer = timer;
   }

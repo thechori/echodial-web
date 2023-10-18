@@ -125,7 +125,7 @@ function LeadsFilteredList() {
           rowData={filteredLeads}
           columnDefs={leadColDefs}
           quickFilterText={keyword}
-          // animateRows={true}
+          animateRows={true}
           rowSelection="multiple"
           onSelectionChanged={onSelectionChanged}
         />

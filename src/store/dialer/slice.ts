@@ -14,16 +14,16 @@ const buildOptions = (): TDialerOptions => {
   }
 
   return {
-    maxRingTimeInMilliseconds: 3000,
+    maxRingTimeInSeconds: 3,
     maxCallTries: 3,
-    cooldownTimeInMilliseconds: 10000,
+    cooldownTimeInSeconds: 10,
   };
 };
 
 export type TDialerOptions = {
-  maxRingTimeInMilliseconds: number;
+  maxRingTimeInSeconds: number;
   maxCallTries: number;
-  cooldownTimeInMilliseconds: number;
+  cooldownTimeInSeconds: number;
 };
 
 export type TRequestAction =
