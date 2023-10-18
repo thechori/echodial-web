@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Center, Modal, Text, TextInput } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Flex,
+  Modal,
+  Select,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 //
@@ -7,6 +15,7 @@ import { useUpdateLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
 import { Lead } from "../../types";
 import { useAppSelector } from "../../store/hooks";
+import { useGetLeadStatusesQuery } from "../../services/lead-status";
 
 type TEditLeadModalProps = {
   opened: boolean;
@@ -16,11 +25,10 @@ type TEditLeadModalProps = {
 const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
   const [error, setError] = useState("");
   const [lead, setLead] = useState<Lead | null>(null);
-  //
+  const { data: availableStatuses } = useGetLeadStatusesQuery();
   const { selectedRows } = useAppSelector((state) => state.leads);
-  //
   const [updateLead, { isLoading }] = useUpdateLeadMutation();
-  //
+
   const form = useForm({
     initialValues: lead,
     validate: {
@@ -38,6 +46,11 @@ const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
       },
     },
   });
+
+  function cancelEdit() {
+    form.reset();
+    close();
+  }
 
   async function editLead() {
     form.validate();
@@ -84,13 +97,27 @@ const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
           <TextInput label="First name" {...form.getInputProps("first_name")} />
           <TextInput label="Last name" {...form.getInputProps("last_name")} />
           <TextInput label="Phone" required {...form.getInputProps("phone")} />
+          <Select
+            label="Status"
+            required
+            {...form.getInputProps("status")}
+            data={
+              availableStatuses?.map((s) => ({
+                value: s.value,
+                label: s.label,
+              })) || []
+            }
+          />
         </Box>
 
-        <Center py="md">
-          <Button loading={isLoading} onClick={editLead}>
+        <Flex pt="xl" justify="center" align="center">
+          <Button onClick={cancelEdit} variant="subtle" mx="sm">
+            Cancel
+          </Button>
+          <Button loading={isLoading} onClick={editLead} mx="sm">
             Update
           </Button>
-        </Center>
+        </Flex>
 
         <Text w="100%" color="red">
           {error}

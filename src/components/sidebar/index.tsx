@@ -9,7 +9,7 @@ import {
 import { GoHistory } from "react-icons/go";
 import { IoIosSettings } from "react-icons/io";
 import { MdGroups } from "react-icons/md";
-import { AiOutlineMenu, AiOutlineDashboard } from "react-icons/ai";
+import { AiOutlineMenu } from "react-icons/ai";
 //
 import SidebarStyled from "./Sidebar.styles";
 import routes from "../../configs/routes";
@@ -46,11 +46,6 @@ const Sidebar = () => {
           <div className="hamburger-menu-drawer" onClick={handleClickOff}>
             <div className="hamburger-menu-drawer-links">
               <div className="content">
-                <NavLink to={routes.dashboard}>
-                  <AiOutlineDashboard fontSize="1.5rem" />
-                  <div>Dashboard</div>
-                </NavLink>
-
                 <NavLink to={routes.leads}>
                   <MdGroups fontSize="1.5rem" />
                   <div>Leads</div>
@@ -101,11 +96,6 @@ const Sidebar = () => {
         </div>
 
         <div className="content">
-          <NavLink to={routes.dashboard}>
-            <AiOutlineDashboard fontSize="1.5rem" />
-            <div>Dashboard</div>
-          </NavLink>
-
           <NavLink to={routes.leads}>
             <MdGroups fontSize="1.5rem" />
             <div>Leads</div>

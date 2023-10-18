@@ -1,5 +1,5 @@
 import { useForm } from "@mantine/form";
-import { Box, Button, Center, Modal, Text, TextInput } from "@mantine/core";
+import { Box, Button, Flex, Modal, Text, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
 import { useAddLeadMutation } from "../../services/lead";
@@ -30,6 +30,11 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
       },
     },
   });
+
+  function cancel() {
+    form.reset();
+    close();
+  }
 
   async function createLead() {
     form.validate();
@@ -74,21 +79,38 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
   return (
     <Modal opened={opened} onClose={handleClose} title="Create new lead">
       <Modal.Body>
-        <Text mb="md">Manually create your new Lead via the form below:</Text>
+        <Text mb="md" size="sm">
+          Manually create your new Lead via the form below.
+        </Text>
 
         <Box>
-          <TextInput label="Email" {...form.getInputProps("email")} />
-          <TextInput label="First name" {...form.getInputProps("firstName")} />
-          <TextInput label="Last name" {...form.getInputProps("lastName")} />
-
-          <TextInput required label="Phone" {...form.getInputProps("phone")} />
+          <TextInput
+            pb="xs"
+            required
+            label="Phone"
+            {...form.getInputProps("phone")}
+          />
+          <TextInput
+            pb="xs"
+            label="First name"
+            {...form.getInputProps("firstName")}
+          />
+          <TextInput
+            pb="xs"
+            label="Last name"
+            {...form.getInputProps("lastName")}
+          />
+          <TextInput pb="xs" label="Email" {...form.getInputProps("email")} />
         </Box>
 
-        <Center py="md">
-          <Button loading={isLoading} onClick={createLead}>
+        <Flex pt="md" align="center" justify="center">
+          <Button variant="outline" onClick={cancel} mx="sm">
+            Cancel
+          </Button>
+          <Button loading={isLoading} onClick={createLead} mx="sm">
             Create
           </Button>
-        </Center>
+        </Flex>
 
         <Text w="100%" color="red">
           {/* @ts-ignore */}

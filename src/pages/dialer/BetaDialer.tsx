@@ -14,15 +14,20 @@ import {
   IconPlayerSkipForward,
   IconPlayerStopFilled,
 } from "@tabler/icons-react";
-import { PiPhone } from "react-icons/pi";
-import { useAppDispatch } from "../../store/hooks";
-import { setShowOptions } from "../../store/dialer/slice";
+import { PiPhone, PiPhoneDisconnect } from "react-icons/pi";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setRequestAction, setShowOptions } from "../../store/dialer/slice";
 
 const BetaDialer = () => {
   const dispatch = useAppDispatch();
+  const { call } = useAppSelector((state) => state.dialer);
 
   function openDialerOptions() {
     dispatch(setShowOptions(true));
+  }
+
+  function stopCall() {
+    dispatch(setRequestAction("stopCall"));
   }
 
   return (
@@ -88,9 +93,20 @@ const BetaDialer = () => {
             </ActionIcon>
           </Tooltip>
 
-          <Button mx={4} leftIcon={<PiPhone />}>
-            Start calling
-          </Button>
+          {!call ? (
+            <Button mx={4} leftIcon={<PiPhone />}>
+              Start calling
+            </Button>
+          ) : (
+            <Button
+              mx={4}
+              leftIcon={<PiPhoneDisconnect />}
+              color="red"
+              onClick={stopCall}
+            >
+              End call
+            </Button>
+          )}
         </Flex>
       </Flex>
     </Card>

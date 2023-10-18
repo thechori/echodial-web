@@ -60,7 +60,7 @@ function SignUp() {
       });
 
       dispatch(setJwt(data));
-      navigate(routes.dashboard);
+      navigate(routes.leads);
     } catch (error) {
       setError(extractErrorMessage(error));
     } finally {

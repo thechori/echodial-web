@@ -1,7 +1,15 @@
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import { AgGridReact } from "ag-grid-react";
-import { Box, Button, Card, Flex, MultiSelect, TextInput } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Card,
+  Flex,
+  MultiSelect,
+  SelectItem,
+  TextInput,
+} from "@mantine/core";
 //
 import { Lead } from "../../types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -13,21 +21,10 @@ import { IconFilter } from "@tabler/icons-react";
 import LeadsFilterDrawer from "./LeadsFilterDrawer";
 import { leadColDefs } from "./leadColDefs";
 import { setSelectedRows } from "../../store/leads/slice";
-
-type TOption = {
-  value: string;
-  label: string;
-};
+import { useGetLeadStatusesQuery } from "../../services/lead-status";
 
 function LeadsFilteredList() {
-  const availableStatuses: TOption[] = [
-    { value: "new", label: "New" },
-    { value: "open", label: "Open" },
-    { value: "closed", label: "Closed" },
-    { value: "inProgress", label: "In progress" },
-    { value: "unqualified", label: "Unqualified" },
-    { value: "attemptedToContact", label: "Attempted to contact" },
-  ];
+  const { data } = useGetLeadStatusesQuery();
 
   const dispatch = useAppDispatch();
   const gridRef = useRef<any>(); // TODO: type this properly
@@ -59,6 +56,13 @@ function LeadsFilteredList() {
     dispatch(setSelectedRows(selectedRows));
   }, []);
 
+  const selectItems: SelectItem[] = data
+    ? data.map((leadStatus) => ({
+        value: leadStatus.value,
+        label: leadStatus.label,
+      }))
+    : [];
+
   return (
     <Card
       withBorder
@@ -73,7 +77,7 @@ function LeadsFilteredList() {
             w={200}
             label="Status"
             placeholder="Choose a status"
-            data={availableStatuses}
+            data={selectItems}
             value={selectedStatuses}
             onChange={(values) => setSelectedStatuses(values)}
             clearButtonProps={{ "aria-label": "Clear selection" }}

@@ -15,7 +15,6 @@ import Landing from "./pages/landing";
 import SignIn from "./pages/sign-in";
 import SignUp from "./pages/sign-up";
 import Faq from "./pages/faq";
-import Dashboard from "./pages/dashboard";
 import Settings from "./pages/settings";
 import StyleProvider from "./styles";
 import store from "./store";
@@ -106,11 +105,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                 <Route path="" element={<NotFound />} />
               </Route>
               <Route
-                path={routes.dashboard}
+                path={routes.leads}
                 element={
                   <ProtectedRoute>
                     <AuthenticatedUserLayout>
-                      <Dashboard />
+                      <Leads />
                     </AuthenticatedUserLayout>
                   </ProtectedRoute>
                 }
@@ -131,16 +130,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   <ProtectedRoute>
                     <AuthenticatedUserLayout>
                       <CallHistory />
-                    </AuthenticatedUserLayout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={routes.leads}
-                element={
-                  <ProtectedRoute>
-                    <AuthenticatedUserLayout>
-                      <Leads />
                     </AuthenticatedUserLayout>
                   </ProtectedRoute>
                 }
