@@ -3,7 +3,6 @@ import { Card, Container, Grid } from "@mantine/core";
 import CallHistory from "../dialer/CallHistory";
 
 function CallHistoryPage() {
-  console.log("call history");
   return (
     <Container fluid>
       <Grid>

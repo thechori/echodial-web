@@ -14,7 +14,6 @@ import { Box } from "@mantine/core";
 
 const Container = styled.div`
   display: block;
-  padding-bottom: 100px; // To account for the dialer status bar
 
   @media ${devices.tablet} {
     display: flex;
