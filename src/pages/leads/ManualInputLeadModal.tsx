@@ -13,6 +13,7 @@ import { notifications } from "@mantine/notifications";
 import { useAddLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
+import { PhoneInput } from "../../components/phone-input";
 
 const ManualInputLeadModal = ({ opened, close }: any) => {
   const [addLead, { isLoading, error }] = useAddLeadMutation();
@@ -94,12 +95,10 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
         </Text>
 
         <Box>
-          <TextInput
-            pb="xs"
-            required
-            label="Phone"
-            {...form.getInputProps("phone")}
-          />
+          <Box pb="xs">
+            <PhoneInput label="Phone number" {...form.getInputProps("phone")} />
+          </Box>
+
           <TextInput
             pb="xs"
             label="First name"

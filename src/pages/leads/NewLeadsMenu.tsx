@@ -13,11 +13,11 @@ function NewLeadsMenu({ onCsvUpload, onManualInput }: TNewLeadsMenuProps) {
         mx={4}
         variant="subtle"
         onClick={onCsvUpload}
-        leftIcon={<IconUpload size={14} />}
+        leftIcon={<IconUpload size={16} />}
       >
         Import
       </Button>
-      <Button mx={4} onClick={onManualInput} leftIcon={<IconPlus size={14} />}>
+      <Button mx={4} onClick={onManualInput} leftIcon={<IconPlus size={16} />}>
         Create lead
       </Button>
     </Flex>

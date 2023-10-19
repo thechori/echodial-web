@@ -16,6 +16,7 @@ import { extractErrorMessage } from "../../utils/error";
 import { Lead } from "../../types";
 import { useAppSelector } from "../../store/hooks";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
+import { PhoneInput } from "../../components/phone-input";
 
 type TEditLeadModalProps = {
   opened: boolean;
@@ -56,12 +57,10 @@ const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
     form.validate();
 
     if (!form.isValid()) {
-      console.error("Form is not valid");
       return;
     }
 
     if (!form.values) {
-      console.error("No lead found");
       return;
     }
 
@@ -82,10 +81,7 @@ const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
 
   useEffect(() => {
     if (lead) {
-      form.setValues({
-        ...lead,
-        phone: lead ? lead.phone.split("+1")[1] : "", // Remove +1 as not to confuse user
-      });
+      form.setValues(lead);
     }
   }, [lead]);
 
@@ -93,11 +89,26 @@ const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
     <Modal opened={opened} onClose={close} title="Edit lead">
       <Modal.Body>
         <Box>
-          <TextInput label="Email address" {...form.getInputProps("email")} />
-          <TextInput label="First name" {...form.getInputProps("first_name")} />
-          <TextInput label="Last name" {...form.getInputProps("last_name")} />
-          <TextInput label="Phone" required {...form.getInputProps("phone")} />
+          <TextInput
+            mb="xs"
+            label="Email address"
+            {...form.getInputProps("email")}
+          />
+          <TextInput
+            mb="xs"
+            label="First name"
+            {...form.getInputProps("first_name")}
+          />
+          <TextInput
+            mb="xs"
+            label="Last name"
+            {...form.getInputProps("last_name")}
+          />
+          <Box mb="xs">
+            <PhoneInput label="Phone number" {...form.getInputProps("phone")} />
+          </Box>
           <Select
+            mb="xs"
             label="Status"
             required
             {...form.getInputProps("status")}
@@ -120,6 +131,10 @@ const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
         </Flex>
 
         <Text w="100%" color="red">
+          {/*  @ts-ignore */}
+          {/* {form.errors?.map((e) => (
+            <Text color="red">{e}</Text>
+          ))} */}
           {error}
         </Text>
       </Modal.Body>

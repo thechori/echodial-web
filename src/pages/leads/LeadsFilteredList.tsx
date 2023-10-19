@@ -1,5 +1,6 @@
-import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
-import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
+import { useCallback, useMemo, useRef, useState } from "react";
+import { createSelector } from "@reduxjs/toolkit";
+import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { AgGridReact } from "ag-grid-react";
 import {
   Box,
@@ -10,14 +11,12 @@ import {
   SelectItem,
   TextInput,
 } from "@mantine/core";
+import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
+import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 //
 import { Lead } from "../../types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { createSelector } from "@reduxjs/toolkit";
 import { useGetLeadsQuery } from "../../services/lead";
-
-import { IconFilter } from "@tabler/icons-react";
 import LeadsFilterDrawer from "./LeadsFilterDrawer";
 import { leadColDefs } from "./leadColDefs";
 import { setSelectedRows } from "../../store/leads/slice";
@@ -113,9 +112,9 @@ function LeadsFilteredList() {
         <Button
           variant={filters.length ? "light" : "subtle"}
           onClick={() => setFilterDrawerOpen(!filterDrawerOpen)}
-          leftIcon={<IconFilter />}
+          leftIcon={<HiOutlineAdjustmentsHorizontal size={20} />}
         >
-          Filters
+          Filters ({filters.length})
         </Button>
       </Flex>
       <Box className="ag-theme-alpine lead-grid-container" h={500} my="md">

@@ -88,7 +88,7 @@ const BetaDialer = () => {
           </Tooltip>
 
           {!call ? (
-            <Button mx={4} leftIcon={<PiPhone />}>
+            <Button mx={4} leftIcon={<PiPhone size={16} />}>
               Start calling
             </Button>
           ) : (
