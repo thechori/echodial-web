@@ -204,8 +204,11 @@ function SignUp() {
                 </Text>
               </Flex>
 
-              <div style={{ height: 24 }} />
-              <div className="error">{error}</div>
+              <Box py="md">
+                <Text size="sm" color="red">
+                  {error}
+                </Text>
+              </Box>
 
               <Button fullWidth size="lg" variant="gradient" type="submit">
                 {loading ? "Loading..." : "Start your free trial"}
