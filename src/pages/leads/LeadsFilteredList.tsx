@@ -31,7 +31,7 @@ function LeadsFilteredList() {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
-  const { filters } = useAppSelector((state) => state.leads);
+  const { appliedFilters } = useAppSelector((state) => state.leads);
 
   // Filter based on status
   // Filter based on filters (e.g., has been called)
@@ -110,11 +110,11 @@ function LeadsFilteredList() {
           onChange={(e) => setKeyword(e.target.value)}
         />
         <Button
-          variant={filters.length ? "light" : "subtle"}
+          variant={appliedFilters.length ? "light" : "subtle"}
           onClick={() => setFilterDrawerOpen(!filterDrawerOpen)}
           leftIcon={<HiOutlineAdjustmentsHorizontal size={20} />}
         >
-          Filters ({filters.length})
+          Filters ({appliedFilters.length})
         </Button>
       </Flex>
       <Box className="ag-theme-alpine lead-grid-container" h={500} my="md">

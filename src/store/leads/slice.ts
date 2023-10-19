@@ -1,57 +1,39 @@
 import { createSlice } from "@reduxjs/toolkit";
 //
-import { Lead } from "../../types";
+import {
+  LOCAL_STORAGE_KEY__LEADS_OPTIONS,
+  TLeadOptions,
+  TLeadsState,
+} from "./types";
 
-export const availableFilters: TFilter[] = [
-  {
-    value: "hasAppointment",
-    label: "Has appointment",
-    type: "boolean",
-    fn: (lead) => {
-      if (lead.appointment_at) {
-        return true;
-      }
-      return false;
-    },
-  },
-  {
-    value: "hasBeenCalled",
-    label: "Has been called",
-    type: "boolean",
-    fn: (lead) => {
-      if (lead.call_count > 0) {
-        return true;
-      }
-      return false;
-    },
-  },
-];
+const buildOptions = (): TLeadOptions => {
+  // Check for local storage
+  const cachedOptions = localStorage.getItem(LOCAL_STORAGE_KEY__LEADS_OPTIONS);
 
-type TFilterType = "boolean" | "number" | "string";
-type TFilter = {
-  type: TFilterType;
-  value: boolean | number | string;
-  label: string;
-  fn: (lead: Lead) => boolean;
+  if (cachedOptions) {
+    return JSON.parse(cachedOptions);
+  }
+
+  return {
+    hideDoNotCallLeads: true,
+    hideSoldLeads: true,
+    hideClosedLeads: true,
+    hideArchivedLeads: true,
+  };
 };
 
-export type TLeadsState = {
-  keyword: string;
-  filteredRows: Lead[];
-  filters: TFilter[];
-  selectedRows: Lead[];
-};
-
-const initialState: TLeadsState = {
+const buildInitialState = (): TLeadsState => ({
   keyword: "",
   filteredRows: [],
-  filters: [],
+  appliedFilters: [],
   selectedRows: [],
-};
+  //
+  options: buildOptions(),
+});
 
 export const LeadsSlice = createSlice({
   name: "leads",
-  initialState,
+  initialState: buildInitialState(),
   reducers: {
     setKeyword: (state, action) => {
       state.keyword = action.payload;
@@ -62,8 +44,18 @@ export const LeadsSlice = createSlice({
     setSelectedRows: (state, action) => {
       state.selectedRows = action.payload;
     },
-    setAdvancedFilters: (state, action) => {
-      state.filters = action.payload;
+    setAppliedFilters: (state, action) => {
+      state.appliedFilters = action.payload;
+    },
+    setOptions: (state, action) => {
+      state.options = action.payload;
+      console.log(action.payload);
+
+      // Persist in local storage
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY__LEADS_OPTIONS,
+        JSON.stringify(action.payload)
+      );
     },
   },
 });
@@ -72,9 +64,10 @@ export const LeadsSlice = createSlice({
 
 export const {
   setKeyword,
-  setAdvancedFilters,
+  setAppliedFilters,
   setFilteredRows,
   setSelectedRows,
+  setOptions,
 } = LeadsSlice.actions;
 
 export default LeadsSlice.reducer;

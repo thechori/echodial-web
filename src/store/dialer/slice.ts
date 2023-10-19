@@ -5,9 +5,12 @@ import numbers from "../../configs/numbers";
 import { RootState } from "..";
 import { Lead } from "../../types";
 
+export const LOCAL_STORAGE_KEY__DIALER_OPTIONS = "dialer__options";
+export const LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER = "dialer__from_number";
+
 const buildOptions = (): TDialerOptions => {
   // Check for local storage
-  const cachedOptions = localStorage.getItem("dialer__options");
+  const cachedOptions = localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_OPTIONS);
 
   if (cachedOptions) {
     return JSON.parse(cachedOptions);
@@ -74,7 +77,9 @@ const buildInitialState = (): IDialerState => ({
   currentDialAttempts: null,
   muted: false,
   // TODO: Remove this hardcoded value in favor of values from API
-  fromNumber: localStorage.getItem("dialer__fromNumber") || numbers[2].value,
+  fromNumber:
+    localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER) ||
+    numbers[2].value,
   error: "",
   status: "idle",
   token: null,
@@ -154,7 +159,10 @@ export const DialerSlice = createSlice({
       state.options = action.payload;
 
       // Persist in local storage
-      localStorage.setItem("dialer__options", JSON.stringify(action.payload));
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY__DIALER_OPTIONS,
+        JSON.stringify(action.payload)
+      );
     },
     setCurrentDialAttempts: (state, action) => {
       state.currentDialAttempts = action.payload;
