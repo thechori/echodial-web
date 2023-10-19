@@ -9,6 +9,7 @@ type TPhoneInputProps = {
   onChange: any;
   label: string;
   error?: string;
+  required?: boolean;
 };
 
 const PhoneInput = ({
@@ -16,12 +17,18 @@ const PhoneInput = ({
   onChange,
   label,
   error,
+  required,
   ...rest
 }: TPhoneInputProps) => {
   return (
     <PhoneInputStyled haserror={!!error}>
       <Text fw={500} size="sm" mb={2}>
-        {label}
+        {label}{" "}
+        {required && (
+          <Text span color="red">
+            *
+          </Text>
+        )}
       </Text>
       <ReactPhoneNumberInput
         international={false}
@@ -29,6 +36,8 @@ const PhoneInput = ({
         defaultCountry="US"
         value={value}
         onChange={onChange}
+        placeholder="(123) 456-7890"
+        rules={{ required }}
         {...rest}
       />
       <Text size="xs" color="red">

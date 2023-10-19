@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconCircleCheck } from "@tabler/icons-react";
+import { isPossiblePhoneNumber } from "react-phone-number-input";
 //
 import SignUpStyled from "./SignUp.styles";
 import echodialLogo from "../../assets/EchoDial-temp-logo-full.png";
@@ -22,6 +23,7 @@ import {
   Title,
 } from "@mantine/core";
 import { APP_NAME } from "../../configs/constants";
+import { PhoneInput } from "../../components/phone-input";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -30,9 +32,11 @@ function SignUp() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [error, setError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleFormSubmit(e: FormEvent) {
@@ -40,6 +44,14 @@ function SignUp() {
 
     // Clear errors
     setError("");
+    setPhoneError("");
+
+    // Validate phone
+    const isValid = isPossiblePhoneNumber(phone);
+    if (!isValid) {
+      setPhoneError("Invalid phone number");
+      return;
+    }
 
     // API call
     setLoading(true);
@@ -51,6 +63,7 @@ function SignUp() {
         lastName,
         email,
         password,
+        phone,
       });
 
       // Sign in to new User account
@@ -95,8 +108,8 @@ function SignUp() {
             <div className="value-proposition">
               <div className="title">With EchoDial you get:</div>
               <List
-                spacing="xs"
-                size="sm"
+                spacing="md"
+                size="md"
                 center
                 icon={
                   <ThemeIcon color="teal" size={24} radius="xl">
@@ -141,6 +154,16 @@ function SignUp() {
                   setLastName(e.target.value)
                 }
               />
+
+              <Box py="sm">
+                <PhoneInput
+                  required
+                  label="Phone number"
+                  value={phone}
+                  onChange={(p: any) => setPhone(p)}
+                  error={phoneError}
+                />
+              </Box>
 
               <TextInput
                 py="sm"
