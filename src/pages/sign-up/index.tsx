@@ -162,6 +162,7 @@ function SignUp() {
                   value={phone}
                   onChange={(p: any) => setPhone(p)}
                   error={phoneError}
+                  flush
                 />
               </Box>
 
