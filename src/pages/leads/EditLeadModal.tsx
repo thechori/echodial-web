@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { isPossiblePhoneNumber } from "react-phone-number-input";
 import {
   Box,
   Button,
@@ -9,14 +10,16 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { DateInput } from "@mantine/dates";
 import { notifications } from "@mantine/notifications";
 //
 import { useUpdateLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
 import { Lead } from "../../types";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
 import { PhoneInput } from "../../components/phone-input";
+import { setSelectedRows } from "../../store/leads/slice";
 
 type TEditLeadModalProps = {
   opened: boolean;
@@ -24,6 +27,7 @@ type TEditLeadModalProps = {
 };
 
 const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
+  const dispatch = useAppDispatch();
   const [error, setError] = useState("");
   const [lead, setLead] = useState<Lead | null>(null);
   const { data: availableStatuses } = useGetLeadStatusesQuery();
@@ -40,10 +44,8 @@ const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
       },
       phone: (val: string | null) => {
         if (!val) return "Phone number required";
-        // Trim and strip all non-numeric characters
-        const trimmedVal = val.trim();
-        const digits = trimmedVal.replace(/\D/g, "");
-        return digits.length === 10 ? null : "Invalid phone number";
+        const isValid = isPossiblePhoneNumber(val);
+        return isValid ? null : "Invalid phone number";
       },
     },
   });
@@ -67,6 +69,7 @@ const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
     try {
       await updateLead(form.values).unwrap();
       notifications.show({ message: "Successfully updated lead" });
+      dispatch(setSelectedRows([]));
       close();
     } catch (e) {
       setError(extractErrorMessage(e));
@@ -118,6 +121,10 @@ const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
                 label: s.label,
               })) || []
             }
+          />
+          <DateInput
+            label="Appointment at"
+            {...form.getInputProps("appointment_at")}
           />
         </Box>
 

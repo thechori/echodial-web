@@ -1,4 +1,5 @@
 import { useForm } from "@mantine/form";
+import { isPossiblePhoneNumber } from "react-phone-number-input";
 import {
   Box,
   Button,
@@ -9,6 +10,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { DateInput } from "@mantine/dates";
 //
 import { useAddLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
@@ -34,10 +36,9 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
         return /^\S+@\S+$/.test(val) ? null : "Invalid email";
       },
       phone: (val) => {
-        // Trim and strip all non-numeric characters
-        const trimmedVal = val.trim();
-        const digits = trimmedVal.replace(/\D/g, "");
-        return digits.length === 10 ? null : "Invalid phone number";
+        if (!val) return "Phone number required";
+        const isValid = isPossiblePhoneNumber(val);
+        return isValid ? null : "Invalid phone number";
       },
     },
   });
@@ -96,7 +97,11 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
 
         <Box>
           <Box pb="xs">
-            <PhoneInput label="Phone number" {...form.getInputProps("phone")} />
+            <PhoneInput
+              required
+              label="Phone number"
+              {...form.getInputProps("phone")}
+            />
           </Box>
 
           <TextInput
@@ -113,6 +118,7 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
           <Select
             label="Status"
             required
+            pb="xs"
             {...form.getInputProps("status")}
             data={
               availableStatuses?.map((s) => ({
@@ -120,6 +126,11 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
                 label: s.label,
               })) || []
             }
+          />
+          <DateInput
+            label="Appointment at"
+            pb="xs"
+            {...form.getInputProps("appointment_at")}
           />
         </Box>
 

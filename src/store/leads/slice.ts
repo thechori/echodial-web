@@ -15,6 +15,7 @@ const buildOptions = (): TLeadOptions => {
   }
 
   return {
+    hideNoPhoneLeads: true,
     hideDoNotCallLeads: true,
     hideSoldLeads: true,
     hideClosedLeads: true,

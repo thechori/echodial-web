@@ -23,4 +23,15 @@ export const availableFilters: TFilter[] = [
       return false;
     },
   },
+  {
+    value: "notCalledYet",
+    label: "Not called yet",
+    type: "boolean",
+    fn: (lead) => {
+      if (lead.call_count === 0) {
+        return true;
+      }
+      return false;
+    },
+  },
 ];

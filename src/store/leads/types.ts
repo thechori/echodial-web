@@ -4,12 +4,13 @@ export type TFilterType = "boolean" | "number" | "string";
 
 export type TFilter = {
   type: TFilterType;
-  value: boolean | number | string;
+  value: string;
   label: string;
   fn: (lead: Lead) => boolean;
 };
 
 export type TLeadOptions = {
+  hideNoPhoneLeads: boolean;
   hideDoNotCallLeads: boolean;
   hideSoldLeads: boolean;
   hideClosedLeads: boolean;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -10,13 +10,18 @@ import {
   Text,
   TextInput,
   Title,
+  ScrollArea,
+  ThemeIcon,
+  Card,
+  Tooltip,
+  Center,
 } from "@mantine/core";
 import { AiOutlineClose } from "react-icons/ai";
-import { IconPlus, IconSearch } from "@tabler/icons-react";
+import { IconPlus, IconSearch, IconX } from "@tabler/icons-react";
 //
-import LeadsAdvancedFilterDrawerStyled from "./LeadsFilterDrawer.styles";
+import { LeadsFilterDrawerStyled } from "./LeadsFilterDrawer.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setOptions } from "../../store/leads/slice";
+import { setAppliedFilters, setOptions } from "../../store/leads/slice";
 import { availableFilters } from "../../store/leads/available-filters";
 
 const LeadsFilterDrawer = ({ opened, onClose }: any) => {
@@ -24,8 +29,17 @@ const LeadsFilterDrawer = ({ opened, onClose }: any) => {
   const { appliedFilters, options } = useAppSelector((state) => state.leads);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [keyword, setKeyword] = useState("");
+  // const [filteredFilters, setFilteredFilters] = useState(availableFilters)
 
-  const handleApplyFilter = () => {};
+  const handleApplyFilter = (value: string) => {
+    const f = availableFilters.filter((af) => af.value === value);
+    if (f && f.length === 1) {
+      dispatch(setAppliedFilters([...appliedFilters, f[0]]));
+    } else {
+      alert("Error adding filter");
+    }
+    handleCancel();
+  };
 
   const handleCancel = () => {
     setKeyword("");
@@ -37,70 +51,142 @@ const LeadsFilterDrawer = ({ opened, onClose }: any) => {
     onClose();
   };
 
+  const clearFilters = () => {
+    dispatch(setAppliedFilters([]));
+  };
+
+  const clearFilterByValue = (value: string) => {
+    const newAppliedFilters = appliedFilters.filter((af) => af.value !== value);
+    dispatch(setAppliedFilters(newAppliedFilters));
+  };
+
+  // Filter using keyword
+  // Do not show already applied filters
+  useEffect(() => {
+    const f = availableFilters.filter((af) => {
+      if (af.label.toLowerCase().includes(keyword)) {
+        console.log("hi");
+      }
+    });
+    console.log(f);
+  }, [keyword, appliedFilters]);
+
   return (
-    <LeadsAdvancedFilterDrawerStyled>
-      <Drawer opened={opened} onClose={handleClose} position="right">
-        <Flex align="center" justify="space-between" mb="lg">
+    <LeadsFilterDrawerStyled>
+      <Drawer
+        opened={opened}
+        onClose={handleClose}
+        position="right"
+        styles={{
+          body: {
+            ".filter-item": {
+              padding: "0.25rem 0.5rem",
+              borderRadius: "0.1rem",
+            },
+            ".filter-item:hover": {
+              backgroundColor: "rgba(248, 249, 250, 1)",
+              cursor: "pointer",
+            },
+          },
+        }}
+      >
+        <Flex align="center" justify="space-between">
           <Title>Filters</Title>
           <Button
             disabled={appliedFilters.length === 0}
+            color="red"
             variant="outline"
             size="sm"
             leftIcon={<AiOutlineClose />}
+            onClick={clearFilters}
           >
-            Clear filters
+            Clear all
           </Button>
         </Flex>
 
         {isSearchOpen ? (
-          <Box className="filters-search">
+          <Box className="filters-search" p="md">
             <TextInput
               label="Available filters"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               placeholder="Search for filter..."
-              onClick={handleApplyFilter}
               icon={<IconSearch />}
             />
-            <List>
-              {availableFilters.map((f) => (
-                <Text>{f.label}</Text>
-              ))}
-            </List>
-            <Button variant="subtle" onClick={handleCancel}>
+            <ScrollArea mah={500}>
+              <List py="md">
+                {availableFilters.map((f) => (
+                  <Text
+                    key={f.value}
+                    className="filter-item"
+                    onClick={() => handleApplyFilter(f.value)}
+                  >
+                    {f.label}
+                  </Text>
+                ))}
+              </List>
+            </ScrollArea>
+            <Button variant="subtle" onClick={handleCancel} fullWidth>
               Cancel
             </Button>
           </Box>
         ) : (
           <Box className="filters-applied">
-            <Box>
+            <Stack py="lg" spacing="sm">
               {appliedFilters.length ? (
                 appliedFilters.map((filter) => (
-                  <Box key={filter.label}>
-                    {filter.label} - {filter.value}
-                  </Box>
+                  <Card
+                    key={filter.label}
+                    withBorder
+                    style={{ overflow: "visible" }}
+                  >
+                    <Flex align="center" justify="space-between">
+                      <Text pr="sm">{filter.label}</Text>
+                      <Tooltip label="Remove filter">
+                        <ThemeIcon
+                          color="red"
+                          variant="outline"
+                          onClick={() => clearFilterByValue(filter.value)}
+                          size="sm"
+                        >
+                          <IconX />
+                        </ThemeIcon>
+                      </Tooltip>
+                    </Flex>
+                  </Card>
                 ))
               ) : (
-                <Box ta="center" py={64}>
+                <Box ta="center" py={32}>
                   <Text mb="md">No filters applied.</Text>
-                  <Button
-                    size="xs"
-                    leftIcon={<IconPlus size={16} />}
-                    onClick={() => setIsSearchOpen(true)}
-                  >
-                    Add filter
-                  </Button>
                 </Box>
               )}
-            </Box>
+            </Stack>
+            <Center mb="md">
+              <Button
+                leftIcon={<IconPlus size={16} />}
+                onClick={() => setIsSearchOpen(true)}
+              >
+                Add filter
+              </Button>
+            </Center>
 
-            <Box>
-              <Title order={3} mb="lg">
-                Recommended filters
-              </Title>
+            <Box my="lg">
+              <Title order={3}>Recommended filters</Title>
 
               <Box>
-                <Stack spacing="md">
+                <Stack spacing="md" py="md">
+                  <Switch
+                    label="Hide leads with no phone number"
+                    checked={options.hideNoPhoneLeads}
+                    onChange={(e) =>
+                      dispatch(
+                        setOptions({
+                          ...options,
+                          hideNoPhoneLeads: e.currentTarget.checked,
+                        })
+                      )
+                    }
+                  />
                   <Switch
                     label="Hide Do Not Call (DNC) leads"
                     checked={options.hideDoNotCallLeads}
@@ -155,7 +241,7 @@ const LeadsFilterDrawer = ({ opened, onClose }: any) => {
           </Box>
         )}
       </Drawer>
-    </LeadsAdvancedFilterDrawerStyled>
+    </LeadsFilterDrawerStyled>
   );
 };
 

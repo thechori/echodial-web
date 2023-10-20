@@ -75,6 +75,58 @@ export const leadColDefs: ColDef<Lead>[] = [
     sortable: true,
   },
   {
+    field: "appointment_at",
+    headerName: "Appointment at",
+    filter: true,
+    resizable: true,
+    sortable: true,
+    valueFormatter: ({ value }) => {
+      return value ? format(new Date(value), "Pp") : "N/A";
+    },
+  },
+  {
+    field: "not_interested_reason",
+    headerName: "Not interested reason",
+    filter: true,
+    resizable: true,
+    sortable: true,
+  },
+  {
+    field: "call_count",
+    headerName: "Call count",
+    filter: true,
+    resizable: true,
+    sortable: true,
+  },
+  {
+    field: "address1",
+    headerName: "Address",
+    filter: true,
+    resizable: true,
+    sortable: true,
+  },
+  {
+    field: "city",
+    headerName: "City",
+    filter: true,
+    resizable: true,
+    sortable: true,
+  },
+  {
+    field: "state",
+    headerName: "State",
+    filter: true,
+    resizable: true,
+    sortable: true,
+  },
+  {
+    field: "zip",
+    headerName: "Zip",
+    filter: true,
+    resizable: true,
+    sortable: true,
+  },
+  {
     field: "created_at",
     headerName: "Created at",
     filter: true,

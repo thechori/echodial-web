@@ -4,7 +4,8 @@ import { notifications } from "@mantine/notifications";
 //
 import { useDeleteMultipleLeadsMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setSelectedRows } from "../../store/leads/slice";
 
 type TDeleteLeadConfirmationModalProps = {
   opened: boolean;
@@ -15,10 +16,9 @@ const DeleteLeadConfirmationModal = ({
   opened,
   close,
 }: TDeleteLeadConfirmationModalProps) => {
+  const dispatch = useAppDispatch();
   const [error, setError] = useState("");
-  //
   const { selectedRows } = useAppSelector((state) => state.leads);
-  //
   const [deleteLeads, { isLoading }] = useDeleteMultipleLeadsMutation();
 
   async function handleDeleteLeads() {
@@ -29,6 +29,7 @@ const DeleteLeadConfirmationModal = ({
         title: "Success",
         message: "Deleted leads",
       });
+      dispatch(setSelectedRows([]));
       close();
     } catch (e) {
       setError(extractErrorMessage(e));
