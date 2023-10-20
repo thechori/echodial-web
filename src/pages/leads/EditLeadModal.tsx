@@ -35,14 +35,18 @@ const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
   const [updateLead, { isLoading }] = useUpdateLeadMutation();
 
   const form = useForm({
-    initialValues: lead,
+    initialValues: {
+      ...lead,
+      appointment_at:
+        lead && lead.appointment_at ? new Date(lead.appointment_at) : null,
+    },
     validate: {
       // Allow blank, but validate if something has been entered
-      email: (val: string | null) => {
+      email: (val: any) => {
         if (!val) return null;
         return /^\S+@\S+$/.test(val) ? null : "Invalid email";
       },
-      phone: (val: string | null) => {
+      phone: (val: any) => {
         if (!val) return "Phone number required";
         const isValid = isPossiblePhoneNumber(val);
         return isValid ? null : "Invalid phone number";
@@ -84,7 +88,11 @@ const EditLeadModal = ({ opened, close }: TEditLeadModalProps) => {
 
   useEffect(() => {
     if (lead) {
-      form.setValues(lead);
+      form.setValues({
+        ...lead,
+        appointment_at:
+          lead && lead.appointment_at ? new Date(lead.appointment_at) : null,
+      });
     }
   }, [lead]);
 
