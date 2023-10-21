@@ -40,24 +40,51 @@ function LeadsFilteredList() {
     // the filtered results are correctly memoized
     return createSelector(
       (res) => res.data,
-      (leads) => {
+      // Filter by status
+      (leads: any) => {
         // Handle undefined data
         if (!leads) return;
 
-        // Handle no status filters
-        if (selectedStatuses.length === 0) return leads;
+        // Init return array
+        let filteredLeads = leads;
 
-        // Handle lead filtering
-        // @ts-ignore
-        return leads.filter((l) => {
-          if (selectedStatuses.includes(l.status)) {
-            return true;
-          }
-          return false;
-        });
+        /* Filter by status */
+
+        // Filters are present, filter on them
+        if (selectedStatuses.length) {
+          filteredLeads = filteredLeads.filter((lead: Lead) => {
+            // Status
+            if (selectedStatuses.includes(lead.status || "")) {
+              return true;
+            }
+          });
+        }
+
+        /* Filter by keyword */
+
+        // Keyword is present, filter on it
+        if (keyword) {
+          filteredLeads = filteredLeads.filter((lead: Lead) => {
+            // @ts-ignore
+            const allFieldsCombined = Object.keys(lead).map((k) => lead[k]);
+
+            // Join all cell data
+            if (
+              allFieldsCombined
+                .join(" ")
+                .toLowerCase()
+                .includes(keyword.toLowerCase())
+            ) {
+              return true;
+            }
+          });
+        }
+
+        // Return what's left over from the filters
+        return filteredLeads;
       }
     );
-  }, [selectedStatuses]);
+  }, [selectedStatuses, keyword]);
 
   // Use the same posts query, but extract only part of its data
   const { filteredLeads } = useGetLeadsQuery(undefined, {
@@ -123,7 +150,6 @@ function LeadsFilteredList() {
           // @ts-ignore
           rowData={filteredLeads}
           columnDefs={leadColDefs}
-          quickFilterText={keyword}
           animateRows={true}
           rowSelection="multiple"
           onSelectionChanged={onSelectionChanged}

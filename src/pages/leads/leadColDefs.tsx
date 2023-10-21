@@ -9,7 +9,6 @@ import { Button } from "@mantine/core";
 
 export const leadColDefs: ColDef<Lead>[] = [
   {
-    filter: true,
     width: 10,
     sortable: true,
     headerCheckboxSelection: true,
@@ -41,28 +40,24 @@ export const leadColDefs: ColDef<Lead>[] = [
   {
     field: "first_name",
     headerName: "First name",
-    filter: true,
     sortable: true,
     resizable: true,
   },
   {
     field: "last_name",
     headerName: "Last name",
-    filter: true,
     sortable: true,
     resizable: true,
   },
   {
     field: "phone",
-    filter: true,
     sortable: true,
     resizable: true,
     cellRenderer: (param: any) => phoneFormatter(param.value),
   },
-  { field: "email", filter: true, resizable: true, sortable: true },
+  // { field: "email", filter: true, resizable: true, sortable: true },
   {
     field: "source",
-    filter: true,
     headerName: "Lead vendor",
     resizable: true,
     sortable: true,
@@ -70,14 +65,12 @@ export const leadColDefs: ColDef<Lead>[] = [
   {
     field: "do_not_call",
     headerName: "Do not call (DNC)",
-    filter: true,
     resizable: true,
     sortable: true,
   },
   {
     field: "appointment_at",
     headerName: "Appointment at",
-    filter: true,
     resizable: true,
     sortable: true,
     valueFormatter: ({ value }) => {
@@ -87,49 +80,42 @@ export const leadColDefs: ColDef<Lead>[] = [
   {
     field: "not_interested_reason",
     headerName: "Not interested reason",
-    filter: true,
     resizable: true,
     sortable: true,
   },
   {
     field: "call_count",
     headerName: "Call count",
-    filter: true,
     resizable: true,
     sortable: true,
   },
   {
     field: "address1",
     headerName: "Address",
-    filter: true,
     resizable: true,
     sortable: true,
   },
   {
     field: "city",
     headerName: "City",
-    filter: true,
     resizable: true,
     sortable: true,
   },
   {
     field: "state",
     headerName: "State",
-    filter: true,
     resizable: true,
     sortable: true,
   },
   {
     field: "zip",
     headerName: "Zip",
-    filter: true,
     resizable: true,
     sortable: true,
   },
   {
     field: "created_at",
     headerName: "Created at",
-    filter: true,
     resizable: true,
     sortable: true,
     valueFormatter: (param) => format(new Date(param.value), "Pp"),
