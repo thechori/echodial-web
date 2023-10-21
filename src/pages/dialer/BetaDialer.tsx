@@ -1,8 +1,10 @@
 import {
   ActionIcon,
+  Box,
   Button,
   Card,
   Flex,
+  Text,
   ThemeIcon,
   Title,
   Tooltip,
@@ -13,6 +15,7 @@ import {
   IconPlayerSkipForward,
   IconPlayerStopFilled,
 } from "@tabler/icons-react";
+import { MdPerson } from "react-icons/md";
 import { PiPhone, PiPhoneDisconnect } from "react-icons/pi";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setRequestAction, setShowOptions } from "../../store/dialer/slice";
@@ -21,13 +24,17 @@ const BetaDialer = () => {
   const dispatch = useAppDispatch();
   const { call } = useAppSelector((state) => state.dialer);
 
-  function openDialerOptions() {
+  const openDialerOptions = () => {
     dispatch(setShowOptions(true));
-  }
+  };
 
-  function stopCall() {
+  const stopCall = () => {
     dispatch(setRequestAction("stopCall"));
-  }
+  };
+
+  const openContactCard = () => {
+    console.log("opening contact card...");
+  };
 
   return (
     // Note: `overflow: visible` is required to support menu bleeding outside of Card bounds (before, it would cut off and not be visible)
@@ -41,6 +48,36 @@ const BetaDialer = () => {
         </Flex>
 
         <Flex align="center">
+          <Card
+            className="contact-card"
+            withBorder
+            h="2.125rem"
+            px={8}
+            py={0}
+            w={150}
+            mx={4}
+            style={{ overflow: "visible" }}
+          >
+            <Flex align="center" justify="space-between">
+              <Box>
+                <Text lh="1rem" size="xs">
+                  Ryan Teodoro
+                </Text>
+                <Text lh="1rem" size="xs" color="dimmed">
+                  00:00:00
+                </Text>
+              </Box>
+              <Tooltip label="Open contact card">
+                <ThemeIcon
+                  variant="outline"
+                  size="sm"
+                  onClick={openContactCard}
+                >
+                  <MdPerson />
+                </ThemeIcon>
+              </Tooltip>
+            </Flex>
+          </Card>
           <Tooltip label="Open dialer options">
             <ActionIcon
               variant="outline"

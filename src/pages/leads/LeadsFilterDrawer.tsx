@@ -171,7 +171,7 @@ const LeadsFilterDrawer = ({ opened, onClose }: any) => {
                 ))
               ) : (
                 <Box ta="center" py={32}>
-                  <Text mb="md">No filters applied.</Text>
+                  <Text mb="md">No filters applied</Text>
                 </Box>
               )}
             </Stack>

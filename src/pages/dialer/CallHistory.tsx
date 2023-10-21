@@ -192,7 +192,7 @@ export function CallHistory() {
                   }
                 >
                   <Text weight={500} align="center">
-                    Nothing found
+                    No calls found
                   </Text>
                 </td>
               </tr>
