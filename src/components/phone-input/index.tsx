@@ -23,7 +23,7 @@ const PhoneInput = ({
   ...rest
 }: TPhoneInputProps) => {
   return (
-    <PhoneInputStyled haserror={!!error}>
+    <PhoneInputStyled $error={!!error}>
       {!flush && (
         <Text fw={500} size="sm" mb={2}>
           {label}{" "}

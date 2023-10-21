@@ -29,7 +29,7 @@ const LeadsFilterDrawer = ({ opened, onClose }: any) => {
   const { appliedFilters, options } = useAppSelector((state) => state.leads);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [keyword, setKeyword] = useState("");
-  // const [filteredFilters, setFilteredFilters] = useState(availableFilters)
+  const [filteredFilters, setFilteredFilters] = useState(availableFilters);
 
   const handleApplyFilter = (value: string) => {
     const f = availableFilters.filter((af) => af.value === value);
@@ -61,14 +61,22 @@ const LeadsFilterDrawer = ({ opened, onClose }: any) => {
   };
 
   // Filter using keyword
-  // Do not show already applied filters
+  // Do not show already applied filters (TODO: determine if this is good UX -- might want to be able to add multiple filters on a field like "First name")
   useEffect(() => {
-    const f = availableFilters.filter((af) => {
-      if (af.label.toLowerCase().includes(keyword)) {
-        console.log("hi");
+    const appliedFilterLabels = appliedFilters.map((af) => af.label);
+    const filtersNotYetApplied = availableFilters.filter(
+      (af) => !appliedFilterLabels.includes(af.label)
+    );
+
+    if (!keyword) return setFilteredFilters(filtersNotYetApplied);
+
+    const f = filtersNotYetApplied.filter((af) => {
+      if (af.label.toLowerCase().includes(keyword.toLowerCase())) {
+        return true;
       }
+      return false;
     });
-    console.log(f);
+    setFilteredFilters(f);
   }, [keyword, appliedFilters]);
 
   return (
@@ -115,15 +123,21 @@ const LeadsFilterDrawer = ({ opened, onClose }: any) => {
             />
             <ScrollArea mah={500}>
               <List py="md">
-                {availableFilters.map((f) => (
-                  <Text
-                    key={f.value}
-                    className="filter-item"
-                    onClick={() => handleApplyFilter(f.value)}
-                  >
-                    {f.label}
-                  </Text>
-                ))}
+                {filteredFilters.length ? (
+                  filteredFilters.map((f) => (
+                    <Text
+                      key={f.value}
+                      className="filter-item"
+                      onClick={() => handleApplyFilter(f.value)}
+                    >
+                      {f.label}
+                    </Text>
+                  ))
+                ) : (
+                  <Center py="md">
+                    <Text>No filters found</Text>
+                  </Center>
+                )}
               </List>
             </ScrollArea>
             <Button variant="subtle" onClick={handleCancel} fullWidth>

@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import colors from "../../styles/colors";
 
-const PhoneInputStyled = styled.div<{ haserror: boolean }>`
+const PhoneInputStyled = styled.div<{ $error: boolean }>`
   .PhoneInputCountry {
     margin-right: 0.75rem;
   }
@@ -9,7 +9,7 @@ const PhoneInputStyled = styled.div<{ haserror: boolean }>`
   .PhoneInput input {
     height: 2.25rem;
     border: 0.0625rem solid
-      ${(props) => (props.haserror ? colors.red : "#ced4da")};
+      ${(props) => (props.$error ? colors.red : "#ced4da")};
     border-radius: 0.25rem;
     padding-left: calc(2.25rem / 3);
     padding-right: calc(2.25rem / 3);
