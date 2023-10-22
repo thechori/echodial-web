@@ -2,7 +2,6 @@ import { styled } from "styled-components";
 //
 import Sidebar from "../sidebar";
 import devices from "../../styles/devices";
-import AlphaDialer from "../../pages/dialer/AlphaDialer";
 import DialerOptionsModal from "../../pages/dialer/DialerOptionsModal";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -10,10 +9,11 @@ import {
   setShowOptions,
 } from "../../store/dialer/slice";
 import ProtectedBetaModal from "../protected-beta-modal";
+import BetaDialer from "../../pages/dialer/BetaDialer";
+import { Box } from "@mantine/core";
 
 const Container = styled.div`
   display: block;
-  padding-bottom: 100px; // To account for the dialer status bar
 
   @media ${devices.tablet} {
     display: flex;
@@ -33,8 +33,12 @@ const AuthenticatedUserLayout = ({ children }: any) => {
   return (
     <Container>
       <Sidebar />
-      <div className="content">{children}</div>
-      <AlphaDialer />
+      <div className="content">
+        <Box p="md">
+          <BetaDialer />
+        </Box>
+        <div>{children}</div>
+      </div>
       <DialerOptionsModal
         opened={isDialerOptionsModalOpen}
         onClose={() => dispatch(setShowOptions(false))}

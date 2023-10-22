@@ -29,7 +29,7 @@ function Dashboard() {
 
   return (
     <DashboardStyled>
-      <Container fluid py="md">
+      <Container fluid>
         <Grid>
           <Grid.Col>
             <Flex align="center">

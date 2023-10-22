@@ -1,8 +1,10 @@
-import { Button, Checkbox, Group, Modal, Text, TextInput } from "@mantine/core";
+import { Button, Checkbox, Group, Modal, Text } from "@mantine/core";
+import { isPossiblePhoneNumber } from "react-phone-number-input";
 //
 import { useAddCallerIdMutation } from "../../services/caller-id";
 import { useState } from "react";
 import { extractErrorMessage } from "../../utils/error";
+import { PhoneInput } from "../../components/phone-input";
 
 type TNewCallerIdModalProps = {
   opened: boolean;
@@ -15,9 +17,20 @@ const NewCallerIdModal = ({ opened, close }: TNewCallerIdModalProps) => {
     { error: errorAddCallerId, isLoading: isLoadingAddCallerId },
   ] = useAddCallerIdMutation();
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [agree, setAgree] = useState(false);
 
   async function handleSubmit() {
+    // Clear errors
+    setPhoneError("");
+
+    // Validate
+    const isValid = isPossiblePhoneNumber(phoneNumber);
+    if (!isValid) {
+      setPhoneError("Invalid phone number");
+      return;
+    }
+
     try {
       await addCallerId(phoneNumber).unwrap();
       close();
@@ -42,13 +55,12 @@ const NewCallerIdModal = ({ opened, close }: TNewCallerIdModalProps) => {
         </Text>
 
         <Group>
-          <TextInput
+          <PhoneInput
             label="Phone number"
-            miw={300}
             required
-            placeholder="e.g., 832-111-3333"
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            error={phoneError}
+            onChange={(phone: any) => setPhoneNumber(phone)}
           />
 
           <Checkbox

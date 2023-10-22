@@ -9,8 +9,9 @@ import {
   AiOutlineAudioMuted,
   AiOutlineAudio,
 } from "react-icons/ai";
+
 import { FaRegStopCircle, FaUser } from "react-icons/fa";
-import { BiHide, BiImport } from "react-icons/bi";
+import { BiImport } from "react-icons/bi";
 import { notifications } from "@mantine/notifications";
 //
 import {
@@ -27,8 +28,6 @@ import {
   selectActivePhoneNumber,
   selectActiveFullName,
   setCurrentDialIndex,
-  selectShowAlphaDialer,
-  setOptions,
   setError,
   setDevice,
   setCall,
@@ -87,10 +86,10 @@ function AlphaDialer() {
     currentDialIndex,
     muted,
     options,
+    alphaDialerVisible,
   } = useAppSelector((state) => state.dialer);
   const phoneNumber = useAppSelector(selectActivePhoneNumber);
   const fullName = useAppSelector(selectActiveFullName);
-  const showAlphaDialer = useAppSelector(selectShowAlphaDialer);
   //
   const [addCall] = useAddCallMutation();
   const [updateCallViaId] = useUpdateCallViaIdMutation();
@@ -301,7 +300,7 @@ function AlphaDialer() {
     console.log("starting new call timer!");
 
     const timer = setTimeout(async () => {
-      console.log("maxRingTimeInMilliseconds hit! moving on...");
+      console.log("maxRingTimeInSeconds hit! moving on...");
 
       // When time expires, check to see if connected or not
       if (callRef.current.wasCallConnected) {
@@ -316,7 +315,7 @@ function AlphaDialer() {
       }
 
       dispatch(setRequestAction("determineNextAction"));
-    }, options.maxRingTimeInMilliseconds);
+    }, options.maxRingTimeInSeconds * 1000);
 
     callRef.current.currentCallTimer = timer;
   }
@@ -591,10 +590,8 @@ function AlphaDialer() {
     stopDialing,
   ]);
 
-  if (!showAlphaDialer) return null;
-
   return (
-    <AlphaDialerStyled>
+    <AlphaDialerStyled isvisible={alphaDialerVisible}>
       <Box className="details">
         <Box>
           <FaUser className="user-icon" color="white" />
@@ -703,24 +700,10 @@ function AlphaDialer() {
           <Text size="sm">
             Duration:{" "}
             <Text color="grey" span>
-              0:00
+              0:00:00
             </Text>
           </Text>
         </div>
-      </Box>
-
-      <Box className="options">
-        <Tooltip label="Hide status bar">
-          <div>
-            <BiHide
-              fontSize="2rem"
-              className="hoverable"
-              onClick={() =>
-                dispatch(setOptions({ ...options, showAlphaDialer: false }))
-              }
-            />
-          </div>
-        </Tooltip>
       </Box>
     </AlphaDialerStyled>
   );

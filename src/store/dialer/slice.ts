@@ -5,27 +5,28 @@ import numbers from "../../configs/numbers";
 import { RootState } from "..";
 import { Lead } from "../../types";
 
+export const LOCAL_STORAGE_KEY__DIALER_OPTIONS = "dialer__options";
+export const LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER = "dialer__from_number";
+
 const buildOptions = (): TDialerOptions => {
   // Check for local storage
-  const cachedOptions = localStorage.getItem("dialer__options");
+  const cachedOptions = localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_OPTIONS);
 
   if (cachedOptions) {
     return JSON.parse(cachedOptions);
   }
 
   return {
-    maxRingTimeInMilliseconds: 3000,
+    maxRingTimeInSeconds: 3,
     maxCallTries: 3,
-    cooldownTimeInMilliseconds: 10000,
-    showAlphaDialer: true,
+    cooldownTimeInSeconds: 10,
   };
 };
 
 export type TDialerOptions = {
-  maxRingTimeInMilliseconds: number;
+  maxRingTimeInSeconds: number;
   maxCallTries: number;
-  cooldownTimeInMilliseconds: number;
-  showAlphaDialer: boolean;
+  cooldownTimeInSeconds: number;
 };
 
 export type TRequestAction =
@@ -76,7 +77,9 @@ const buildInitialState = (): IDialerState => ({
   currentDialAttempts: null,
   muted: false,
   // TODO: Remove this hardcoded value in favor of values from API
-  fromNumber: localStorage.getItem("dialer__fromNumber") || numbers[2].value,
+  fromNumber:
+    localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER) ||
+    numbers[2].value,
   error: "",
   status: "idle",
   token: null,
@@ -156,7 +159,10 @@ export const DialerSlice = createSlice({
       state.options = action.payload;
 
       // Persist in local storage
-      localStorage.setItem("dialer__options", JSON.stringify(action.payload));
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY__DIALER_OPTIONS,
+        JSON.stringify(action.payload)
+      );
     },
     setCurrentDialAttempts: (state, action) => {
       state.currentDialAttempts = action.payload;
@@ -261,7 +267,7 @@ export const selectActiveFullName = (state: RootState) => {
 };
 
 export const selectShowAlphaDialer = (state: RootState) =>
-  state.dialer.options.showAlphaDialer;
+  state.dialer.alphaDialerVisible;
 
 export const selectIsDialerOptionsModalOpen = (state: RootState) =>
   state.dialer.showOptions;

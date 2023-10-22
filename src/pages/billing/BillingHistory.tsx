@@ -10,8 +10,8 @@ function BillingHistory() {
     let renderedData = [];
     for (let i = 0; i < billingData.length; i++) {
       renderedData.push(
-        billingData[i].map((item) => (
-          <tr>
+        billingData[i].map((item, index) => (
+          <tr key={index}>
             <th>{item.date}</th>
             <th>{item.description}</th>
             <th>{item.amount}</th>

@@ -43,7 +43,7 @@ function SignIn() {
       });
 
       dispatch(setJwt(res.data));
-      navigate(routes.dashboard);
+      navigate(routes.leads);
     } catch (error) {
       setError(extractErrorMessage(error));
     } finally {
@@ -54,7 +54,7 @@ function SignIn() {
   // Check for active session
   useEffect(() => {
     if (jwt) {
-      navigate(routes.dashboard);
+      navigate(routes.leads);
     }
   }, [jwt]);
 

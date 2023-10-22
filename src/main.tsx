@@ -15,7 +15,6 @@ import Landing from "./pages/landing";
 import SignIn from "./pages/sign-in";
 import SignUp from "./pages/sign-up";
 import Faq from "./pages/faq";
-import Dashboard from "./pages/dashboard";
 import Settings from "./pages/settings";
 import StyleProvider from "./styles";
 import store from "./store";
@@ -35,11 +34,13 @@ import Billing from "./pages/billing";
 import CallHistory from "./pages/call-history";
 import ForgotPassword from "./pages/forgot-password";
 import ResetPassword from "./pages/reset-password";
+import AlphaDialerFab from "./pages/dialer/AlphaDialerFab";
 
 Sentry.init({
   dsn: "https://dbc6c090143fce815721f48b790b3810@o4505859893231616.ingest.sentry.io/4505859896442880",
   integrations: [
     new Sentry.BrowserTracing({
+      // TODO: update these values to be proper or remove
       // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
       tracePropagationTargets: ["localhost", "https:yourserver.io/api/"],
     }),
@@ -58,6 +59,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <StyleProvider>
           <Notifications />
+          <AlphaDialerFab />
           <BrowserRouter>
             <Routes>
               <Route
@@ -103,11 +105,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                 <Route path="" element={<NotFound />} />
               </Route>
               <Route
-                path={routes.dashboard}
+                path={routes.leads}
                 element={
                   <ProtectedRoute>
                     <AuthenticatedUserLayout>
-                      <Dashboard />
+                      <Leads />
                     </AuthenticatedUserLayout>
                   </ProtectedRoute>
                 }
@@ -128,16 +130,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   <ProtectedRoute>
                     <AuthenticatedUserLayout>
                       <CallHistory />
-                    </AuthenticatedUserLayout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={routes.leads}
-                element={
-                  <ProtectedRoute>
-                    <AuthenticatedUserLayout>
-                      <Leads />
                     </AuthenticatedUserLayout>
                   </ProtectedRoute>
                 }

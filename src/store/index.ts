@@ -8,6 +8,7 @@ import metricReducer from "./metric/slice";
 import billingReducer from "./billing/slice";
 import leadReducer from "./leads/slice";
 import { leadApi } from "../services/lead";
+import { leadStatusApi } from "../services/lead-status";
 import { callerIdApi } from "../services/caller-id";
 import { callApi } from "../services/call";
 import { metricApi } from "../services/metric";
@@ -21,6 +22,7 @@ const store = configureStore({
     leads: leadReducer,
     billing: billingReducer,
     [leadApi.reducerPath]: leadApi.reducer,
+    [leadStatusApi.reducerPath]: leadStatusApi.reducer,
     [callerIdApi.reducerPath]: callerIdApi.reducer,
     [callApi.reducerPath]: callApi.reducer,
     [metricApi.reducerPath]: metricApi.reducer,
@@ -30,6 +32,7 @@ const store = configureStore({
       serializableCheck: false,
     }).concat(
       leadApi.middleware,
+      leadStatusApi.middleware,
       callerIdApi.middleware,
       callApi.middleware,
       metricApi.middleware

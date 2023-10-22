@@ -105,7 +105,7 @@ const Header = () => {
                   </NavLink>
 
                   <div className="sign-up-container">
-                    <NavLink to={routes.dashboard}>
+                    <NavLink to={routes.leads}>
                       <Button size="lg">Dashboard</Button>
                     </NavLink>
                   </div>

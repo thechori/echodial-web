@@ -32,9 +32,8 @@ function ContactQueue() {
   const dispatch = useAppDispatch();
 
   const { data: leads } = useGetLeadsQuery();
-  const { currentDialIndex, call, options } = useAppSelector(
-    (state) => state.dialer
-  );
+  const { currentDialIndex, call, options, alphaDialerVisible } =
+    useAppSelector((state) => state.dialer);
 
   function startCall(index: number) {
     dispatch(setCurrentDialIndex(index));
@@ -132,7 +131,7 @@ function ContactQueue() {
         </Title>
 
         <Flex className="call-buttons" align="center">
-          {!options.showAlphaDialer && (
+          {!alphaDialerVisible && (
             <Tooltip label="Show status bar">
               <div>
                 <BiShow

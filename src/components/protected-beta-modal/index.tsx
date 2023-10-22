@@ -1,7 +1,7 @@
 import { Anchor, Box, Flex, Image, Modal, Text, Title } from "@mantine/core";
 //
 import { APP_NAME } from "../../configs/constants";
-import logo from "../../assets/EchoDial-temp-logo-full.png";
+import logo from "../../assets/EchoDial-temp-logo-full-dark.png";
 import colors from "../../styles/colors";
 import { useAppSelector } from "../../store/hooks";
 import { selectJwtDecoded } from "../../store/user/slice";
@@ -45,8 +45,7 @@ const ProtectedBetaModal = () => {
           <Text>Thank you!</Text>
           <Flex
             mt="md"
-            style={{ borderRadius: 4 }}
-            bg={colors.appBlue}
+            style={{ borderRadius: 4, border: `1px solid ${colors.appBlue}` }}
             py={12}
             w="200px"
             mx="auto"

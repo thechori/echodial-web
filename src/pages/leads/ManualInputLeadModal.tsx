@@ -1,12 +1,25 @@
 import { useForm } from "@mantine/form";
-import { Box, Button, Center, Modal, Text, TextInput } from "@mantine/core";
+import { isPossiblePhoneNumber } from "react-phone-number-input";
+import {
+  Box,
+  Button,
+  Flex,
+  Modal,
+  Select,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { DateInput } from "@mantine/dates";
 //
 import { useAddLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
+import { useGetLeadStatusesQuery } from "../../services/lead-status";
+import { PhoneInput } from "../../components/phone-input";
 
 const ManualInputLeadModal = ({ opened, close }: any) => {
   const [addLead, { isLoading, error }] = useAddLeadMutation();
+  const { data: availableStatuses } = useGetLeadStatusesQuery();
 
   const form = useForm({
     initialValues: {
@@ -23,13 +36,17 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
         return /^\S+@\S+$/.test(val) ? null : "Invalid email";
       },
       phone: (val) => {
-        // Trim and strip all non-numeric characters
-        const trimmedVal = val.trim();
-        const digits = trimmedVal.replace(/\D/g, "");
-        return digits.length === 10 ? null : "Invalid phone number";
+        if (!val) return "Phone number required";
+        const isValid = isPossiblePhoneNumber(val);
+        return isValid ? null : "Invalid phone number";
       },
     },
   });
+
+  function cancel() {
+    form.reset();
+    close();
+  }
 
   async function createLead() {
     form.validate();
@@ -74,21 +91,57 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
   return (
     <Modal opened={opened} onClose={handleClose} title="Create new lead">
       <Modal.Body>
-        <Text mb="md">Manually create your new Lead via the form below:</Text>
+        <Text mb="md" size="sm">
+          Manually create your new Lead via the form below.
+        </Text>
 
         <Box>
-          <TextInput label="Email" {...form.getInputProps("email")} />
-          <TextInput label="First name" {...form.getInputProps("firstName")} />
-          <TextInput label="Last name" {...form.getInputProps("lastName")} />
+          <Box pb="xs">
+            <PhoneInput
+              required
+              label="Phone number"
+              {...form.getInputProps("phone")}
+            />
+          </Box>
 
-          <TextInput required label="Phone" {...form.getInputProps("phone")} />
+          <TextInput
+            pb="xs"
+            label="First name"
+            {...form.getInputProps("firstName")}
+          />
+          <TextInput
+            pb="xs"
+            label="Last name"
+            {...form.getInputProps("lastName")}
+          />
+          <TextInput pb="xs" label="Email" {...form.getInputProps("email")} />
+          <Select
+            label="Status"
+            required
+            pb="xs"
+            {...form.getInputProps("status")}
+            data={
+              availableStatuses?.map((s) => ({
+                value: s.value,
+                label: s.label,
+              })) || []
+            }
+          />
+          <DateInput
+            label="Appointment at"
+            pb="xs"
+            {...form.getInputProps("appointment_at")}
+          />
         </Box>
 
-        <Center py="md">
-          <Button loading={isLoading} onClick={createLead}>
+        <Flex pt="md" align="center" justify="center">
+          <Button variant="outline" onClick={cancel} mx="sm">
+            Cancel
+          </Button>
+          <Button loading={isLoading} onClick={createLead} mx="sm">
             Create
           </Button>
-        </Center>
+        </Flex>
 
         <Text w="100%" color="red">
           {/* @ts-ignore */}
