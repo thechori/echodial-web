@@ -23,6 +23,8 @@ import { LeadsFilterDrawerStyled } from "./LeadsFilterDrawer.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setAppliedFilters, setOptions } from "../../store/leads/slice";
 import { availableFilters } from "../../store/leads/available-filters";
+import { recommendedFilters } from "../../store/leads/recommended-filters";
+import { TLeadOptions } from "../../store/leads/types";
 
 const LeadsFilterDrawer = ({ opened, onClose }: any) => {
   const dispatch = useAppDispatch();
@@ -189,66 +191,23 @@ const LeadsFilterDrawer = ({ opened, onClose }: any) => {
 
               <Box>
                 <Stack spacing="md" py="md">
-                  <Switch
-                    label="Hide leads with no phone number"
-                    checked={options.hideNoPhoneLeads}
-                    onChange={(e) =>
-                      dispatch(
-                        setOptions({
-                          ...options,
-                          hideNoPhoneLeads: e.currentTarget.checked,
-                        })
-                      )
-                    }
-                  />
-                  <Switch
-                    label="Hide Do Not Call (DNC) leads"
-                    checked={options.hideDoNotCallLeads}
-                    onChange={(e) =>
-                      dispatch(
-                        setOptions({
-                          ...options,
-                          hideDoNotCallLeads: e.currentTarget.checked,
-                        })
-                      )
-                    }
-                  />
-                  <Switch
-                    label="Hide sold leads"
-                    checked={options.hideSoldLeads}
-                    onChange={(e) =>
-                      dispatch(
-                        setOptions({
-                          ...options,
-                          hideSoldLeads: e.currentTarget.checked,
-                        })
-                      )
-                    }
-                  />
-                  <Switch
-                    label="Hide closed leads"
-                    checked={options.hideClosedLeads}
-                    onChange={(e) =>
-                      dispatch(
-                        setOptions({
-                          ...options,
-                          hideClosedLeads: e.currentTarget.checked,
-                        })
-                      )
-                    }
-                  />
-                  <Switch
-                    label="Hide archived leads"
-                    checked={options.hideArchivedLeads}
-                    onChange={(e) =>
-                      dispatch(
-                        setOptions({
-                          ...options,
-                          hideArchivedLeads: e.currentTarget.checked,
-                        })
-                      )
-                    }
-                  />
+                  {recommendedFilters.map((f) => {
+                    return (
+                      <Switch
+                        key={f.value}
+                        label={f.label}
+                        checked={options[f.value as keyof TLeadOptions]}
+                        onChange={(e) =>
+                          dispatch(
+                            setOptions({
+                              ...options,
+                              [f.value]: e.currentTarget.checked,
+                            })
+                          )
+                        }
+                      />
+                    );
+                  })}
                 </Stack>
               </Box>
             </Box>

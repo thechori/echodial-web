@@ -92,6 +92,13 @@ function LeadsFilteredList() {
           }
         }
 
+        /* Recommended filters */
+
+        // Recommended filters are present, filter on them
+        // if () {
+
+        // }
+
         // Return what's left over from the filters
         return filteredLeads;
       }

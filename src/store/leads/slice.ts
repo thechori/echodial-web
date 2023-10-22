@@ -50,7 +50,6 @@ export const LeadsSlice = createSlice({
     },
     setOptions: (state, action) => {
       state.options = action.payload;
-      console.log(action.payload);
 
       // Persist in local storage
       localStorage.setItem(
@@ -60,8 +59,6 @@ export const LeadsSlice = createSlice({
     },
   },
 });
-
-// const selectFilteredLeads = createSelector()
 
 export const {
   setKeyword,
