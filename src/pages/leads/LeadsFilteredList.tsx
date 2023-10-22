@@ -80,11 +80,23 @@ function LeadsFilteredList() {
           });
         }
 
+        /* Filters */
+
+        // Applied filters are present, filter on them
+        if (appliedFilters.length) {
+          for (const f of appliedFilters) {
+            filteredLeads = filteredLeads.filter((lead: Lead) => {
+              const isMatch = f.fn(lead);
+              return isMatch;
+            });
+          }
+        }
+
         // Return what's left over from the filters
         return filteredLeads;
       }
     );
-  }, [selectedStatuses, keyword]);
+  }, [selectedStatuses, keyword, appliedFilters]);
 
   // Use the same posts query, but extract only part of its data
   const { filteredLeads } = useGetLeadsQuery(undefined, {
