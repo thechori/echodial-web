@@ -1,16 +1,19 @@
-import { Container } from "@mantine/core";
+import { Box } from "@mantine/core";
 //
 import LeadsStyled from "./Leads.styles";
 import LeadsFilter from "./LeadsFilter";
 import LeadsFilteredList from "./LeadsFilteredList";
+import { LeadDetail } from "./LeadDetail";
 
 function Leads() {
   return (
     <LeadsStyled>
-      <Container fluid size="xl">
+      <Box id="lead-content">
         <LeadsFilter />
         <LeadsFilteredList />
-      </Container>
+      </Box>
+
+      <LeadDetail />
     </LeadsStyled>
   );
 }

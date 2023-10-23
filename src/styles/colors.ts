@@ -9,6 +9,8 @@ const colors = {
 
   darkBackground: "#2a2a2a",
   darkBlueBackground: "#105370",
+  darkBluerBackground: "#031b4d",
+  darkBluerBackgroundLightened: "#414e73",
   lightBackground: "#F4F6F9",
   fontOnDarkBackground: "#fff",
   surface: "#efefef",

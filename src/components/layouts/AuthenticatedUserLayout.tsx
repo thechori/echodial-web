@@ -33,12 +33,14 @@ const AuthenticatedUserLayout = ({ children }: any) => {
   return (
     <Container>
       <Sidebar />
-      <div className="content">
+      <Box className="content">
         <Box p="md">
           <BetaDialer />
         </Box>
-        <div>{children}</div>
-      </div>
+        <Box>{children}</Box>
+      </Box>
+
+      {/* Modals */}
       <DialerOptionsModal
         opened={isDialerOptionsModalOpen}
         onClose={() => dispatch(setShowOptions(false))}

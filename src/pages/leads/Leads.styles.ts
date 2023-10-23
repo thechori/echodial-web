@@ -1,8 +1,13 @@
 import { styled } from "styled-components";
 
 const LeadsStyled = styled.div`
-  .lead-grid-container {
-    width: 100%;
+  display: flex;
+  width: 100%;
+
+  #lead-content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    flex: 1;
   }
 `;
 

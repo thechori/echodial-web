@@ -163,7 +163,14 @@ function LeadsFilteredList() {
           Filters ({appliedFilters.length})
         </Button>
       </Flex>
-      <Box className="ag-theme-alpine lead-grid-container" h={500} my="md">
+      <Box
+        className="ag-theme-alpine lead-grid-container"
+        h={500}
+        my="md"
+        style={{
+          width: "100%",
+        }}
+      >
         <AgGridReact<Lead>
           ref={gridRef}
           // @ts-ignore
