@@ -21,6 +21,8 @@ import LeadsFilterDrawer from "./LeadsFilterDrawer";
 import { leadColDefs } from "./leadColDefs";
 import { setSelectedRows } from "../../store/leads/slice";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
+import { CellClickedEvent } from "ag-grid-community";
+import { setSelectedLead } from "../../store/lead-detail/slice";
 
 function LeadsFilteredList() {
   const { data: leadStatuses } = useGetLeadStatusesQuery();
@@ -118,6 +120,11 @@ function LeadsFilteredList() {
     dispatch(setSelectedRows(selectedRows));
   }, []);
 
+  const onCellClicked = (event: CellClickedEvent<Lead>) => {
+    const { data } = event;
+    dispatch(setSelectedLead(data));
+  };
+
   const selectItems: SelectItem[] = leadStatuses
     ? leadStatuses.map((leadStatus) => ({
         value: leadStatus.value,
@@ -179,6 +186,7 @@ function LeadsFilteredList() {
           animateRows={true}
           rowSelection="multiple"
           onSelectionChanged={onSelectionChanged}
+          onCellClicked={onCellClicked}
         />
       </Box>
       <LeadsFilterDrawer

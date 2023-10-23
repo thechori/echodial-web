@@ -1,15 +1,16 @@
-import { Card, Flex, ThemeIcon, Title } from "@mantine/core";
+import { Button, Card, Flex, ThemeIcon, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { MdGroups } from "react-icons/md";
+import { IconTrash } from "@tabler/icons-react";
 //
+import { useAppSelector } from "../../store/hooks";
 import NewLeadsMenu from "./NewLeadsMenu";
-import EditLeadSelectionMenu from "./EditLeadSelectionMenu";
 import UploadLeadsViaCsvModal from "./UploadLeadsViaCsvModal";
 import ManualInputLeadModal from "./ManualInputLeadModal";
 import DeleteLeadConfirmationModal from "./DeleteLeadConfirmationModal";
-import EditLeadModal from "./EditLeadModal";
 
 const LeadsFilter = () => {
+  const { selectedRows } = useAppSelector((state) => state.leads);
   const [opened, { open, close }] = useDisclosure(false);
   const [openedManual, { open: openManual, close: closeManual }] =
     useDisclosure(false);
@@ -17,15 +18,9 @@ const LeadsFilter = () => {
     openedDeleteConfirmationModal,
     { open: openDeleteConfirmationModal, close: closeDeleteConfirmationModal },
   ] = useDisclosure(false);
-  const [openedEditModal, { open: openEditModal, close: closeEditModal }] =
-    useDisclosure(false);
 
   function deleteLeads() {
     openDeleteConfirmationModal();
-  }
-
-  function editLead() {
-    openEditModal();
   }
 
   return (
@@ -48,7 +43,23 @@ const LeadsFilter = () => {
         </Flex>
 
         <Flex align="center">
-          <EditLeadSelectionMenu onDelete={deleteLeads} onEdit={editLead} />
+          <Flex
+            className="action-buttons"
+            style={{
+              visibility: selectedRows.length === 0 ? "hidden" : "unset",
+            }}
+          >
+            <Button
+              size="xs"
+              color="red"
+              mx={6}
+              leftIcon={<IconTrash />}
+              variant="subtle"
+              onClick={deleteLeads}
+            >
+              Delete
+            </Button>
+          </Flex>
           <NewLeadsMenu onCsvUpload={open} onManualInput={openManual} />
         </Flex>
       </Flex>
@@ -60,7 +71,6 @@ const LeadsFilter = () => {
         opened={openedDeleteConfirmationModal}
         close={closeDeleteConfirmationModal}
       />
-      <EditLeadModal opened={openedEditModal} close={closeEditModal} />
     </Card>
   );
 };

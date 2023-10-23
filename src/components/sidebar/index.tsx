@@ -108,18 +108,17 @@ const Sidebar = () => {
 
             <Divider color={colors.darkBluerBackgroundLightened} />
 
-            <NavLink to={routes.settings}>
-              <Box w={36}>
-                <IoIosSettings size="1.4rem" />
-              </Box>
-              <div>Settings</div>
-            </NavLink>
-
             <NavLink to={routes.billing}>
               <Box w={36}>
                 <FaCreditCard size="1.2rem" />
               </Box>
               <div>Billing</div>
+            </NavLink>
+            <NavLink to={routes.settings}>
+              <Box w={36}>
+                <IoIosSettings size="1.4rem" />
+              </Box>
+              <div>Settings</div>
             </NavLink>
           </div>
         </div>

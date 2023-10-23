@@ -1,10 +1,8 @@
 import { styled } from "styled-components";
 
 export const LeadDetailStyled = styled.div<{ open: boolean }>`
-  color: red;
   width: ${({ open }) => (open ? "50%" : "0%")};
-  transition: width 0.2s ease;
-
+  transition: width 0.2s ease, opacity 3s ease;
   overflow: ${({ open }) => (open ? "unset" : "hidden")};
 
   #lead-detail {
