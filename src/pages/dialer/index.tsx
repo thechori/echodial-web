@@ -12,7 +12,7 @@ import {
 import DialerStyled from "./Dialer.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setFromNumber } from "../../store/dialer/slice";
-import ContactQueue from "./ContactQueue";
+import DialerQueue from "./DialerQueue";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
 import phoneFormatter from "../../utils/phone-formatter";
 import numbers from "../../configs/numbers";
@@ -58,7 +58,7 @@ function Dialer() {
         <Grid>
           <Grid.Col xs={12} sm={12} md={12}>
             <Card className={!token ? "disabled" : ""} withBorder shadow="md">
-              <ContactQueue />
+              <DialerQueue />
             </Card>
           </Grid.Col>
         </Grid>

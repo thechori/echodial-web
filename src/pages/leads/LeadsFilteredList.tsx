@@ -25,7 +25,11 @@ import { leadColDefs } from "./leadColDefs";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
 import { RowSelectedEvent } from "ag-grid-community";
 import { setSelectedLead } from "../../store/lead-detail/slice";
-import { setDialQueue, setRequestAction } from "../../store/dialer/slice";
+import {
+  setAlphaDialerVisible,
+  setDialQueue,
+  setRequestAction,
+} from "../../store/dialer/slice";
 
 function LeadsFilteredList() {
   const { data: leadStatuses } = useGetLeadStatusesQuery();
@@ -119,12 +123,6 @@ function LeadsFilteredList() {
     }),
   });
 
-  // const onSelectionChanged = useCallback(() => {
-  //   const selectedRows = gridRef.current?.api.getSelectedRows();
-  //   console.log("selectedRows", selectedRows);
-  //   dispatch(setSelectedRows(selectedRows));
-  // }, []);
-
   const onRowSelected = (event: RowSelectedEvent<Lead>) => {
     const { data } = event;
     dispatch(setSelectedLead(data));
@@ -140,10 +138,13 @@ function LeadsFilteredList() {
         leadsForQueue.push(data);
       }
     });
-    console.log("leadsForQueue", leadsForQueue);
     dispatch(setDialQueue(leadsForQueue));
 
+    // Open dialer
+    dispatch(setAlphaDialerVisible(true));
+
     // Start dialing
+    dispatch(setSelectedLead(leadsForQueue[0]));
   };
 
   const stopCall = () => {

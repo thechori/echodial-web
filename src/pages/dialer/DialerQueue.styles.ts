@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import devices from "../../styles/devices";
 
-const ContactQueueStyled = styled.div`
+const DialerQueueStyled = styled.div`
   .contact {
     border: 1px solid rgba(0, 0, 0, 0.1);
     display: flex;
@@ -61,4 +61,4 @@ const ContactQueueStyled = styled.div`
   }
 `;
 
-export default ContactQueueStyled;
+export default DialerQueueStyled;

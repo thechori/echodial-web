@@ -110,7 +110,7 @@ export const LeadDetail = () => {
   });
 
   return (
-    <LeadDetailStyled open={!!selectedLead}>
+    <LeadDetailStyled>
       <Card id="lead-detail" withBorder mr="md">
         <Box>
           <Flex align="center" justify="space-between" mb="md">

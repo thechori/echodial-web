@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Call, Device } from "@twilio/voice-sdk";
 import { Tooltip } from "@mantine/core";
-import { Box, Flex, Text } from "@mantine/core";
+import { Box, Flex } from "@mantine/core";
 import {
   AiFillPlayCircle,
   AiFillStepForward,
@@ -10,8 +9,7 @@ import {
   AiOutlineAudio,
 } from "react-icons/ai";
 
-import { FaRegStopCircle, FaUser } from "react-icons/fa";
-import { BiImport } from "react-icons/bi";
+import { FaRegStopCircle } from "react-icons/fa";
 import { notifications } from "@mantine/notifications";
 //
 import {
@@ -23,10 +21,7 @@ import apiService from "../../services/api";
 import { selectJwtDecoded } from "../../store/user/slice";
 import { extractErrorMessage } from "../../utils/error";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import phoneFormatter from "../../utils/phone-formatter";
 import {
-  selectActivePhoneNumber,
-  selectActiveFullName,
   setDialQueueIndex,
   setError,
   setDevice,
@@ -39,10 +34,10 @@ import {
   setWasCallConnected,
   setIsDialing,
 } from "../../store/dialer/slice";
-import routes from "../../configs/routes";
 import AlphaDialerStyled from "./AlphaDialer.styles";
 import { Call as TCall } from "../../types";
-import ContactQueue from "./ContactQueue";
+import DialerQueue from "./DialerQueue";
+import { LeadDetail } from "../leads/LeadDetail";
 
 export type TCallRef = {
   error: string;
@@ -60,7 +55,6 @@ export type TCallRef = {
 
 function AlphaDialer() {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const [starting, setStarting] = useState(false);
   const callRef = useRef<TCallRef>({
     isDialing: false,
@@ -89,8 +83,6 @@ function AlphaDialer() {
     options,
     alphaDialerVisible,
   } = useAppSelector((state) => state.dialer);
-  const phoneNumber = useAppSelector(selectActivePhoneNumber);
-  const fullName = useAppSelector(selectActiveFullName);
   //
   const [addCall] = useAddCallMutation();
   const [updateCallViaId] = useUpdateCallViaIdMutation();
@@ -595,34 +587,6 @@ function AlphaDialer() {
 
   return (
     <AlphaDialerStyled $visible={alphaDialerVisible}>
-      <Box className="details">
-        <Box>
-          <FaUser className="user-icon" color="white" />
-        </Box>
-        <Box className="lead-details">
-          <Box>
-            <Text color="white">
-              {phoneFormatter(phoneNumber) || "No phone active"}
-            </Text>
-          </Box>
-          <Box>
-            <Text size="sm" color="grey">
-              {fullName || "No lead active"}
-            </Text>
-          </Box>
-        </Box>
-        <Box>
-          <Tooltip label="Open Dialer page">
-            <div>
-              <BiImport
-                className="import-contact-button hoverable"
-                onClick={() => navigate(routes.dialer)}
-              />
-            </div>
-          </Tooltip>
-        </Box>
-      </Box>
-
       <Box className="controls">
         <Box>
           <Flex align="center" justify="center">
@@ -692,25 +656,14 @@ function AlphaDialer() {
           </Flex>
         </Box>
 
-        <div className="call-details">
-          <Text size="sm">
-            Status:{" "}
-            <Text color="grey" span>
-              No status yet
-            </Text>
-          </Text>
-
-          <Text size="sm">
-            Duration:{" "}
-            <Text color="grey" span>
-              0:00:00
-            </Text>
-          </Text>
-        </div>
-
-        <Box>
-          <ContactQueue />
-        </Box>
+        <Flex className="split">
+          <Box>
+            <DialerQueue />
+          </Box>
+          <Box>
+            <LeadDetail />
+          </Box>
+        </Flex>
       </Box>
     </AlphaDialerStyled>
   );

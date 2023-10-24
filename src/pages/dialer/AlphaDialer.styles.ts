@@ -15,6 +15,12 @@ const AlphaDialerStyled = styled.div<{ $visible: boolean }>`
   z-index: 100;
   padding: 1rem;
 
+  .split {
+    & > div {
+      flex: 1;
+    }
+  }
+
   .details {
     display: block;
     align-items: center;

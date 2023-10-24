@@ -20,9 +20,7 @@ import { setShowOptions } from "../../store/dialer/slice";
 
 const BetaDialer = () => {
   const dispatch = useAppDispatch();
-  const { call, dialQueue, dialQueueIndex } = useAppSelector(
-    (state) => state.dialer
-  );
+  const { dialQueue, dialQueueIndex } = useAppSelector((state) => state.dialer);
 
   const openDialerOptions = () => {
     dispatch(setShowOptions(true));
@@ -32,9 +30,13 @@ const BetaDialer = () => {
     console.log("opening contact card...");
   };
 
-  if (!call || !dialQueue.length || dialQueueIndex === null) {
-    return null;
-  }
+  const renderFullName = () => {
+    if (!dialQueue || dialQueueIndex === null) {
+      return "";
+    }
+
+    return `${dialQueue[dialQueueIndex].first_name} ${dialQueue[dialQueueIndex].last_name}`;
+  };
 
   return (
     // Note: `overflow: visible` is required to support menu bleeding outside of Card bounds (before, it would cut off and not be visible)
@@ -62,8 +64,7 @@ const BetaDialer = () => {
             <Flex align="center" justify="space-between">
               <Box>
                 <Text lh="1rem" size="xs">
-                  {dialQueue[dialQueueIndex].first_name}{" "}
-                  {dialQueue[dialQueueIndex].last_name}
+                  {renderFullName()}
                 </Text>
                 <Text lh="1rem" size="xs" color="dimmed">
                   00:00:00

@@ -1,9 +1,5 @@
-import { AiFillPlayCircle } from "react-icons/ai";
-import { FaRegStopCircle } from "react-icons/fa";
-import { BiDownArrow, BiShow, BiTrash, BiUpArrow } from "react-icons/bi";
+import { BiShow } from "react-icons/bi";
 import {
-  ActionIcon,
-  Box,
   Flex,
   Group,
   ScrollArea,
@@ -17,17 +13,15 @@ import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import phoneFormatter from "../../utils/phone-formatter";
 import {
-  deleteLeadFromQueue,
-  moveLeadDownInQueue,
-  moveLeadUpInQueue,
   setDialQueueIndex,
   setOptions,
   setRequestAction,
 } from "../../store/dialer/slice";
-import ContactQueueStyled from "./ContactQueue.styles";
+import DialerQueueStyled from "./DialerQueue.styles";
+import { IconPhone } from "@tabler/icons-react";
 import CallButtonWithCount from "../../components/call-button-with-count";
 
-function ContactQueue() {
+function DialerQueue() {
   const dispatch = useAppDispatch();
 
   const { dialQueueIndex, call, options, alphaDialerVisible, dialQueue } =
@@ -63,14 +57,7 @@ function ContactQueue() {
             ["active-index"]: activeIndex,
           })}
         >
-          <td className="call-icon hoverable">
-            <CallButtonWithCount
-              callCount={c.call_count}
-              active={!(call && active)}
-              onInactiveClick={stopCall}
-              onActiveClick={() => startCall(index)}
-            />
-          </td>
+          <td>{index + 1}</td>
           <td>
             <Group spacing="sm">
               <Text fz="sm" fw={500}>
@@ -81,26 +68,13 @@ function ContactQueue() {
           <td>
             <Text size="sm">{phoneFormatter(c.phone)}</Text>
           </td>
-          <td>
-            <Flex align="center">
-              <Box mr={8}>
-                <ActionIcon onClick={() => dispatch(moveLeadUpInQueue(c.id))}>
-                  <BiUpArrow />
-                </ActionIcon>
-                <ActionIcon>
-                  <BiDownArrow
-                    onClick={() => dispatch(moveLeadDownInQueue(c.id))}
-                  />
-                </ActionIcon>
-              </Box>
-              <ActionIcon>
-                <BiTrash
-                  color="red"
-                  fontSize="1.2rem"
-                  onClick={() => dispatch(deleteLeadFromQueue(c.id))}
-                />
-              </ActionIcon>
-            </Flex>
+          <td className="call-icon hoverable">
+            <CallButtonWithCount
+              callCount={c.call_count}
+              active={!(call && active)}
+              onInactiveClick={stopCall}
+              onActiveClick={() => startCall(index)}
+            />
           </td>
         </tr>
       );
@@ -122,7 +96,7 @@ function ContactQueue() {
   // }
 
   return (
-    <ContactQueueStyled>
+    <DialerQueueStyled>
       <Flex justify="space-between" align="center">
         <Title order={3} mb={16}>
           Call queue
@@ -163,7 +137,8 @@ function ContactQueue() {
               />
             </div>
           </Tooltip> */}
-          <Box ml="xs">
+
+          {/* <Box ml="xs">
             {call ? (
               <Tooltip label="End call">
                 <div>
@@ -175,9 +150,9 @@ function ContactQueue() {
                 </div>
               </Tooltip>
             ) : (
-              <Tooltip label="Start call">
+              <Tooltip label="Start dialer">
                 <div>
-                  <AiFillPlayCircle
+                  <PiPhone
                     color="green"
                     className="start-call-icon hoverable"
                     disabled={!!call}
@@ -191,7 +166,7 @@ function ContactQueue() {
                 </div>
               </Tooltip>
             )}
-          </Box>
+          </Box> */}
         </Flex>
       </Flex>
 
@@ -199,17 +174,19 @@ function ContactQueue() {
         <Table horizontalSpacing="xs" verticalSpacing="sm">
           <thead>
             <tr>
-              <th style={{ width: 75 }} />
-              <th>Full name</th>
-              <th>Phone</th>
-              <th />
+              <th style={{ width: 75 }}>#</th>
+              <th>Name</th>
+              <th>Status</th>
+              <th>
+                <IconPhone />
+              </th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>
         </Table>
       </ScrollArea>
-    </ContactQueueStyled>
+    </DialerQueueStyled>
   );
 }
 
-export default ContactQueue;
+export default DialerQueue;

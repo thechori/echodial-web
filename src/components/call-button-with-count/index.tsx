@@ -1,6 +1,7 @@
 import { Text } from "@mantine/core";
-import { FaPhone, FaRegStopCircle } from "react-icons/fa";
+import { FaRegStopCircle } from "react-icons/fa";
 import CallButtonWithCountStyled from "./CallButtonWithCount.styles";
+import { PiPhone } from "react-icons/pi";
 
 export type TCallButtonWithCountProps = {
   callCount: number;
@@ -28,7 +29,7 @@ const CallButtonWithCount = ({
 
   return (
     <CallButtonWithCountStyled $active={active}>
-      <FaPhone fontSize="1rem" onClick={onActiveClick} />
+      <PiPhone fontSize="1rem" onClick={onActiveClick} />
       <Text className="call-count" size="xs">
         {callCount}
       </Text>
