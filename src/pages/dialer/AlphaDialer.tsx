@@ -591,6 +591,7 @@ function AlphaDialer() {
             {!muted ? (
               <Tooltip label="Mute">
                 <Button
+                  mx={4}
                   onClick={() => call?.mute()}
                   leftIcon={<AiOutlineAudio size="1rem" />}
                   disabled={!call}

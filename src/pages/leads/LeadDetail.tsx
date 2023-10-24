@@ -18,7 +18,7 @@ import { notifications } from "@mantine/notifications";
 //
 import { LeadDetailStyled } from "./LeadDetail.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
 import { useUpdateLeadMutation } from "../../services/lead";
 import { useForm } from "@mantine/form";
@@ -58,6 +58,17 @@ export const LeadDetail = () => {
       },
     },
   });
+
+  useEffect(() => {
+    form.setValues({
+      ...selectedLead,
+      appointment_at:
+        selectedLead && selectedLead.appointment_at
+          ? new Date(selectedLead.appointment_at)
+          : null,
+    });
+    form.resetDirty();
+  }, [selectedLead]);
 
   // Close icon
   function handleClose() {

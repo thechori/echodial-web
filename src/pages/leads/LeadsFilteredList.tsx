@@ -23,7 +23,7 @@ import { useGetLeadsQuery } from "../../services/lead";
 import LeadsFilterDrawer from "./LeadsFilterDrawer";
 import { leadColDefs } from "./leadColDefs";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
-import { RowSelectedEvent } from "ag-grid-community";
+import { CellClickedEvent } from "ag-grid-community";
 import { setSelectedLead } from "../../store/lead-detail/slice";
 import {
   setAlphaDialerVisible,
@@ -123,7 +123,7 @@ function LeadsFilteredList() {
     }),
   });
 
-  const onRowSelected = (event: RowSelectedEvent<Lead>) => {
+  const onCellClicked = (event: CellClickedEvent<Lead>) => {
     const { data } = event;
     dispatch(setSelectedLead(data));
   };
@@ -240,7 +240,7 @@ function LeadsFilteredList() {
           animateRows={true}
           rowSelection="multiple"
           // onSelectionChanged={onSelectionChanged}
-          onRowSelected={onRowSelected}
+          onCellClicked={onCellClicked}
           quickFilterText={keyword}
           onSortChanged={(e) => console.log("onSortChanged", e)}
           onFilterChanged={(e) => console.log("onFilterChanged", e)}

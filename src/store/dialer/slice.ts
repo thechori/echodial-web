@@ -89,7 +89,9 @@ const buildInitialState = (): IDialerState => ({
   dialQueue: JSON.parse(
     localStorage.getItem(LOCAL_STORAGE_KEY__DIAL_QUEUE) || "[]"
   ),
-  dialQueueIndex: null,
+  dialQueueIndex: JSON.parse(
+    localStorage.getItem(LOCAL_STORAGE_KEY__DIAL_QUEUE_INDEX) || "null"
+  ),
   //
   options: buildOptions(),
   showOptions: false,
@@ -140,6 +142,12 @@ export const DialerSlice = createSlice({
     },
     setDialQueueIndex: (state, action) => {
       state.dialQueueIndex = action.payload;
+
+      // Persist in local storage
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY__DIAL_QUEUE_INDEX,
+        JSON.stringify(action.payload)
+      );
     },
     setDialQueue: (state, action) => {
       state.dialQueue = action.payload;
