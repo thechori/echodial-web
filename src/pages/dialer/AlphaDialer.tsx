@@ -38,6 +38,7 @@ import AlphaDialerStyled from "./AlphaDialer.styles";
 import { Call as TCall } from "../../types";
 import DialerQueue from "./DialerQueue";
 import { LeadDetail } from "../leads/LeadDetail";
+import CallerIdSelect from "./CallerIdSelect";
 
 export type TCallRef = {
   error: string;
@@ -588,79 +589,78 @@ function AlphaDialer() {
   return (
     <AlphaDialerStyled $visible={alphaDialerVisible}>
       <Box className="controls">
-        <Box>
-          <Flex align="center" justify="center">
-            <div className="control-buttons">
-              {!muted ? (
-                <Tooltip label="Mute">
-                  <div>
-                    <AiOutlineAudio
-                      fontSize="2.5rem"
-                      onClick={() => call?.mute()}
-                      className={`hoverable ${call ?? "disabled"}`}
-                    />
-                  </div>
-                </Tooltip>
-              ) : (
-                <Tooltip label="Unmute">
-                  <div>
-                    <AiOutlineAudioMuted
-                      fontSize="2.5rem"
-                      onClick={() => call?.mute()}
-                      className="hoverable"
-                      color="red"
-                    />
-                  </div>
-                </Tooltip>
-              )}
-
-              {call ? (
-                <Tooltip label="End call">
-                  <div>
-                    <FaRegStopCircle
-                      fontSize="2.5rem"
-                      className="hoverable"
-                      onClick={() => dispatch(setDialQueueIndex(null))}
-                    />
-                  </div>
-                </Tooltip>
-              ) : (
-                <Tooltip label="Start dialing">
-                  <div>
-                    <AiFillPlayCircle
-                      fontSize="2.5rem"
-                      className="hoverable"
-                      onClick={() => {
-                        // Start from 0 UNLESS there is a currently selected index
-                        const index =
-                          dialQueueIndex === null ? 0 : dialQueueIndex;
-
-                        dispatch(setDialQueueIndex(index));
-                        // dispatch(setIs);
-                      }}
-                    />
-                  </div>
-                </Tooltip>
-              )}
-
-              <Tooltip label="Skip to next Lead">
+        <Flex align="center" justify="space-between" p="md">
+          <CallerIdSelect />
+          <div className="control-buttons">
+            {!muted ? (
+              <Tooltip label="Mute">
                 <div>
-                  <AiFillStepForward
+                  <AiOutlineAudio
                     fontSize="2.5rem"
-                    className="hoverable"
-                    onClick={continueToNextLead}
+                    onClick={() => call?.mute()}
+                    className={`hoverable ${call ?? "disabled"}`}
                   />
                 </div>
               </Tooltip>
-            </div>
-          </Flex>
-        </Box>
+            ) : (
+              <Tooltip label="Unmute">
+                <div>
+                  <AiOutlineAudioMuted
+                    fontSize="2.5rem"
+                    onClick={() => call?.mute()}
+                    className="hoverable"
+                    color="red"
+                  />
+                </div>
+              </Tooltip>
+            )}
+
+            {call ? (
+              <Tooltip label="End call">
+                <div>
+                  <FaRegStopCircle
+                    fontSize="2.5rem"
+                    className="hoverable"
+                    onClick={() => dispatch(setDialQueueIndex(null))}
+                  />
+                </div>
+              </Tooltip>
+            ) : (
+              <Tooltip label="Start dialing">
+                <div>
+                  <AiFillPlayCircle
+                    fontSize="2.5rem"
+                    className="hoverable"
+                    onClick={() => {
+                      // Start from 0 UNLESS there is a currently selected index
+                      const index =
+                        dialQueueIndex === null ? 0 : dialQueueIndex;
+
+                      dispatch(setDialQueueIndex(index));
+                      // dispatch(setIs);
+                    }}
+                  />
+                </div>
+              </Tooltip>
+            )}
+
+            <Tooltip label="Skip to next Lead">
+              <div>
+                <AiFillStepForward
+                  fontSize="2.5rem"
+                  className="hoverable"
+                  onClick={continueToNextLead}
+                />
+              </div>
+            </Tooltip>
+          </div>
+        </Flex>
 
         <Flex className="split">
-          <Box>
+          <Box m="md">
             <DialerQueue />
           </Box>
-          <Box>
+          <Box m="md">
             <LeadDetail />
           </Box>
         </Flex>

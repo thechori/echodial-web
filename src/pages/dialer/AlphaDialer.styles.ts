@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import devices from "../../styles/devices";
 
 const AlphaDialerStyled = styled.div<{ $visible: boolean }>`
-  background-color: lightsalmon;
+  background-color: #cccccc;
 
   display: ${(props) => (props.$visible ? "block" : "none")};
 
@@ -13,7 +13,6 @@ const AlphaDialerStyled = styled.div<{ $visible: boolean }>`
   top: 0;
   bottom: 0;
   z-index: 100;
-  padding: 1rem;
 
   .split {
     & > div {

@@ -1,5 +1,6 @@
 import { BiShow } from "react-icons/bi";
 import {
+  Card,
   Flex,
   Group,
   ScrollArea,
@@ -97,25 +98,28 @@ function DialerQueue() {
 
   return (
     <DialerQueueStyled>
-      <Flex justify="space-between" align="center">
-        <Title order={3} mb={16}>
-          Call queue
-        </Title>
+      <Card withBorder>
+        <Flex justify="space-between" align="center">
+          <Title order={3} mb={16}>
+            Call queue
+          </Title>
 
-        <Flex className="call-buttons" align="center">
-          {!alphaDialerVisible && (
-            <Tooltip label="Show status bar">
-              <div>
-                <BiShow
-                  className="hoverable"
-                  onClick={() =>
-                    dispatch(setOptions({ ...options, showAlphaDialer: true }))
-                  }
-                />
-              </div>
-            </Tooltip>
-          )}
-          {/* <Tooltip label="Clear leads from queue">
+          <Flex className="call-buttons" align="center">
+            {!alphaDialerVisible && (
+              <Tooltip label="Show status bar">
+                <div>
+                  <BiShow
+                    className="hoverable"
+                    onClick={() =>
+                      dispatch(
+                        setOptions({ ...options, showAlphaDialer: true })
+                      )
+                    }
+                  />
+                </div>
+              </Tooltip>
+            )}
+            {/* <Tooltip label="Clear leads from queue">
             <div>
               <FaUndo
                 size="1.2rem"
@@ -124,7 +128,7 @@ function DialerQueue() {
               />
             </div>
           </Tooltip> */}
-          {/* <Tooltip label="Import leads into queue">
+            {/* <Tooltip label="Import leads into queue">
             <div>
               <BiImport className="hoverable" onClick={importLeadsIntoQueue} />
             </div>
@@ -138,7 +142,7 @@ function DialerQueue() {
             </div>
           </Tooltip> */}
 
-          {/* <Box ml="xs">
+            {/* <Box ml="xs">
             {call ? (
               <Tooltip label="End call">
                 <div>
@@ -167,24 +171,25 @@ function DialerQueue() {
               </Tooltip>
             )}
           </Box> */}
+          </Flex>
         </Flex>
-      </Flex>
 
-      <ScrollArea h={400}>
-        <Table horizontalSpacing="xs" verticalSpacing="sm">
-          <thead>
-            <tr>
-              <th style={{ width: 75 }}>#</th>
-              <th>Name</th>
-              <th>Status</th>
-              <th>
-                <IconPhone />
-              </th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </ScrollArea>
+        <ScrollArea h={400}>
+          <Table horizontalSpacing="xs" verticalSpacing="sm">
+            <thead>
+              <tr>
+                <th style={{ width: 75 }}>#</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>
+                  <IconPhone />
+                </th>
+              </tr>
+            </thead>
+            <tbody>{rows}</tbody>
+          </Table>
+        </ScrollArea>
+      </Card>
     </DialerQueueStyled>
   );
 }
