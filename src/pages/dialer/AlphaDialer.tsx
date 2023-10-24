@@ -27,7 +27,7 @@ import phoneFormatter from "../../utils/phone-formatter";
 import {
   selectActivePhoneNumber,
   selectActiveFullName,
-  setCurrentDialIndex,
+  setDialQueueIndex,
   setError,
   setDevice,
   setCall,
@@ -42,13 +42,14 @@ import {
 import routes from "../../configs/routes";
 import AlphaDialerStyled from "./AlphaDialer.styles";
 import { Call as TCall } from "../../types";
+import ContactQueue from "./ContactQueue";
 
 export type TCallRef = {
   error: string;
   isDialing: boolean;
   wasCallConnected: boolean;
   currentCallId: number | null;
-  currentDialIndex: number | null;
+  dialQueueIndex: number | null;
   currentDialAttempts: number;
   call: Call | null;
   device: Device | null;
@@ -66,7 +67,7 @@ function AlphaDialer() {
     error: "",
     wasCallConnected: false,
     currentCallId: null,
-    currentDialIndex: null,
+    dialQueueIndex: null,
     currentDialAttempts: 0,
     call: null,
     device: null,
@@ -83,7 +84,7 @@ function AlphaDialer() {
     token,
     fromNumber,
     dialQueue,
-    currentDialIndex,
+    dialQueueIndex,
     muted,
     options,
     alphaDialerVisible,
@@ -142,7 +143,7 @@ function AlphaDialer() {
   }
 
   async function startCall() {
-    let index = callRef.current.currentDialIndex;
+    let index = callRef.current.dialQueueIndex;
     let attempts = callRef.current.currentDialAttempts;
 
     // Check for device
@@ -162,8 +163,8 @@ function AlphaDialer() {
       index = 0;
     }
 
-    dispatch(setCurrentDialIndex(index));
-    callRef.current.currentDialIndex = index;
+    dispatch(setDialQueueIndex(index));
+    callRef.current.dialQueueIndex = index;
     dispatch(setIsDialing(true));
     callRef.current.isDialing = true;
 
@@ -201,8 +202,8 @@ function AlphaDialer() {
         return;
       }
 
-      if (callRef.current.currentDialIndex === null) {
-        console.error("currentDialIndex is not set");
+      if (callRef.current.dialQueueIndex === null) {
+        console.error("dialQueueIndex is not set");
         return;
       }
 
@@ -212,9 +213,9 @@ function AlphaDialer() {
 
       const newCall: Partial<TCall> = {
         user_id: jwtDecoded?.id,
-        lead_id: dialQueue[callRef.current.currentDialIndex].id,
+        lead_id: dialQueue[callRef.current.dialQueueIndex].id,
         from_number: fromNumber,
-        to_number: dialQueue[callRef.current.currentDialIndex].phone,
+        to_number: dialQueue[callRef.current.dialQueueIndex].phone,
       };
 
       try {
@@ -366,7 +367,7 @@ function AlphaDialer() {
   // - Next arrow is click
   async function continueToNextLead() {
     // Check for existing index before proceeding
-    if (callRef.current.currentDialIndex === dialQueue.length - 1) {
+    if (callRef.current.dialQueueIndex === dialQueue.length - 1) {
       notifications.show({
         message: "No more leads in the queue. Stopping the dialer",
       });
@@ -376,7 +377,7 @@ function AlphaDialer() {
     }
 
     // Check for null dial index
-    if (callRef.current.currentDialIndex === null) {
+    if (callRef.current.dialQueueIndex === null) {
       notifications.show({
         message:
           "Dial index is null. Try selecting a different lead and trying again",
@@ -385,21 +386,21 @@ function AlphaDialer() {
     }
 
     // Point to the next Lead in the queue
-    const value = callRef.current.currentDialIndex + 1;
-    dispatch(setCurrentDialIndex(value));
-    callRef.current.currentDialIndex = value;
+    const value = callRef.current.dialQueueIndex + 1;
+    dispatch(setDialQueueIndex(value));
+    callRef.current.dialQueueIndex = value;
 
     // Reset attempt count
     dispatch(setCurrentDialAttempts(0));
     callRef.current.currentDialAttempts = 0;
 
     // Check for null active index
-    if (callRef.current.currentDialIndex === null) {
+    if (callRef.current.dialQueueIndex === null) {
       return console.error("No active contact index found");
     }
 
     // Stop if we're at the last index of the queue
-    if (callRef.current.currentDialIndex === dialQueue.length - 1) {
+    if (callRef.current.dialQueueIndex === dialQueue.length - 1) {
       return console.info("No more leads to dial");
     }
 
@@ -482,8 +483,8 @@ function AlphaDialer() {
     // Additional state cleanup
     dispatch(setError(""));
     callRef.current.error = "";
-    dispatch(setCurrentDialIndex(null));
-    callRef.current.currentDialIndex = null;
+    dispatch(setDialQueueIndex(null));
+    callRef.current.dialQueueIndex = null;
     dispatch(setCurrentDialAttempts(0));
     callRef.current.currentDialAttempts = 0;
   }
@@ -522,7 +523,9 @@ function AlphaDialer() {
     setStarting(true);
 
     // No token found, get it
-    if (!token) {
+    if (token) {
+      // TODO: bring this back when ready
+      // if (!token) {
       fetchToken();
       return;
     }
@@ -591,7 +594,7 @@ function AlphaDialer() {
   ]);
 
   return (
-    <AlphaDialerStyled isvisible={alphaDialerVisible}>
+    <AlphaDialerStyled $visible={alphaDialerVisible}>
       <Box className="details">
         <Box>
           <FaUser className="user-icon" color="white" />
@@ -653,7 +656,7 @@ function AlphaDialer() {
                     <FaRegStopCircle
                       fontSize="2.5rem"
                       className="hoverable"
-                      onClick={() => dispatch(setCurrentDialIndex(null))}
+                      onClick={() => dispatch(setDialQueueIndex(null))}
                     />
                   </div>
                 </Tooltip>
@@ -666,9 +669,9 @@ function AlphaDialer() {
                       onClick={() => {
                         // Start from 0 UNLESS there is a currently selected index
                         const index =
-                          currentDialIndex === null ? 0 : currentDialIndex;
+                          dialQueueIndex === null ? 0 : dialQueueIndex;
 
-                        dispatch(setCurrentDialIndex(index));
+                        dispatch(setDialQueueIndex(index));
                         // dispatch(setIs);
                       }}
                     />
@@ -704,6 +707,10 @@ function AlphaDialer() {
             </Text>
           </Text>
         </div>
+
+        <Box>
+          <ContactQueue />
+        </Box>
       </Box>
     </AlphaDialerStyled>
   );

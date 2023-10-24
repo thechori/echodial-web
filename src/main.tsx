@@ -34,7 +34,6 @@ import Billing from "./pages/billing";
 import CallHistory from "./pages/call-history";
 import ForgotPassword from "./pages/forgot-password";
 import ResetPassword from "./pages/reset-password";
-import AlphaDialerFab from "./pages/dialer/AlphaDialerFab";
 
 Sentry.init({
   dsn: "https://dbc6c090143fce815721f48b790b3810@o4505859893231616.ingest.sentry.io/4505859896442880",
@@ -59,7 +58,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <StyleProvider>
           <Notifications />
-          <AlphaDialerFab />
           <BrowserRouter>
             <Routes>
               <Route

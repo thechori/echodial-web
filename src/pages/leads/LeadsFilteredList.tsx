@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { createSelector } from "@reduxjs/toolkit";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { AgGridReact } from "ag-grid-react";
@@ -7,10 +7,13 @@ import {
   Button,
   Card,
   Flex,
+  HoverCard,
   MultiSelect,
   SelectItem,
+  Text,
   TextInput,
 } from "@mantine/core";
+import { PiPhone, PiPhoneDisconnect } from "react-icons/pi";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 //
@@ -19,21 +22,22 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useGetLeadsQuery } from "../../services/lead";
 import LeadsFilterDrawer from "./LeadsFilterDrawer";
 import { leadColDefs } from "./leadColDefs";
-import { setSelectedRows } from "../../store/leads/slice";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
-import { CellClickedEvent } from "ag-grid-community";
+import { RowSelectedEvent } from "ag-grid-community";
 import { setSelectedLead } from "../../store/lead-detail/slice";
+import { setDialQueue, setRequestAction } from "../../store/dialer/slice";
 
 function LeadsFilteredList() {
   const { data: leadStatuses } = useGetLeadStatusesQuery();
 
   const dispatch = useAppDispatch();
-  const gridRef = useRef<any>(); // TODO: type this properly
+  const gridRef = useRef<AgGridReact<Lead>>(null);
   const [keyword, setKeyword] = useState("");
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
   const { appliedFilters } = useAppSelector((state) => state.leads);
+  const { call } = useAppSelector((state) => state.dialer);
 
   // Filter based on status
   // Filter based on filters (e.g., has been called)
@@ -65,22 +69,22 @@ function LeadsFilteredList() {
         /* Filter by keyword */
 
         // Keyword is present, filter on it
-        if (keyword) {
-          filteredLeads = filteredLeads.filter((lead: Lead) => {
-            // @ts-ignore
-            const allFieldsCombined = Object.keys(lead).map((k) => lead[k]);
+        // if (keyword) {
+        //   filteredLeads = filteredLeads.filter((lead: Lead) => {
+        //     // @ts-ignore
+        //     const allFieldsCombined = Object.keys(lead).map((k) => lead[k]);
 
-            // Join all cell data
-            if (
-              allFieldsCombined
-                .join(" ")
-                .toLowerCase()
-                .includes(keyword.toLowerCase())
-            ) {
-              return true;
-            }
-          });
-        }
+        //     // Join all cell data
+        //     if (
+        //       allFieldsCombined
+        //         .join(" ")
+        //         .toLowerCase()
+        //         .includes(keyword.toLowerCase())
+        //     ) {
+        //       return true;
+        //     }
+        //   });
+        // }
 
         /* Filters */
 
@@ -115,14 +119,35 @@ function LeadsFilteredList() {
     }),
   });
 
-  const onSelectionChanged = useCallback(() => {
-    const selectedRows = gridRef.current.api.getSelectedRows();
-    dispatch(setSelectedRows(selectedRows));
-  }, []);
+  // const onSelectionChanged = useCallback(() => {
+  //   const selectedRows = gridRef.current?.api.getSelectedRows();
+  //   console.log("selectedRows", selectedRows);
+  //   dispatch(setSelectedRows(selectedRows));
+  // }, []);
 
-  const onCellClicked = (event: CellClickedEvent<Lead>) => {
+  const onRowSelected = (event: RowSelectedEvent<Lead>) => {
     const { data } = event;
     dispatch(setSelectedLead(data));
+  };
+
+  const startDialer = () => {
+    // Load up leads into queue from filtered
+    // Note: Extremely hacky way to get the sorted and filtered list of leads from the AG Grid table, but it works.
+    // Very surprising there is no easy-to-use API to get this data
+    const leadsForQueue: Lead[] = [];
+    gridRef.current?.api.forEachNodeAfterFilterAndSort(({ data }) => {
+      if (data) {
+        leadsForQueue.push(data);
+      }
+    });
+    console.log("leadsForQueue", leadsForQueue);
+    dispatch(setDialQueue(leadsForQueue));
+
+    // Start dialing
+  };
+
+  const stopCall = () => {
+    dispatch(setRequestAction("stopCall"));
   };
 
   const selectItems: SelectItem[] = leadStatuses
@@ -169,6 +194,35 @@ function LeadsFilteredList() {
         >
           Filters ({appliedFilters.length})
         </Button>
+
+        <HoverCard width={280} shadow="md" openDelay={500}>
+          <HoverCard.Target>
+            {!call ? (
+              <Button
+                mx={4}
+                leftIcon={<PiPhone size={16} />}
+                onClick={startDialer}
+              >
+                Start dialer
+              </Button>
+            ) : (
+              <Button
+                mx={4}
+                leftIcon={<PiPhoneDisconnect />}
+                color="red"
+                onClick={stopCall}
+              >
+                End call
+              </Button>
+            )}
+          </HoverCard.Target>
+          <HoverCard.Dropdown>
+            <Text size="sm">
+              Clicking "Start dialer" will transfer the filtered view of leads
+              into your dialer queue and begin dialing.
+            </Text>
+          </HoverCard.Dropdown>
+        </HoverCard>
       </Flex>
       <Box
         className="ag-theme-alpine lead-grid-container"
@@ -180,13 +234,15 @@ function LeadsFilteredList() {
       >
         <AgGridReact<Lead>
           ref={gridRef}
-          // @ts-ignore
           rowData={filteredLeads}
           columnDefs={leadColDefs}
           animateRows={true}
           rowSelection="multiple"
-          onSelectionChanged={onSelectionChanged}
-          onCellClicked={onCellClicked}
+          // onSelectionChanged={onSelectionChanged}
+          onRowSelected={onRowSelected}
+          quickFilterText={keyword}
+          onSortChanged={(e) => console.log("onSortChanged", e)}
+          onFilterChanged={(e) => console.log("onFilterChanged", e)}
         />
       </Box>
       <LeadsFilterDrawer

@@ -1,12 +1,10 @@
 import {
   ActionIcon,
   Box,
-  Button,
   Card,
   Flex,
   Text,
   ThemeIcon,
-  Title,
   Tooltip,
 } from "@mantine/core";
 import {
@@ -16,37 +14,40 @@ import {
   IconPlayerStopFilled,
 } from "@tabler/icons-react";
 import { MdPerson } from "react-icons/md";
-import { PiPhone, PiPhoneDisconnect } from "react-icons/pi";
+//
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setRequestAction, setShowOptions } from "../../store/dialer/slice";
+import { setShowOptions } from "../../store/dialer/slice";
 
 const BetaDialer = () => {
   const dispatch = useAppDispatch();
-  const { call } = useAppSelector((state) => state.dialer);
+  const { call, dialQueue, dialQueueIndex } = useAppSelector(
+    (state) => state.dialer
+  );
 
   const openDialerOptions = () => {
     dispatch(setShowOptions(true));
-  };
-
-  const stopCall = () => {
-    dispatch(setRequestAction("stopCall"));
   };
 
   const openContactCard = () => {
     console.log("opening contact card...");
   };
 
+  if (!call || !dialQueue.length || dialQueueIndex === null) {
+    return null;
+  }
+
   return (
     // Note: `overflow: visible` is required to support menu bleeding outside of Card bounds (before, it would cut off and not be visible)
-    <Card withBorder style={{ overflow: "visible" }}>
+    <Card
+      withBorder
+      shadow="md"
+      style={{ overflow: "visible", display: "flex", alignItems: "center" }}
+      pl="1rem"
+      pr="2.5rem"
+      py={0}
+      mr={-36}
+    >
       <Flex align="center" justify="space-between">
-        <Flex align="center">
-          <ThemeIcon radius="xl" size="xl" mr="xs">
-            <PiPhone style={{ width: "70%", height: "70%" }} />
-          </ThemeIcon>
-          <Title order={2}>Dialer</Title>
-        </Flex>
-
         <Flex align="center">
           <Card
             className="contact-card"
@@ -61,7 +62,8 @@ const BetaDialer = () => {
             <Flex align="center" justify="space-between">
               <Box>
                 <Text lh="1rem" size="xs">
-                  Ryan Teodoro
+                  {dialQueue[dialQueueIndex].first_name}{" "}
+                  {dialQueue[dialQueueIndex].last_name}
                 </Text>
                 <Text lh="1rem" size="xs" color="dimmed">
                   00:00:00
@@ -123,21 +125,6 @@ const BetaDialer = () => {
               <IconPlayerSkipForward stroke={1.5} />
             </ActionIcon>
           </Tooltip>
-
-          {!call ? (
-            <Button mx={4} leftIcon={<PiPhone size={16} />}>
-              Start calling
-            </Button>
-          ) : (
-            <Button
-              mx={4}
-              leftIcon={<PiPhoneDisconnect />}
-              color="red"
-              onClick={stopCall}
-            >
-              End call
-            </Button>
-          )}
         </Flex>
       </Flex>
     </Card>

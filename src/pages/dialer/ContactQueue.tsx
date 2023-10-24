@@ -20,23 +20,21 @@ import {
   deleteLeadFromQueue,
   moveLeadDownInQueue,
   moveLeadUpInQueue,
-  setCurrentDialIndex,
+  setDialQueueIndex,
   setOptions,
   setRequestAction,
 } from "../../store/dialer/slice";
 import ContactQueueStyled from "./ContactQueue.styles";
-import { useGetLeadsQuery } from "../../services/lead";
 import CallButtonWithCount from "../../components/call-button-with-count";
 
 function ContactQueue() {
   const dispatch = useAppDispatch();
 
-  const { data: leads } = useGetLeadsQuery();
-  const { currentDialIndex, call, options, alphaDialerVisible } =
+  const { dialQueueIndex, call, options, alphaDialerVisible, dialQueue } =
     useAppSelector((state) => state.dialer);
 
   function startCall(index: number) {
-    dispatch(setCurrentDialIndex(index));
+    dispatch(setDialQueueIndex(index));
     dispatch(setRequestAction("startCall"));
   }
 
@@ -44,12 +42,12 @@ function ContactQueue() {
     dispatch(setRequestAction("stopCall"));
   }
 
-  const rows = leads?.length ? (
-    leads.map((c, index) => {
+  const rows = dialQueue?.length ? (
+    dialQueue.map((c, index) => {
       let active = false;
       let activeIndex = false;
 
-      if (currentDialIndex !== null && leads[currentDialIndex].id === c.id) {
+      if (dialQueueIndex !== null && dialQueue[dialQueueIndex].id === c.id) {
         activeIndex = true;
       }
 
@@ -186,7 +184,7 @@ function ContactQueue() {
                     onClick={() => {
                       // Start from 0 UNLESS there is a currently selected index
                       const index =
-                        currentDialIndex === null ? 0 : currentDialIndex;
+                        dialQueueIndex === null ? 0 : dialQueueIndex;
                       startCall(index);
                     }}
                   />
