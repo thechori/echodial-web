@@ -21,7 +21,6 @@ import store from "./store";
 import ProtectedRoute from "./components/protected-route";
 import routes from "./configs/routes";
 import NotFound from "./pages/not-found";
-import Dialer from "./pages/dialer";
 import Features from "./pages/features";
 import Pricing from "./pages/pricing";
 import Layout from "./components/layouts/Layout";
@@ -112,16 +111,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path={routes.dialer}
-                element={
-                  <ProtectedRoute>
-                    <AuthenticatedUserLayout>
-                      <Dialer />
-                    </AuthenticatedUserLayout>
-                  </ProtectedRoute>
-                }
-              />
+
               <Route
                 path={routes.callHistory}
                 element={

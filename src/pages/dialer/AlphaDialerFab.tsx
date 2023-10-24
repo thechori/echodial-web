@@ -17,7 +17,7 @@ const AlphaDialerFab = () => {
 
       <Box id="fab">
         {alphaDialerVisible ? (
-          <Tooltip label="Hide call pane" openDelay={500}>
+          <Tooltip label="Hide dialer" openDelay={500}>
             <div>
               <PiPhoneFill
                 size={40}
@@ -27,7 +27,7 @@ const AlphaDialerFab = () => {
             </div>
           </Tooltip>
         ) : (
-          <Tooltip label="Show call pane" openDelay={500}>
+          <Tooltip label="Show dialer" openDelay={500}>
             <div>
               <PiPhone
                 size={40}

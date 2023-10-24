@@ -1,15 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Call, Device } from "@twilio/voice-sdk";
-import { Tooltip } from "@mantine/core";
+import { Button, Tooltip } from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
-import {
-  AiFillPlayCircle,
-  AiFillStepForward,
-  AiOutlineAudioMuted,
-  AiOutlineAudio,
-} from "react-icons/ai";
+import { AiOutlineAudioMuted, AiOutlineAudio } from "react-icons/ai";
 
-import { FaRegStopCircle } from "react-icons/fa";
 import { notifications } from "@mantine/notifications";
 //
 import {
@@ -39,6 +33,11 @@ import { Call as TCall } from "../../types";
 import DialerQueue from "./DialerQueue";
 import { LeadDetail } from "../leads/LeadDetail";
 import CallerIdSelect from "./CallerIdSelect";
+import {
+  IconPlayerPlay,
+  IconPlayerSkipForward,
+  IconPlayerStop,
+} from "@tabler/icons-react";
 
 export type TCallRef = {
   error: string;
@@ -516,11 +515,8 @@ function AlphaDialer() {
     setStarting(true);
 
     // No token found, get it
-    if (token) {
-      // TODO: bring this back when ready
-      // if (!token) {
+    if (!token) {
       fetchToken();
-      return;
     }
   }, [token, starting, setStarting]);
 
@@ -594,64 +590,66 @@ function AlphaDialer() {
           <div className="control-buttons">
             {!muted ? (
               <Tooltip label="Mute">
-                <div>
-                  <AiOutlineAudio
-                    fontSize="2.5rem"
-                    onClick={() => call?.mute()}
-                    className={`hoverable ${call ?? "disabled"}`}
-                  />
-                </div>
+                <Button
+                  onClick={() => call?.mute()}
+                  leftIcon={<AiOutlineAudio size="1rem" />}
+                  disabled={!call}
+                >
+                  Mute
+                </Button>
               </Tooltip>
             ) : (
               <Tooltip label="Unmute">
-                <div>
-                  <AiOutlineAudioMuted
-                    fontSize="2.5rem"
-                    onClick={() => call?.mute()}
-                    className="hoverable"
-                    color="red"
-                  />
-                </div>
+                <Button
+                  color="red"
+                  onClick={() => call?.mute()}
+                  leftIcon={<AiOutlineAudioMuted size="1rem" />}
+                >
+                  Unmute
+                </Button>
               </Tooltip>
             )}
 
             {call ? (
               <Tooltip label="End call">
-                <div>
-                  <FaRegStopCircle
-                    fontSize="2.5rem"
-                    className="hoverable"
-                    onClick={() => dispatch(setDialQueueIndex(null))}
-                  />
-                </div>
+                <Button
+                  leftIcon={<IconPlayerStop />}
+                  onClick={() => dispatch(setDialQueueIndex(null))}
+                >
+                  End call
+                </Button>
               </Tooltip>
             ) : (
-              <Tooltip label="Start dialing">
-                <div>
-                  <AiFillPlayCircle
-                    fontSize="2.5rem"
-                    className="hoverable"
-                    onClick={() => {
-                      // Start from 0 UNLESS there is a currently selected index
-                      const index =
-                        dialQueueIndex === null ? 0 : dialQueueIndex;
+              <Tooltip
+                label="Begin making calls to the leads in the Call queue"
+                openDelay={1000}
+              >
+                <Button
+                  mx={4}
+                  variant="gradient"
+                  onClick={() => {
+                    // Start from 0 UNLESS there is a currently selected index
+                    const index = dialQueueIndex === null ? 0 : dialQueueIndex;
 
-                      dispatch(setDialQueueIndex(index));
-                      // dispatch(setIs);
-                    }}
-                  />
-                </div>
+                    dispatch(setDialQueueIndex(index));
+                    // dispatch(setIs);
+                  }}
+                  leftIcon={<IconPlayerPlay />}
+                >
+                  Start dialer
+                </Button>
               </Tooltip>
             )}
 
             <Tooltip label="Skip to next Lead">
-              <div>
-                <AiFillStepForward
-                  fontSize="2.5rem"
-                  className="hoverable"
-                  onClick={continueToNextLead}
-                />
-              </div>
+              <Button
+                disabled={!call}
+                leftIcon={<IconPlayerSkipForward />}
+                onClick={continueToNextLead}
+                mx={4}
+              >
+                Next lead
+              </Button>
             </Tooltip>
           </div>
         </Flex>

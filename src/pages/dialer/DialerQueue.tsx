@@ -9,6 +9,7 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
+import { IconPhone } from "@tabler/icons-react";
 import clsx from "clsx";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -19,7 +20,6 @@ import {
   setRequestAction,
 } from "../../store/dialer/slice";
 import DialerQueueStyled from "./DialerQueue.styles";
-import { IconPhone } from "@tabler/icons-react";
 import CallButtonWithCount from "../../components/call-button-with-count";
 
 function DialerQueue() {

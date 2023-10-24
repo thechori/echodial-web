@@ -104,8 +104,14 @@ export const LeadDetail = () => {
   }
 
   useWindowEvent("keydown", (e) => {
-    if (e.key === "Escape" && selectedLead) {
-      handleClose();
+    if (e.key === "Escape") {
+      if (selectedLead) {
+        // Close window
+        handleClose();
+      } else {
+        // Deselect row
+        // TODO: add me for nice ux
+      }
     }
   });
 
