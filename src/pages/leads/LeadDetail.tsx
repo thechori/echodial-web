@@ -128,7 +128,7 @@ export const LeadDetail = () => {
   });
 
   return (
-    <LeadDetailStyled>
+    <LeadDetailStyled className="js-scrollable">
       <Card id="lead-detail" withBorder>
         <Box>
           <Flex align="center" justify="space-between" mb="md">
@@ -266,27 +266,19 @@ export const LeadDetail = () => {
           </Group>
         </Box>
 
+        <Box id="footer-buttons-overlay" />
         <Group id="footer-buttons" spacing="sm">
           {form.isDirty() ? (
             <Button
               onClick={discardChanges}
-              variant="subtle"
+              variant="outline"
               w={200}
               mx="auto"
-              size="xs"
-              compact
             >
               Discard changes
             </Button>
           ) : (
-            <Button
-              onClick={handleClose}
-              variant="subtle"
-              w={200}
-              mx="auto"
-              size="xs"
-              compact
-            >
+            <Button onClick={handleClose} variant="outline" w={200} mx="auto">
               Close
             </Button>
           )}
