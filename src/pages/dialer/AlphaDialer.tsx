@@ -116,8 +116,12 @@ function AlphaDialer() {
     }
 
     // Check for items in queue
-    if (dialQueue.length === 0 || dialStateInstance.dialQueueIndex === null) {
-      dispatch(setError("No leads in call queue or index is null"));
+    if (dialQueue.length === 0) {
+      dispatch(
+        setError(
+          "No leads in call queue, be sure to add some before running the dialer"
+        )
+      );
       return;
     }
 

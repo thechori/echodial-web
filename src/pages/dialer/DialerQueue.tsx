@@ -32,7 +32,8 @@ function DialerQueue() {
 
   function startCall(index: number) {
     console.log("startCall");
-    dispatch(setDialQueueIndex(index));
+    dialStateInstance.dialQueueIndex = index;
+    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
     dispatch(setRequestAction("startCall"));
   }
 
