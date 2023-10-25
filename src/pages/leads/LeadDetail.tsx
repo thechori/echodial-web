@@ -128,10 +128,10 @@ export const LeadDetail = () => {
   });
 
   return (
-    <LeadDetailStyled className="js-scrollable">
+    <LeadDetailStyled>
       <Card id="lead-detail" withBorder>
-        <Box>
-          <Flex align="center" justify="space-between" mb="md">
+        <Box id="lead-header">
+          <Flex align="center" justify="space-between">
             <Box>
               <Flex align="center" justify="space-between">
                 <ThemeIcon size="md" mr="xs">

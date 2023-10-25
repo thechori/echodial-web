@@ -3,9 +3,25 @@ import { styled } from "styled-components";
 export const LeadDetailStyled = styled.div`
   transition: width 0.2s ease, opacity 3s ease;
 
+  #lead-header {
+    position: sticky;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    top: 0px;
+    background-color: white;
+    z-index: 1;
+    background: linear-gradient(
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0)
+    );
+  }
+
   #lead-detail {
     max-height: calc(100vh - 120px); // Account for bottom dialer FAB
     overflow: scroll;
+    padding-top: 0px;
     padding-bottom: 0px;
   }
 
@@ -26,7 +42,7 @@ export const LeadDetailStyled = styled.div`
     background: linear-gradient(
       rgba(255, 255, 255, 0),
       rgba(255, 255, 255, 0.9),
-      rgba(255, 255, 255, 0.95),
+      rgba(255, 255, 255, 1),
       rgba(255, 255, 255, 1)
     );
   }

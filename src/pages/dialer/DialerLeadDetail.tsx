@@ -118,7 +118,11 @@ export const DialerLeadDetail = () => {
 
   return (
     <LeadDetailStyled>
-      <Card id="lead-detail" withBorder style={{ overflow: "visible" }}>
+      <Card
+        id="lead-detail"
+        withBorder
+        style={{ overflow: "visible", paddingTop: "1rem" }}
+      >
         <Box>
           <Flex align="center" justify="space-between" mb="md">
             <Box>
