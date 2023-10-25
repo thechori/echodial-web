@@ -29,14 +29,13 @@ import {
 import AlphaDialerStyled from "./AlphaDialer.styles";
 import { Call as TCall } from "../../types";
 import DialerQueue from "./DialerQueue";
-import { LeadDetail } from "../leads/LeadDetail";
 import CallerIdSelect from "./CallerIdSelect";
 import {
   IconPlayerPlay,
   IconPlayerSkipForward,
   IconPlayerStop,
 } from "@tabler/icons-react";
-import { setSelectedLead } from "../../store/lead-detail/slice";
+import { DialerLeadDetail } from "./DialerLeadDetail";
 
 export type TCallRef = {
   error: string;
@@ -132,6 +131,8 @@ function AlphaDialer() {
   }
 
   async function startCall() {
+    console.log("startCall");
+
     let index = callRef.current.dialQueueIndex;
     let attempts = callRef.current.currentDialAttempts;
 
@@ -156,7 +157,6 @@ function AlphaDialer() {
     callRef.current.dialQueueIndex = index;
     dispatch(setIsDialing(true));
     callRef.current.isDialing = true;
-    dispatch(setSelectedLead(dialQueue[dialQueueIndex]));
 
     // Initialize or increment current dial attempts
     if (attempts === null) {
@@ -642,7 +642,7 @@ function AlphaDialer() {
             )}
           </Box>
           <Box m="md">
-            <LeadDetail />
+            <DialerLeadDetail />
           </Box>
         </Flex>
       </Box>

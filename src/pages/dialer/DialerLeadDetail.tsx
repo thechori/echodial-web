@@ -14,13 +14,12 @@ import {
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import { useWindowEvent } from "@mantine/hooks";
 import { MdPerson } from "react-icons/md";
 import { AiOutlineClose } from "react-icons/ai";
 import { isPossiblePhoneNumber } from "react-phone-number-input";
 import { notifications } from "@mantine/notifications";
 //
-import { LeadDetailStyled } from "./LeadDetail.styles";
+import { LeadDetailStyled } from "../leads/LeadDetail.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
 import { useUpdateLeadMutation } from "../../services/lead";
@@ -28,21 +27,23 @@ import { setSelectedRows } from "../../store/leads/slice";
 import { extractErrorMessage } from "../../utils/error";
 import { PhoneInput } from "../../components/phone-input";
 import { setSelectedLead } from "../../store/lead-detail/slice";
+import { Lead } from "../../types";
 
-export const LeadDetail = () => {
+export const DialerLeadDetail = () => {
   const dispatch = useAppDispatch();
-  const { selectedLead } = useAppSelector((state) => state.leadDetail);
+  const { dialQueue, dialQueueIndex } = useAppSelector((state) => state.dialer);
 
   const [error, setError] = useState("");
+  const [activeLead, setActiveLead] = useState<Lead | null>(null);
   const { data: availableStatuses } = useGetLeadStatusesQuery();
   const [updateLead, { isLoading }] = useUpdateLeadMutation();
 
   const form = useForm({
     initialValues: {
-      ...selectedLead,
+      ...activeLead,
       appointment_at:
-        selectedLead && selectedLead.appointment_at
-          ? new Date(selectedLead.appointment_at)
+        activeLead && activeLead.appointment_at
+          ? new Date(activeLead.appointment_at)
           : null,
     },
     validate: {
@@ -59,16 +60,25 @@ export const LeadDetail = () => {
     },
   });
 
+  // Grab lead from state use queue and index
+  useEffect(() => {
+    if (dialQueue.length && dialQueueIndex !== null) {
+      const lead = dialQueue[dialQueueIndex];
+      setActiveLead(lead);
+    }
+  }, [dialQueue, dialQueueIndex]);
+
+  // Handle changed activeLead
   useEffect(() => {
     form.setValues({
-      ...selectedLead,
+      ...activeLead,
       appointment_at:
-        selectedLead && selectedLead.appointment_at
-          ? new Date(selectedLead.appointment_at)
+        activeLead && activeLead.appointment_at
+          ? new Date(activeLead.appointment_at)
           : null,
     });
     form.resetDirty();
-  }, [selectedLead]);
+  }, [activeLead]);
 
   // Close icon
   function handleClose() {
@@ -79,15 +89,15 @@ export const LeadDetail = () => {
   // Cancel edit
   function discardChanges() {
     form.reset();
-    if (!selectedLead)
+    if (!activeLead)
       return notifications.show({
-        message: "Error editing the selectedLead. Please try again later.",
+        message: "Error editing the activeLead. Please try again later.",
       });
     form.setValues({
-      ...selectedLead,
+      ...activeLead,
       appointment_at:
-        selectedLead && selectedLead.appointment_at
-          ? new Date(selectedLead.appointment_at)
+        activeLead && activeLead.appointment_at
+          ? new Date(activeLead.appointment_at)
           : null,
     });
     form.resetDirty();
@@ -114,18 +124,6 @@ export const LeadDetail = () => {
     }
   }
 
-  useWindowEvent("keydown", (e) => {
-    if (e.key === "Escape") {
-      if (selectedLead) {
-        // Close window
-        handleClose();
-      } else {
-        // Deselect row
-        // TODO: add me for nice ux
-      }
-    }
-  });
-
   return (
     <LeadDetailStyled>
       <Card id="lead-detail" withBorder>
@@ -137,7 +135,7 @@ export const LeadDetail = () => {
                   <MdPerson />
                 </ThemeIcon>
                 <Title order={2}>
-                  {selectedLead?.first_name} {selectedLead?.last_name}
+                  {activeLead?.first_name} {activeLead?.last_name}
                 </Title>
               </Flex>
               <Text size="sm">Local time: ??</Text>

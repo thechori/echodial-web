@@ -29,6 +29,7 @@ function DialerQueue() {
     useAppSelector((state) => state.dialer);
 
   function startCall(index: number) {
+    console.log("startCall");
     dispatch(setDialQueueIndex(index));
     dispatch(setRequestAction("startCall"));
   }
