@@ -3,12 +3,13 @@ import {
   Box,
   Button,
   Card,
+  Divider,
   Flex,
   Group,
   Select,
-  Stack,
   Text,
   TextInput,
+  Textarea,
   ThemeIcon,
   Title,
 } from "@mantine/core";
@@ -154,6 +155,10 @@ export const LeadDetail = () => {
           </Flex>
         </Box>
 
+        <Text size="sm" color="dimmed">
+          Contact information
+        </Text>
+        <Divider py={8} />
         <Box>
           <Group>
             <TextInput
@@ -190,17 +195,78 @@ export const LeadDetail = () => {
                 })) || []
               }
             />
+
+            <Textarea
+              label="Notes"
+              w="100%"
+              autosize
+              minRows={3}
+              {...form.getInputProps("notes")}
+            />
+          </Group>
+
+          <Text size="sm" color="dimmed" mt="md">
+            Activity details
+          </Text>
+
+          <Divider py={8} />
+
+          <Group>
             <DateInput
               label="Appointment at"
               {...form.getInputProps("appointment_at")}
             />
+            <TextInput
+              label="Call count"
+              disabled
+              {...form.getInputProps("call_count")}
+            />
+            <TextInput
+              label="Answer count"
+              disabled
+              {...form.getInputProps("answer_count")}
+            />
+
+            <Textarea
+              w="100%"
+              minRows={1}
+              label="Not interested reason"
+              {...form.getInputProps("not_interested_reason")}
+            />
+          </Group>
+
+          <Text size="sm" color="dimmed" mt="md">
+            Deal information
+          </Text>
+          <Divider py={8} />
+
+          <Group>
+            <TextInput
+              mb="xs"
+              label="Sale amount"
+              {...form.getInputProps("sale_amount")}
+            />
+            <TextInput
+              mb="xs"
+              label="Sale cost"
+              {...form.getInputProps("sale_cost")}
+            />
+            <TextInput
+              mb="xs"
+              label="Sale commission"
+              {...form.getInputProps("sale_commission")}
+            />
+            <DateInput label="Sale at" {...form.getInputProps("sale_at")} />
+            <Textarea
+              minRows={2}
+              w="100%"
+              label="Sale notes"
+              {...form.getInputProps("sale_notes")}
+            />
           </Group>
         </Box>
 
-        <Stack py="lg" spacing="sm">
-          <Button loading={isLoading} onClick={editLead} w={200} mx="auto">
-            Update
-          </Button>
+        <Group id="footer-buttons" spacing="sm">
           {form.isDirty() ? (
             <Button
               onClick={discardChanges}
@@ -224,7 +290,10 @@ export const LeadDetail = () => {
               Close
             </Button>
           )}
-        </Stack>
+          <Button loading={isLoading} onClick={editLead} w={200} mx="auto">
+            Save changes
+          </Button>
+        </Group>
 
         <Text w="100%" color="red">
           {/*  @ts-ignore */}

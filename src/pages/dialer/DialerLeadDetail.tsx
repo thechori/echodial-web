@@ -9,13 +9,13 @@ import {
   Stack,
   Text,
   TextInput,
+  Textarea,
   ThemeIcon,
   Title,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { MdPerson } from "react-icons/md";
-import { AiOutlineClose } from "react-icons/ai";
 import { isPossiblePhoneNumber } from "react-phone-number-input";
 import { notifications } from "@mantine/notifications";
 //
@@ -26,7 +26,6 @@ import { useUpdateLeadMutation } from "../../services/lead";
 import { setSelectedRows } from "../../store/leads/slice";
 import { extractErrorMessage } from "../../utils/error";
 import { PhoneInput } from "../../components/phone-input";
-import { setSelectedLead } from "../../store/lead-detail/slice";
 import { Lead } from "../../types";
 
 export const DialerLeadDetail = () => {
@@ -80,12 +79,6 @@ export const DialerLeadDetail = () => {
     form.resetDirty();
   }, [activeLead]);
 
-  // Close icon
-  function handleClose() {
-    discardChanges();
-    dispatch(setSelectedLead(null));
-  }
-
   // Cancel edit
   function discardChanges() {
     form.reset();
@@ -118,7 +111,6 @@ export const DialerLeadDetail = () => {
       await updateLead(form.values).unwrap();
       notifications.show({ message: "Successfully updated lead" });
       dispatch(setSelectedRows([]));
-      handleClose();
     } catch (e) {
       setError(extractErrorMessage(e));
     }
@@ -126,7 +118,7 @@ export const DialerLeadDetail = () => {
 
   return (
     <LeadDetailStyled>
-      <Card id="lead-detail" withBorder>
+      <Card id="lead-detail" withBorder style={{ overflow: "visible" }}>
         <Box>
           <Flex align="center" justify="space-between" mb="md">
             <Box>
@@ -140,15 +132,6 @@ export const DialerLeadDetail = () => {
               </Flex>
               <Text size="sm">Local time: ??</Text>
             </Box>
-
-            <Button
-              color="red"
-              onClick={handleClose}
-              leftIcon={<AiOutlineClose />}
-              variant="outline"
-            >
-              Close
-            </Button>
           </Flex>
         </Box>
 
@@ -192,6 +175,13 @@ export const DialerLeadDetail = () => {
               label="Appointment at"
               {...form.getInputProps("appointment_at")}
             />
+            <Textarea
+              label="Notes"
+              w="100%"
+              autosize
+              minRows={3}
+              {...form.getInputProps("notes")}
+            />
           </Group>
         </Box>
 
@@ -199,29 +189,17 @@ export const DialerLeadDetail = () => {
           <Button loading={isLoading} onClick={editLead} w={200} mx="auto">
             Update
           </Button>
-          {form.isDirty() ? (
-            <Button
-              onClick={discardChanges}
-              variant="subtle"
-              w={200}
-              mx="auto"
-              size="xs"
-              compact
-            >
-              Discard changes
-            </Button>
-          ) : (
-            <Button
-              onClick={handleClose}
-              variant="subtle"
-              w={200}
-              mx="auto"
-              size="xs"
-              compact
-            >
-              Close
-            </Button>
-          )}
+          <Button
+            onClick={discardChanges}
+            variant="subtle"
+            w={200}
+            mx="auto"
+            size="xs"
+            compact
+            style={{ visibility: form.isDirty() ? "visible" : "hidden" }}
+          >
+            Discard changes
+          </Button>
         </Stack>
 
         <Text w="100%" color="red">
