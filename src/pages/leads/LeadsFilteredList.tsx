@@ -30,6 +30,7 @@ import {
   setDialQueue,
   setRequestAction,
 } from "../../store/dialer/slice";
+import { dialStateInstance } from "../dialer/DialState.class";
 
 function LeadsFilteredList() {
   const { data: leadStatuses } = useGetLeadStatusesQuery();
@@ -138,13 +139,12 @@ function LeadsFilteredList() {
         leadsForQueue.push(data);
       }
     });
+
+    dialStateInstance.dialQueueIndex = null;
     dispatch(setDialQueue(leadsForQueue));
 
     // Open dialer
     dispatch(setAlphaDialerVisible(true));
-
-    // Start dialing
-    dispatch(setSelectedLead(leadsForQueue[0]));
   };
 
   const stopCall = () => {

@@ -21,12 +21,14 @@ import {
 } from "../../store/dialer/slice";
 import DialerQueueStyled from "./DialerQueue.styles";
 import CallButtonSimple from "../../components/call-buttons/CallButtonSimple";
+import { dialStateInstance } from "./DialState.class";
 
 function DialerQueue() {
   const dispatch = useAppDispatch();
 
-  const { dialQueueIndex, call, options, alphaDialerVisible, dialQueue } =
-    useAppSelector((state) => state.dialer);
+  const { options, alphaDialerVisible, dialQueue } = useAppSelector(
+    (state) => state.dialer
+  );
 
   function startCall(index: number) {
     console.log("startCall");
@@ -39,21 +41,24 @@ function DialerQueue() {
   }
 
   const rows = dialQueue.length ? (
-    dialQueue.map((c, index) => {
+    dialQueue.map((lead, index) => {
       let active = false;
       let activeIndex = false;
 
-      if (dialQueueIndex !== null && dialQueue[dialQueueIndex].id === c.id) {
+      if (
+        dialStateInstance.dialQueueIndex !== null &&
+        dialQueue[dialStateInstance.dialQueueIndex].id === lead.id
+      ) {
         activeIndex = true;
       }
 
-      if (activeIndex && call) {
+      if (activeIndex && dialStateInstance.call) {
         active = true;
       }
 
       return (
         <tr
-          key={c.id}
+          key={lead.id}
           className={clsx({
             ["active"]: active,
             ["active-index"]: activeIndex,
@@ -63,7 +68,7 @@ function DialerQueue() {
           <td>
             <Group spacing="sm">
               <Text fz="sm" fw={500}>
-                {c.first_name} {c.last_name}
+                {lead.first_name} {lead.last_name}
               </Text>
             </Group>
           </td>
@@ -72,7 +77,7 @@ function DialerQueue() {
           </td>
           <td className="call-icon hoverable">
             <CallButtonSimple
-              active={!(call && active)}
+              active={!(dialStateInstance.call && active)}
               onInactiveClick={stopCall}
               onActiveClick={() => startCall(index)}
             />
