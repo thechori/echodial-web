@@ -17,7 +17,7 @@ const DialerQueueStyled = styled.div`
   }
 
   tr.active-index {
-    border: 2px solid green;
+    color: green;
   }
 
   .call-icon {

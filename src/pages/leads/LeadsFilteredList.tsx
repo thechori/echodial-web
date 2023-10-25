@@ -239,11 +239,8 @@ function LeadsFilteredList() {
           columnDefs={leadColDefs}
           animateRows={true}
           rowSelection="multiple"
-          // onSelectionChanged={onSelectionChanged}
           onCellClicked={onCellClicked}
           quickFilterText={keyword}
-          onSortChanged={(e) => console.log("onSortChanged", e)}
-          onFilterChanged={(e) => console.log("onFilterChanged", e)}
         />
       </Box>
       <LeadsFilterDrawer

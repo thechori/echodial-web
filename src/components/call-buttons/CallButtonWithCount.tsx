@@ -4,10 +4,10 @@ import CallButtonWithCountStyled from "./CallButtonWithCount.styles";
 import { PiPhone } from "react-icons/pi";
 
 export type TCallButtonWithCountProps = {
-  callCount: number;
   active: boolean;
   onInactiveClick: () => void;
   onActiveClick: () => void;
+  callCount?: number;
 };
 
 const CallButtonWithCount = ({
@@ -20,9 +20,11 @@ const CallButtonWithCount = ({
     return (
       <CallButtonWithCountStyled $active={active}>
         <FaRegStopCircle fontSize="1rem" onClick={onInactiveClick} />
-        <Text className="call-count" size="xs">
-          {callCount}
-        </Text>
+        {callCount !== undefined && (
+          <Text className="call-count" size="xs">
+            {callCount}
+          </Text>
+        )}
       </CallButtonWithCountStyled>
     );
   }
@@ -30,9 +32,11 @@ const CallButtonWithCount = ({
   return (
     <CallButtonWithCountStyled $active={active}>
       <PiPhone fontSize="1rem" onClick={onActiveClick} />
-      <Text className="call-count" size="xs">
-        {callCount}
-      </Text>
+      {callCount !== undefined && (
+        <Text className="call-count" size="xs">
+          {callCount}
+        </Text>
+      )}
     </CallButtonWithCountStyled>
   );
 };

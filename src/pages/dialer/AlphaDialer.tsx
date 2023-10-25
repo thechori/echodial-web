@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Call, Device } from "@twilio/voice-sdk";
-import { Button, Tooltip } from "@mantine/core";
+import { Button, Card, Text, Tooltip } from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
-import { AiOutlineAudioMuted, AiOutlineAudio } from "react-icons/ai";
 
 import { notifications } from "@mantine/notifications";
 //
@@ -16,17 +15,16 @@ import { selectJwtDecoded } from "../../store/user/slice";
 import { extractErrorMessage } from "../../utils/error";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
-  setDialQueueIndex,
   setError,
   setDevice,
   setCall,
   setCurrentCallId,
-  setIsMuted,
   setToken,
   setCurrentDialAttempts,
   setRequestAction,
   setWasCallConnected,
   setIsDialing,
+  setDialQueueIndex,
 } from "../../store/dialer/slice";
 import AlphaDialerStyled from "./AlphaDialer.styles";
 import { Call as TCall } from "../../types";
@@ -38,6 +36,7 @@ import {
   IconPlayerSkipForward,
   IconPlayerStop,
 } from "@tabler/icons-react";
+import { setSelectedLead } from "../../store/lead-detail/slice";
 
 export type TCallRef = {
   error: string;
@@ -50,7 +49,6 @@ export type TCallRef = {
   device: Device | null;
   token: string | null;
   currentCallTimer: any;
-  muted: boolean;
 };
 
 function AlphaDialer() {
@@ -67,7 +65,6 @@ function AlphaDialer() {
     device: null,
     token: null,
     currentCallTimer: null,
-    muted: false,
   });
   //
   const jwtDecoded = useAppSelector(selectJwtDecoded);
@@ -79,9 +76,9 @@ function AlphaDialer() {
     fromNumber,
     dialQueue,
     dialQueueIndex,
-    muted,
     options,
     alphaDialerVisible,
+    error,
   } = useAppSelector((state) => state.dialer);
   //
   const [addCall] = useAddCallMutation();
@@ -145,8 +142,8 @@ function AlphaDialer() {
     }
 
     // Check for items in queue
-    if (dialQueue.length === 0) {
-      dispatch(setError("No leads in call queue"));
+    if (dialQueue.length === 0 || dialQueueIndex === null) {
+      dispatch(setError("No leads in call queue or index is null"));
       return;
     }
 
@@ -159,6 +156,7 @@ function AlphaDialer() {
     callRef.current.dialQueueIndex = index;
     dispatch(setIsDialing(true));
     callRef.current.isDialing = true;
+    dispatch(setSelectedLead(dialQueue[dialQueueIndex]));
 
     // Initialize or increment current dial attempts
     if (attempts === null) {
@@ -249,13 +247,6 @@ function AlphaDialer() {
     });
 
     // Occurs when:
-    // - User mutes the call
-    c.on("mute", (isMuted: boolean) => {
-      dispatch(setIsMuted(isMuted));
-      callRef.current.muted = isMuted;
-    });
-
-    // Occurs when:
     // - Call ends (user hangs up, lead hangs up, voicemail ends)
     // - Call errors?
     c.on("disconnect", async () => {
@@ -279,11 +270,6 @@ function AlphaDialer() {
     dispatch(setCall(c));
     callRef.current.call = c;
   }
-
-  // function getWasCallConnected() {
-  //   console.log("getWasCallConnected");
-  //   return wasCallConnected;
-  // }
 
   // Start timer that will check to see if:
   // - Call has connected or not
@@ -342,6 +328,8 @@ function AlphaDialer() {
       );
       return;
     }
+
+    // Check for end of queue
 
     // Dialing has gone past allowed ring time, determine if retrying or continuing
     if (callRef.current.currentDialAttempts >= options.maxCallTries) {
@@ -405,6 +393,8 @@ function AlphaDialer() {
   // - An error occurs
   // - Call disconnects ?
   async function stopCall() {
+    console.log("stopCall");
+
     // Ensure a Call exists before proceeding
     if (!callRef.current.call) {
       console.info("No call to end found");
@@ -461,8 +451,6 @@ function AlphaDialer() {
     callRef.current.call = null;
     dispatch(setCurrentCallId(null));
     callRef.current.currentCallId = null;
-    dispatch(setIsMuted(false));
-    callRef.current.muted = false;
     callRef.current.currentCallTimer = null;
     dispatch(setWasCallConnected(false));
     callRef.current.wasCallConnected = false;
@@ -475,22 +463,37 @@ function AlphaDialer() {
     // Additional state cleanup
     dispatch(setError(""));
     callRef.current.error = "";
-    dispatch(setDialQueueIndex(null));
-    callRef.current.dialQueueIndex = null;
     dispatch(setCurrentDialAttempts(0));
     callRef.current.currentDialAttempts = 0;
+  }
+
+  function requestStartDialer() {
+    // Start from 0 UNLESS there is a currently selected index
+    const index = dialQueueIndex === null ? 0 : dialQueueIndex;
+
+    dispatch(setDialQueueIndex(index));
+    dispatch(setRequestAction("startCall"));
+  }
+
+  function requestStopDialer() {
+    dispatch(setRequestAction("stopDialing"));
   }
 
   async function startDialing() {
     dispatch(setIsDialing(true));
   }
+
   async function stopDialing() {
+    console.log("stopDialing");
     dispatch(setIsDialing(false));
     callRef.current.isDialing = false;
     await stopCall();
   }
 
-  async function handleError() {}
+  async function handleError() {
+    console.log("ERROR!");
+    stopDialing();
+  }
 
   //////////////////////// HOOKS ///////////////////////////
 
@@ -588,36 +591,14 @@ function AlphaDialer() {
         <Flex align="center" justify="space-between" p="md">
           <CallerIdSelect />
           <div className="control-buttons">
-            {!muted ? (
-              <Tooltip label="Mute">
-                <Button
-                  mx={4}
-                  onClick={() => call?.mute()}
-                  leftIcon={<AiOutlineAudio size="1rem" />}
-                  disabled={!call}
-                >
-                  Mute
-                </Button>
-              </Tooltip>
-            ) : (
-              <Tooltip label="Unmute">
-                <Button
-                  color="red"
-                  onClick={() => call?.mute()}
-                  leftIcon={<AiOutlineAudioMuted size="1rem" />}
-                >
-                  Unmute
-                </Button>
-              </Tooltip>
-            )}
-
             {call ? (
-              <Tooltip label="End call">
+              <Tooltip label="Stop dialer">
                 <Button
                   leftIcon={<IconPlayerStop />}
-                  onClick={() => dispatch(setDialQueueIndex(null))}
+                  onClick={requestStopDialer}
+                  color="red"
                 >
-                  End call
+                  Stop dialer
                 </Button>
               </Tooltip>
             ) : (
@@ -628,22 +609,16 @@ function AlphaDialer() {
                 <Button
                   mx={4}
                   variant="gradient"
-                  onClick={() => {
-                    // Start from 0 UNLESS there is a currently selected index
-                    const index = dialQueueIndex === null ? 0 : dialQueueIndex;
-
-                    dispatch(setDialQueueIndex(index));
-                    // dispatch(setIs);
-                  }}
+                  onClick={requestStartDialer}
                   leftIcon={<IconPlayerPlay />}
                 >
                   Start dialer
                 </Button>
               </Tooltip>
             )}
-
             <Tooltip label="Skip to next Lead">
               <Button
+                variant="outline"
                 disabled={!call}
                 leftIcon={<IconPlayerSkipForward />}
                 onClick={continueToNextLead}
@@ -658,6 +633,13 @@ function AlphaDialer() {
         <Flex className="split">
           <Box m="md">
             <DialerQueue />
+
+            {error && (
+              <Card withBorder mt="md">
+                <Text>Error</Text>
+                <Text color="red">{error}</Text>
+              </Card>
+            )}
           </Box>
           <Box m="md">
             <LeadDetail />

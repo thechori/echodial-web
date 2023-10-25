@@ -60,6 +60,7 @@ export const LeadDetail = () => {
   });
 
   useEffect(() => {
+    console.log("selectedLead", selectedLead);
     form.setValues({
       ...selectedLead,
       appointment_at:
@@ -126,6 +127,8 @@ export const LeadDetail = () => {
     }
   });
 
+  console.log("isDirty: ", form.isDirty());
+
   return (
     <LeadDetailStyled>
       <Card id="lead-detail" withBorder>
@@ -158,11 +161,6 @@ export const LeadDetail = () => {
           <Group>
             <TextInput
               mb="xs"
-              label="Email address"
-              {...form.getInputProps("email")}
-            />
-            <TextInput
-              mb="xs"
               label="First name"
               {...form.getInputProps("first_name")}
             />
@@ -174,9 +172,15 @@ export const LeadDetail = () => {
             <Box mb="xs">
               <PhoneInput
                 label="Phone number"
+                required
                 {...form.getInputProps("phone")}
               />
             </Box>
+            <TextInput
+              mb="xs"
+              label="Email address"
+              {...form.getInputProps("email")}
+            />
             <Select
               mb="xs"
               label="Status"

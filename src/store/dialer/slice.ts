@@ -143,6 +143,8 @@ export const DialerSlice = createSlice({
     setDialQueueIndex: (state, action) => {
       state.dialQueueIndex = action.payload;
 
+      console.log("setDialQueueIndex: ", action.payload);
+
       // Persist in local storage
       localStorage.setItem(
         LOCAL_STORAGE_KEY__DIAL_QUEUE_INDEX,

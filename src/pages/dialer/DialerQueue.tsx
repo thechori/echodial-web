@@ -1,6 +1,8 @@
 import { BiShow } from "react-icons/bi";
+import { PiPhone, PiPhoneOutgoing } from "react-icons/pi";
 import {
   Card,
+  Chip,
   Flex,
   Group,
   ScrollArea,
@@ -9,18 +11,16 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import { IconPhone } from "@tabler/icons-react";
 import clsx from "clsx";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import phoneFormatter from "../../utils/phone-formatter";
 import {
   setDialQueueIndex,
   setOptions,
   setRequestAction,
 } from "../../store/dialer/slice";
 import DialerQueueStyled from "./DialerQueue.styles";
-import CallButtonWithCount from "../../components/call-button-with-count";
+import CallButtonSimple from "../../components/call-buttons/CallButtonSimple";
 
 function DialerQueue() {
   const dispatch = useAppDispatch();
@@ -37,7 +37,7 @@ function DialerQueue() {
     dispatch(setRequestAction("stopCall"));
   }
 
-  const rows = dialQueue?.length ? (
+  const rows = dialQueue.length ? (
     dialQueue.map((c, index) => {
       let active = false;
       let activeIndex = false;
@@ -58,7 +58,7 @@ function DialerQueue() {
             ["active-index"]: activeIndex,
           })}
         >
-          <td>{index + 1}</td>
+          <td>{active ? <PiPhoneOutgoing fontSize="1.5em" /> : index + 1}</td>
           <td>
             <Group spacing="sm">
               <Text fz="sm" fw={500}>
@@ -67,11 +67,10 @@ function DialerQueue() {
             </Group>
           </td>
           <td>
-            <Text size="sm">{phoneFormatter(c.phone)}</Text>
+            <Chip>Add status</Chip>
           </td>
           <td className="call-icon hoverable">
-            <CallButtonWithCount
-              callCount={c.call_count}
+            <CallButtonSimple
               active={!(call && active)}
               onInactiveClick={stopCall}
               onActiveClick={() => startCall(index)}
@@ -87,14 +86,6 @@ function DialerQueue() {
       <td></td>
     </tr>
   );
-
-  // function importLeadsIntoQueue() {
-  //   dispatch(setDialQueue(leads));
-  // }
-
-  // function clearLeadsFromQueue() {
-  //   dispatch(setDialQueue([]));
-  // }
 
   return (
     <DialerQueueStyled>
@@ -182,7 +173,7 @@ function DialerQueue() {
                 <th>Name</th>
                 <th>Status</th>
                 <th>
-                  <IconPhone />
+                  <PiPhone fontSize="1.5rem" />
                 </th>
               </tr>
             </thead>
