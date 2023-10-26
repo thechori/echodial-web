@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { Call, Device } from "@twilio/voice-sdk";
 import { Button, Card, Text, Tooltip } from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
-
 import { notifications } from "@mantine/notifications";
+// @ts-ignore
+import useSound from "use-sound";
 //
 import {
   useAddCallMutation,
@@ -37,10 +38,17 @@ import {
 } from "@tabler/icons-react";
 import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
+import startSound from "../../assets/sounds/tone-2.mp3";
 
 function AlphaDialer() {
   const dispatch = useAppDispatch();
   const [starting, setStarting] = useState(false);
+
+  // Audio
+  const [playStartSound] = useSound(
+    startSound
+    // "https://echodial-public.s3.us-east-2.amazonaws.com/tone-1.wav"
+  );
 
   const jwtDecoded = useAppSelector(selectJwtDecoded);
   const {
@@ -71,6 +79,15 @@ function AlphaDialer() {
       // @ts-ignore
       codecPreferences: ["opus", "pcmu"],
     });
+
+    // Disable all default Twilio sounds because they are slow and ugly
+    // Hacky workaround found here: https://github.com/twilio/twilio-voice.js/issues/14
+    // @ts-ignore
+    device.audio.incoming(false);
+    // @ts-ignore
+    device.audio.outgoing(false);
+    // @ts-ignore
+    device.audio.disconnect(false);
 
     device.on("incoming", () => {
       notifications.show({
@@ -109,6 +126,10 @@ function AlphaDialer() {
   async function startCall() {
     console.log("startCall");
 
+    // Clear error
+    dialStateInstance.error = "";
+    dispatch(setError(dialStateInstance.error));
+
     // Check for device
     if (!dialStateInstance.device) {
       dispatch(setError("No device initialized"));
@@ -131,8 +152,8 @@ function AlphaDialer() {
     }
 
     dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-    dispatch(setIsDialing(true));
     dialStateInstance.isDialing = true;
+    dispatch(setIsDialing(dialStateInstance.isDialing));
 
     // Initialize or increment current dial attempts
     if (dialStateInstance.currentDialAttempts === null) {
@@ -148,6 +169,12 @@ function AlphaDialer() {
       To: dialQueue[dialStateInstance.dialQueueIndex].phone,
       From: fromNumber,
     };
+
+    // Play sound
+    console.log("playStartSound", playStartSound);
+    playStartSound();
+
+    await setTimeout(() => console.log("done waiting"), 2000);
 
     // Start Call
     const c = (await device.connect({ params })) as Call;
@@ -223,7 +250,6 @@ function AlphaDialer() {
 
     // Occurs when:
     // - Call ends (user hangs up, lead hangs up, voicemail ends)
-    // - Call errors?
     c.on("disconnect", async () => {
       dispatch(setRequestAction("determineNextAction"));
     });
@@ -276,22 +302,12 @@ function AlphaDialer() {
 
   // [x] Should retry call if no answer AND under option.maxAttempts
   // [x] Should continue to next call if nobody answered AND over option.maxAttempts
-  // [ ] Should stop if a call connects (maybe they want to write notes, update Lead data, etc)
+  // [x] Should stop if a call connects then ends (e.g., users wants to write notes, update Lead data, etc)
   // [x] Should stop if an error exists
   async function determineNextAction() {
-    // End call
-    await stopCall();
-    dispatch(setRequestAction("stopCall"));
-
     // Check for error
     if (dialStateInstance.error) {
       console.info(`Error: ${dialStateInstance.error}`);
-      return;
-    }
-
-    // Check for null value in currentDialAttempts
-    if (dialStateInstance.currentDialAttempts === null) {
-      console.error("currentDialAttempts is null");
       return;
     }
 
@@ -301,10 +317,16 @@ function AlphaDialer() {
       console.info(
         "Connected call has ended, pausing here until user explicitly decides to continue"
       );
+      // End call
+      await stopCall();
+      dispatch(setRequestAction("stopCall"));
+
       return;
     }
 
-    // Check for end of queue
+    // End call
+    await stopCall();
+    dispatch(setRequestAction("stopCall"));
 
     // Dialing has gone past allowed ring time, determine if retrying or continuing
     if (dialStateInstance.currentDialAttempts >= options.maxCallTries) {
@@ -455,6 +477,25 @@ function AlphaDialer() {
     dispatch(setRequestAction("startCall"));
   }
 
+  function requestContinue() {
+    if (dialStateInstance.dialQueueIndex === null) {
+      dialStateInstance.error = "Dial queue index is null";
+      dispatch(setError(dialStateInstance.error));
+      return;
+    }
+
+    // Check for next index
+    if (dialStateInstance.dialQueueIndex === dialQueue.length - 1) {
+      dialStateInstance.dialQueueIndex = 0;
+      dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
+    } else {
+      dialStateInstance.dialQueueIndex = dialStateInstance.dialQueueIndex + 1;
+      dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
+    }
+
+    startCall();
+  }
+
   function requestStopDialer() {
     dispatch(setRequestAction("stopDialing"));
   }
@@ -465,7 +506,6 @@ function AlphaDialer() {
   }
 
   async function stopDialing() {
-    console.log("stopDialing");
     dialStateInstance.isDialing = false;
     dispatch(setIsDialing(dialStateInstance.isDialing));
     await stopCall();
@@ -477,17 +517,6 @@ function AlphaDialer() {
   }
 
   //////////////////////// HOOKS ///////////////////////////
-
-  // Main logic MUST happen in these React components, unfortunately
-
-  // What are the main events?
-  // [ ] Initializing
-  // [ ] Start dialer (with or without index)
-  // [ ] Start call (at current index)
-  // [ ] Determine next in-dial action (retry or continue)
-  // [ ] Stop dialer
-  // [ ] Reset dialer
-  // [ ] Error
 
   // Get token
   // Create device instance
@@ -504,6 +533,8 @@ function AlphaDialer() {
     }
   }, [token, starting, setStarting]);
 
+  // Handle request actions
+  // TODO: reconsider if this is necessary now that we have the DialState class singleton (ftw)
   useEffect(() => {
     if (!requestAction) {
       return;
@@ -582,7 +613,7 @@ function AlphaDialer() {
                   Stop dialer
                 </Button>
               </Tooltip>
-            ) : (
+            ) : dialStateInstance.dialQueueIndex === null ? (
               <Tooltip
                 label="Begin making calls to the leads in the Call queue"
                 openDelay={1000}
@@ -596,7 +627,22 @@ function AlphaDialer() {
                   Start dialer
                 </Button>
               </Tooltip>
+            ) : (
+              <Tooltip
+                label="Continue to the next lead in the Call queue"
+                openDelay={1000}
+              >
+                <Button
+                  mx={4}
+                  variant="gradient"
+                  onClick={requestContinue}
+                  leftIcon={<IconPlayerPlay />}
+                >
+                  Continue
+                </Button>
+              </Tooltip>
             )}
+
             <Tooltip label="Skip to next Lead">
               <Button
                 variant="outline"

@@ -81,7 +81,7 @@ export const leadColDefs: ColDef<Lead>[] = [
     sortable: true,
     filter: true,
     valueFormatter: ({ value }) => {
-      return value ? format(new Date(value), "Pp") : "N/A";
+      return value ? format(new Date(value), "Pp") : "";
     },
   },
   {

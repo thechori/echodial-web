@@ -29,7 +29,7 @@ function CallerIdSelect() {
   return (
     <Select
       px="xs"
-      label="Your number"
+      label="My number"
       placeholder="Pick one"
       data={callerIdItems}
       value={fromNumber}

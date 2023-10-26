@@ -1,5 +1,7 @@
 import { Call, Device } from "@twilio/voice-sdk";
 
+type DialerStateStatus = "idle" | "connecting" | "ringing" | "inCall";
+
 class DialerState {
   error: string;
   isDialing: boolean;
@@ -11,6 +13,9 @@ class DialerState {
   device: Device | null;
   token: string | null;
   currentCallTimer: any;
+  currentCallDuration: number | null;
+  totalDialingDuration: number | null;
+  status: DialerStateStatus;
 
   constructor() {
     // log
@@ -27,6 +32,9 @@ class DialerState {
     this.device = null;
     this.token = null;
     this.currentCallTimer = null;
+    this.currentCallDuration = null;
+    this.totalDialingDuration = null;
+    this.status = "idle";
   }
 
   getState() {

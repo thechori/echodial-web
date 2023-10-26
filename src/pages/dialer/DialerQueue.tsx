@@ -31,7 +31,6 @@ function DialerQueue() {
   );
 
   function startCall(index: number) {
-    console.log("startCall");
     dialStateInstance.dialQueueIndex = index;
     dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
     dispatch(setRequestAction("startCall"));
@@ -117,58 +116,6 @@ function DialerQueue() {
                 </div>
               </Tooltip>
             )}
-            {/* <Tooltip label="Clear leads from queue">
-            <div>
-              <FaUndo
-                size="1.2rem"
-                className="hoverable"
-                onClick={clearLeadsFromQueue}
-              />
-            </div>
-          </Tooltip> */}
-            {/* <Tooltip label="Import leads into queue">
-            <div>
-              <BiImport className="hoverable" onClick={importLeadsIntoQueue} />
-            </div>
-          </Tooltip>
-          <Tooltip label="Call options">
-            <div>
-              <IoIosSettings
-                className="hoverable"
-                onClick={() => dispatch(setShowOptions(true))}
-              />
-            </div>
-          </Tooltip> */}
-
-            {/* <Box ml="xs">
-            {call ? (
-              <Tooltip label="End call">
-                <div>
-                  <FaRegStopCircle
-                    color="red"
-                    className="hoverable"
-                    onClick={stopCall}
-                  />
-                </div>
-              </Tooltip>
-            ) : (
-              <Tooltip label="Start dialer">
-                <div>
-                  <PiPhone
-                    color="green"
-                    className="start-call-icon hoverable"
-                    disabled={!!call}
-                    onClick={() => {
-                      // Start from 0 UNLESS there is a currently selected index
-                      const index =
-                        dialQueueIndex === null ? 0 : dialQueueIndex;
-                      startCall(index);
-                    }}
-                  />
-                </div>
-              </Tooltip>
-            )}
-          </Box> */}
           </Flex>
         </Flex>
 
@@ -176,7 +123,7 @@ function DialerQueue() {
           <Table horizontalSpacing="xs" verticalSpacing="sm">
             <thead>
               <tr>
-                <th style={{ width: 75 }}>#</th>
+                <th style={{ width: 50 }}>#</th>
                 <th>Name</th>
                 <th>Status</th>
                 <th>

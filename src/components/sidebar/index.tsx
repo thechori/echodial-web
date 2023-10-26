@@ -50,7 +50,7 @@ const Sidebar = () => {
 
                 <NavLink to={routes.callerIds}>
                   <FaAddressBook fontSize="1.5rem" />
-                  <div>Caller IDs</div>
+                  <div>My numbers</div>
                 </NavLink>
 
                 <NavLink to={routes.callHistory}>
@@ -96,7 +96,7 @@ const Sidebar = () => {
               <Box w={36}>
                 <FaAddressBook size="1.2rem" />
               </Box>
-              <div>Caller IDs</div>
+              <div>My numbers</div>
             </NavLink>
 
             <NavLink to={routes.callHistory}>
