@@ -25,6 +25,14 @@ export const LeadDetailStyled = styled.div`
     padding-bottom: 0px;
   }
 
+  /* Slightly different for the dialer version */
+  #dialer-lead-detail {
+    max-height: calc(100vh - 200px); // Account for bottom dialer FAB
+    overflow: scroll;
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+
   #lead-detail-fab {
     position: fixed;
     right: 128px;

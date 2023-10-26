@@ -141,7 +141,6 @@ export const LeadDetail = () => {
                   {selectedLead?.first_name} {selectedLead?.last_name}
                 </Title>
               </Flex>
-              <Text size="sm">Local time: ??</Text>
             </Box>
 
             <Button

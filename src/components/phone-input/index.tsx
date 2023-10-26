@@ -10,6 +10,7 @@ type TPhoneInputProps = {
   label: string;
   error?: string;
   required?: boolean;
+  disabled?: boolean;
   flush?: boolean; // Displays no label above input (for Sign up page)
 };
 
@@ -19,6 +20,7 @@ const PhoneInput = ({
   label,
   error,
   required,
+  disabled,
   flush,
   ...rest
 }: TPhoneInputProps) => {
@@ -43,6 +45,7 @@ const PhoneInput = ({
         onChange={onChange}
         placeholder={flush ? "Phone number *" : "(123) 456-7890"}
         rules={{ required }}
+        disabled={disabled}
         {...rest}
       />
       <Text size="xs" color="red">

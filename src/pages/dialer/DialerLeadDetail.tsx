@@ -3,10 +3,10 @@ import {
   Box,
   Button,
   Card,
+  Divider,
   Flex,
   Group,
   Select,
-  Stack,
   Text,
   TextInput,
   Textarea,
@@ -25,8 +25,9 @@ import { useGetLeadStatusesQuery } from "../../services/lead-status";
 import { useUpdateLeadMutation } from "../../services/lead";
 import { setSelectedRows } from "../../store/leads/slice";
 import { extractErrorMessage } from "../../utils/error";
-import { PhoneInput } from "../../components/phone-input";
 import { Lead } from "../../types";
+import phoneFormatter from "../../utils/phone-formatter";
+import { format } from "date-fns";
 
 export const DialerLeadDetail = () => {
   const dispatch = useAppDispatch();
@@ -118,27 +119,35 @@ export const DialerLeadDetail = () => {
 
   return (
     <LeadDetailStyled>
-      <Card
-        id="lead-detail"
-        withBorder
-        style={{ overflow: "visible", paddingTop: "1rem" }}
-      >
-        <Box>
-          <Flex align="center" justify="space-between" mb="md">
+      <Card id="dialer-lead-detail" withBorder>
+        <Box id="lead-header">
+          <Flex align="center" justify="space-between">
             <Box>
               <Flex align="center" justify="space-between">
                 <ThemeIcon size="md" mr="xs">
                   <MdPerson />
                 </ThemeIcon>
-                <Title order={2}>
-                  {activeLead?.first_name} {activeLead?.last_name}
-                </Title>
+                <Box>
+                  <Title order={2} lh="1.5rem">
+                    {activeLead?.first_name} {activeLead?.last_name}
+                  </Title>
+                  <Text size="lg">{phoneFormatter(activeLead?.phone)}</Text>
+                </Box>
               </Flex>
-              <Text size="sm">Local time: ??</Text>
+            </Box>
+
+            <Box>
+              <Text size="sm" color="dimmed">
+                Local time: {format(new Date(), "Pp")}
+              </Text>
             </Box>
           </Flex>
         </Box>
 
+        <Text size="sm" color="dimmed">
+          Contact information
+        </Text>
+        <Divider py={8} />
         <Box>
           <Group>
             <TextInput
@@ -151,13 +160,7 @@ export const DialerLeadDetail = () => {
               label="Last name"
               {...form.getInputProps("last_name")}
             />
-            <Box mb="xs">
-              <PhoneInput
-                label="Phone number"
-                required
-                {...form.getInputProps("phone")}
-              />
-            </Box>
+
             <TextInput
               mb="xs"
               label="Email address"
@@ -175,10 +178,7 @@ export const DialerLeadDetail = () => {
                 })) || []
               }
             />
-            <DateInput
-              label="Appointment at"
-              {...form.getInputProps("appointment_at")}
-            />
+
             <Textarea
               label="Notes"
               w="100%"
@@ -187,24 +187,83 @@ export const DialerLeadDetail = () => {
               {...form.getInputProps("notes")}
             />
           </Group>
+
+          <Text size="sm" color="dimmed" mt="md">
+            Activity details
+          </Text>
+
+          <Divider py={8} />
+
+          <Group>
+            <DateInput
+              label="Appointment at"
+              {...form.getInputProps("appointment_at")}
+            />
+            <TextInput
+              label="Call count"
+              disabled
+              {...form.getInputProps("call_count")}
+            />
+            <TextInput
+              label="Answer count"
+              disabled
+              {...form.getInputProps("answer_count")}
+            />
+
+            <Textarea
+              w="100%"
+              minRows={1}
+              label="Not interested reason"
+              {...form.getInputProps("not_interested_reason")}
+            />
+          </Group>
+
+          <Text size="sm" color="dimmed" mt="md">
+            Deal information
+          </Text>
+          <Divider py={8} />
+
+          <Group>
+            <TextInput
+              mb="xs"
+              label="Sale amount"
+              {...form.getInputProps("sale_amount")}
+            />
+            <TextInput
+              mb="xs"
+              label="Sale cost"
+              {...form.getInputProps("sale_cost")}
+            />
+            <TextInput
+              mb="xs"
+              label="Sale commission"
+              {...form.getInputProps("sale_commission")}
+            />
+            <DateInput label="Sale at" {...form.getInputProps("sale_at")} />
+            <Textarea
+              minRows={2}
+              w="100%"
+              label="Sale notes"
+              {...form.getInputProps("sale_notes")}
+            />
+          </Group>
         </Box>
 
-        <Stack py="lg" spacing="sm">
-          <Button loading={isLoading} onClick={editLead} w={200} mx="auto">
-            Update
-          </Button>
+        <Box id="footer-buttons-overlay" />
+        <Group id="footer-buttons" spacing="sm">
           <Button
             onClick={discardChanges}
-            variant="subtle"
+            variant="outline"
             w={200}
             mx="auto"
-            size="xs"
-            compact
-            style={{ visibility: form.isDirty() ? "visible" : "hidden" }}
+            disabled={!form.isDirty()}
           >
             Discard changes
           </Button>
-        </Stack>
+          <Button loading={isLoading} onClick={editLead} w={200} mx="auto">
+            Save changes
+          </Button>
+        </Group>
 
         <Text w="100%" color="red">
           {/*  @ts-ignore */}
