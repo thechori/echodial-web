@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import devices from "../../styles/devices";
 
 const AlphaDialerStyled = styled.div<{ $visible: boolean }>`
-  background-color: #cccccc;
+  background-color: #f1f1f1;
 
   display: ${(props) => (props.$visible ? "block" : "none")};
 

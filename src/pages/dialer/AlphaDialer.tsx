@@ -24,12 +24,14 @@ import {
   setWasCallConnected,
   setIsDialing,
   setDialQueueIndex,
+  setShowOptions,
 } from "../../store/dialer/slice";
 import AlphaDialerStyled from "./AlphaDialer.styles";
 import { Call as TCall } from "../../types";
 import DialerQueue from "./DialerQueue";
 import CallerIdSelect from "./CallerIdSelect";
 import {
+  IconAdjustments,
   IconPlayerPlay,
   IconPlayerSkipForward,
   IconPlayerStop,
@@ -501,6 +503,10 @@ function AlphaDialer() {
     stopDialing();
   }
 
+  const openDialerOptions = () => {
+    dispatch(setShowOptions(true));
+  };
+
   //////////////////////// HOOKS ///////////////////////////
 
   // Get token
@@ -587,7 +593,20 @@ function AlphaDialer() {
       <Box className="controls">
         <Flex align="center" justify="space-between" p="md">
           <CallerIdSelect />
+
           <div className="control-buttons">
+            <Tooltip label="Open dialer settings">
+              <Button
+                variant="outline"
+                aria-label="Settings"
+                color="primary"
+                mx={4}
+                onClick={openDialerOptions}
+                leftIcon={<IconAdjustments stroke={1.5} />}
+              >
+                Settings
+              </Button>
+            </Tooltip>
             {call ? (
               <Tooltip label="Stop dialer">
                 <Button

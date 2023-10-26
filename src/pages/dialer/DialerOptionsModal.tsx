@@ -24,7 +24,7 @@ const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
   const { maxCallTries, cooldownTimeInSeconds, maxRingTimeInSeconds } = options;
 
   return (
-    <StyledModal opened={opened} onClose={onClose} title="Dialer options">
+    <StyledModal opened={opened} onClose={onClose} title="Dialer settings">
       <Text>
         Configure your call settings to maximize productivity in your unique
         situation.

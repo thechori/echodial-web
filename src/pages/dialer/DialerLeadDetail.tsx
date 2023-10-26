@@ -18,6 +18,7 @@ import { useForm } from "@mantine/form";
 import { MdPerson } from "react-icons/md";
 import { isPossiblePhoneNumber } from "react-phone-number-input";
 import { notifications } from "@mantine/notifications";
+import { format } from "date-fns";
 //
 import { LeadDetailStyled } from "../leads/LeadDetail.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -27,11 +28,12 @@ import { setSelectedRows } from "../../store/leads/slice";
 import { extractErrorMessage } from "../../utils/error";
 import { Lead } from "../../types";
 import phoneFormatter from "../../utils/phone-formatter";
-import { format } from "date-fns";
 
 export const DialerLeadDetail = () => {
   const dispatch = useAppDispatch();
-  const { dialQueue, dialQueueIndex } = useAppSelector((state) => state.dialer);
+  const { dialQueue, dialQueueIndex, call } = useAppSelector(
+    (state) => state.dialer
+  );
 
   const [error, setError] = useState("");
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
@@ -131,7 +133,9 @@ export const DialerLeadDetail = () => {
                   <Title order={2} lh="1.5rem">
                     {activeLead?.first_name} {activeLead?.last_name}
                   </Title>
-                  <Text size="lg">{phoneFormatter(activeLead?.phone)}</Text>
+                  <Text color={call ? "green" : "dimmed"} size="lg">
+                    {phoneFormatter(activeLead?.phone)}
+                  </Text>
                 </Box>
               </Flex>
             </Box>

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BiShow } from "react-icons/bi";
 import { PiPhone, PiPhoneOutgoing } from "react-icons/pi";
 import {
@@ -25,9 +26,8 @@ import { dialStateInstance } from "./DialState.class";
 function DialerQueue() {
   const dispatch = useAppDispatch();
 
-  const { options, alphaDialerVisible, dialQueue } = useAppSelector(
-    (state) => state.dialer
-  );
+  const { call, options, alphaDialerVisible, dialQueue, dialQueueIndex } =
+    useAppSelector((state) => state.dialer);
 
   function startCall(index: number) {
     dialStateInstance.dialQueueIndex = index;
@@ -57,6 +57,7 @@ function DialerQueue() {
 
       return (
         <tr
+          id={`dialer-queue-lead-${lead.id}`}
           key={lead.id}
           className={clsx({
             ["active"]: active,
@@ -91,6 +92,18 @@ function DialerQueue() {
       <td></td>
     </tr>
   );
+
+  useEffect(() => {
+    if (call && dialQueue.length && dialQueueIndex !== null) {
+      const lead = dialQueue[dialQueueIndex];
+      const item = document.getElementById(`dialer-queue-lead-${lead.id}`);
+      if (item) {
+        item.scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [dialQueueIndex, call]);
 
   return (
     <DialerQueueStyled>
