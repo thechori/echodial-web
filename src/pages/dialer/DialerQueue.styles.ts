@@ -59,6 +59,23 @@ const DialerQueueStyled = styled.div`
       font-size: 3rem;
     }
   }
+
+  position: relative;
+
+  .fade {
+    width: 100%;
+    bottom: 0px;
+    position: absolute;
+    background-color: white;
+    height: 10rem;
+    pointer-events: none;
+    background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  }
+
+  .scroll-area {
+    overflow: scroll;
+    max-height: calc(100vh - 280px);
+  }
 `;
 
 export default DialerQueueStyled;

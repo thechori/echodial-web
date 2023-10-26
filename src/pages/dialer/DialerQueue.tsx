@@ -5,7 +5,6 @@ import {
   Chip,
   Flex,
   Group,
-  ScrollArea,
   Table,
   Text,
   Title,
@@ -119,7 +118,8 @@ function DialerQueue() {
           </Flex>
         </Flex>
 
-        <ScrollArea h={400}>
+        <div className="fade" />
+        <div className="scroll-area">
           <Table horizontalSpacing="xs" verticalSpacing="sm">
             <thead>
               <tr>
@@ -133,7 +133,7 @@ function DialerQueue() {
             </thead>
             <tbody>{rows}</tbody>
           </Table>
-        </ScrollArea>
+        </div>
       </Card>
     </DialerQueueStyled>
   );
