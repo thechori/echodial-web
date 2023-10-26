@@ -38,9 +38,9 @@ _TODO: Update docs once multiple environments are setup_
 
 ## Developer Guide
 
-- Git branches are _preferred_ to named using the Jira namespace and issue number separated by a dash as the prefix, followed by an underscore, followed by a dash-separated short description of the purpose of the branch
+- Git branches are _preferred_ to named using the Jira namespace and issue number separated by a dash as the prefix, followed by a forward slace, followed by a dash-separated short description of the purpose of the branch, all lowercase
 
-  - e.g., `EDM-123_bucket-page` or `EDM-323_user-login-form-fix`
+  - e.g., `edm-123/bucket-page` or `edm-323/user-login-form-fix`
   - **Note**: For the sake of speedy development, this convention may be disregarded when it makes sense -- consult your lead for guidance on this
 
 - Semantic versioning will be used for releases (e.g., `v1.2.3` or `v2.0.0` or `v4.1.23`)

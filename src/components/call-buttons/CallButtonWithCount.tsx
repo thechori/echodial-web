@@ -1,12 +1,13 @@
 import { Text } from "@mantine/core";
-import { FaPhone, FaRegStopCircle } from "react-icons/fa";
+import { FaRegStopCircle } from "react-icons/fa";
 import CallButtonWithCountStyled from "./CallButtonWithCount.styles";
+import { PiPhone } from "react-icons/pi";
 
 export type TCallButtonWithCountProps = {
-  callCount: number;
   active: boolean;
   onInactiveClick: () => void;
   onActiveClick: () => void;
+  callCount?: number;
 };
 
 const CallButtonWithCount = ({
@@ -19,19 +20,23 @@ const CallButtonWithCount = ({
     return (
       <CallButtonWithCountStyled $active={active}>
         <FaRegStopCircle fontSize="1rem" onClick={onInactiveClick} />
-        <Text className="call-count" size="xs">
-          {callCount}
-        </Text>
+        {callCount !== undefined && (
+          <Text className="call-count" size="xs">
+            {callCount}
+          </Text>
+        )}
       </CallButtonWithCountStyled>
     );
   }
 
   return (
     <CallButtonWithCountStyled $active={active}>
-      <FaPhone fontSize="1rem" onClick={onActiveClick} />
-      <Text className="call-count" size="xs">
-        {callCount}
-      </Text>
+      <PiPhone fontSize="1rem" onClick={onActiveClick} />
+      {callCount !== undefined && (
+        <Text className="call-count" size="xs">
+          {callCount}
+        </Text>
+      )}
     </CallButtonWithCountStyled>
   );
 };

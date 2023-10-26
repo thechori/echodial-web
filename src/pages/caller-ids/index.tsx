@@ -61,10 +61,8 @@ function PhoneNumbers() {
         <Grid>
           <Grid.Col xs={12} sm={12} md={6}>
             <Card shadow="md" withBorder radius="md">
-              <Flex align="center" justify="space-between">
-                <Title order={3} mb={16}>
-                  Personal
-                </Title>
+              <Flex align="center" justify="space-between" mb="sm">
+                <Title order={3}>Personal</Title>
                 <Button
                   loading={isLoadingCallerIds}
                   onClick={() => getCallerIds()}
@@ -74,7 +72,9 @@ function PhoneNumbers() {
                   Refresh
                 </Button>
               </Flex>
-              <Text>Your personal numbers verified with us</Text>
+              <Text>
+                Verified numbers available to make outbound calls from
+              </Text>
 
               <Box p="lg">
                 {callerIds && callerIds.length ? (

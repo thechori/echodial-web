@@ -2,9 +2,9 @@ import { styled } from "styled-components";
 
 const CallButtonWithCountStyled = styled.div<{ $active: boolean }>`
   background-color: ${(props) => (props.$active ? "green" : "red")};
-  width: 50px;
-  height: 50px;
-  border-radius: 50px;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
   display: flex;
   justify-content: center;
   align-items: center;

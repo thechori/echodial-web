@@ -50,6 +50,7 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
 
       close();
     } catch (error) {
+      console.log(error);
       setError(extractErrorMessage(error));
     }
   }
