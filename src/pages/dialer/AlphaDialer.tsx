@@ -3,8 +3,6 @@ import { Call, Device } from "@twilio/voice-sdk";
 import { Button, Card, Text, Tooltip } from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-// @ts-ignore
-import useSound from "use-sound";
 //
 import {
   useAddCallMutation,
@@ -38,17 +36,10 @@ import {
 } from "@tabler/icons-react";
 import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
-import startSound from "../../assets/sounds/tone-2.mp3";
 
 function AlphaDialer() {
   const dispatch = useAppDispatch();
   const [starting, setStarting] = useState(false);
-
-  // Audio
-  const [playStartSound] = useSound(
-    startSound
-    // "https://echodial-public.s3.us-east-2.amazonaws.com/tone-1.wav"
-  );
 
   const jwtDecoded = useAppSelector(selectJwtDecoded);
   const {
@@ -169,12 +160,6 @@ function AlphaDialer() {
       To: dialQueue[dialStateInstance.dialQueueIndex].phone,
       From: fromNumber,
     };
-
-    // Play sound
-    console.log("playStartSound", playStartSound);
-    playStartSound();
-
-    await setTimeout(() => console.log("done waiting"), 2000);
 
     // Start Call
     const c = (await device.connect({ params })) as Call;
