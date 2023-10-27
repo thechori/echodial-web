@@ -17,10 +17,13 @@ import { MdPerson } from "react-icons/md";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setShowOptions } from "../../store/dialer/slice";
+import phoneFormatter from "../../utils/phone-formatter";
 
 const BetaDialer = () => {
   const dispatch = useAppDispatch();
-  const { dialQueue, dialQueueIndex } = useAppSelector((state) => state.dialer);
+  const { call, dialQueue, dialQueueIndex } = useAppSelector(
+    (state) => state.dialer
+  );
 
   const openDialerOptions = () => {
     dispatch(setShowOptions(true));
@@ -32,6 +35,14 @@ const BetaDialer = () => {
     }
 
     return `${dialQueue[dialQueueIndex].first_name} ${dialQueue[dialQueueIndex].last_name}`;
+  };
+
+  const renderPhoneNumber = () => {
+    if (!dialQueue || dialQueueIndex === null) {
+      return "";
+    }
+
+    return phoneFormatter(dialQueue[dialQueueIndex].phone);
   };
 
   return (
@@ -65,8 +76,8 @@ const BetaDialer = () => {
                 <Text lh="1rem" size="xs">
                   {renderFullName()}
                 </Text>
-                <Text lh="1rem" size="xs" color="dimmed">
-                  00:00:00
+                <Text lh="1rem" size="xs" color={call ? "green" : "dimmed"}>
+                  {renderPhoneNumber()}
                 </Text>
               </Box>
             </Flex>
