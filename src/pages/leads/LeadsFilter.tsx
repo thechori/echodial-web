@@ -3,15 +3,25 @@ import { useDisclosure } from "@mantine/hooks";
 import { MdGroups } from "react-icons/md";
 import { IconTrash } from "@tabler/icons-react";
 //
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import NewLeadsMenu from "./NewLeadsMenu";
 import UploadLeadsViaCsvModal from "./UploadLeadsViaCsvModal";
 import ManualInputLeadModal from "./ManualInputLeadModal";
 import DeleteLeadConfirmationModal from "./DeleteLeadConfirmationModal";
+import { useEffect } from "react";
+import {
+  setRequestForImportLeadsModal,
+  setRequestForManualCreateLeadsModal,
+} from "../../store/leads/slice";
 
 const LeadsFilter = () => {
-  const { selectedRows } = useAppSelector((state) => state.leads);
-  const [opened, { open, close }] = useDisclosure(false);
+  const dispatch = useAppDispatch();
+  const {
+    selectedRows,
+    shouldImportLeadsModalOpen,
+    shouldManualCreateLeadModalOpen,
+  } = useAppSelector((state) => state.leads);
+  const [opened, { open: openImport, close }] = useDisclosure(false);
   const [openedManual, { open: openManual, close: closeManual }] =
     useDisclosure(false);
   const [
@@ -22,6 +32,25 @@ const LeadsFilter = () => {
   function deleteLeads() {
     openDeleteConfirmationModal();
   }
+
+  // Allow opening of modals from other components (e.g., filtered list)
+  useEffect(() => {
+    console.log("shouldImportLeadsModalOpen", shouldImportLeadsModalOpen);
+    if (shouldImportLeadsModalOpen) {
+      openImport();
+      dispatch(setRequestForImportLeadsModal(false));
+    }
+  }, [shouldImportLeadsModalOpen]);
+  useEffect(() => {
+    console.log(
+      "shouldManualCreateLeadModalOpen",
+      shouldManualCreateLeadModalOpen
+    );
+    if (shouldManualCreateLeadModalOpen) {
+      openManual();
+      dispatch(setRequestForManualCreateLeadsModal(false));
+    }
+  }, [shouldManualCreateLeadModalOpen]);
 
   return (
     // Note: `overflow: visible` is required to support menu bleeding outside of Card bounds (before, it would cut off and not be visible)
@@ -60,7 +89,7 @@ const LeadsFilter = () => {
               Delete
             </Button>
           </Flex>
-          <NewLeadsMenu onCsvUpload={open} onManualInput={openManual} />
+          <NewLeadsMenu onCsvUpload={openImport} onManualInput={openManual} />
         </Flex>
       </Flex>
 

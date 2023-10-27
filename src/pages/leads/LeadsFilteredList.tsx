@@ -31,9 +31,14 @@ import {
   setRequestAction,
 } from "../../store/dialer/slice";
 import { dialStateInstance } from "../dialer/DialState.class";
+import {
+  setRequestForImportLeadsModal,
+  setRequestForManualCreateLeadsModal,
+} from "../../store/leads/slice";
 
 function LeadsFilteredList() {
   const { data: leadStatuses } = useGetLeadStatusesQuery();
+  const { data: leads } = useGetLeadsQuery();
 
   const dispatch = useAppDispatch();
   const gridRef = useRef<AgGridReact<Lead>>(null);
@@ -151,6 +156,13 @@ function LeadsFilteredList() {
     dispatch(setRequestAction("stopCall"));
   };
 
+  const openImportModal = () => {
+    dispatch(setRequestForImportLeadsModal(true));
+  };
+  const openManualModal = () => {
+    dispatch(setRequestForManualCreateLeadsModal(true));
+  };
+
   const selectItems: SelectItem[] = leadStatuses
     ? leadStatuses.map((leadStatus) => ({
         value: leadStatus.value,
@@ -225,24 +237,44 @@ function LeadsFilteredList() {
           </HoverCard.Dropdown>
         </HoverCard>
       </Flex>
-      <Box
-        className="ag-theme-alpine lead-grid-container"
-        h={500}
-        my="md"
-        style={{
-          width: "100%",
-        }}
-      >
-        <AgGridReact<Lead>
-          ref={gridRef}
-          rowData={filteredLeads}
-          columnDefs={leadColDefs}
-          animateRows={true}
-          rowSelection="multiple"
-          onCellClicked={onCellClicked}
-          quickFilterText={keyword}
-        />
-      </Box>
+
+      {leads?.length === 0 ? (
+        <Flex justify="center" align="center" w="100%" h={500}>
+          <Box ta="center">
+            <Text size="sm" mb="lg">
+              Looks like you're new here. Add some leads to get started!
+            </Text>
+            <Button variant="gradient" onClick={openImportModal}>
+              Upload a file
+            </Button>
+            <Text mt="sm">or</Text>
+            <Button variant="subtle" onClick={openManualModal}>
+              Create a new lead manually
+            </Button>
+          </Box>
+        </Flex>
+      ) : (
+        <Box
+          className="ag-theme-alpine lead-grid-container"
+          h={500}
+          my="md"
+          style={{
+            width: "100%",
+          }}
+        >
+          <AgGridReact<Lead>
+            ref={gridRef}
+            rowData={filteredLeads}
+            columnDefs={leadColDefs}
+            animateRows={true}
+            rowSelection="multiple"
+            onCellClicked={onCellClicked}
+            quickFilterText={keyword}
+            overlayNoRowsTemplate=""
+          />
+        </Box>
+      )}
+
       <LeadsFilterDrawer
         opened={filterDrawerOpen}
         onClose={() => setFilterDrawerOpen(false)}

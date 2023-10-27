@@ -28,6 +28,8 @@ const buildInitialState = (): TLeadsState => ({
   filteredRows: [],
   appliedFilters: [],
   selectedRows: [],
+  shouldImportLeadsModalOpen: false,
+  shouldManualCreateLeadModalOpen: false,
   //
   options: buildOptions(),
 });
@@ -57,6 +59,12 @@ export const LeadsSlice = createSlice({
         JSON.stringify(action.payload)
       );
     },
+    setRequestForImportLeadsModal: (state, action) => {
+      state.shouldImportLeadsModalOpen = action.payload;
+    },
+    setRequestForManualCreateLeadsModal: (state, action) => {
+      state.shouldManualCreateLeadModalOpen = action.payload;
+    },
   },
 });
 
@@ -65,6 +73,8 @@ export const {
   setAppliedFilters,
   setFilteredRows,
   setSelectedRows,
+  setRequestForImportLeadsModal,
+  setRequestForManualCreateLeadsModal,
   setOptions,
 } = LeadsSlice.actions;
 

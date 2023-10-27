@@ -21,9 +21,8 @@ import phoneFormatter from "../../utils/phone-formatter";
 
 const BetaDialer = () => {
   const dispatch = useAppDispatch();
-  const { call, dialQueue, dialQueueIndex } = useAppSelector(
-    (state) => state.dialer
-  );
+  const { alphaDialerVisible, call, dialQueue, dialQueueIndex } =
+    useAppSelector((state) => state.dialer);
 
   const openDialerOptions = () => {
     dispatch(setShowOptions(true));
@@ -50,7 +49,11 @@ const BetaDialer = () => {
     <Card
       withBorder
       shadow="md"
-      style={{ overflow: "visible", display: "flex", alignItems: "center" }}
+      style={{
+        overflow: "visible",
+        display: call && alphaDialerVisible ? "flex" : "none",
+        alignItems: "center",
+      }}
       pl="1rem"
       pr="2.5rem"
       py={0}
@@ -66,7 +69,11 @@ const BetaDialer = () => {
             py={0}
             w={150}
             mx={4}
-            style={{ overflow: "visible" }}
+            style={{
+              overflow: "visible",
+              display: "flex",
+              alignItems: "center",
+            }}
           >
             <Flex align="center" justify="flex-start">
               <ThemeIcon variant="outline" size="sm" mr={8}>
