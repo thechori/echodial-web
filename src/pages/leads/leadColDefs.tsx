@@ -1,34 +1,20 @@
 import { ColDef } from "ag-grid-community";
-import { PiPhoneFill } from "react-icons/pi";
 import { format } from "date-fns";
 //
 import { Lead } from "../../types";
 import { capitalizeFirstLetter } from "../../utils/string-formatters";
 import phoneFormatter from "../../utils/phone-formatter";
-import { Button } from "@mantine/core";
 
 export const leadColDefs: ColDef<Lead>[] = [
   {
-    width: 10,
+    width: 50,
     sortable: true,
     headerCheckboxSelection: true,
     checkboxSelection: true,
     showDisabledCheckboxes: true,
     headerCheckboxSelectionFilteredOnly: true,
   },
-  {
-    colId: "actions",
-    width: 100,
-    cellRenderer: () => {
-      return (
-        <div>
-          <Button variant="outline" size="xs" leftIcon={<PiPhoneFill />}>
-            Call
-          </Button>
-        </div>
-      );
-    },
-  },
+
   {
     field: "status",
     headerName: "Status",
