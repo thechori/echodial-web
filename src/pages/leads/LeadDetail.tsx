@@ -213,6 +213,7 @@ export const LeadDetail = () => {
           <Group>
             <DateInput
               label="Appointment at"
+              clearable
               {...form.getInputProps("appointment_at")}
             />
             <TextInput
@@ -255,7 +256,11 @@ export const LeadDetail = () => {
               label="Sale commission"
               {...form.getInputProps("sale_commission")}
             />
-            <DateInput label="Sale at" {...form.getInputProps("sale_at")} />
+            <DateInput
+              label="Sale at"
+              clearable
+              {...form.getInputProps("sale_at")}
+            />
             <Textarea
               minRows={2}
               w="100%"
