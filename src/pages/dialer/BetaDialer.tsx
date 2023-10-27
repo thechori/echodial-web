@@ -26,10 +26,6 @@ const BetaDialer = () => {
     dispatch(setShowOptions(true));
   };
 
-  const openContactCard = () => {
-    console.log("opening contact card...");
-  };
-
   const renderFullName = () => {
     if (!dialQueue || dialQueueIndex === null) {
       return "";
@@ -61,7 +57,10 @@ const BetaDialer = () => {
             mx={4}
             style={{ overflow: "visible" }}
           >
-            <Flex align="center" justify="space-between">
+            <Flex align="center" justify="flex-start">
+              <ThemeIcon variant="outline" size="sm" mr={8}>
+                <MdPerson />
+              </ThemeIcon>
               <Box>
                 <Text lh="1rem" size="xs">
                   {renderFullName()}
@@ -70,15 +69,6 @@ const BetaDialer = () => {
                   00:00:00
                 </Text>
               </Box>
-              <Tooltip label="Open contact card">
-                <ThemeIcon
-                  variant="outline"
-                  size="sm"
-                  onClick={openContactCard}
-                >
-                  <MdPerson />
-                </ThemeIcon>
-              </Tooltip>
             </Flex>
           </Card>
           <Tooltip label="Open dialer options">

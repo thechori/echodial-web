@@ -143,8 +143,6 @@ export const DialerSlice = createSlice({
     setDialQueueIndex: (state, action) => {
       state.dialQueueIndex = action.payload;
 
-      console.log("setDialQueueIndex: ", action.payload);
-
       // Persist in local storage
       localStorage.setItem(
         LOCAL_STORAGE_KEY__DIAL_QUEUE_INDEX,
@@ -159,6 +157,18 @@ export const DialerSlice = createSlice({
         LOCAL_STORAGE_KEY__DIAL_QUEUE,
         JSON.stringify(action.payload)
       );
+    },
+    updateLeadById: (
+      state,
+      action: PayloadAction<{ id: number; leadUpdated: Lead }>
+    ) => {
+      const { dialQueue } = state;
+      const { id, leadUpdated } = action.payload;
+      const indexFound = dialQueue.findIndex((lead) => lead.id === id);
+      if (indexFound === -1) {
+        return console.log("Error finding lead in queue");
+      }
+      dialQueue[indexFound] = leadUpdated;
     },
     setIsMuted: (state, action) => {
       state.muted = action.payload;
@@ -265,6 +275,7 @@ export const {
   moveLeadDownInQueue,
   deleteLeadFromQueue,
   setWasCallConnected,
+  updateLeadById,
 } = DialerSlice.actions;
 
 export const selectIsCallActive = (state: RootState) => state.dialer.call;

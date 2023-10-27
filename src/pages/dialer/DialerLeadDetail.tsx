@@ -24,10 +24,10 @@ import { LeadDetailStyled } from "../leads/LeadDetail.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
 import { useUpdateLeadMutation } from "../../services/lead";
-import { setSelectedRows } from "../../store/leads/slice";
 import { extractErrorMessage } from "../../utils/error";
 import { Lead } from "../../types";
 import phoneFormatter from "../../utils/phone-formatter";
+import { updateLeadById } from "../../store/dialer/slice";
 
 export const DialerLeadDetail = () => {
   const dispatch = useAppDispatch();
@@ -113,7 +113,16 @@ export const DialerLeadDetail = () => {
     try {
       await updateLead(form.values).unwrap();
       notifications.show({ message: "Successfully updated lead" });
-      dispatch(setSelectedRows([]));
+
+      if (form.values.id === undefined) {
+        throw "No lead ID found";
+      }
+
+      // Update local lead in queue
+      dispatch(
+        // @ts-ignore - we checked for undefined `id` above
+        updateLeadById({ id: form.values.id, leadUpdated: form.values })
+      );
     } catch (e) {
       setError(extractErrorMessage(e));
     }
