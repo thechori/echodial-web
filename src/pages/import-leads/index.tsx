@@ -1,6 +1,7 @@
-import { Stepper, Button } from "@mantine/core";
+import { Stepper, Button, Flex, Paper } from "@mantine/core";
 import { useState } from "react";
 import styled from "@emotion/styled";
+import MappingTable from "./MappingTable";
 
 const ImportLeadsStyled = styled.div`
   min-height: calc(100vh);
@@ -18,7 +19,7 @@ function ImportLeads() {
           Contents
         </Stepper.Step>
         <Stepper.Step label="Second step" description="Map columns">
-          Table for mapping properties
+          <MappingTable />
         </Stepper.Step>
         <Stepper.Step label="Final step" description="Confirmation">
           Step 3 content: Get full access
@@ -27,10 +28,24 @@ function ImportLeads() {
           Completed, click back button to get to previous step
         </Stepper.Completed>
       </Stepper>
-      <Button variant="default" onClick={prevStep}>
-        Back
-      </Button>
-      <Button onClick={nextStep}>Next step</Button>
+
+      <Paper
+        style={{
+          position: "fixed",
+          bottom: "0",
+          width: "100%",
+        }}
+        withBorder
+        radius="xs"
+        bg="gray.3"
+      >
+        <Flex justify="space-between" align="center" py="lg">
+          <Button variant="default" onClick={prevStep}>
+            Back
+          </Button>
+          <Button onClick={nextStep}>Next</Button>
+        </Flex>
+      </Paper>
     </ImportLeadsStyled>
   );
 }
