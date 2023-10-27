@@ -63,6 +63,10 @@ export const LeadDetail = () => {
   useEffect(() => {
     form.setValues({
       ...selectedLead,
+      // Note: We must manually set the value to "" in order to avoid having stale values linger -- very confusing and misleading to users
+      notes: selectedLead?.notes || "",
+      not_interested_reason: selectedLead?.not_interested_reason || "",
+      sale_notes: selectedLead?.sale_notes || "",
       appointment_at:
         selectedLead && selectedLead.appointment_at
           ? new Date(selectedLead.appointment_at)

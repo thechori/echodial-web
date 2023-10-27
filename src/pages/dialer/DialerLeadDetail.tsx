@@ -74,6 +74,10 @@ export const DialerLeadDetail = () => {
   useEffect(() => {
     form.setValues({
       ...activeLead,
+      // Note: We must manually set the value to "" in order to avoid having stale values linger -- very confusing and misleading to users
+      notes: activeLead?.notes || "",
+      not_interested_reason: activeLead?.not_interested_reason || "",
+      sale_notes: activeLead?.sale_notes || "",
       appointment_at:
         activeLead && activeLead.appointment_at
           ? new Date(activeLead.appointment_at)
