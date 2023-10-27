@@ -35,17 +35,12 @@ const LeadsFilter = () => {
 
   // Allow opening of modals from other components (e.g., filtered list)
   useEffect(() => {
-    console.log("shouldImportLeadsModalOpen", shouldImportLeadsModalOpen);
     if (shouldImportLeadsModalOpen) {
       openImport();
       dispatch(setRequestForImportLeadsModal(false));
     }
   }, [shouldImportLeadsModalOpen]);
   useEffect(() => {
-    console.log(
-      "shouldManualCreateLeadModalOpen",
-      shouldManualCreateLeadModalOpen
-    );
     if (shouldManualCreateLeadModalOpen) {
       openManual();
       dispatch(setRequestForManualCreateLeadsModal(false));

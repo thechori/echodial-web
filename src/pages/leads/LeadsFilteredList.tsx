@@ -270,7 +270,6 @@ function LeadsFilteredList() {
             rowSelection="multiple"
             onCellClicked={onCellClicked}
             quickFilterText={keyword}
-            overlayNoRowsTemplate=""
           />
         </Box>
       )}
