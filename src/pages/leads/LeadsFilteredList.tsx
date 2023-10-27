@@ -23,7 +23,7 @@ import { useGetLeadsQuery } from "../../services/lead";
 import LeadsFilterDrawer from "./LeadsFilterDrawer";
 import { leadColDefs } from "./leadColDefs";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
-import { CellClickedEvent } from "ag-grid-community";
+import { CellClickedEvent, SelectionChangedEvent } from "ag-grid-community";
 import { setSelectedLead } from "../../store/lead-detail/slice";
 import {
   setAlphaDialerVisible,
@@ -34,6 +34,7 @@ import { dialStateInstance } from "../dialer/DialState.class";
 import {
   setRequestForImportLeadsModal,
   setRequestForManualCreateLeadsModal,
+  setSelectedRows,
 } from "../../store/leads/slice";
 
 function LeadsFilteredList() {
@@ -132,6 +133,10 @@ function LeadsFilteredList() {
   const onCellClicked = (event: CellClickedEvent<Lead>) => {
     const { data } = event;
     dispatch(setSelectedLead(data));
+  };
+
+  const onSelectionChanged = (event: SelectionChangedEvent) => {
+    dispatch(setSelectedRows(event.api.getSelectedRows()));
   };
 
   const startDialer = () => {
@@ -270,6 +275,7 @@ function LeadsFilteredList() {
             rowSelection="multiple"
             onCellClicked={onCellClicked}
             quickFilterText={keyword}
+            onSelectionChanged={onSelectionChanged}
           />
         </Box>
       )}
