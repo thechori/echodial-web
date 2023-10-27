@@ -56,7 +56,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <Provider store={store}>
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <StyleProvider>
-          <Notifications />
+          <Notifications position="bottom-left" />
           <BrowserRouter>
             <Routes>
               <Route

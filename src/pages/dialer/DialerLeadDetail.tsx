@@ -24,10 +24,10 @@ import { LeadDetailStyled } from "../leads/LeadDetail.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
 import { useUpdateLeadMutation } from "../../services/lead";
-import { setSelectedRows } from "../../store/leads/slice";
 import { extractErrorMessage } from "../../utils/error";
 import { Lead } from "../../types";
 import phoneFormatter from "../../utils/phone-formatter";
+import { updateLeadById } from "../../store/dialer/slice";
 
 export const DialerLeadDetail = () => {
   const dispatch = useAppDispatch();
@@ -67,6 +67,8 @@ export const DialerLeadDetail = () => {
     if (dialQueue.length && dialQueueIndex !== null) {
       const lead = dialQueue[dialQueueIndex];
       setActiveLead(lead);
+    } else {
+      setActiveLead(null);
     }
   }, [dialQueue, dialQueueIndex]);
 
@@ -74,6 +76,10 @@ export const DialerLeadDetail = () => {
   useEffect(() => {
     form.setValues({
       ...activeLead,
+      // Note: We must manually set the value to "" in order to avoid having stale values linger -- very confusing and misleading to users
+      notes: activeLead?.notes || "",
+      not_interested_reason: activeLead?.not_interested_reason || "",
+      sale_notes: activeLead?.sale_notes || "",
       appointment_at:
         activeLead && activeLead.appointment_at
           ? new Date(activeLead.appointment_at)
@@ -113,7 +119,16 @@ export const DialerLeadDetail = () => {
     try {
       await updateLead(form.values).unwrap();
       notifications.show({ message: "Successfully updated lead" });
-      dispatch(setSelectedRows([]));
+
+      if (form.values.id === undefined) {
+        throw "No lead ID found";
+      }
+
+      // Update local lead in queue
+      dispatch(
+        // @ts-ignore - we checked for undefined `id` above
+        updateLeadById({ id: form.values.id, leadUpdated: form.values })
+      );
     } catch (e) {
       setError(extractErrorMessage(e));
     }
@@ -201,6 +216,7 @@ export const DialerLeadDetail = () => {
           <Group>
             <DateInput
               label="Appointment at"
+              clearable
               {...form.getInputProps("appointment_at")}
             />
             <TextInput
@@ -243,7 +259,11 @@ export const DialerLeadDetail = () => {
               label="Sale commission"
               {...form.getInputProps("sale_commission")}
             />
-            <DateInput label="Sale at" {...form.getInputProps("sale_at")} />
+            <DateInput
+              label="Sale at"
+              clearable
+              {...form.getInputProps("sale_at")}
+            />
             <Textarea
               minRows={2}
               w="100%"

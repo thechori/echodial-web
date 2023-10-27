@@ -130,6 +130,7 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
           <DateInput
             label="Appointment at"
             pb="xs"
+            clearable
             {...form.getInputProps("appointment_at")}
           />
         </Box>

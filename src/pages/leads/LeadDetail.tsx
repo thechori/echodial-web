@@ -63,6 +63,10 @@ export const LeadDetail = () => {
   useEffect(() => {
     form.setValues({
       ...selectedLead,
+      // Note: We must manually set the value to "" in order to avoid having stale values linger -- very confusing and misleading to users
+      notes: selectedLead?.notes || "",
+      not_interested_reason: selectedLead?.not_interested_reason || "",
+      sale_notes: selectedLead?.sale_notes || "",
       appointment_at:
         selectedLead && selectedLead.appointment_at
           ? new Date(selectedLead.appointment_at)
@@ -213,6 +217,7 @@ export const LeadDetail = () => {
           <Group>
             <DateInput
               label="Appointment at"
+              clearable
               {...form.getInputProps("appointment_at")}
             />
             <TextInput
@@ -255,7 +260,11 @@ export const LeadDetail = () => {
               label="Sale commission"
               {...form.getInputProps("sale_commission")}
             />
-            <DateInput label="Sale at" {...form.getInputProps("sale_at")} />
+            <DateInput
+              label="Sale at"
+              clearable
+              {...form.getInputProps("sale_at")}
+            />
             <Textarea
               minRows={2}
               w="100%"

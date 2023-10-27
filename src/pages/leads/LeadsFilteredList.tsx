@@ -23,7 +23,7 @@ import { useGetLeadsQuery } from "../../services/lead";
 import LeadsFilterDrawer from "./LeadsFilterDrawer";
 import { leadColDefs } from "./leadColDefs";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
-import { CellClickedEvent } from "ag-grid-community";
+import { CellClickedEvent, SelectionChangedEvent } from "ag-grid-community";
 import { setSelectedLead } from "../../store/lead-detail/slice";
 import {
   setAlphaDialerVisible,
@@ -31,9 +31,16 @@ import {
   setRequestAction,
 } from "../../store/dialer/slice";
 import { dialStateInstance } from "../dialer/DialState.class";
+import {
+  setRequestForImportLeadsModal,
+  setRequestForManualCreateLeadsModal,
+  setSelectedRows,
+} from "../../store/leads/slice";
+import { useWindowEvent } from "@mantine/hooks";
 
 function LeadsFilteredList() {
   const { data: leadStatuses } = useGetLeadStatusesQuery();
+  const { data: leads } = useGetLeadsQuery();
 
   const dispatch = useAppDispatch();
   const gridRef = useRef<AgGridReact<Lead>>(null);
@@ -42,6 +49,7 @@ function LeadsFilteredList() {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
   const { appliedFilters } = useAppSelector((state) => state.leads);
+  const { selectedLead } = useAppSelector((state) => state.leadDetail);
   const { call } = useAppSelector((state) => state.dialer);
 
   // Filter based on status
@@ -129,6 +137,10 @@ function LeadsFilteredList() {
     dispatch(setSelectedLead(data));
   };
 
+  const onSelectionChanged = (event: SelectionChangedEvent) => {
+    dispatch(setSelectedRows(event.api.getSelectedRows()));
+  };
+
   const startDialer = () => {
     // Load up leads into queue from filtered
     // Note: Extremely hacky way to get the sorted and filtered list of leads from the AG Grid table, but it works.
@@ -151,12 +163,28 @@ function LeadsFilteredList() {
     dispatch(setRequestAction("stopCall"));
   };
 
+  const openImportModal = () => {
+    dispatch(setRequestForImportLeadsModal(true));
+  };
+  const openManualModal = () => {
+    dispatch(setRequestForManualCreateLeadsModal(true));
+  };
+
   const selectItems: SelectItem[] = leadStatuses
     ? leadStatuses.map((leadStatus) => ({
         value: leadStatus.value,
         label: leadStatus.label,
       }))
     : [];
+
+  // Deselect rows when ESC key is hit
+  useWindowEvent("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (!selectedLead) {
+        gridRef.current?.api.deselectAll();
+      }
+    }
+  });
 
   return (
     <Card
@@ -203,6 +231,7 @@ function LeadsFilteredList() {
                 mx={4}
                 leftIcon={<PiPhone size={16} />}
                 onClick={startDialer}
+                variant="gradient"
               >
                 Start dialer
               </Button>
@@ -225,24 +254,44 @@ function LeadsFilteredList() {
           </HoverCard.Dropdown>
         </HoverCard>
       </Flex>
-      <Box
-        className="ag-theme-alpine lead-grid-container"
-        h={500}
-        my="md"
-        style={{
-          width: "100%",
-        }}
-      >
-        <AgGridReact<Lead>
-          ref={gridRef}
-          rowData={filteredLeads}
-          columnDefs={leadColDefs}
-          animateRows={true}
-          rowSelection="multiple"
-          onCellClicked={onCellClicked}
-          quickFilterText={keyword}
-        />
-      </Box>
+
+      {leads?.length === 0 ? (
+        <Flex justify="center" align="center" w="100%" h={500}>
+          <Box ta="center">
+            <Text size="sm" mb="lg">
+              Looks like you're new here. Add some leads to get started!
+            </Text>
+            <Button variant="gradient" onClick={openImportModal}>
+              Upload a file
+            </Button>
+            <Text mt="sm">or</Text>
+            <Button variant="subtle" onClick={openManualModal}>
+              Create a new lead manually
+            </Button>
+          </Box>
+        </Flex>
+      ) : (
+        <Box
+          className="ag-theme-alpine lead-grid-container"
+          h={500}
+          my="md"
+          style={{
+            width: "100%",
+          }}
+        >
+          <AgGridReact<Lead>
+            ref={gridRef}
+            rowData={filteredLeads}
+            columnDefs={leadColDefs}
+            animateRows={true}
+            rowSelection="multiple"
+            onCellClicked={onCellClicked}
+            quickFilterText={keyword}
+            onSelectionChanged={onSelectionChanged}
+          />
+        </Box>
+      )}
+
       <LeadsFilterDrawer
         opened={filterDrawerOpen}
         onClose={() => setFilterDrawerOpen(false)}
