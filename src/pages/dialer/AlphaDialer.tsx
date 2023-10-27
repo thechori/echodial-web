@@ -34,10 +34,10 @@ import {
   IconAdjustments,
   IconPlayerPlay,
   IconPlayerSkipForward,
-  IconPlayerStop,
 } from "@tabler/icons-react";
 import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
+import { PiPhoneDisconnect } from "react-icons/pi";
 
 function AlphaDialer() {
   const dispatch = useAppDispatch();
@@ -216,6 +216,7 @@ function AlphaDialer() {
     c.on("accept", async (call: Call) => {
       dialStateInstance.wasCallConnected = true;
       dispatch(setWasCallConnected(dialStateInstance.wasCallConnected));
+      notifications.show({ message: "Call accepted" });
 
       try {
         if (dialStateInstance.currentCallId === null) {
@@ -239,6 +240,7 @@ function AlphaDialer() {
     // - Call ends (user hangs up, lead hangs up, voicemail ends)
     c.on("disconnect", async () => {
       dispatch(setRequestAction("determineNextAction"));
+      notifications.show({ message: "Call ended" });
     });
 
     // Occurs when:
@@ -333,10 +335,12 @@ function AlphaDialer() {
     // Check for existing index before proceeding
     if (dialStateInstance.dialQueueIndex === dialQueue.length - 1) {
       notifications.show({
-        message: "No more leads in the queue. Stopping the dialer",
+        message: "You've made it through all of your leads! Great job 🎉",
       });
-      await stopDialing();
-      await resetDialer();
+
+      requestStopDialer();
+      dialStateInstance.dialQueueIndex = null;
+      dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
       return;
     }
 
@@ -595,7 +599,7 @@ function AlphaDialer() {
           <CallerIdSelect />
 
           <div className="control-buttons">
-            <Tooltip label="Open dialer settings">
+            <Tooltip label="Open dialer settings" openDelay={500}>
               <Button
                 variant="outline"
                 aria-label="Settings"
@@ -607,20 +611,10 @@ function AlphaDialer() {
                 Settings
               </Button>
             </Tooltip>
-            {call ? (
-              <Tooltip label="Stop dialer">
-                <Button
-                  leftIcon={<IconPlayerStop />}
-                  onClick={requestStopDialer}
-                  color="red"
-                >
-                  Stop dialer
-                </Button>
-              </Tooltip>
-            ) : dialStateInstance.dialQueueIndex === null ? (
+            {dialStateInstance.dialQueueIndex === null ? (
               <Tooltip
                 label="Begin making calls to the leads in the Call queue"
-                openDelay={1000}
+                openDelay={500}
               >
                 <Button
                   mx={4}
@@ -634,18 +628,30 @@ function AlphaDialer() {
             ) : (
               <Tooltip
                 label="Continue to the next lead in the Call queue"
-                openDelay={1000}
+                openDelay={500}
               >
                 <Button
                   mx={4}
                   variant="gradient"
                   onClick={requestContinue}
                   leftIcon={<IconPlayerPlay />}
+                  disabled={!!call}
                 >
                   Continue
                 </Button>
               </Tooltip>
             )}
+            <Tooltip label="Hang up" openDelay={500}>
+              <Button
+                mx={4}
+                color="red"
+                onClick={requestStopDialer}
+                disabled={!call}
+                leftIcon={<PiPhoneDisconnect fontSize="1.5rem" />}
+              >
+                Hang up
+              </Button>
+            </Tooltip>
 
             <Tooltip label="Skip to next Lead">
               <Button

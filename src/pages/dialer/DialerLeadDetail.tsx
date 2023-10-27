@@ -67,6 +67,8 @@ export const DialerLeadDetail = () => {
     if (dialQueue.length && dialQueueIndex !== null) {
       const lead = dialQueue[dialQueueIndex];
       setActiveLead(lead);
+    } else {
+      setActiveLead(null);
     }
   }, [dialQueue, dialQueueIndex]);
 

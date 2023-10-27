@@ -17,7 +17,7 @@ const CallButtonSimple = ({
   if (!active) {
     return (
       <CallButtonSimpleStyled>
-        <Tooltip label="Call lead" openDelay={500}>
+        <Tooltip label="End call" openDelay={500}>
           <div>
             <PiPhoneDisconnect
               color="red"
@@ -32,7 +32,7 @@ const CallButtonSimple = ({
 
   return (
     <CallButtonSimpleStyled>
-      <Tooltip label="Call lead" openDelay={500}>
+      <Tooltip label="Call" openDelay={500}>
         <div>
           <PiPhoneFill
             color="green"

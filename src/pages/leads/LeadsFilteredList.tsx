@@ -36,6 +36,7 @@ import {
   setRequestForManualCreateLeadsModal,
   setSelectedRows,
 } from "../../store/leads/slice";
+import { useWindowEvent } from "@mantine/hooks";
 
 function LeadsFilteredList() {
   const { data: leadStatuses } = useGetLeadStatusesQuery();
@@ -48,6 +49,7 @@ function LeadsFilteredList() {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
   const { appliedFilters } = useAppSelector((state) => state.leads);
+  const { selectedLead } = useAppSelector((state) => state.leadDetail);
   const { call } = useAppSelector((state) => state.dialer);
 
   // Filter based on status
@@ -175,6 +177,15 @@ function LeadsFilteredList() {
       }))
     : [];
 
+  // Deselect rows when ESC key is hit
+  useWindowEvent("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (!selectedLead) {
+        gridRef.current?.api.deselectAll();
+      }
+    }
+  });
+
   return (
     <Card
       withBorder
@@ -220,6 +231,7 @@ function LeadsFilteredList() {
                 mx={4}
                 leftIcon={<PiPhone size={16} />}
                 onClick={startDialer}
+                variant="gradient"
               >
                 Start dialer
               </Button>

@@ -1,32 +1,31 @@
 import {
-  ActionIcon,
+  // ActionIcon,
   Box,
   Card,
   Flex,
   Text,
   ThemeIcon,
-  Tooltip,
+  // Tooltip,
 } from "@mantine/core";
-import {
-  IconAdjustments,
-  IconPlayerPause,
-  IconPlayerSkipForward,
-  IconPlayerStopFilled,
-} from "@tabler/icons-react";
+// import {
+//   IconAdjustments,
+//   IconPlayerSkipForward,
+//   IconPlayerStopFilled,
+// } from "@tabler/icons-react";
 import { MdPerson } from "react-icons/md";
 //
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setShowOptions } from "../../store/dialer/slice";
+import { useAppSelector } from "../../store/hooks";
+// import { setShowOptions } from "../../store/dialer/slice";
 import phoneFormatter from "../../utils/phone-formatter";
 
 const BetaDialer = () => {
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
   const { alphaDialerVisible, call, dialQueue, dialQueueIndex } =
     useAppSelector((state) => state.dialer);
 
-  const openDialerOptions = () => {
-    dispatch(setShowOptions(true));
-  };
+  // const openDialerOptions = () => {
+  //   dispatch(setShowOptions(true));
+  // };
 
   const renderFullName = () => {
     if (!dialQueue || dialQueueIndex === null) {
@@ -51,8 +50,10 @@ const BetaDialer = () => {
       shadow="md"
       style={{
         overflow: "visible",
-        display: call && alphaDialerVisible ? "flex" : "none",
+        display: dialQueue.length ? "flex" : "none",
         alignItems: "center",
+        opacity: alphaDialerVisible ? 0.3 : 1,
+        pointerEvents: alphaDialerVisible ? "none" : "all",
       }}
       pl="1rem"
       pr="2.5rem"
@@ -71,7 +72,7 @@ const BetaDialer = () => {
             mx={4}
             style={{
               overflow: "visible",
-              display: "flex",
+              display: dialQueueIndex === null ? "none" : "flex",
               alignItems: "center",
             }}
           >
@@ -89,7 +90,7 @@ const BetaDialer = () => {
               </Box>
             </Flex>
           </Card>
-          <Tooltip label="Open dialer options">
+          {/* <Tooltip label="Open dialer options">
             <ActionIcon
               variant="outline"
               size="lg"
@@ -112,17 +113,6 @@ const BetaDialer = () => {
               <IconPlayerStopFilled stroke={1.5} />
             </ActionIcon>
           </Tooltip>
-          <Tooltip label="Pause dialer">
-            <ActionIcon
-              variant="outline"
-              size="lg"
-              aria-label="pause dialer"
-              color="yellow"
-              mx={4}
-            >
-              <IconPlayerPause stroke={1.5} />
-            </ActionIcon>
-          </Tooltip>
           <Tooltip label="Skip to next lead">
             <ActionIcon
               variant="outline"
@@ -133,7 +123,7 @@ const BetaDialer = () => {
             >
               <IconPlayerSkipForward stroke={1.5} />
             </ActionIcon>
-          </Tooltip>
+          </Tooltip> */}
         </Flex>
       </Flex>
     </Card>

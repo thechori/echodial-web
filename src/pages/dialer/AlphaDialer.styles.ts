@@ -64,9 +64,9 @@ const AlphaDialerStyled = styled.div<{ $visible: boolean }>`
 
       padding: 0.25rem;
 
-      svg {
+      /* svg {
         font-size: 2.5rem;
-      }
+      } */
 
       & > div {
         padding: 0 0.5rem;
