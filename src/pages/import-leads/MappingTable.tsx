@@ -8,7 +8,116 @@ import {
   ThemeIcon,
   Container,
 } from "@mantine/core";
+import { useState } from "react";
+
 function MappingTable() {
+  const dummyHeaders = [
+    {
+      columnHeader: "First_Name",
+      preview: "Hans",
+      mapped: false,
+      property: "empty",
+    },
+    {
+      columnHeader: "Last_Name",
+      preview: "Zhang",
+      mapped: false,
+      property: "empty",
+    },
+    {
+      columnHeader: "Address",
+      preview: "USA",
+      mapped: false,
+      property: "empty",
+    },
+  ];
+  type PropertyObject = {
+    value: string;
+    label: string;
+    disabled: boolean;
+  };
+
+  const dummyProperties: Record<string, PropertyObject> = {
+    email: { value: "email", label: "Email", disabled: false },
+    first_name: { value: "first_name", label: "First_Name", disabled: false },
+    last_name: { value: "last_name", label: "Last_Name", disabled: false },
+    address: { value: "address", label: "Address", disabled: false },
+    number: { value: "number", label: "Number", disabled: false },
+  };
+
+  const [headers, setHeaders] = useState(dummyHeaders);
+  const [properties, setProperties] = useState(dummyProperties);
+
+  //newProperty is the property we are mapping the header at headerIndex to
+  function handleChange(newProperty: any, headerIndex: any) {
+    //this if condition checks if the header is already mapped, if it is we have to make the property that it was mapped to available again
+    if (headers[headerIndex].mapped) {
+      const resetProperty = headers[headerIndex].property;
+      setProperties((properties) => ({
+        ...properties,
+        [resetProperty]: { ...properties[resetProperty], disabled: false },
+      }));
+    }
+
+    //we disable this property so other headers can't be mapped to it
+    setProperties((properties) => ({
+      ...properties,
+      [newProperty]: { ...properties[newProperty], disabled: true },
+    }));
+
+    //map the header to this property
+    setHeaders((headers) => {
+      const updatedHeaders = [...headers];
+      updatedHeaders[headerIndex].mapped = true;
+      updatedHeaders[headerIndex].property = newProperty;
+      return updatedHeaders;
+    });
+  }
+
+  function renderTable() {
+    let renderedData = [];
+    for (let i = 0; i < headers.length; i++) {
+      renderedData.push(
+        <tr key={i}>
+          <td>{headers[i].columnHeader}</td>
+          <td>{headers[i].preview}</td>
+          <td>
+            {headers[i].mapped ? (
+              <ThemeIcon radius="lg" color="green">
+                <CheckIcon style={{ width: "70%", height: "70%" }} />
+              </ThemeIcon>
+            ) : (
+              <ThemeIcon radius="lg" color="gray">
+                <CheckIcon style={{ width: "70%", height: "70%" }} />
+              </ThemeIcon>
+            )}
+          </td>
+          <td>
+            {/* if the header isn't mapped, the placeholder will be set to "select", otherwise we set it to the 
+            property it's mapped to */}
+            <Flex justify="flex-start">
+              {headers[i].property === "empty" ? (
+                <Select
+                  placeholder="Select"
+                  data={Object.values(properties)}
+                  onChange={(newProperty) => handleChange(newProperty, i)}
+                />
+              ) : (
+                <Select
+                  placeholder={headers[i].property}
+                  data={Object.values(properties)}
+                  onChange={(newProperty) => handleChange(newProperty, i)}
+                />
+              )}
+            </Flex>
+          </td>
+        </tr>
+      );
+    }
+    return renderedData;
+  }
+  const mapTableData = renderTable();
+
   return (
     <>
       <Container py="md">
@@ -39,22 +148,7 @@ function MappingTable() {
             <th>Property</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>Name</td>
-            <td>Hans Zhang</td>
-            <td>
-              <ThemeIcon radius="lg" color="green">
-                <CheckIcon style={{ width: "70%", height: "70%" }} />
-              </ThemeIcon>
-            </td>
-            <td>
-              <Flex justify="flex-start">
-                <Select placeholder="Select" data={["Select"]} />
-              </Flex>
-            </td>
-          </tr>
-        </tbody>
+        <tbody>{mapTableData}</tbody>
       </Table>
     </>
   );

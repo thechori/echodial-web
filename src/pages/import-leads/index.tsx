@@ -14,7 +14,7 @@ function ImportLeads() {
     setActive((current) => (current > 0 ? current - 1 : current));
   return (
     <ImportLeadsStyled>
-      <Stepper active={active} onStepClick={setActive} py="xl" px="xl">
+      <Stepper active={active} py="xl" px="xl">
         <Stepper.Step label="First step" description="Import files">
           Contents
         </Stepper.Step>
