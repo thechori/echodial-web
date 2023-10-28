@@ -6,11 +6,12 @@ import { Text } from "@mantine/core";
 
 type TPhoneInputProps = {
   value: string;
-  onChange: any;
+  onChange?: any;
   label: string;
   error?: string;
   required?: boolean;
   disabled?: boolean;
+  readOnly?: boolean;
   flush?: boolean; // Displays no label above input (for Sign up page)
 };
 
@@ -21,6 +22,7 @@ const PhoneInput = ({
   error,
   required,
   disabled,
+  readOnly,
   flush,
   ...rest
 }: TPhoneInputProps) => {
@@ -46,6 +48,7 @@ const PhoneInput = ({
         placeholder={flush ? "Phone number *" : "(123) 456-7890"}
         rules={{ required }}
         disabled={disabled}
+        readOnly={readOnly}
         {...rest}
       />
       <Text size="xs" color="red">
