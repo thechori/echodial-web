@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Call, Device } from "@twilio/voice-sdk";
-import { Button, Card, Text, Tooltip } from "@mantine/core";
+import { Button, Card, Text, ThemeIcon, Title, Tooltip } from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
@@ -37,7 +37,7 @@ import {
 } from "@tabler/icons-react";
 import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
-import { PiPhoneDisconnect } from "react-icons/pi";
+import { PiPhone, PiPhoneDisconnect } from "react-icons/pi";
 
 function AlphaDialer() {
   const dispatch = useAppDispatch();
@@ -595,76 +595,107 @@ function AlphaDialer() {
   return (
     <AlphaDialerStyled $visible={alphaDialerVisible}>
       <Box className="controls">
-        <Flex align="center" justify="space-between" p="md">
-          <CallerIdSelect />
+        <Flex align="flex-start" justify="space-between" p="md">
+          <Card
+            withBorder
+            style={{
+              overflow: "visible",
+              display: "flex",
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Flex justify="flex-start" align="center">
+              <Flex justify="flex-start" align="center" mr={36}>
+                <ThemeIcon mr="xs" size="xl" variant="gradient">
+                  <PiPhone fontSize="1.75rem" />
+                </ThemeIcon>
+                <Title>Dialer</Title>
+              </Flex>
 
-          <div className="control-buttons">
-            <Tooltip label="Open dialer settings" openDelay={500}>
-              <Button
-                variant="outline"
-                aria-label="Settings"
-                color="primary"
-                mx={4}
-                onClick={openDialerOptions}
-                leftIcon={<IconAdjustments stroke={1.5} />}
-              >
-                Settings
-              </Button>
-            </Tooltip>
-            {dialStateInstance.dialQueueIndex === null ? (
-              <Tooltip
-                label="Begin making calls to the leads in the Call queue"
-                openDelay={500}
-              >
+              <Flex align="flex-end">
+                <Tooltip
+                  openDelay={500}
+                  position="bottom"
+                  label="The selected phone number is what we will use to call your
+                      leads. This number will appear as your caller ID on the lead's phone."
+                >
+                  <div>
+                    <CallerIdSelect pr="xs" />
+                  </div>
+                </Tooltip>
+
+                <Tooltip label="Open dialer settings" openDelay={500}>
+                  <Button
+                    variant="outline"
+                    aria-label="Settings"
+                    color="primary"
+                    onClick={openDialerOptions}
+                    leftIcon={<IconAdjustments stroke={1.5} />}
+                  >
+                    Settings
+                  </Button>
+                </Tooltip>
+              </Flex>
+            </Flex>
+
+            <div className="control-buttons">
+              {dialStateInstance.dialQueueIndex === null ? (
+                <Tooltip
+                  label="Begin making calls to the leads in the Call queue"
+                  openDelay={500}
+                >
+                  <Button
+                    mx={4}
+                    variant="gradient"
+                    onClick={requestStartDialer}
+                    leftIcon={<IconPlayerPlay />}
+                  >
+                    Start dialer
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  label="Continue to the next lead in the Call queue"
+                  openDelay={500}
+                >
+                  <Button
+                    mx={4}
+                    variant="gradient"
+                    onClick={requestContinue}
+                    leftIcon={<IconPlayerPlay />}
+                    disabled={!!call}
+                  >
+                    Continue
+                  </Button>
+                </Tooltip>
+              )}
+              <Tooltip label="Hang up" openDelay={500}>
                 <Button
                   mx={4}
-                  variant="gradient"
-                  onClick={requestStartDialer}
-                  leftIcon={<IconPlayerPlay />}
+                  color="red"
+                  onClick={requestStopDialer}
+                  disabled={!call}
+                  leftIcon={<PiPhoneDisconnect fontSize="1.5rem" />}
                 >
-                  Start dialer
+                  Hang up
                 </Button>
               </Tooltip>
-            ) : (
-              <Tooltip
-                label="Continue to the next lead in the Call queue"
-                openDelay={500}
-              >
-                <Button
-                  mx={4}
-                  variant="gradient"
-                  onClick={requestContinue}
-                  leftIcon={<IconPlayerPlay />}
-                  disabled={!!call}
-                >
-                  Continue
-                </Button>
-              </Tooltip>
-            )}
-            <Tooltip label="Hang up" openDelay={500}>
-              <Button
-                mx={4}
-                color="red"
-                onClick={requestStopDialer}
-                disabled={!call}
-                leftIcon={<PiPhoneDisconnect fontSize="1.5rem" />}
-              >
-                Hang up
-              </Button>
-            </Tooltip>
 
-            <Tooltip label="Skip to next Lead">
-              <Button
-                variant="outline"
-                disabled={!call}
-                leftIcon={<IconPlayerSkipForward />}
-                onClick={continueToNextLead}
-                mx={4}
-              >
-                Next lead
-              </Button>
-            </Tooltip>
-          </div>
+              <Tooltip label="Skip to next Lead">
+                <Button
+                  variant="outline"
+                  disabled={!call}
+                  leftIcon={<IconPlayerSkipForward />}
+                  onClick={continueToNextLead}
+                  mx={4}
+                >
+                  Next lead
+                </Button>
+              </Tooltip>
+            </div>
+          </Card>
         </Flex>
 
         <Flex className="split">
