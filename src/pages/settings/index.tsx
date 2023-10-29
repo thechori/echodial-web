@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useLocalStorage } from "@mantine/hooks";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 //
@@ -22,7 +21,6 @@ import {
   Flex,
   Grid,
   List,
-  Select,
   Text,
   TextInput,
   ThemeIcon,
@@ -34,17 +32,10 @@ import { APP_NAME } from "../../configs/constants";
 import { setShowOptions } from "../../store/dialer/slice";
 import { PhoneInput } from "../../components/phone-input";
 import { PiPhone } from "react-icons/pi";
-import { timezones } from "./timezones";
 
 function Settings() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  const [timezone, setTimezone] = useLocalStorage({
-    key: "timezone",
-    defaultValue: timezones[2].value,
-  });
-
   const email = useAppSelector(selectEmail);
   const phone = useAppSelector(selectPhone);
   const firstName = useAppSelector(selectFirstName);
@@ -146,19 +137,6 @@ function Settings() {
               <Box mt="md">
                 <Button disabled>Update</Button>
               </Box>
-            </Card>
-          </Grid.Col>
-          <Grid.Col xs={12} sm={6}>
-            <Card withBorder shadow="md" style={{ overflow: "visible" }}>
-              <Flex mb="md">
-                <Title order={3}>Preferences</Title>
-              </Flex>
-              <Select
-                label="Timezone"
-                data={timezones}
-                value={timezone}
-                onChange={(newVal) => setTimezone(newVal || "CST")}
-              />
             </Card>
           </Grid.Col>
 
