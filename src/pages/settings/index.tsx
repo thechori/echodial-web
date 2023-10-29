@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useLocalStorage } from "@mantine/hooks";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 //
@@ -21,6 +22,7 @@ import {
   Flex,
   Grid,
   List,
+  Select,
   Text,
   TextInput,
   ThemeIcon,
@@ -32,10 +34,16 @@ import { APP_NAME } from "../../configs/constants";
 import { setShowOptions } from "../../store/dialer/slice";
 import { PhoneInput } from "../../components/phone-input";
 import { PiPhone } from "react-icons/pi";
+import { timezones } from "./timezones";
 
 function Settings() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const [timezone, setTimezone] = useLocalStorage({
+    key: "timezone",
+    defaultValue: timezones[2].value,
+  });
 
   const email = useAppSelector(selectEmail);
   const phone = useAppSelector(selectPhone);
@@ -87,6 +95,11 @@ function Settings() {
                   <PhoneInput
                     label="Phone number"
                     value={phone || ""}
+                    onChange={() =>
+                      console.log(
+                        "log function included to satisfy required prop"
+                      )
+                    }
                     disabled
                     readOnly
                   />
@@ -100,6 +113,7 @@ function Settings() {
               </Flex>
             </Card>
           </Grid.Col>
+
           <Grid.Col xs={12} sm={6}>
             <Card withBorder shadow="md" mb="md">
               <Flex align="center" justify="space-between">
@@ -134,9 +148,22 @@ function Settings() {
               </Box>
             </Card>
           </Grid.Col>
+          <Grid.Col xs={12} sm={6}>
+            <Card withBorder shadow="md" style={{ overflow: "visible" }}>
+              <Flex mb="md">
+                <Title order={3}>Preferences</Title>
+              </Flex>
+              <Select
+                label="Timezone"
+                data={timezones}
+                value={timezone}
+                onChange={(newVal) => setTimezone(newVal || "CST")}
+              />
+            </Card>
+          </Grid.Col>
 
           <Grid.Col xs={12} sm={6}>
-            <Card withBorder shadow="md" my="md">
+            <Card withBorder shadow="md">
               <Title order={3}>Support</Title>
               <Box py="md">
                 <Text>
@@ -172,7 +199,7 @@ function Settings() {
           </Grid.Col>
 
           <Grid.Col xs={12} sm={6}>
-            <Card withBorder shadow="md" my="md">
+            <Card withBorder shadow="md">
               <Title order={3}>Dialer</Title>
               <Box>
                 <Text py="md">
@@ -191,7 +218,7 @@ function Settings() {
           </Grid.Col>
 
           <Grid.Col xs={12} sm={6}>
-            <Card withBorder shadow="md" my="md">
+            <Card withBorder shadow="md">
               <Title order={3}>Subscription</Title>
 
               <Box py="md">
@@ -217,7 +244,7 @@ function Settings() {
           </Grid.Col>
 
           <Grid.Col xs={12} sm={6}>
-            <Card withBorder shadow="md" color="red" my="md">
+            <Card withBorder shadow="md" color="red">
               <Title order={3}>Danger zone</Title>
               <Text py="md">
                 Not happy with {APP_NAME} any more? Feel free to cancel at any
