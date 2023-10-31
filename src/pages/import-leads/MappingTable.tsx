@@ -8,9 +8,12 @@ import {
   ThemeIcon,
   Container,
 } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setAllMapped } from "../../store/import/slice";
 
 function MappingTable() {
+  const dispatch = useDispatch();
   const dummyHeaders = [
     {
       columnHeader: "First_Name",
@@ -116,6 +119,15 @@ function MappingTable() {
     }
     return renderedData;
   }
+
+  useEffect(() => {
+    if (headers.every((header) => header.mapped === true)) {
+      dispatch(setAllMapped(true));
+    } else {
+      dispatch(setAllMapped(false));
+    }
+  }, [headers]);
+
   const mapTableData = renderTable();
 
   return (

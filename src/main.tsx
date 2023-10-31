@@ -34,7 +34,7 @@ import Billing from "./pages/billing";
 import CallHistory from "./pages/call-history";
 import ForgotPassword from "./pages/forgot-password";
 import ResetPassword from "./pages/reset-password";
-import AlphaDialerFab from "./pages/dialer/AlphaDialerFab";
+// import AlphaDialerFab from "./pages/dialer/AlphaDialerFab";
 import ImportLeads from "./pages/import-leads";
 
 Sentry.init({
@@ -60,7 +60,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <StyleProvider>
           <Notifications />
-          <AlphaDialerFab />
+          {/* <AlphaDialerFab /> */}
           <BrowserRouter>
             <Routes>
               <Route
@@ -196,7 +196,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   </ProtectedRoute>
                 }
               />
-              <Route path={routes.importLeads} element={<ImportLeads />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
