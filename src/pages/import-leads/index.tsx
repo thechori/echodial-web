@@ -1,4 +1,4 @@
-import { Stepper, Button, Flex, Paper } from "@mantine/core";
+import { Stepper, Button, Flex, Paper, Space } from "@mantine/core";
 import { useState } from "react";
 import { useAppSelector } from "../../store/hooks";
 
@@ -6,6 +6,9 @@ import styled from "@emotion/styled";
 import MappingTable from "./MappingTable";
 const ImportLeadsStyled = styled.div`
   min-height: calc(100vh);
+  z-index: 200;
+  position: relative;
+  background-color: white;
 `;
 function ImportLeads() {
   const [active, setActive] = useState(1);
@@ -17,6 +20,7 @@ function ImportLeads() {
 
   return (
     <ImportLeadsStyled>
+      <Space h="lg" />
       <Stepper active={active} py="xl" px="xl">
         <Stepper.Step label="First step" description="Import files">
           Contents
@@ -42,7 +46,7 @@ function ImportLeads() {
         radius="xs"
         bg="gray.3"
       >
-        <Flex justify="space-between" align="center" py="lg">
+        <Flex justify="space-between" align="center" py="lg" px="xl">
           <Button onClick={prevStep}>Back</Button>
 
           <Button onClick={nextStep} disabled={!showButton}>
