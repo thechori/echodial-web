@@ -1,11 +1,12 @@
-import { Stepper, Button, Flex, Paper, Space } from "@mantine/core";
+import { Stepper, Button, Flex, Paper, Space, Drawer } from "@mantine/core";
 import { useState } from "react";
 import { useAppSelector } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
+import { useDisclosure } from "@mantine/hooks";
 import routes from "../../configs/routes";
-
 import styled from "@emotion/styled";
 import MappingTable from "./MappingTable";
+import DrawerContent from "./DrawerContent";
 const ImportLeadsStyled = styled.div`
   min-height: calc(100vh);
   z-index: 200;
@@ -14,6 +15,8 @@ const ImportLeadsStyled = styled.div`
 `;
 function ImportLeads() {
   const [active, setActive] = useState(1);
+  const [opened, { open, close }] = useDisclosure(false);
+
   const nextStep = () =>
     setActive((current) => (current < 2 ? current + 1 : current));
   //   const prevStep = () =>
@@ -37,6 +40,20 @@ function ImportLeads() {
         </Stepper.Completed>
       </Stepper>
 
+      <Drawer
+        opened={opened}
+        onClose={close}
+        overlayProps={{ opacity: 0.5, blur: 4 }}
+        transitionProps={{
+          transition: "fade",
+          duration: 500,
+          timingFunction: "ease",
+        }}
+        position="right"
+      >
+        <DrawerContent />
+      </Drawer>
+
       <Paper
         style={{
           position: "fixed",
@@ -49,11 +66,12 @@ function ImportLeads() {
       >
         <Flex justify="space-between" align="center" py="lg" px="xl">
           <Button onClick={() => navigate(routes.leads)}>Cancel</Button>
-          {/* <Button onClick={prevStep}>Back</Button> */}
-
-          <Button onClick={nextStep} disabled={!showButton}>
-            Next
-          </Button>
+          <Flex justify="space-between" gap="md" align="center">
+            <Button onClick={open}>Add Property</Button>
+            <Button onClick={nextStep} disabled={!showButton}>
+              Next
+            </Button>
+          </Flex>
         </Flex>
       </Paper>
     </ImportLeadsStyled>
