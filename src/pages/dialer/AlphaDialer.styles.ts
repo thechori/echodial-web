@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import devices from "../../styles/devices";
 
 const AlphaDialerStyled = styled.div<{ $visible: boolean }>`
-  background-color: #f1f1f1;
+  background-color: #e1e1e1;
 
   display: ${(props) => (props.$visible ? "block" : "none")};
 
@@ -13,6 +13,10 @@ const AlphaDialerStyled = styled.div<{ $visible: boolean }>`
   top: 0;
   bottom: 0;
   z-index: 100;
+
+  @media ${devices.tablet} {
+    left: 180px;
+  }
 
   .split {
     & > div {
@@ -61,6 +65,7 @@ const AlphaDialerStyled = styled.div<{ $visible: boolean }>`
   .controls {
     .control-buttons {
       display: flex;
+      align-items: flex-end;
 
       padding: 0.25rem;
 

@@ -595,9 +595,10 @@ function AlphaDialer() {
   return (
     <AlphaDialerStyled $visible={alphaDialerVisible}>
       <Box className="controls">
-        <Flex align="flex-start" justify="space-between" p="md">
+        <Flex align="flex-start" justify="space-between">
           <Card
             withBorder
+            pt="0.5rem"
             style={{
               overflow: "visible",
               display: "flex",
@@ -622,7 +623,7 @@ function AlphaDialer() {
                       leads. This number will appear as your caller ID on the lead's phone."
                 >
                   <div>
-                    <CallerIdSelect pr="xs" />
+                    <CallerIdSelect pr="xs" w={180} />
                   </div>
                 </Tooltip>
 
@@ -640,7 +641,7 @@ function AlphaDialer() {
               </Flex>
             </Flex>
 
-            <div className="control-buttons">
+            <Flex align="flex-end" h={60}>
               {dialStateInstance.dialQueueIndex === null ? (
                 <Tooltip
                   label="Begin making calls to the leads in the Call queue"
@@ -694,7 +695,7 @@ function AlphaDialer() {
                   Next lead
                 </Button>
               </Tooltip>
-            </div>
+            </Flex>
           </Card>
         </Flex>
 
