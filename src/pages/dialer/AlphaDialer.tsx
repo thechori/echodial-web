@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { Call, Device } from "@twilio/voice-sdk";
-import { Button, Card, Text, ThemeIcon, Title, Tooltip } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Card,
+  Text,
+  ThemeIcon,
+  Title,
+  Tooltip,
+} from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
@@ -608,11 +616,11 @@ function AlphaDialer() {
             }}
           >
             <Flex justify="flex-start" align="center">
-              <Flex justify="flex-start" align="center" mr={36}>
+              <Flex justify="flex-start" align="flex-end" mr={36}>
                 <ThemeIcon mr="xs" size="xl" variant="gradient">
                   <PiPhone fontSize="1.75rem" />
                 </ThemeIcon>
-                <Title>Dialer</Title>
+                <Title order={2}>Dialer</Title>
               </Flex>
 
               <Flex align="flex-end">
@@ -628,15 +636,14 @@ function AlphaDialer() {
                 </Tooltip>
 
                 <Tooltip label="Open dialer settings" openDelay={500}>
-                  <Button
+                  <ActionIcon
                     variant="outline"
-                    aria-label="Settings"
-                    color="primary"
                     onClick={openDialerOptions}
-                    leftIcon={<IconAdjustments stroke={1.5} />}
+                    size="lg"
+                    color="blue"
                   >
-                    Settings
-                  </Button>
+                    <IconAdjustments />
+                  </ActionIcon>
                 </Tooltip>
               </Flex>
             </Flex>

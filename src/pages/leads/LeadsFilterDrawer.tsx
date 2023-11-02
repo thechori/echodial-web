@@ -11,10 +11,10 @@ import {
   TextInput,
   Title,
   ScrollArea,
-  ThemeIcon,
   Card,
   Tooltip,
   Center,
+  ActionIcon,
 } from "@mantine/core";
 import { AiOutlineClose } from "react-icons/ai";
 import { IconPlus, IconSearch, IconX } from "@tabler/icons-react";
@@ -159,14 +159,14 @@ const LeadsFilterDrawer = ({ opened, onClose }: any) => {
                     <Flex align="center" justify="space-between">
                       <Text pr="sm">{filter.label}</Text>
                       <Tooltip label="Remove filter">
-                        <ThemeIcon
+                        <ActionIcon
                           color="red"
                           variant="outline"
                           onClick={() => clearFilterByValue(filter.value)}
                           size="sm"
                         >
                           <IconX />
-                        </ThemeIcon>
+                        </ActionIcon>
                       </Tooltip>
                     </Flex>
                   </Card>

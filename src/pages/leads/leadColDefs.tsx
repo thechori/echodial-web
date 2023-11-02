@@ -14,7 +14,11 @@ export const leadColDefs: ColDef<Lead>[] = [
     showDisabledCheckboxes: true,
     headerCheckboxSelectionFilteredOnly: true,
   },
-
+  {
+    width: 100,
+    headerName: "Actions",
+    cellRenderer: "tableActionCell", // name comes from `components` memoized object which gets passed to AG Grid `components` parameter
+  },
   {
     field: "status",
     headerName: "Status",
@@ -25,18 +29,12 @@ export const leadColDefs: ColDef<Lead>[] = [
     valueFormatter: (val) => capitalizeFirstLetter(val.value),
   },
   {
-    field: "first_name",
-    headerName: "First name",
+    headerName: "Full name",
     sortable: true,
     resizable: true,
     filter: true,
-  },
-  {
-    field: "last_name",
-    headerName: "Last name",
-    sortable: true,
-    resizable: true,
-    filter: true,
+    valueGetter: (params) =>
+      `${params.data?.first_name} ${params.data?.last_name}`,
   },
   {
     field: "phone",
@@ -45,17 +43,10 @@ export const leadColDefs: ColDef<Lead>[] = [
     filter: true,
     cellRenderer: (param: any) => phoneFormatter(param.value),
   },
-  // { field: "email", filter: true, resizable: true, sortable: true },
   {
-    field: "source",
-    headerName: "Lead vendor",
-    resizable: true,
-    sortable: true,
-    filter: true,
-  },
-  {
-    field: "do_not_call",
-    headerName: "Do not call (DNC)",
+    field: "call_count",
+    headerName: "Call count",
+    width: 120,
     resizable: true,
     sortable: true,
     filter: true,
@@ -71,15 +62,8 @@ export const leadColDefs: ColDef<Lead>[] = [
     },
   },
   {
-    field: "not_interested_reason",
-    headerName: "Not interested reason",
-    resizable: true,
-    sortable: true,
-    filter: true,
-  },
-  {
-    field: "call_count",
-    headerName: "Call count",
+    field: "source",
+    headerName: "Lead vendor",
     resizable: true,
     sortable: true,
     filter: true,
@@ -108,6 +92,21 @@ export const leadColDefs: ColDef<Lead>[] = [
   {
     field: "zip",
     headerName: "Zip",
+    resizable: true,
+    sortable: true,
+    filter: true,
+  },
+  {
+    field: "do_not_call",
+    headerName: "Do not call (DNC)",
+    resizable: true,
+    sortable: true,
+    filter: true,
+  },
+
+  {
+    field: "not_interested_reason",
+    headerName: "Not interested reason",
     resizable: true,
     sortable: true,
     filter: true,
