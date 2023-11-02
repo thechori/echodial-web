@@ -20,7 +20,7 @@ export const TableActionCell = (props: any) => {
         </Button>
       ) : (
         <Button variant="outline" size="xs" compact onClick={handleClick}>
-          Open
+          Details
         </Button>
       )}
     </span>
