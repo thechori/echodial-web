@@ -5,7 +5,9 @@ import devices from "../../styles/devices";
 const AlphaDialerStyled = styled.div<{ $visible: boolean }>`
   background-color: #e1e1e1;
 
-  display: ${(props) => (props.$visible ? "block" : "none")};
+  opacity: ${(props) => (props.$visible ? 1 : 0)};
+  transform: ${(props) =>
+    props.$visible ? "translateY(0px)" : "translateY(100vh)"};
 
   position: fixed;
   left: 0;
@@ -13,6 +15,8 @@ const AlphaDialerStyled = styled.div<{ $visible: boolean }>`
   top: 0;
   bottom: 0;
   z-index: 100;
+
+  transition: transform 0.5s ease, opacity 0.5s ease;
 
   @media ${devices.tablet} {
     left: 180px;
