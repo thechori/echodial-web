@@ -15,7 +15,7 @@ export const leadColDefs: ColDef<Lead>[] = [
     headerCheckboxSelectionFilteredOnly: true,
   },
   {
-    width: 100,
+    width: 120,
     headerName: "Actions",
     cellRenderer: "tableActionCell", // name comes from `components` memoized object which gets passed to AG Grid `components` parameter
   },
