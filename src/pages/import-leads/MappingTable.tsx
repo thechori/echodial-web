@@ -8,7 +8,9 @@ import {
   ThemeIcon,
   Container,
   ScrollArea,
+  Stack,
 } from "@mantine/core";
+
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setAllMapped } from "../../store/import/slice";
@@ -27,7 +29,7 @@ function MappingTable() {
 
   type HeaderObject = {
     columnHeader: string;
-    preview: string;
+    preview: string[];
     mapped: boolean;
     property: string;
   };
@@ -37,7 +39,12 @@ function MappingTable() {
     first_name: { value: "first_name", label: "First_Name", disabled: false },
     last_name: { value: "last_name", label: "Last_Name", disabled: false },
     address: { value: "address", label: "Address", disabled: false },
-    number: { value: "number", label: "Number", disabled: false },
+    phone: { value: "phone", label: "Phone", disabled: false },
+    city: { value: "city", label: "City", disabled: false },
+    state: { value: "state", label: "State", disabled: false },
+    zip: { value: "zip", label: "Zip", disabled: false },
+    notes: { value: "notes", label: "Notes", disabled: false },
+    status: { value: "status", label: "Status", disabled: false },
   };
 
   const [headers, setHeaders] = useState<HeaderObject[]>([]);
@@ -48,7 +55,7 @@ function MappingTable() {
     for (let i = 0; i < fileHeaders.length; i++) {
       tempHeaders.push({
         columnHeader: fileHeaders[i],
-        preview: fileRows[0][fileHeaders[i]],
+        preview: fileRows.slice(0, 3).map((row) => row[fileHeaders[i]]),
         mapped: false,
         property: "empty",
       });
@@ -62,7 +69,13 @@ function MappingTable() {
       renderedData.push(
         <tr key={i}>
           <td>{headers[i].columnHeader}</td>
-          <td>{headers[i].preview}</td>
+          <td>
+            <Stack spacing="xs" py="xs">
+              {headers[i].preview.map((row, i) => (
+                <div key={i}>{row}</div>
+              ))}
+            </Stack>
+          </td>
           <td>
             {headers[i].mapped ? (
               <ThemeIcon radius="lg" color="green">
@@ -83,12 +96,14 @@ function MappingTable() {
                   placeholder="Select"
                   data={Object.values(properties)}
                   onChange={(newProperty) => handleChange(newProperty, i)}
+                  searchable
                 />
               ) : (
                 <Select
                   placeholder={headers[i].property}
                   data={Object.values(properties)}
                   onChange={(newProperty) => handleChange(newProperty, i)}
+                  searchable
                 />
               )}
             </Flex>
@@ -97,7 +112,7 @@ function MappingTable() {
       );
     }
     setMappingTable(renderedData);
-  }, [headers]);
+  }, [headers, properties]);
 
   useEffect(() => {
     if (headers.every((header) => header.mapped === true)) {
@@ -152,7 +167,7 @@ function MappingTable() {
         <Table
           highlightOnHover
           horizontalSpacing="lg"
-          verticalSpacing="md"
+          verticalSpacing="xs"
           withBorder
           py="md"
         >
