@@ -53,7 +53,7 @@ function Dropzone({
           ) : (
             <>
               <Text size="md" inline align="center">
-                Drag .CSV file here or click to select files
+                Drag file here or click to select a file (.csv or .xls)
               </Text>
               <Text size="xs" color="dimmed" inline mt={7} align="center">
                 Attach one file at a time (max 5mb)

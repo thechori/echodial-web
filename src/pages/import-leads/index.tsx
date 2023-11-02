@@ -1,6 +1,8 @@
 import { Stepper, Button, Flex, Paper, Space } from "@mantine/core";
 import { useState } from "react";
 import { useAppSelector } from "../../store/hooks";
+import { useNavigate } from "react-router-dom";
+import routes from "../../configs/routes";
 
 import styled from "@emotion/styled";
 import MappingTable from "./MappingTable";
@@ -14,9 +16,10 @@ function ImportLeads() {
   const [active, setActive] = useState(1);
   const nextStep = () =>
     setActive((current) => (current < 2 ? current + 1 : current));
-  const prevStep = () =>
-    setActive((current) => (current > 1 ? current - 1 : current));
+  //   const prevStep = () =>
+  //     setActive((current) => (current > 1 ? current - 1 : current));
   const showButton = useAppSelector((state) => state.importLeads.allMapped);
+  const navigate = useNavigate();
 
   return (
     <ImportLeadsStyled>
@@ -47,7 +50,8 @@ function ImportLeads() {
         bg="gray.3"
       >
         <Flex justify="space-between" align="center" py="lg" px="xl">
-          <Button onClick={prevStep}>Back</Button>
+          <Button onClick={() => navigate(routes.leads)}>Cancel</Button>
+          {/* <Button onClick={prevStep}>Back</Button> */}
 
           <Button onClick={nextStep} disabled={!showButton}>
             Next

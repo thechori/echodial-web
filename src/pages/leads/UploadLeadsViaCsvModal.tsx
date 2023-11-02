@@ -11,16 +11,24 @@ import {
 import { useForm } from "@mantine/form";
 import { FileWithPath } from "@mantine/dropzone";
 import { IconCircleCheck } from "@tabler/icons-react";
-import { notifications } from "@mantine/notifications";
+// import { notifications } from "@mantine/notifications";
 //
 import Dropzone from "./Dropzone";
 import { extractErrorMessage } from "../../utils/error";
-import { useAddLeadsViaCsvMutation } from "../../services/lead";
+// import { useAddLeadsViaCsvMutation } from "../../services/lead";
+import routes from "../../configs/routes";
+import { useNavigate } from "react-router-dom";
+import Papa from "papaparse";
+import { useDispatch } from "react-redux";
+import { setFileHeaders, setFileRows } from "../../store/import/slice";
 
 const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [error, setError] = useState("");
 
-  const [addLeadsViaCsv, { isLoading }] = useAddLeadsViaCsvMutation();
+  // const [addLeadsViaCsv, { isLoading }] = useAddLeadsViaCsvMutation();
 
   const form = useForm<{ source: string; file: null | FileWithPath }>({
     initialValues: {
@@ -37,20 +45,29 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
       return setError("Upload file before submitting");
     }
 
-    const formData = new FormData();
-    formData.append("file", form.values.file);
-    formData.append("source", form.values.source);
+    const csvFile = form.values.file;
 
-    try {
-      await addLeadsViaCsv(formData).unwrap();
-
-      notifications.show({
-        message: "Successfully uploaded leads",
+    if (csvFile) {
+      Papa.parse(csvFile, {
+        header: true,
+        dynamicTyping: true,
+        complete: function (results) {
+          if (results.meta.fields) {
+            const fileHeaders: string[] = results.meta.fields;
+            dispatch(setFileHeaders(fileHeaders));
+          }
+          if (results.data) {
+            const fileRows = results.data;
+            dispatch(setFileRows(fileRows));
+          }
+        },
+        error: function (error) {
+          return setError(error.message);
+        },
       });
-
-      close();
-    } catch (error) {
-      setError(extractErrorMessage(error));
+      navigate(routes.importLeads);
+    } else {
+      setError("File cannot be parsed.");
     }
   }
 
@@ -104,9 +121,8 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
             py="xs"
             {...form.getInputProps("source")}
           />
-          <Button loading={isLoading} onClick={handleSubmit}>
-            Submit
-          </Button>
+          {/* <Button loading={isLoading} onClick={() => navigate(routes.leads)}> */}
+          <Button onClick={handleSubmit}>Submit</Button>
           <Text w="100%" mt="sm" color="red">
             {error}
           </Text>

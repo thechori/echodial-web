@@ -11,34 +11,31 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setAllMapped } from "../../store/import/slice";
+import { useAppSelector } from "../../store/hooks";
 
 function MappingTable() {
   const dispatch = useDispatch();
-  const dummyHeaders = [
-    {
-      columnHeader: "First_Name",
-      preview: "Hans",
-      mapped: false,
-      property: "empty",
-    },
-    {
-      columnHeader: "Last_Name",
-      preview: "Zhang",
-      mapped: false,
-      property: "empty",
-    },
-    {
-      columnHeader: "Address",
-      preview: "USA",
-      mapped: false,
-      property: "empty",
-    },
-  ];
+  const fileHeaders = useAppSelector((state) => state.importLeads.fileHeaders);
+  const fileRows = useAppSelector((state) => state.importLeads.fileRows);
+
   type PropertyObject = {
     value: string;
     label: string;
     disabled: boolean;
   };
+  function setDummyHeaders() {
+    const outputData = [];
+    for (let i = 0; i < fileHeaders.length; i++) {
+      outputData.push({
+        columnHeader: fileHeaders[i],
+        preview: fileRows[0][fileHeaders[i]],
+        mapped: false,
+        property: "empty",
+      });
+    }
+    return outputData;
+  }
+  const dummyHeaders = setDummyHeaders();
 
   const dummyProperties: Record<string, PropertyObject> = {
     email: { value: "email", label: "Email", disabled: false },
