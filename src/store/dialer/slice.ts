@@ -18,8 +18,10 @@ const buildOptions = (): TDialerOptions => {
     return JSON.parse(cachedOptions);
   }
 
+  // Check for APP_VERSION difference, clear settings if found to leave room for enhancements to the user experience
+
   return {
-    maxRingTimeInSeconds: 3,
+    maxRingTimeInSeconds: 10, // 10 seems like a good sweet spot
     maxCallTries: 3,
     cooldownTimeInSeconds: 10,
   };

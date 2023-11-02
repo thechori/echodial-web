@@ -7,6 +7,7 @@ import {
   Flex,
   Grid,
   Group,
+  Loader,
   Text,
   ThemeIcon,
   Title,
@@ -103,6 +104,8 @@ function PhoneNumbers() {
                       />
                     </Flex>
                   ))
+                ) : isLoadingCallerIds ? (
+                  <Loader py="lg" />
                 ) : (
                   <Text size="sm" italic color="dimmed">
                     No numbers found

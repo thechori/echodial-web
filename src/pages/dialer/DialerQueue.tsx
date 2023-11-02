@@ -136,12 +136,12 @@ function DialerQueue() {
                 onClick={resetDialer}
                 leftIcon={<IconRefresh size="1rem" />}
               >
-                Reset
+                Clear
               </Button>
             </HoverCard.Target>
             <HoverCard.Dropdown>
               <Text size="sm">
-                Clicking "Reset" will remove all leads from the Call queue. You
+                Clicking "Clear" will remove all leads from the Call queue. You
                 can create a new queue by filtering your selection on the Leads
                 page and clicking "Start dialer"
               </Text>

@@ -15,6 +15,7 @@ const AlphaDialerFabStyled = styled.div`
     display: flex;
     width: 64px;
     height: 64px;
+
     border-radius: 64px;
     align-items: center;
     justify-content: center;

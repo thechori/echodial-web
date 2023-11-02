@@ -13,13 +13,14 @@ const initialState: TLeadDetailState = {
 };
 
 export const LeadDetailSlice = createSlice({
-  name: "metric",
+  name: "leadDetail",
   initialState,
   reducers: {
     setIsOpen: (state, action) => {
       state.isOpen = action.payload;
     },
     setSelectedLead: (state, action) => {
+      console.log("setSelectedLead", action.payload);
       state.selectedLead = action.payload;
     },
   },
