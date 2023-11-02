@@ -52,20 +52,16 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
         header: true,
         dynamicTyping: true,
         complete: function (results) {
-          if (results.meta.fields) {
-            const fileHeaders: string[] = results.meta.fields;
-            dispatch(setFileHeaders(fileHeaders));
-          }
-          if (results.data) {
-            const fileRows = results.data;
-            dispatch(setFileRows(fileRows));
+          if (results.meta.fields && results.data) {
+            dispatch(setFileHeaders(results.meta.fields));
+            dispatch(setFileRows(results.data));
+            navigate(routes.importLeads);
           }
         },
         error: function (error) {
           return setError(error.message);
         },
       });
-      navigate(routes.importLeads);
     } else {
       setError("File cannot be parsed.");
     }

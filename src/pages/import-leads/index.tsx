@@ -25,13 +25,11 @@ function ImportLeads() {
     <ImportLeadsStyled>
       <Space h="lg" />
       <Stepper active={active} py="xl" px="xl">
-        <Stepper.Step label="First step" description="Import files">
-          Contents
-        </Stepper.Step>
-        <Stepper.Step label="Second step" description="Map columns">
+        <Stepper.Step label="Import files">Contents</Stepper.Step>
+        <Stepper.Step label="Map columns">
           <MappingTable />
         </Stepper.Step>
-        <Stepper.Step label="Final step" description="Confirmation">
+        <Stepper.Step label="Confirmation">
           Step 3 content: Get full access
         </Stepper.Step>
         <Stepper.Completed>

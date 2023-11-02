@@ -7,6 +7,7 @@ import {
   CheckIcon,
   ThemeIcon,
   Container,
+  ScrollArea,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -23,19 +24,13 @@ function MappingTable() {
     label: string;
     disabled: boolean;
   };
-  function setDummyHeaders() {
-    const outputData = [];
-    for (let i = 0; i < fileHeaders.length; i++) {
-      outputData.push({
-        columnHeader: fileHeaders[i],
-        preview: fileRows[0][fileHeaders[i]],
-        mapped: false,
-        property: "empty",
-      });
-    }
-    return outputData;
-  }
-  const dummyHeaders = setDummyHeaders();
+
+  type HeaderObject = {
+    columnHeader: string;
+    preview: string;
+    mapped: boolean;
+    property: string;
+  };
 
   const dummyProperties: Record<string, PropertyObject> = {
     email: { value: "email", label: "Email", disabled: false },
@@ -45,37 +40,24 @@ function MappingTable() {
     number: { value: "number", label: "Number", disabled: false },
   };
 
-  const [headers, setHeaders] = useState(dummyHeaders);
+  const [headers, setHeaders] = useState<HeaderObject[]>([]);
   const [properties, setProperties] = useState(dummyProperties);
-
-  //newProperty is the property we are mapping the header at headerIndex to
-  function handleChange(newProperty: any, headerIndex: any) {
-    //this if condition checks if the header is already mapped, if it is we have to make the property that it was mapped to available again
-    if (headers[headerIndex].mapped) {
-      const resetProperty = headers[headerIndex].property;
-      setProperties((properties) => ({
-        ...properties,
-        [resetProperty]: { ...properties[resetProperty], disabled: false },
-      }));
+  const [mappingTable, setMappingTable] = useState([]);
+  useEffect(() => {
+    const tempHeaders: HeaderObject[] = [];
+    for (let i = 0; i < fileHeaders.length; i++) {
+      tempHeaders.push({
+        columnHeader: fileHeaders[i],
+        preview: fileRows[0][fileHeaders[i]],
+        mapped: false,
+        property: "empty",
+      });
     }
+    setHeaders(tempHeaders);
+  }, [fileHeaders, fileRows]);
 
-    //we disable this property so other headers can't be mapped to it
-    setProperties((properties) => ({
-      ...properties,
-      [newProperty]: { ...properties[newProperty], disabled: true },
-    }));
-
-    //map the header to this property
-    setHeaders((headers) => {
-      const updatedHeaders = [...headers];
-      updatedHeaders[headerIndex].mapped = true;
-      updatedHeaders[headerIndex].property = newProperty;
-      return updatedHeaders;
-    });
-  }
-
-  function renderTable() {
-    let renderedData = [];
+  useEffect(() => {
+    let renderedData: any = [];
     for (let i = 0; i < headers.length; i++) {
       renderedData.push(
         <tr key={i}>
@@ -114,8 +96,8 @@ function MappingTable() {
         </tr>
       );
     }
-    return renderedData;
-  }
+    setMappingTable(renderedData);
+  }, [headers]);
 
   useEffect(() => {
     if (headers.every((header) => header.mapped === true)) {
@@ -123,13 +105,37 @@ function MappingTable() {
     } else {
       dispatch(setAllMapped(false));
     }
-  }, [headers]);
+  }, [headers, dispatch]);
 
-  const mapTableData = renderTable();
+  //newProperty is the property we are mapping the header at headerIndex to
+  function handleChange(newProperty: any, headerIndex: any) {
+    //this if condition checks if the header is already mapped, if it is we have to make the property that it was mapped to available again
+    if (headers[headerIndex].mapped) {
+      const resetProperty = headers[headerIndex].property;
+      setProperties((properties) => ({
+        ...properties,
+        [resetProperty]: { ...properties[resetProperty], disabled: false },
+      }));
+    }
+
+    //we disable this property so other headers can't be mapped to it
+    setProperties((properties) => ({
+      ...properties,
+      [newProperty]: { ...properties[newProperty], disabled: true },
+    }));
+
+    //map the header to this property
+    setHeaders((headers) => {
+      const updatedHeaders = [...headers];
+      updatedHeaders[headerIndex].mapped = true;
+      updatedHeaders[headerIndex].property = newProperty;
+      return updatedHeaders;
+    });
+  }
 
   return (
     <>
-      <Container py="md">
+      <Container py="sm">
         <Flex justify="center" py="xs">
           <Title order={2}>
             Map columns in your file to contact properties
@@ -142,23 +148,25 @@ function MappingTable() {
         </Flex>
       </Container>
 
-      <Table
-        highlightOnHover
-        horizontalSpacing="lg"
-        verticalSpacing="md"
-        withBorder
-        py="md"
-      >
-        <thead>
-          <tr>
-            <th>Column Header</th>
-            <th>Preview Information</th>
-            <th>Mapped</th>
-            <th>Property</th>
-          </tr>
-        </thead>
-        <tbody>{mapTableData}</tbody>
-      </Table>
+      <ScrollArea h={370}>
+        <Table
+          highlightOnHover
+          horizontalSpacing="lg"
+          verticalSpacing="md"
+          withBorder
+          py="md"
+        >
+          <thead>
+            <tr>
+              <th>Column Header</th>
+              <th>Preview Information</th>
+              <th>Mapped</th>
+              <th>Property</th>
+            </tr>
+          </thead>
+          <tbody>{mappingTable}</tbody>
+        </Table>
+      </ScrollArea>
     </>
   );
 }
