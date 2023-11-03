@@ -38,7 +38,7 @@ function PlanUsage() {
               <Accordion.Control>
                 <Text c="dimmed">How does this work?</Text>
               </Accordion.Control>
-              <Accordion.Panel>idk</Accordion.Panel>
+              <Accordion.Panel></Accordion.Panel>
             </Accordion.Item>
           </Accordion>
         </Card>

@@ -1,59 +1,65 @@
-type PropertyObject = {
-  value: string;
-  label: string;
-  disabled: boolean;
-  group: string;
+import { SelectItem } from "@mantine/core";
+export const addNewPropertySelectItem: SelectItem = {
+  value: "-1",
+  label: "+ Add new property",
+  group: "Options",
 };
-
-export const dummyProperties: Record<string, PropertyObject> = {
-  email: {
+export type HeaderObject = {
+  columnHeader: string;
+  preview: string[];
+  mapped: boolean;
+  property: string;
+};
+export const dummyProperties: SelectItem[] = [
+  {
     value: "email",
     label: "Email",
     disabled: false,
     group: "Contact",
   },
-  first_name: {
+  {
     value: "first_name",
     label: "First_Name",
     disabled: false,
     group: "Contact",
   },
-  last_name: {
+  {
     value: "last_name",
     label: "Last_Name",
     disabled: false,
     group: "Contact",
   },
-  address: {
+  {
     value: "address",
     label: "Address",
     disabled: false,
     group: "Address",
   },
-  phone: {
+  {
     value: "phone",
     label: "Phone",
     disabled: false,
     group: "Contact",
   },
-  city: { value: "city", label: "City", disabled: false, group: "Address" },
-  state: {
+  { value: "city", label: "City", disabled: false, group: "Address" },
+  {
     value: "state",
     label: "State",
     disabled: false,
     group: "Address",
   },
-  zip: { value: "zip", label: "Zip", disabled: false, group: "Address" },
-  notes: {
+  { value: "zip", label: "Zip", disabled: false, group: "Address" },
+  {
     value: "notes",
     label: "Notes",
     disabled: false,
     group: "Other",
   },
-  status: {
+  {
     value: "status",
     label: "Status",
     disabled: false,
     group: "Other",
   },
-};
+  addNewPropertySelectItem,
+];
