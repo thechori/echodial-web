@@ -7,7 +7,6 @@ import {
   CheckIcon,
   ThemeIcon,
   Container,
-  ScrollArea,
   Stack,
 } from "@mantine/core";
 
@@ -15,18 +14,11 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setAllMapped } from "../../store/import/slice";
 import { useAppSelector } from "../../store/hooks";
-
+import { dummyProperties } from "./DummyProperties";
 function MappingTable() {
   const dispatch = useDispatch();
   const fileHeaders = useAppSelector((state) => state.importLeads.fileHeaders);
   const fileRows = useAppSelector((state) => state.importLeads.fileRows);
-
-  type PropertyObject = {
-    value: string;
-    label: string;
-    disabled: boolean;
-    group: string;
-  };
 
   type HeaderObject = {
     columnHeader: string;
@@ -34,60 +26,6 @@ function MappingTable() {
     mapped: boolean;
     property: string;
   };
-
-  const dummyProperties: Record<string, PropertyObject> = {
-    email: {
-      value: "email",
-      label: "Email",
-      disabled: false,
-      group: "Contact",
-    },
-    first_name: {
-      value: "first_name",
-      label: "First_Name",
-      disabled: false,
-      group: "Contact",
-    },
-    last_name: {
-      value: "last_name",
-      label: "Last_Name",
-      disabled: false,
-      group: "Contact",
-    },
-    address: {
-      value: "address",
-      label: "Address",
-      disabled: false,
-      group: "Address",
-    },
-    phone: {
-      value: "phone",
-      label: "Phone",
-      disabled: false,
-      group: "Contact",
-    },
-    city: { value: "city", label: "City", disabled: false, group: "Address" },
-    state: {
-      value: "state",
-      label: "State",
-      disabled: false,
-      group: "Address",
-    },
-    zip: { value: "zip", label: "Zip", disabled: false, group: "Address" },
-    notes: {
-      value: "notes",
-      label: "Notes",
-      disabled: false,
-      group: "Other",
-    },
-    status: {
-      value: "status",
-      label: "Status",
-      disabled: false,
-      group: "Other",
-    },
-  };
-
   const [headers, setHeaders] = useState<HeaderObject[]>([]);
   const [properties, setProperties] = useState(dummyProperties);
   const [mappingTable, setMappingTable] = useState([]);
@@ -191,26 +129,23 @@ function MappingTable() {
 
   return (
     <>
-      <Container py="sm">
+      <Container fluid pb={100}>
         <Flex justify="center" py="xs">
           <Title order={2}>
             Map columns in your file to contact properties
           </Title>
         </Flex>
-        <Flex justify="center">
+        <Flex justify="center" py="xs">
           <Text c="dimmed">
             Each column header below should be mapped to a contact property{" "}
           </Text>
         </Flex>
-      </Container>
 
-      <ScrollArea h={370}>
         <Table
           highlightOnHover
           horizontalSpacing="lg"
           verticalSpacing="xs"
           withBorder
-          py="md"
         >
           <thead>
             <tr>
@@ -222,7 +157,7 @@ function MappingTable() {
           </thead>
           <tbody>{mappingTable}</tbody>
         </Table>
-      </ScrollArea>
+      </Container>
     </>
   );
 }
