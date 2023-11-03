@@ -1,4 +1,5 @@
 import { Button } from "@mantine/core";
+//
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setSelectedLead } from "../../store/lead-detail/slice";
 
@@ -13,13 +14,19 @@ export const TableActionCell = (props: any) => {
   const active = selectedLead && selectedLead.id === props.data.id;
 
   return (
-    <span className="total-value-renderer">
+    <span>
       {active ? (
         <Button variant="filled" size="xs" compact onClick={handleClick}>
           Active
         </Button>
       ) : (
-        <Button variant="outline" size="xs" compact onClick={handleClick}>
+        <Button
+          className="hover-button"
+          variant="outline"
+          size="xs"
+          compact
+          onClick={handleClick}
+        >
           Details
         </Button>
       )}

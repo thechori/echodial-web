@@ -40,6 +40,7 @@ import {
   setSelectedRows,
 } from "../../store/leads/slice";
 import { TableActionCell } from "./TableActionCell";
+import { LeadsFilteredListStyled } from "./LeadsFilteredList.styles";
 
 function LeadsFilteredList() {
   const { data: leadStatuses } = useGetLeadStatusesQuery();
@@ -171,125 +172,128 @@ function LeadsFilteredList() {
   });
 
   return (
-    <Card
-      withBorder
-      style={{
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
-      }}
-    >
-      <Flex align="flex-end" justify="space-between">
-        <Flex align="flex-end">
-          <MultiSelect
-            w={200}
-            label="Status"
-            placeholder="Choose a status"
-            data={selectItems}
-            value={selectedStatuses}
-            onChange={(values) => setSelectedStatuses(values)}
-            clearButtonProps={{ "aria-label": "Clear selection" }}
-            clearable
-          />
-          <TextInput
-            placeholder="Search..."
-            maw={200}
-            px="md"
-            icon={<IconSearch size="1rem" />}
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-          />
-          <Button
-            variant={appliedFilters.length ? "light" : "subtle"}
-            onClick={() => setFilterDrawerOpen(!filterDrawerOpen)}
-            leftIcon={<HiOutlineAdjustmentsHorizontal size={20} />}
-          >
-            Filters ({appliedFilters.length})
-          </Button>
-        </Flex>
-
-        <Flex align="center">
-          {selectedRows.length > 0 && (
+    <LeadsFilteredListStyled>
+      <Card
+        withBorder
+        style={{
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+        }}
+      >
+        <Flex align="flex-end" justify="space-between">
+          <Flex align="flex-end">
+            <MultiSelect
+              w={200}
+              label="Status"
+              placeholder="Choose a status"
+              data={selectItems}
+              value={selectedStatuses}
+              onChange={(values) => setSelectedStatuses(values)}
+              clearButtonProps={{ "aria-label": "Clear selection" }}
+              clearable
+            />
+            <TextInput
+              placeholder="Search..."
+              maw={200}
+              px="md"
+              icon={<IconSearch size="1rem" />}
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+            />
             <Button
-              size="xs"
-              color="red"
-              mx={8}
-              leftIcon={<IconTrash />}
-              variant="subtle"
-              onClick={deleteLeads}
+              variant={appliedFilters.length ? "light" : "subtle"}
+              onClick={() => setFilterDrawerOpen(!filterDrawerOpen)}
+              leftIcon={<HiOutlineAdjustmentsHorizontal size={20} />}
             >
-              Delete
+              Filters ({appliedFilters.length})
             </Button>
-          )}
+          </Flex>
 
-          <HoverCard width={280} shadow="md" openDelay={500}>
-            <HoverCard.Target>
+          <Flex align="center">
+            {selectedRows.length > 0 && (
               <Button
+                size="xs"
+                color="red"
                 mx={8}
-                leftIcon={<PiPhone size={16} />}
-                onClick={startDialer}
-                variant="gradient"
-                disabled={selectedRows.length === 0}
+                leftIcon={<IconTrash />}
+                variant="subtle"
+                onClick={deleteLeads}
               >
-                Start dial session
+                Delete
               </Button>
-            </HoverCard.Target>
-            <HoverCard.Dropdown>
-              <Text size="sm">
-                Clicking "Start dial session" will load the selected leads into
-                your dialer queue to begin dialing. You must have at least one
-                lead selected for this option to become enabled.
+            )}
+
+            <HoverCard width={280} shadow="md" openDelay={500}>
+              <HoverCard.Target>
+                <Button
+                  mx={8}
+                  leftIcon={<PiPhone size={16} />}
+                  onClick={startDialer}
+                  variant="gradient"
+                  disabled={selectedRows.length === 0}
+                >
+                  Start dial session
+                </Button>
+              </HoverCard.Target>
+              <HoverCard.Dropdown>
+                <Text size="sm">
+                  Clicking "Start dial session" will load the selected leads
+                  into your dialer queue to begin dialing. You must have at
+                  least one lead selected for this option to become enabled.
+                </Text>
+              </HoverCard.Dropdown>
+            </HoverCard>
+          </Flex>
+        </Flex>
+
+        {leads?.length === 0 ? (
+          <Flex justify="center" align="center" w="100%" h={500}>
+            <Box ta="center">
+              <Text size="sm" mb="lg">
+                Looks like you're new here. Add some leads to get started!
               </Text>
-            </HoverCard.Dropdown>
-          </HoverCard>
-        </Flex>
-      </Flex>
-
-      {leads?.length === 0 ? (
-        <Flex justify="center" align="center" w="100%" h={500}>
-          <Box ta="center">
-            <Text size="sm" mb="lg">
-              Looks like you're new here. Add some leads to get started!
-            </Text>
-            <Button variant="gradient" onClick={openImportModal}>
-              Upload a file
-            </Button>
-            <Text mt="sm">or</Text>
-            <Button variant="subtle" onClick={openManualModal}>
-              Create a new lead manually
-            </Button>
+              <Button variant="gradient" onClick={openImportModal}>
+                Upload a file
+              </Button>
+              <Text mt="sm">or</Text>
+              <Button variant="subtle" onClick={openManualModal}>
+                Create a new lead manually
+              </Button>
+            </Box>
+          </Flex>
+        ) : (
+          <Box
+            className="ag-theme-alpine"
+            my="md"
+            style={{
+              width: "100%",
+              height: "calc(100vh - 240px)",
+            }}
+          >
+            <AgGridReact<Lead>
+              ref={gridRef}
+              rowData={filteredLeads}
+              columnDefs={columnDefs}
+              animateRows={true}
+              rowSelection="multiple"
+              suppressRowClickSelection
+              quickFilterText={keyword}
+              onSelectionChanged={onSelectionChanged}
+              components={components}
+            />
           </Box>
-        </Flex>
-      ) : (
-        <Box
-          className="ag-theme-alpine"
-          my="md"
-          style={{
-            width: "100%",
-            height: "calc(100vh - 240px)",
-          }}
-        >
-          <AgGridReact<Lead>
-            ref={gridRef}
-            rowData={filteredLeads}
-            columnDefs={columnDefs}
-            animateRows={true}
-            rowSelection="multiple"
-            quickFilterText={keyword}
-            onSelectionChanged={onSelectionChanged}
-            components={components}
-          />
-        </Box>
-      )}
+        )}
 
-      <DeleteLeadConfirmationModal
-        opened={openedDeleteConfirmationModal}
-        close={closeDeleteConfirmationModal}
-      />
-      <LeadsFilterDrawer
-        opened={filterDrawerOpen}
-        onClose={() => setFilterDrawerOpen(false)}
-      />
-    </Card>
+        <DeleteLeadConfirmationModal
+          opened={openedDeleteConfirmationModal}
+          close={closeDeleteConfirmationModal}
+        />
+        <LeadsFilterDrawer
+          opened={filterDrawerOpen}
+          onClose={() => setFilterDrawerOpen(false)}
+        />
+      </Card>
+    </LeadsFilteredListStyled>
   );
 }
 
