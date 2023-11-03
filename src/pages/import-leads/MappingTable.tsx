@@ -11,7 +11,7 @@ import {
   SelectItem,
   Drawer,
 } from "@mantine/core";
-
+import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setAllMapped } from "../../store/import/slice";
@@ -21,7 +21,6 @@ import {
   addNewPropertySelectItem,
   HeaderObject,
 } from "./DummyProperties";
-import { useDisclosure } from "@mantine/hooks";
 import DrawerContent from "./DrawerContent";
 
 function MappingTable() {
@@ -112,7 +111,6 @@ function MappingTable() {
   //newProperty is the property we are mapping the header at headerIndex to
   function handleChange(newProperty: any, headerIndex: any) {
     if (newProperty === addNewPropertySelectItem.value) {
-      console.log("hello");
       open();
       return;
     }
@@ -154,15 +152,12 @@ function MappingTable() {
         opened={opened}
         onClose={close}
         overlayProps={{ opacity: 0.5, blur: 4 }}
-        transitionProps={{
-          transition: "fade",
-          duration: 500,
-          timingFunction: "ease",
-        }}
         position="right"
+        withCloseButton={false}
       >
         <DrawerContent />
       </Drawer>
+
       <Container fluid pb={100}>
         <Flex justify="center" py="xs">
           <Title order={2}>
