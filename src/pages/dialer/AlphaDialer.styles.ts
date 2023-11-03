@@ -2,11 +2,31 @@ import { styled } from "styled-components";
 //
 import devices from "../../styles/devices";
 
-const AlphaDialerStyled = styled.div<{ isvisible: boolean }>`
-  transition: width 0.2s ease;
-  overflow: ${(props) => (props.isvisible ? "unset" : "hidden")};
-  background-color: lightyellow;
-  width: ${(props) => (props.isvisible ? "900px" : "0px")};
+const AlphaDialerStyled = styled.div<{ $visible: boolean }>`
+  background-color: #e1e1e1;
+
+  opacity: ${(props) => (props.$visible ? 1 : 0)};
+  transform: ${(props) =>
+    props.$visible ? "translateY(0px)" : "translateY(100vh)"};
+
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+
+  transition: transform 0.5s ease, opacity 0.5s ease;
+
+  @media ${devices.tablet} {
+    left: 180px;
+  }
+
+  .split {
+    & > div {
+      flex: 1;
+    }
+  }
 
   .details {
     display: block;
@@ -49,12 +69,13 @@ const AlphaDialerStyled = styled.div<{ isvisible: boolean }>`
   .controls {
     .control-buttons {
       display: flex;
+      align-items: flex-end;
 
       padding: 0.25rem;
 
-      svg {
+      /* svg {
         font-size: 2.5rem;
-      }
+      } */
 
       & > div {
         padding: 0 0.5rem;

@@ -29,11 +29,13 @@ import {
 } from "@mantine/core";
 //
 import { APP_NAME } from "../../configs/constants";
+import { setShowOptions } from "../../store/dialer/slice";
+import { PhoneInput } from "../../components/phone-input";
+import { PiPhone } from "react-icons/pi";
 
 function Settings() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
   const email = useAppSelector(selectEmail);
   const phone = useAppSelector(selectPhone);
   const firstName = useAppSelector(selectFirstName);
@@ -42,6 +44,10 @@ function Settings() {
   function handleSignOut() {
     dispatch(signOut());
     navigate(routes.signIn);
+  }
+
+  function openDialerSettingsModal() {
+    dispatch(setShowOptions(true));
   }
 
   return (
@@ -76,13 +82,19 @@ function Settings() {
                   readOnly
                   disabled
                 />
-                <TextInput
-                  mt="sm"
-                  label="Phone number"
-                  value={phone || undefined}
-                  readOnly
-                  disabled
-                />
+                <Box mt="sm">
+                  <PhoneInput
+                    label="Phone number"
+                    value={phone || ""}
+                    onChange={() =>
+                      console.log(
+                        "log function included to satisfy required prop"
+                      )
+                    }
+                    disabled
+                    readOnly
+                  />
+                </Box>
               </Box>
               <Flex mt="md" align="center" justify="space-between">
                 <Button disabled>Update</Button>
@@ -92,6 +104,7 @@ function Settings() {
               </Flex>
             </Card>
           </Grid.Col>
+
           <Grid.Col xs={12} sm={6}>
             <Card withBorder shadow="md" mb="md">
               <Flex align="center" justify="space-between">
@@ -126,78 +139,104 @@ function Settings() {
               </Box>
             </Card>
           </Grid.Col>
-        </Grid>
 
-        <Card withBorder shadow="md" my="md">
-          <Title order={3}>Support</Title>
-          <Box py="md">
-            <Text>
-              Need help with something? Contact our support team and one of our
-              agents should have a response for you within 24 hours.
-            </Text>
-            <List
-              spacing="xs"
-              size="sm"
-              p="md"
-              center
-              icon={
-                <ThemeIcon color="teal" size={24} radius="xl">
-                  <IconCircleCheck size="1rem" />
-                </ThemeIcon>
-              }
-            >
-              <List.Item>
-                <Anchor href="mailto:support@echodial.com">
-                  support@echodial.com
-                </Anchor>
-              </List.Item>
-              {/* Note: hiding phone for now until this is ready to be fully supported */}
-              {/* <List.Item>
+          <Grid.Col xs={12} sm={6}>
+            <Card withBorder shadow="md">
+              <Title order={3}>Support</Title>
+              <Box py="md">
+                <Text>
+                  Need help with something? Contact our support team and one of
+                  our agents should have a response for you within 24 hours.
+                </Text>
+                <List
+                  spacing="xs"
+                  size="sm"
+                  p="md"
+                  center
+                  icon={
+                    <ThemeIcon color="teal" size={24} radius="xl">
+                      <IconCircleCheck size="1rem" />
+                    </ThemeIcon>
+                  }
+                >
+                  <List.Item>
+                    <Anchor href="mailto:support@echodial.com">
+                      support@echodial.com
+                    </Anchor>
+                  </List.Item>
+                  {/* Note: hiding phone for now until this is ready to be fully supported */}
+                  {/* <List.Item>
                 <Anchor mr="sm" href={`tel:${phoneNumberSupport}`}>
                   {phoneFormatter(phoneNumberSupport)}
                 </Anchor>
                 (Monday-Friday 8:00am CST - 5:00pm CST)
               </List.Item> */}
-            </List>
-          </Box>
-        </Card>
+                </List>
+              </Box>
+            </Card>
+          </Grid.Col>
 
-        <Card withBorder shadow="md" my="md">
-          <Title order={3}>Subscription</Title>
+          <Grid.Col xs={12} sm={6}>
+            <Card withBorder shadow="md">
+              <Title order={3}>Dialer</Title>
+              <Box>
+                <Text py="md">
+                  Configure your call settings to maximize productivity in your
+                  unique situation.
+                </Text>
+                <Button
+                  variant="outline"
+                  onClick={openDialerSettingsModal}
+                  leftIcon={<PiPhone fontSize="1rem" />}
+                >
+                  Open dialer settings
+                </Button>
+              </Box>
+            </Card>
+          </Grid.Col>
 
-          <Box py="md">
-            <Text>
-              Need to pause your account? Put your account on hold to keep your
-              data for 60 days, free of charge.
-            </Text>
-            <Text italic size="sm">
-              Note: You can only do this once per year
-            </Text>
-          </Box>
+          <Grid.Col xs={12} sm={6}>
+            <Card withBorder shadow="md">
+              <Title order={3}>Subscription</Title>
 
-          <Flex align="center" justify="space-between">
-            <Button
-              color="red"
-              variant="outline"
-              onClick={() => alert("Please email us to complete this step")}
-            >
-              Pause subscription
-            </Button>
-          </Flex>
-        </Card>
+              <Box py="md">
+                <Text>
+                  Need to pause your account? Put your account on hold to keep
+                  your data for 60 days, free of charge.
+                </Text>
+                <Text italic size="sm">
+                  Note: You can only do this once per year
+                </Text>
+              </Box>
 
-        <Card withBorder shadow="md" color="red" my="md">
-          <Title order={3}>Danger zone</Title>
-          <Text py="md">
-            Not happy with {APP_NAME} any more? Feel free to cancel at any time.
-          </Text>
-          <Button
-            color="red"
-            onClick={() => alert("Please email us to complete this step")}
-          >
-            Delete account
-          </Button>
-        </Card>
+              <Flex align="center" justify="space-between">
+                <Button
+                  color="red"
+                  variant="outline"
+                  onClick={() => alert("Please email us to complete this step")}
+                >
+                  Pause subscription
+                </Button>
+              </Flex>
+            </Card>
+          </Grid.Col>
+
+          <Grid.Col xs={12} sm={6}>
+            <Card withBorder shadow="md" color="red">
+              <Title order={3}>Danger zone</Title>
+              <Text py="md">
+                Not happy with {APP_NAME} any more? Feel free to cancel at any
+                time.
+              </Text>
+              <Button
+                color="red"
+                onClick={() => alert("Please email us to complete this step")}
+              >
+                Delete account
+              </Button>
+            </Card>
+          </Grid.Col>
+        </Grid>
       </Container>
     </SettingsStyled>
   );

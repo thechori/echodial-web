@@ -1,15 +1,13 @@
 import { ColDef } from "ag-grid-community";
-import { PiPhoneFill } from "react-icons/pi";
 import { format } from "date-fns";
 //
 import { Lead } from "../../types";
 import { capitalizeFirstLetter } from "../../utils/string-formatters";
 import phoneFormatter from "../../utils/phone-formatter";
-import { Button } from "@mantine/core";
 
 export const leadColDefs: ColDef<Lead>[] = [
   {
-    width: 10,
+    width: 50,
     sortable: true,
     headerCheckboxSelection: true,
     checkboxSelection: true,
@@ -17,107 +15,108 @@ export const leadColDefs: ColDef<Lead>[] = [
     headerCheckboxSelectionFilteredOnly: true,
   },
   {
-    colId: "actions",
-    width: 100,
-    cellRenderer: () => {
-      return (
-        <div>
-          <Button variant="outline" size="xs" leftIcon={<PiPhoneFill />}>
-            Call
-          </Button>
-        </div>
-      );
-    },
+    width: 120,
+    headerName: "Actions",
+    cellRenderer: "tableActionCell", // name comes from `components` memoized object which gets passed to AG Grid `components` parameter
   },
   {
     field: "status",
     headerName: "Status",
     sortable: true,
     resizable: true,
+    filter: true,
     width: 120,
     valueFormatter: (val) => capitalizeFirstLetter(val.value),
   },
   {
-    field: "first_name",
-    headerName: "First name",
+    headerName: "Full name",
     sortable: true,
     resizable: true,
-  },
-  {
-    field: "last_name",
-    headerName: "Last name",
-    sortable: true,
-    resizable: true,
+    filter: true,
+    valueGetter: (params) =>
+      `${params.data?.first_name} ${params.data?.last_name}`,
   },
   {
     field: "phone",
     sortable: true,
     resizable: true,
+    filter: true,
     cellRenderer: (param: any) => phoneFormatter(param.value),
   },
-  // { field: "email", filter: true, resizable: true, sortable: true },
   {
-    field: "source",
-    headerName: "Lead vendor",
+    field: "call_count",
+    headerName: "Call count",
+    width: 120,
     resizable: true,
     sortable: true,
-  },
-  {
-    field: "do_not_call",
-    headerName: "Do not call (DNC)",
-    resizable: true,
-    sortable: true,
+    filter: true,
   },
   {
     field: "appointment_at",
     headerName: "Appointment at",
     resizable: true,
     sortable: true,
+    filter: true,
     valueFormatter: ({ value }) => {
-      return value ? format(new Date(value), "Pp") : "N/A";
+      return value ? format(new Date(value), "Pp") : "";
     },
   },
   {
-    field: "not_interested_reason",
-    headerName: "Not interested reason",
+    field: "source",
+    headerName: "Lead vendor",
     resizable: true,
     sortable: true,
-  },
-  {
-    field: "call_count",
-    headerName: "Call count",
-    resizable: true,
-    sortable: true,
+    filter: true,
   },
   {
     field: "address1",
     headerName: "Address",
     resizable: true,
     sortable: true,
+    filter: true,
   },
   {
     field: "city",
     headerName: "City",
     resizable: true,
     sortable: true,
+    filter: true,
   },
   {
     field: "state",
     headerName: "State",
     resizable: true,
     sortable: true,
+    filter: true,
   },
   {
     field: "zip",
     headerName: "Zip",
     resizable: true,
     sortable: true,
+    filter: true,
+  },
+  {
+    field: "do_not_call",
+    headerName: "Do not call (DNC)",
+    resizable: true,
+    sortable: true,
+    filter: true,
+  },
+
+  {
+    field: "not_interested_reason",
+    headerName: "Not interested reason",
+    resizable: true,
+    sortable: true,
+    filter: true,
   },
   {
     field: "created_at",
     headerName: "Created at",
     resizable: true,
     sortable: true,
+    filter: true,
     valueFormatter: (param) => format(new Date(param.value), "Pp"),
   },
 ];

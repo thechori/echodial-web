@@ -9,8 +9,9 @@ import {
   setShowOptions,
 } from "../../store/dialer/slice";
 import ProtectedBetaModal from "../protected-beta-modal";
-import BetaDialer from "../../pages/dialer/BetaDialer";
 import { Box } from "@mantine/core";
+import AlphaDialer from "../../pages/dialer/AlphaDialer";
+import AlphaDialerFab from "../../pages/dialer/AlphaDialerFab";
 
 const Container = styled.div`
   display: block;
@@ -33,17 +34,18 @@ const AuthenticatedUserLayout = ({ children }: any) => {
   return (
     <Container>
       <Sidebar />
-      <div className="content">
-        <Box p="md">
-          <BetaDialer />
-        </Box>
-        <div>{children}</div>
-      </div>
+      <Box className="content" py="md">
+        <Box>{children}</Box>
+      </Box>
+
+      {/* Modals */}
       <DialerOptionsModal
         opened={isDialerOptionsModalOpen}
         onClose={() => dispatch(setShowOptions(false))}
       />
       <ProtectedBetaModal />
+      <AlphaDialer />
+      <AlphaDialerFab />
     </Container>
   );
 };

@@ -1,32 +1,41 @@
+import { useEffect } from "react";
 import { Card, Flex, ThemeIcon, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { MdGroups } from "react-icons/md";
 //
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import NewLeadsMenu from "./NewLeadsMenu";
-import EditLeadSelectionMenu from "./EditLeadSelectionMenu";
 import UploadLeadsViaCsvModal from "./UploadLeadsViaCsvModal";
 import ManualInputLeadModal from "./ManualInputLeadModal";
-import DeleteLeadConfirmationModal from "./DeleteLeadConfirmationModal";
-import EditLeadModal from "./EditLeadModal";
+import {
+  setRequestForImportLeadsModal,
+  setRequestForManualCreateLeadsModal,
+} from "../../store/leads/slice";
 
 const LeadsFilter = () => {
-  const [opened, { open, close }] = useDisclosure(false);
+  const dispatch = useAppDispatch();
+  const {
+    selectedRows,
+    shouldImportLeadsModalOpen,
+    shouldManualCreateLeadModalOpen,
+  } = useAppSelector((state) => state.leads);
+  const [opened, { open: openImport, close }] = useDisclosure(false);
   const [openedManual, { open: openManual, close: closeManual }] =
     useDisclosure(false);
-  const [
-    openedDeleteConfirmationModal,
-    { open: openDeleteConfirmationModal, close: closeDeleteConfirmationModal },
-  ] = useDisclosure(false);
-  const [openedEditModal, { open: openEditModal, close: closeEditModal }] =
-    useDisclosure(false);
 
-  function deleteLeads() {
-    openDeleteConfirmationModal();
-  }
-
-  function editLead() {
-    openEditModal();
-  }
+  // Allow opening of modals from other components (e.g., filtered list)
+  useEffect(() => {
+    if (shouldImportLeadsModalOpen) {
+      openImport();
+      dispatch(setRequestForImportLeadsModal(false));
+    }
+  }, [shouldImportLeadsModalOpen]);
+  useEffect(() => {
+    if (shouldManualCreateLeadModalOpen) {
+      openManual();
+      dispatch(setRequestForManualCreateLeadsModal(false));
+    }
+  }, [shouldManualCreateLeadModalOpen]);
 
   return (
     // Note: `overflow: visible` is required to support menu bleeding outside of Card bounds (before, it would cut off and not be visible)
@@ -48,19 +57,19 @@ const LeadsFilter = () => {
         </Flex>
 
         <Flex align="center">
-          <EditLeadSelectionMenu onDelete={deleteLeads} onEdit={editLead} />
-          <NewLeadsMenu onCsvUpload={open} onManualInput={openManual} />
+          <Flex
+            className="action-buttons"
+            style={{
+              visibility: selectedRows.length === 0 ? "hidden" : "unset",
+            }}
+          ></Flex>
+          <NewLeadsMenu onCsvUpload={openImport} onManualInput={openManual} />
         </Flex>
       </Flex>
 
       {/* Modals */}
       <UploadLeadsViaCsvModal opened={opened} close={close} />
       <ManualInputLeadModal opened={openedManual} close={closeManual} />
-      <DeleteLeadConfirmationModal
-        opened={openedDeleteConfirmationModal}
-        close={closeDeleteConfirmationModal}
-      />
-      <EditLeadModal opened={openedEditModal} close={closeEditModal} />
     </Card>
   );
 };

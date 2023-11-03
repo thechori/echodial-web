@@ -22,6 +22,8 @@ export type TLeadsState = {
   filteredRows: Lead[];
   appliedFilters: TFilter[];
   selectedRows: Lead[];
+  shouldImportLeadsModalOpen: boolean;
+  shouldManualCreateLeadModalOpen: boolean;
   //
   options: TLeadOptions;
 };

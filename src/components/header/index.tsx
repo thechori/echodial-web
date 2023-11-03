@@ -54,7 +54,7 @@ const Header = () => {
                       <NavLink className="light" to={routes.faq}>
                         FAQ
                       </NavLink>
-                      <NavLink to={routes.dashboard}>
+                      <NavLink to={routes.leads}>
                         <Button size="xl" variant="gradient">
                           Dashboard
                         </Button>

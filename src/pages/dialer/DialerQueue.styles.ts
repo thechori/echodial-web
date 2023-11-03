@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import devices from "../../styles/devices";
 
-const ContactQueueStyled = styled.div`
+const DialerQueueStyled = styled.div`
   .contact {
     border: 1px solid rgba(0, 0, 0, 0.1);
     display: flex;
@@ -17,7 +17,7 @@ const ContactQueueStyled = styled.div`
   }
 
   tr.active-index {
-    border: 2px solid green;
+    color: green;
   }
 
   .call-icon {
@@ -59,6 +59,23 @@ const ContactQueueStyled = styled.div`
       font-size: 3rem;
     }
   }
+
+  position: relative;
+
+  .fade {
+    width: 100%;
+    bottom: 0px;
+    position: absolute;
+    background-color: white;
+    height: 10rem;
+    pointer-events: none;
+    background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  }
+
+  .scroll-area {
+    overflow: scroll;
+    max-height: calc(100vh - 280px);
+  }
 `;
 
-export default ContactQueueStyled;
+export default DialerQueueStyled;

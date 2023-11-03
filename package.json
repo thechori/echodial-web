@@ -47,7 +47,8 @@
     "recharts": "^2.7.2",
     "styled-components": "^6.0.4",
     "ts-node": "^10.9.1",
-    "twilio": "^4.14.0"
+    "twilio": "^4.14.0",
+    "use-sound": "^4.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.14",

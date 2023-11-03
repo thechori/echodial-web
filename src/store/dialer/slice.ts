@@ -7,6 +7,8 @@ import { Lead } from "../../types";
 
 export const LOCAL_STORAGE_KEY__DIALER_OPTIONS = "dialer__options";
 export const LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER = "dialer__from_number";
+export const LOCAL_STORAGE_KEY__DIAL_QUEUE = "dialer__dial_queue";
+export const LOCAL_STORAGE_KEY__DIAL_QUEUE_INDEX = "dialer__dial_queue_index";
 
 const buildOptions = (): TDialerOptions => {
   // Check for local storage
@@ -16,8 +18,10 @@ const buildOptions = (): TDialerOptions => {
     return JSON.parse(cachedOptions);
   }
 
+  // Check for APP_VERSION difference, clear settings if found to leave room for enhancements to the user experience
+
   return {
-    maxRingTimeInSeconds: 3,
+    maxRingTimeInSeconds: 10, // 10 seems like a good sweet spot
     maxCallTries: 3,
     cooldownTimeInSeconds: 10,
   };
@@ -58,7 +62,7 @@ interface IDialerState {
   tokenLoading: boolean;
   identity: null | string;
   fromNumber: string;
-  currentDialIndex: null | number;
+  dialQueueIndex: null | number;
   dialQueue: Lead[];
   options: TDialerOptions;
   showOptions: boolean;
@@ -84,8 +88,12 @@ const buildInitialState = (): IDialerState => ({
   status: "idle",
   token: null,
   identity: null,
-  currentDialIndex: null,
-  dialQueue: JSON.parse(localStorage.getItem("dialer__contactQueue") || "[]"),
+  dialQueue: JSON.parse(
+    localStorage.getItem(LOCAL_STORAGE_KEY__DIAL_QUEUE) || "[]"
+  ),
+  dialQueueIndex: JSON.parse(
+    localStorage.getItem(LOCAL_STORAGE_KEY__DIAL_QUEUE_INDEX) || "null"
+  ),
   //
   options: buildOptions(),
   showOptions: false,
@@ -120,7 +128,10 @@ export const DialerSlice = createSlice({
       state.fromNumber = action.payload;
 
       // Persist in local storage
-      localStorage.setItem("dialer__fromNumber", action.payload);
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER,
+        action.payload
+      );
     },
     setToken: (state, action) => {
       state.token = action.payload;
@@ -131,17 +142,35 @@ export const DialerSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
-    setCurrentDialIndex: (state, action) => {
-      state.currentDialIndex = action.payload;
+    setDialQueueIndex: (state, action) => {
+      state.dialQueueIndex = action.payload;
+
+      // Persist in local storage
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY__DIAL_QUEUE_INDEX,
+        JSON.stringify(action.payload)
+      );
     },
     setDialQueue: (state, action) => {
       state.dialQueue = action.payload;
 
       // Persist in local storage
       localStorage.setItem(
-        "dialer__contactQueue",
+        LOCAL_STORAGE_KEY__DIAL_QUEUE,
         JSON.stringify(action.payload)
       );
+    },
+    updateLeadById: (
+      state,
+      action: PayloadAction<{ id: number; leadUpdated: Lead }>
+    ) => {
+      const { dialQueue } = state;
+      const { id, leadUpdated } = action.payload;
+      const indexFound = dialQueue.findIndex((lead) => lead.id === id);
+      if (indexFound === -1) {
+        return console.log("Error finding lead in queue");
+      }
+      dialQueue[indexFound] = leadUpdated;
     },
     setIsMuted: (state, action) => {
       state.muted = action.payload;
@@ -188,8 +217,8 @@ export const DialerSlice = createSlice({
       state.dialQueue = queue;
 
       // Update dial index, if active
-      if (state.currentDialIndex !== null) {
-        state.currentDialIndex--;
+      if (state.dialQueueIndex !== null) {
+        state.dialQueueIndex--;
       }
     },
     moveLeadDownInQueue: (state, action) => {
@@ -213,8 +242,8 @@ export const DialerSlice = createSlice({
       state.dialQueue = queue;
 
       // Update dial index, if active
-      if (state.currentDialIndex !== null) {
-        state.currentDialIndex++;
+      if (state.dialQueueIndex !== null) {
+        state.dialQueueIndex++;
       }
     },
     deleteLeadFromQueue: (state, action) => {
@@ -239,7 +268,7 @@ export const {
   setToken,
   setError,
   setDialQueue,
-  setCurrentDialIndex,
+  setDialQueueIndex,
   setIsMuted,
   setStatus,
   setShowOptions,
@@ -248,21 +277,20 @@ export const {
   moveLeadDownInQueue,
   deleteLeadFromQueue,
   setWasCallConnected,
+  updateLeadById,
 } = DialerSlice.actions;
 
 export const selectIsCallActive = (state: RootState) => state.dialer.call;
 
 export const selectActivePhoneNumber = (state: RootState) => {
-  const { currentDialIndex, dialQueue } = state.dialer;
-  return currentDialIndex !== null
-    ? dialQueue[currentDialIndex].phone
-    : undefined;
+  const { dialQueueIndex, dialQueue } = state.dialer;
+  return dialQueueIndex !== null ? dialQueue[dialQueueIndex].phone : undefined;
 };
 
 export const selectActiveFullName = (state: RootState) => {
-  const { currentDialIndex, dialQueue } = state.dialer;
-  return currentDialIndex !== null
-    ? `${dialQueue[currentDialIndex].first_name} ${dialQueue[currentDialIndex].last_name}`
+  const { dialQueueIndex, dialQueue } = state.dialer;
+  return dialQueueIndex !== null
+    ? `${dialQueue[dialQueueIndex].first_name} ${dialQueue[dialQueueIndex].last_name}`
     : undefined;
 };
 

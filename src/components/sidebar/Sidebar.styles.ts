@@ -3,9 +3,7 @@ import colors from "../../styles/colors";
 import devices from "../../styles/devices";
 
 const SidebarStyled = styled.div`
-  background: rgb(0, 17, 30);
-  background: linear-gradient(90deg, rgba(0, 17, 30, 1) 0%, #00153f 100%);
-
+  background-color: ${colors.darkBluerBackground};
   color: white;
   position: sticky;
   top: 0;
@@ -38,18 +36,16 @@ const SidebarStyled = styled.div`
     display: none;
 
     @media ${devices.tablet} {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
   }
 
   .header {
     display: flex;
     place-content: center;
-    padding: 1.25rem;
-
-    @media ${devices.tablet} {
-      border-bottom: 1px solid white;
-    }
+    padding: 1rem 1.5rem;
 
     img {
       width: 100%;
@@ -61,6 +57,9 @@ const SidebarStyled = styled.div`
       margin-top: 1rem;
       margin-bottom: 1rem;
     }
+  }
+
+  .footer {
   }
 
   a {
@@ -76,13 +75,18 @@ const SidebarStyled = styled.div`
     color: white;
     display: flex;
     padding: 1rem;
-    border-radius: 4px;
     line-height: 1.1rem;
+    font-weight: 400;
+    font-size: 0.9rem;
+    transition: none;
 
     &.active {
-      color: ${colors.blue};
-      text-shadow: 0 0 30px ${colors.purple}, 0 0 30px ${colors.purple},
-        0 0 30px ${colors.purple};
+      background-color: ${colors.darkBluerBackgroundLightened};
+    }
+
+    &:hover {
+      color: ${colors.darkBluerBackground};
+      background-color: white;
     }
   }
 

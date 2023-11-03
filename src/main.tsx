@@ -21,7 +21,6 @@ import store from "./store";
 import ProtectedRoute from "./components/protected-route";
 import routes from "./configs/routes";
 import NotFound from "./pages/not-found";
-import Dialer from "./pages/dialer";
 import Features from "./pages/features";
 import Pricing from "./pages/pricing";
 import Layout from "./components/layouts/Layout";
@@ -34,7 +33,6 @@ import Billing from "./pages/billing";
 import CallHistory from "./pages/call-history";
 import ForgotPassword from "./pages/forgot-password";
 import ResetPassword from "./pages/reset-password";
-import AlphaDialerFab from "./pages/dialer/AlphaDialerFab";
 import ImportLeads from "./pages/import-leads";
 
 Sentry.init({
@@ -59,8 +57,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <Provider store={store}>
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <StyleProvider>
-          <Notifications />
-          <AlphaDialerFab />
+          <Notifications position="bottom-left" />
           <BrowserRouter>
             <Routes>
               <Route
@@ -115,16 +112,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path={routes.dialer}
-                element={
-                  <ProtectedRoute>
-                    <AuthenticatedUserLayout>
-                      <Dialer />
-                    </AuthenticatedUserLayout>
-                  </ProtectedRoute>
-                }
-              />
+
               <Route
                 path={routes.callHistory}
                 element={

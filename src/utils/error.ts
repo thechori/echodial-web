@@ -19,13 +19,13 @@ export const extractErrorMessage = (
   }
   // RTK Query errors
   if (error && typeof error === "object" && "data" in error) {
+    console.log("RTK Query error");
     // TODO: Fix bug here -- caused an app crash when DB connection timed out during
     // initial dashboard load
+
+    // TODO: FIX ME - very brittle, works for now to get import modal working again
     // @ts-ignore
-    if ("message" in error.data) {
-      return error.data.message;
-    }
-    return error.data;
+    return error?.data?.message || error.data;
   }
 
   // Generic TypeScript/JavaScript errors
