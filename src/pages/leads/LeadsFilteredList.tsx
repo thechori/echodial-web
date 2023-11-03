@@ -261,11 +261,11 @@ function LeadsFilteredList() {
         </Flex>
       ) : (
         <Box
-          className="ag-theme-alpine lead-grid-container"
-          h={500}
+          className="ag-theme-alpine"
           my="md"
           style={{
             width: "100%",
+            height: "calc(100vh - 240px)",
           }}
         >
           <AgGridReact<Lead>

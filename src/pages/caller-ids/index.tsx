@@ -15,7 +15,6 @@ import {
 import { IconCircleCheck } from "@tabler/icons-react";
 import { BiPlus, BiRefresh } from "react-icons/bi";
 //
-import PhoneNumbersStyled from "./PhoneNumbers.styles";
 import phoneFormatter from "../../utils/phone-formatter";
 import PhoneNumberMenu from "./PhoneNumberMenu";
 import { useDisclosure } from "@mantine/hooks";
@@ -55,75 +54,70 @@ function PhoneNumbers() {
   }, [errorCallerIds, errorDeleteCallerId]);
 
   return (
-    <PhoneNumbersStyled>
-      <NewCallerIdModal opened={opened} close={close} />
+    <Container fluid p="md">
+      <Grid>
+        <Grid.Col xs={12} sm={12} md={6}>
+          <Card shadow="md" withBorder radius="md">
+            <Flex align="center" justify="space-between" mb="sm">
+              <Title order={3}>Personal</Title>
+              <Button
+                loading={isLoadingCallerIds}
+                onClick={() => getCallerIds()}
+                leftIcon={<BiRefresh />}
+                variant="outline"
+              >
+                Refresh
+              </Button>
+            </Flex>
+            <Text>Verified numbers available to make outbound calls from</Text>
 
-      <Container fluid>
-        <Grid>
-          <Grid.Col xs={12} sm={12} md={6}>
-            <Card shadow="md" withBorder radius="md">
-              <Flex align="center" justify="space-between" mb="sm">
-                <Title order={3}>Personal</Title>
-                <Button
-                  loading={isLoadingCallerIds}
-                  onClick={() => getCallerIds()}
-                  leftIcon={<BiRefresh />}
-                  variant="outline"
-                >
-                  Refresh
-                </Button>
-              </Flex>
-              <Text>
-                Verified numbers available to make outbound calls from
-              </Text>
-
-              <Box p="lg">
-                {callerIds && callerIds.length ? (
-                  callerIds.map((cid) => (
-                    <Flex
-                      key={cid.id}
-                      py={4}
-                      align="center"
-                      justify="space-between"
-                      w={250}
-                    >
-                      <Flex align="center">
-                        <ThemeIcon color="teal" size={24} radius="xl">
-                          <IconCircleCheck size="1rem" />
-                        </ThemeIcon>
-                        <Box ml={16}>{phoneFormatter(cid.phone_number)}</Box>
-                      </Flex>
-                      <PhoneNumberMenu
-                        onDelete={() =>
-                          deleteCallerId({
-                            id: cid.id,
-                            twilio_sid: cid.twilio_sid,
-                          })
-                        }
-                        isLoading={isLoadingDeleteCallerId}
-                      />
+            <Box p="lg">
+              {callerIds && callerIds.length ? (
+                callerIds.map((cid) => (
+                  <Flex
+                    key={cid.id}
+                    py={4}
+                    align="center"
+                    justify="space-between"
+                    w={250}
+                  >
+                    <Flex align="center">
+                      <ThemeIcon color="teal" size={24} radius="xl">
+                        <IconCircleCheck size="1rem" />
+                      </ThemeIcon>
+                      <Box ml={16}>{phoneFormatter(cid.phone_number)}</Box>
                     </Flex>
-                  ))
-                ) : isLoadingCallerIds ? (
-                  <Loader py="lg" />
-                ) : (
-                  <Text size="sm" italic color="dimmed">
-                    No numbers found
-                  </Text>
-                )}
-              </Box>
+                    <PhoneNumberMenu
+                      onDelete={() =>
+                        deleteCallerId({
+                          id: cid.id,
+                          twilio_sid: cid.twilio_sid,
+                        })
+                      }
+                      isLoading={isLoadingDeleteCallerId}
+                    />
+                  </Flex>
+                ))
+              ) : isLoadingCallerIds ? (
+                <Loader py="lg" />
+              ) : (
+                <Text size="sm" italic color="dimmed">
+                  No numbers found
+                </Text>
+              )}
+            </Box>
 
-              <Text color="red">{error}</Text>
+            <Text color="red">{error}</Text>
 
-              <Group>
-                <Button onClick={open} leftIcon={<BiPlus />}>
-                  Add new
-                </Button>
-              </Group>
-            </Card>
-          </Grid.Col>
+            <Group>
+              <Button onClick={open} leftIcon={<BiPlus />}>
+                Add new
+              </Button>
+            </Group>
+          </Card>
+        </Grid.Col>
 
-          {/* <Grid.Col xs={12} sm={12}>
+        {/* <Grid.Col xs={12} sm={12}>
             <Card
               className="disabled"
               shadow="md"
@@ -168,9 +162,10 @@ function PhoneNumbers() {
               </Group>{" "}
             </Card>
           </Grid.Col> */}
-        </Grid>
-      </Container>
-    </PhoneNumbersStyled>
+      </Grid>
+
+      <NewCallerIdModal opened={opened} close={close} />
+    </Container>
   );
 }
 

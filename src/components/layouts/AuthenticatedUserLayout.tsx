@@ -14,7 +14,7 @@ import AlphaDialer from "../../pages/dialer/AlphaDialer";
 import AlphaDialerFab from "../../pages/dialer/AlphaDialerFab";
 
 const Container = styled.div`
-  display: block;
+  height: 100%;
 
   @media ${devices.tablet} {
     display: flex;
@@ -34,9 +34,9 @@ const AuthenticatedUserLayout = ({ children }: any) => {
   return (
     <Container>
       <Sidebar />
-      <Box className="content" py="md">
-        <Box>{children}</Box>
-      </Box>
+
+      {/* Main content area */}
+      <Box className="content">{children}</Box>
 
       {/* Modals */}
       <DialerOptionsModal

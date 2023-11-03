@@ -1,6 +1,6 @@
 import { Box } from "@mantine/core";
 //
-import LeadsStyled, { LeadDetailContainer } from "./Leads.styles";
+import { LeadsStyled, LeadDetailContainer } from "./Leads.styles";
 import LeadsFilter from "./LeadsFilter";
 import LeadsFilteredList from "./LeadsFilteredList";
 import { LeadDetail } from "./LeadDetail";
