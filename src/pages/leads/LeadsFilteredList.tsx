@@ -28,7 +28,6 @@ import LeadsFilterDrawer from "./LeadsFilterDrawer";
 import { leadColDefs } from "./leadColDefs";
 import { useGetLeadStatusesQuery } from "../../services/lead-status";
 import { SelectionChangedEvent } from "ag-grid-community";
-// import { setSelectedLead } from "../../store/lead-detail/slice";
 import {
   setAlphaDialerVisible,
   setDialQueue,

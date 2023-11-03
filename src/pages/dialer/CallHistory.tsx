@@ -1,131 +1,60 @@
-import { ReactNode, useEffect, useState } from "react";
-import {
-  createStyles,
-  Table,
-  ScrollArea,
-  UnstyledButton,
-  Group,
-  Center,
-  rem,
-  Text,
-  Box,
-  Flex,
-  Title,
-} from "@mantine/core";
-import {
-  IconSelector,
-  IconChevronDown,
-  IconChevronUp,
-} from "@tabler/icons-react";
+import { AgGridReact } from "ag-grid-react";
+import { Box, Flex, TextInput, Title } from "@mantine/core";
 import { format } from "date-fns";
+import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
+import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 //
 import { useGetCallsQuery } from "../../services/call";
 import phoneFormatter from "../../utils/phone-formatter";
 import { Call } from "../../types";
-
-const useStyles = createStyles((theme) => ({
-  th: {
-    padding: "0 !important",
-  },
-
-  control: {
-    width: "100%",
-    padding: `${theme.spacing.xs} ${theme.spacing.md}`,
-
-    "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[6]
-          : theme.colors.gray[0],
-    },
-  },
-
-  icon: {
-    width: rem(21),
-    height: rem(21),
-    borderRadius: rem(21),
-  },
-}));
-
-interface ThProps {
-  children: ReactNode;
-  reversed: boolean;
-  sorted: boolean;
-  onSort(): void;
-}
-
-function Th({ children, reversed, sorted, onSort }: ThProps) {
-  const { classes } = useStyles();
-
-  const Icon = sorted
-    ? reversed
-      ? IconChevronUp
-      : IconChevronDown
-    : IconSelector;
-
-  return (
-    <th className={classes.th}>
-      <UnstyledButton onClick={onSort} className={classes.control}>
-        <Group position="apart">
-          <Text fw={500} fz="sm">
-            {children}
-          </Text>
-          <Center className={classes.icon}>
-            <Icon size="0.9rem" stroke={1.5} />
-          </Center>
-        </Group>
-      </UnstyledButton>
-    </th>
-  );
-}
-
-function sortData(
-  data: Call[],
-  payload: { sortBy: keyof Call | null; reversed: boolean }
-) {
-  const { sortBy } = payload;
-
-  return [...data].sort((a, b) => {
-    if (payload.reversed) {
-      // @ts-ignore
-      return b[sortBy].localeCompare(a[sortBy]);
-    }
-
-    // @ts-ignore
-    return a[sortBy].localeCompare(b[sortBy]);
-  });
-}
+import { ColDef } from "ag-grid-community";
+import { IconSearch } from "@tabler/icons-react";
+import { useState } from "react";
 
 export function CallHistory() {
-  const { data: calls } = useGetCallsQuery();
-  const [sortedData, setSortedData] = useState(calls || []);
-  const [sortBy, setSortBy] = useState<keyof Call | null>("created_at");
-  const [reverseSortDirection, setReverseSortDirection] = useState(false);
+  const { data } = useGetCallsQuery();
+  const [keyword, setKeyword] = useState("");
 
-  const setSorting = (field: keyof Call) => {
-    const reversed = field === sortBy ? !reverseSortDirection : false;
-    setReverseSortDirection(reversed);
-    setSortBy(field);
-    setSortedData(sortData(calls || [], { sortBy: field, reversed }));
-  };
-
-  useEffect(() => {
-    if (calls) {
-      setSortedData(
-        sortData(calls || [], { sortBy, reversed: !reverseSortDirection })
-      );
-    }
-  }, [calls]);
-
-  const rows = sortedData.map((row) => (
-    <tr key={row.id}>
-      <td>{format(new Date(row.created_at), "Pp")}</td>
-      <td>{phoneFormatter(row.from_number)}</td>
-      <td>{phoneFormatter(row.to_number)}</td>
-      <td>{row.status}</td>
-      <td>{row.duration_ms}</td>
-    </tr>
-  ));
+  const columnDefs: ColDef<Call>[] = [
+    {
+      sortable: true,
+      resizable: true,
+      filter: true,
+      headerName: "Called at",
+      field: "created_at",
+      valueFormatter: (val) => format(new Date(val.value), "Pp"),
+    },
+    {
+      sortable: true,
+      resizable: true,
+      filter: true,
+      field: "from_number",
+      headerName: "My phone number",
+      valueFormatter: (val) => phoneFormatter(val.value) || "",
+    },
+    {
+      sortable: true,
+      resizable: true,
+      filter: true,
+      field: "to_number",
+      headerName: "Lead phone number",
+      valueFormatter: (val) => phoneFormatter(val.value) || "",
+    },
+    {
+      sortable: true,
+      resizable: true,
+      filter: true,
+      field: "status",
+      headerName: "Status",
+    },
+    {
+      sortable: true,
+      resizable: true,
+      filter: true,
+      field: "duration_ms",
+      headerName: "Call duration",
+    },
+  ];
 
   return (
     <Box>
@@ -135,71 +64,32 @@ export function CallHistory() {
         </Title>
       </Flex>
 
-      <ScrollArea h={400}>
-        <Table
-          horizontalSpacing="md"
-          verticalSpacing="xs"
-          miw={700}
-          sx={{ tableLayout: "fixed" }}
-        >
-          <thead>
-            <tr>
-              <Th
-                sorted={sortBy === "created_at"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("created_at")}
-              >
-                Date
-              </Th>
-              <Th
-                sorted={sortBy === "from_number"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("from_number")}
-              >
-                From
-              </Th>
-              <Th
-                sorted={sortBy === "to_number"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("to_number")}
-              >
-                To
-              </Th>
-              <Th
-                sorted={sortBy === "status"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("status")}
-              >
-                Status
-              </Th>
-              <Th
-                sorted={sortBy === "duration_ms"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("duration_ms")}
-              >
-                Duration
-              </Th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length > 0 ? (
-              rows
-            ) : (
-              <tr>
-                <td
-                  colSpan={
-                    calls && calls.length ? Object.keys(calls[0]).length : 1
-                  }
-                >
-                  <Text weight={500} align="center">
-                    No calls found
-                  </Text>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-      </ScrollArea>
+      <TextInput
+        placeholder="Search..."
+        maw={300}
+        icon={<IconSearch size="1rem" />}
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
+      />
+
+      <Box
+        className="ag-theme-alpine lead-grid-container"
+        h={500}
+        my="md"
+        style={
+          {
+            // width: "100%",
+          }
+        }
+      >
+        <AgGridReact<Call>
+          rowData={data}
+          columnDefs={columnDefs}
+          animateRows={true}
+          rowSelection="multiple"
+          quickFilterText={keyword}
+        />
+      </Box>
     </Box>
   );
 }
