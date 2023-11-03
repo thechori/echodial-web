@@ -1,5 +1,5 @@
 import { AgGridReact } from "ag-grid-react";
-import { Box, Container, Flex, TextInput, Title } from "@mantine/core";
+import { Box, Card, Container, Flex, TextInput, Title } from "@mantine/core";
 import { format } from "date-fns";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
@@ -58,35 +58,37 @@ export function CallHistory() {
 
   return (
     <Container p="md" fluid>
-      <Flex justify="space-between" align="center">
-        <Title order={3} mb={16}>
-          Call history
-        </Title>
-      </Flex>
+      <Card withBorder>
+        <Flex justify="space-between" align="center">
+          <Title order={3} mb={16}>
+            Call history
+          </Title>
+        </Flex>
 
-      <TextInput
-        placeholder="Search..."
-        maw={300}
-        icon={<IconSearch size="1rem" />}
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
-      />
-
-      <Box
-        className="ag-theme-alpine lead-grid-container"
-        my="md"
-        style={{
-          height: "calc(100vh - 150px)",
-        }}
-      >
-        <AgGridReact<Call>
-          rowData={data}
-          columnDefs={columnDefs}
-          animateRows={true}
-          rowSelection="multiple"
-          quickFilterText={keyword}
+        <TextInput
+          placeholder="Search..."
+          maw={360}
+          icon={<IconSearch size="1rem" />}
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
         />
-      </Box>
+
+        <Box
+          className="ag-theme-alpine lead-grid-container"
+          my="md"
+          style={{
+            height: "calc(100vh - 150px)",
+          }}
+        >
+          <AgGridReact<Call>
+            rowData={data}
+            columnDefs={columnDefs}
+            animateRows={true}
+            rowSelection="multiple"
+            quickFilterText={keyword}
+          />
+        </Box>
+      </Card>
     </Container>
   );
 }
