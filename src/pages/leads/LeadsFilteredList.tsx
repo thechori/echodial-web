@@ -223,23 +223,38 @@ function LeadsFilteredList() {
               </Button>
             )}
 
-            <HoverCard width={280} shadow="md" openDelay={500}>
+            <HoverCard
+              width={280}
+              shadow="md"
+              openDelay={selectedRows.length === 0 ? 0 : 500}
+            >
               <HoverCard.Target>
-                <Button
-                  mx={8}
-                  leftIcon={<PiPhone size={16} />}
-                  onClick={startDialer}
-                  variant="gradient"
-                  disabled={selectedRows.length === 0}
-                >
-                  Start dial session
-                </Button>
+                {selectedRows.length !== 0 ? (
+                  <Button
+                    mx={8}
+                    leftIcon={<PiPhone size={16} />}
+                    onClick={startDialer}
+                    variant="gradient"
+                    style={{ pointerEvents: "all" }}
+                  >
+                    Start dial session
+                  </Button>
+                ) : (
+                  <Button
+                    mx={8}
+                    leftIcon={<PiPhone size={16} />}
+                    variant="light"
+                    className="disabled-button start-dial-session-disabled-button"
+                  >
+                    Start dial session
+                  </Button>
+                )}
               </HoverCard.Target>
               <HoverCard.Dropdown>
                 <Text size="sm">
-                  Clicking "Start dial session" will load the selected leads
-                  into your dialer queue to begin dialing. You must have at
-                  least one lead selected for this option to become enabled.
+                  {selectedRows.length !== 0
+                    ? 'Clicking "Start dial session" will load the selected leads into your dialer queue to begin dialing.'
+                    : "Select at least one lead from the table to begin the dial session."}
                 </Text>
               </HoverCard.Dropdown>
             </HoverCard>

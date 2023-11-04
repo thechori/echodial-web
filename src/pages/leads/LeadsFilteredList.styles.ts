@@ -15,4 +15,10 @@ export const LeadsFilteredListStyled = styled.div`
   .ag-row-hover .hover-button:hover {
     background-color: ${lighten(0.4, colors.appBlue)};
   }
+
+  .start-dial-session-disabled-button {
+    &:hover {
+      cursor: not-allowed;
+    }
+  }
 `;

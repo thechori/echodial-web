@@ -230,6 +230,11 @@ const StyleProvider = styled.div`
     opacity: 0.3;
     pointer-events: none;
   }
+
+  .disabled-button {
+    color: #adb5bd;
+    background-color: #f1f3f5;
+  }
 `;
 
 export default StyleProvider;
