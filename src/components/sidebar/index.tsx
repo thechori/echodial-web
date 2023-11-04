@@ -11,14 +11,32 @@ import routes from "../../configs/routes";
 import logo from "../../assets/EchoDial-temp-logo-full.png";
 import { Box, Divider } from "@mantine/core";
 import colors from "../../styles/colors";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setAlphaDialerVisible } from "../../store/dialer/slice";
 
 const Sidebar = () => {
+  const { alphaDialerVisible } = useAppSelector((state) => state.dialer);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
 
   const handleClickOff = (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     setExpanded(false);
+  };
+
+  // Click wrapper to handle hiding the dialer whenever a nav change is requested
+  const clickWrapper = (nextAction: any) => {
+    // Check for visible dialer
+    if (alphaDialerVisible) {
+      // Hide dialer if found
+      dispatch(setAlphaDialerVisible(false));
+    }
+
+    // Continue
+    if (nextAction) {
+      nextAction();
+    }
   };
 
   return (
@@ -29,11 +47,11 @@ const Sidebar = () => {
             className="hoverable"
             src={logo}
             alt="EchoDial logo"
-            onClick={() => navigate(routes.leads)}
+            onClick={() => clickWrapper(navigate(routes.leads))}
           />
           <div
             className="hamburger-menu"
-            onClick={() => setExpanded(!expanded)}
+            onClick={() => clickWrapper(setExpanded(!expanded))}
           >
             <AiOutlineMenu fontSize="26px" color="white" />
           </div>
@@ -80,7 +98,7 @@ const Sidebar = () => {
               src={logo}
               alt="EchoDial logo"
               className="hoverable"
-              onClick={() => navigate(routes.leads)}
+              onClick={() => clickWrapper(navigate(routes.leads))}
             />
           </div>
 
@@ -122,10 +140,6 @@ const Sidebar = () => {
             </NavLink>
           </div>
         </div>
-
-        {/* <div className="footer">
-          
-        </div> */}
       </div>
     </SidebarStyled>
   );
