@@ -9,13 +9,16 @@ import { AiOutlineMenu } from "react-icons/ai";
 import SidebarStyled from "./Sidebar.styles";
 import routes from "../../configs/routes";
 import logo from "../../assets/EchoDial-temp-logo-full.png";
-import { Box, Divider } from "@mantine/core";
+import { Box, Button, Center, Divider, Progress, Text } from "@mantine/core";
 import colors from "../../styles/colors";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setAlphaDialerVisible } from "../../store/dialer/slice";
+import { useGetStripeTrialDetailsQuery } from "../../services/stripe";
+import { fromUnixTime } from "date-fns";
 
 const Sidebar = () => {
   const { alphaDialerVisible } = useAppSelector((state) => state.dialer);
+  const { data } = useGetStripeTrialDetailsQuery();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
@@ -38,6 +41,18 @@ const Sidebar = () => {
       nextAction();
     }
   };
+
+  const getDaysRemaining = () => {
+    if (!data) {
+      return "0 days";
+    }
+
+    // todo: finish me
+    fromUnixTime(data.trial_end);
+    return "1111 days";
+  };
+
+  console.log(data);
 
   return (
     <SidebarStyled>
@@ -140,6 +155,23 @@ const Sidebar = () => {
             </NavLink>
           </div>
         </div>
+
+        {data && (
+          <div className="footer">
+            <Divider />
+            <Box className="trial-details" p="lg" bg="black">
+              <Text size="xs" mb="xs">
+                {getDaysRemaining()} left in free trial
+              </Text>
+              <Progress mb="md" value={75} />
+              <Center>
+                <Button size="xs" compact variant="gradient">
+                  Upgrade
+                </Button>
+              </Center>
+            </Box>
+          </div>
+        )}
       </div>
     </SidebarStyled>
   );

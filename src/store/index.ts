@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-
 //
 import userReducer from "./user/slice";
 import dialerReducer from "./dialer/slice";
@@ -13,6 +12,7 @@ import { leadStatusApi } from "../services/lead.status";
 import { callerIdApi } from "../services/caller-id";
 import { callApi } from "../services/call";
 import { metricApi } from "../services/metric";
+import { stripeApi } from "../services/stripe";
 
 const store = configureStore({
   reducer: {
@@ -28,6 +28,7 @@ const store = configureStore({
     [callerIdApi.reducerPath]: callerIdApi.reducer,
     [callApi.reducerPath]: callApi.reducer,
     [metricApi.reducerPath]: metricApi.reducer,
+    [stripeApi.reducerPath]: stripeApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -37,7 +38,8 @@ const store = configureStore({
       leadStatusApi.middleware,
       callerIdApi.middleware,
       callApi.middleware,
-      metricApi.middleware
+      metricApi.middleware,
+      stripeApi.middleware
     ),
 });
 
