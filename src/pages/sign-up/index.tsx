@@ -120,11 +120,9 @@ function SignUp() {
                 <List.Item>The world's first truly autonomous dialer</List.Item>
                 <List.Item>Best-in-class user interface</List.Item>
                 <List.Item>High-quality voice calls</List.Item>
-                <List.Item>
-                  1500 voice call minutes per month (minimum)
-                </List.Item>
+                <List.Item>1500+ voice call minutes per month</List.Item>
                 <List.Item>Access to premium support</List.Item>
-                <List.Item>24-hour free trial (unlimited access)</List.Item>
+                <List.Item>7-day free trial (unlimited access)</List.Item>
                 <List.Item>100% satisfaction guaranteed</List.Item>
               </List>
             </div>
