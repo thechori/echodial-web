@@ -14,7 +14,7 @@ import { DateInput } from "@mantine/dates";
 //
 import { useAddLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
-import { useGetLeadStatusesQuery } from "../../services/lead-status";
+import { useGetLeadStatusesQuery } from "../../services/lead.status";
 import { PhoneInput } from "../../components/phone-input";
 
 const ManualInputLeadModal = ({ opened, close }: any) => {

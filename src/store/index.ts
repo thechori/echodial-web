@@ -9,7 +9,7 @@ import billingReducer from "./billing/slice";
 import leadReducer from "./leads/slice";
 import leadDetailReducer from "./lead-detail/slice";
 import { leadApi } from "../services/lead";
-import { leadStatusApi } from "../services/lead-status";
+import { leadStatusApi } from "../services/lead.status";
 import { callerIdApi } from "../services/caller-id";
 import { callApi } from "../services/call";
 import { metricApi } from "../services/metric";
