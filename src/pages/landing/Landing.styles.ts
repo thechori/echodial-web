@@ -7,7 +7,7 @@ const LandingStyled = styled.div`
   .hero {
     background: radial-gradient(
       circle,
-      ${colors.darkBlueBackground} 0%,
+      #092f40 20%,
       ${colors.darkBackground} 75%
     );
 

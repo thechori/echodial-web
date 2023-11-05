@@ -21,7 +21,7 @@ function Landing() {
                 lh="2.5rem"
                 weight={600}
                 variant="gradient"
-                gradient={{ from: "gold", to: "orange", deg: 90 }}
+                gradient={{ from: "blue", to: "teal", deg: 90 }}
               >
                 {APP_MOTTO}
               </Title>
