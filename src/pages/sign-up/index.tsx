@@ -123,7 +123,6 @@ function SignUp() {
                 <List.Item>1500+ voice call minutes per month</List.Item>
                 <List.Item>Access to premium support</List.Item>
                 <List.Item>7-day free trial (unlimited access)</List.Item>
-                <List.Item>100% satisfaction guaranteed</List.Item>
               </List>
             </div>
           </div>
