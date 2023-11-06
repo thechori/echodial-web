@@ -10,6 +10,7 @@ import {
   Stack,
   SelectItem,
   Drawer,
+  Checkbox,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
@@ -41,7 +42,8 @@ function MappingTable() {
         columnHeader: fileHeaders[i],
         preview: fileRows.slice(0, 3).map((row) => row[fileHeaders[i]]),
         mapped: false,
-        property: "empty",
+        property: null,
+        excludeHeader: false,
       });
     }
     setHeaders(tempHeaders);
@@ -75,24 +77,23 @@ function MappingTable() {
             {/* if the header isn't mapped, the placeholder will be set to "select", otherwise we set it to the 
             property it's mapped to */}
             <Flex justify="flex-start">
-              {headers[i].property === "empty" ? (
-                <Select
-                  placeholder="Select"
-                  value="Select"
-                  data={properties}
-                  onChange={(newProperty) => handleChange(newProperty, i)}
-                  searchable
-                />
-              ) : (
-                <Select
-                  placeholder={headers[i].property}
-                  value={headers[i].property}
-                  data={properties}
-                  onChange={(newProperty) => handleChange(newProperty, i)}
-                  searchable
-                />
-              )}
+              <Select
+                placeholder={
+                  headers[i].property === null ? "Select" : headers[i].property
+                }
+                value={
+                  headers[i].property === null ? "Select" : headers[i].property
+                }
+                data={properties}
+                onChange={(newProperty) => handleChange(newProperty, i)}
+                searchable
+                clearable
+                disabled={headers[i].excludeHeader}
+              />
             </Flex>
+          </td>
+          <td>
+            <Checkbox onChange={(event) => handleExcludeChange(event, i)} />
           </td>
         </tr>
       );
@@ -101,15 +102,30 @@ function MappingTable() {
   }, [headers, properties]);
 
   useEffect(() => {
-    if (headers.every((header) => header.mapped === true)) {
+    if (
+      headers.every(
+        (header) => header.mapped === true || header.excludeHeader === true
+      )
+    ) {
       dispatch(setAllMapped(true));
     } else {
       dispatch(setAllMapped(false));
     }
   }, [headers, dispatch]);
 
+  function handleExcludeChange(event: any, headerIndex: number) {
+    const checked = event.currentTarget.checked;
+    setHeaders((headers) => {
+      const updatedHeaders = [...headers];
+      updatedHeaders[headerIndex].excludeHeader = checked;
+      handleChange(null, headerIndex);
+      return updatedHeaders;
+    });
+    return;
+  }
   //newProperty is the property we are mapping the header at headerIndex to
   function handleChange(newProperty: any, headerIndex: any) {
+    console.log(newProperty);
     if (newProperty === addNewPropertySelectItem.value) {
       open();
       return;
@@ -140,7 +156,11 @@ function MappingTable() {
     //map the header to this property
     setHeaders((headers) => {
       const updatedHeaders = [...headers];
-      updatedHeaders[headerIndex].mapped = true;
+      if (newProperty) {
+        updatedHeaders[headerIndex].mapped = true;
+      } else {
+        updatedHeaders[headerIndex].mapped = false;
+      }
       updatedHeaders[headerIndex].property = newProperty;
       return updatedHeaders;
     });
@@ -182,6 +202,7 @@ function MappingTable() {
               <th>Preview Information</th>
               <th>Mapped</th>
               <th>Property</th>
+              <th>Exclude Column</th>
             </tr>
           </thead>
           <tbody>{mappingTable}</tbody>

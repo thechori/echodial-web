@@ -19,8 +19,6 @@ function ImportLeads() {
 
   const nextStep = () =>
     setActive((current) => (current < 2 ? current + 1 : current));
-  //   const prevStep = () =>
-  //     setActive((current) => (current > 1 ? current - 1 : current));
   const showButton = useAppSelector((state) => state.importLeads.allMapped);
   const navigate = useNavigate();
 

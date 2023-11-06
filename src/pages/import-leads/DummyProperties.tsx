@@ -8,7 +8,8 @@ export type HeaderObject = {
   columnHeader: string;
   preview: string[];
   mapped: boolean;
-  property: string;
+  property: any;
+  excludeHeader: boolean;
 };
 export const dummyProperties: SelectItem[] = [
   {
