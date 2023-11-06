@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaCreditCard, FaAddressBook } from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
@@ -14,7 +14,7 @@ import colors from "../../styles/colors";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setAlphaDialerVisible } from "../../store/dialer/slice";
 import { useGetStripeTrialDetailsQuery } from "../../services/stripe";
-import { fromUnixTime } from "date-fns";
+import { differenceInDays, fromUnixTime } from "date-fns";
 
 const Sidebar = () => {
   const { alphaDialerVisible } = useAppSelector((state) => state.dialer);
@@ -42,17 +42,30 @@ const Sidebar = () => {
     }
   };
 
-  const getDaysRemaining = () => {
+  const [daysLeftText, setDaysLeftText] = useState("");
+  const [trialPercentage, setTrialPercentage] = useState(100);
+
+  useEffect(() => {
     if (!data) {
-      return "0 days";
+      return console.log("No trial found");
     }
 
-    // todo: finish me
-    fromUnixTime(data.trial_end);
-    return "1111 days";
-  };
+    const trialStart = fromUnixTime(data.trial_start);
+    const trialEnd = fromUnixTime(data.trial_end);
+    const daysTotal = differenceInDays(trialEnd, trialStart);
+    const today = new Date();
+    const daysLeft = differenceInDays(trialEnd, today) + 1;
 
-  console.log(data);
+    const text =
+      daysLeft === 1
+        ? `${daysLeft} day left in trial`
+        : `${daysLeft} days left in trial`;
+
+    setDaysLeftText(text);
+
+    // Percentage = remaining / total * 100
+    setTrialPercentage((daysLeft / daysTotal) * 100);
+  }, [data]);
 
   return (
     <SidebarStyled>
@@ -161,9 +174,9 @@ const Sidebar = () => {
             <Divider />
             <Box className="trial-details" p="lg" bg="black">
               <Text size="xs" mb="xs">
-                {getDaysRemaining()} left in free trial
+                {daysLeftText}
               </Text>
-              <Progress mb="md" value={75} />
+              <Progress mb="md" value={trialPercentage} />
               <Center>
                 <Button size="xs" compact variant="gradient">
                   Upgrade
