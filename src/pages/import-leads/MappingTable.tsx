@@ -33,8 +33,11 @@ function MappingTable() {
   const [properties, setProperties] = useState<SelectItem[]>(dummyProperties);
   const [mappingTable, setMappingTable] = useState([]);
 
+  // values for opening/closing drawer
   const [opened, { open, close }] = useDisclosure(false);
 
+  // set the state header variable to have the values from the fileHeaders global variable
+  // for the preview, we grab the first 3 values
   useEffect(() => {
     const tempHeaders: HeaderObject[] = [];
     for (let i = 0; i < fileHeaders.length; i++) {
@@ -49,6 +52,7 @@ function MappingTable() {
     setHeaders(tempHeaders);
   }, [fileHeaders, fileRows]);
 
+  // create the mapping table
   useEffect(() => {
     let renderedData: any = [];
     for (let i = 0; i < headers.length; i++) {
@@ -63,15 +67,18 @@ function MappingTable() {
             </Stack>
           </td>
           <td>
-            {headers[i].mapped ? (
-              <ThemeIcon radius="lg" color="green">
-                <CheckIcon style={{ width: "70%", height: "70%" }} />
-              </ThemeIcon>
-            ) : (
-              <ThemeIcon radius="lg" color="gray">
-                <CheckIcon style={{ width: "70%", height: "70%" }} />
-              </ThemeIcon>
-            )}
+            {/* if exclude header is checked, we don't display the map checkmark and disable the select */}
+            {!headers[i].excludeHeader ? (
+              headers[i].mapped ? (
+                <ThemeIcon radius="lg" color="green">
+                  <CheckIcon style={{ width: "70%", height: "70%" }} />
+                </ThemeIcon>
+              ) : (
+                <ThemeIcon radius="lg" color="gray">
+                  <CheckIcon style={{ width: "70%", height: "70%" }} />
+                </ThemeIcon>
+              )
+            ) : null}
           </td>
           <td>
             {/* if the header isn't mapped, the placeholder will be set to "select", otherwise we set it to the 
@@ -101,6 +108,8 @@ function MappingTable() {
     setMappingTable(renderedData);
   }, [headers, properties]);
 
+  //if all the headers are either mapped or excluded, then we display the "next" button for the user
+  //to proceed
   useEffect(() => {
     if (
       headers.every(
@@ -113,6 +122,7 @@ function MappingTable() {
     }
   }, [headers, dispatch]);
 
+  //if the exclude checkbox is checked, we call handleChange to reset that property
   function handleExcludeChange(event: any, headerIndex: number) {
     const checked = event.currentTarget.checked;
     setHeaders((headers) => {
@@ -125,7 +135,7 @@ function MappingTable() {
   }
   //newProperty is the property we are mapping the header at headerIndex to
   function handleChange(newProperty: any, headerIndex: any) {
-    console.log(newProperty);
+    //if the newProperty is the add property option, we open the drawer
     if (newProperty === addNewPropertySelectItem.value) {
       open();
       return;
@@ -156,6 +166,7 @@ function MappingTable() {
     //map the header to this property
     setHeaders((headers) => {
       const updatedHeaders = [...headers];
+      //we only map to the property is newProperty is not null
       if (newProperty) {
         updatedHeaders[headerIndex].mapped = true;
       } else {
