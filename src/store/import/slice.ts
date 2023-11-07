@@ -27,10 +27,27 @@ export const importSlice = createSlice({
         setFileRows: (state, action) => { 
             state.fileRows = action.payload;
         },
-        setHeadersToProperties: (state, action) => {
+        initializeHeaderToProperties: (state, action) => {
             state.headersToProperties = action.payload;
+        },
+
+        setHeaderProperties: (state, action) => {
+            const newProperty = action.payload.newProperty;
+            const headerIndex = action.payload.headerIndex;
+            if (newProperty) {
+                state.headersToProperties[headerIndex].mapped = true;
+              } else {
+                state.headersToProperties[headerIndex].mapped = false;
+              }
+            state.headersToProperties[headerIndex].property = newProperty;
+        },
+
+        setExcludeCheckbox: (state, action) => {
+            const checked = action.payload.checked;
+            const headerIndex = action.payload.headerIndex;
+            state.headersToProperties[headerIndex].excludeHeader = checked;
         }
     }
 });
-export const { setAllMapped, setFileHeaders, setFileRows, setHeadersToProperties } = importSlice.actions;
+export const { setAllMapped, setFileHeaders, setFileRows, setHeaderProperties, initializeHeaderToProperties, setExcludeCheckbox } = importSlice.actions;
 export default importSlice.reducer;

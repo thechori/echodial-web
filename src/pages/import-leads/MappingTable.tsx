@@ -15,7 +15,12 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { setAllMapped } from "../../store/import/slice";
+import {
+  setAllMapped,
+  setHeaderProperties,
+  initializeHeaderToProperties,
+  setExcludeCheckbox,
+} from "../../store/import/slice";
 import { useAppSelector } from "../../store/hooks";
 import {
   dummyProperties,
@@ -29,7 +34,9 @@ function MappingTable() {
   const fileHeaders = useAppSelector((state) => state.importLeads.fileHeaders);
   const fileRows = useAppSelector((state) => state.importLeads.fileRows);
 
-  const [headers, setHeaders] = useState<HeaderObject[]>([]);
+  const headers = useAppSelector(
+    (state) => state.importLeads.headersToProperties
+  );
   const [properties, setProperties] = useState<SelectItem[]>(dummyProperties);
   const [mappingTable, setMappingTable] = useState([]);
 
@@ -49,7 +56,7 @@ function MappingTable() {
         excludeHeader: false,
       });
     }
-    setHeaders(tempHeaders);
+    dispatch(initializeHeaderToProperties(tempHeaders));
   }, [fileHeaders, fileRows]);
 
   // create the mapping table
@@ -125,12 +132,13 @@ function MappingTable() {
   //if the exclude checkbox is checked, we call handleChange to reset that property
   function handleExcludeChange(event: any, headerIndex: number) {
     const checked = event.currentTarget.checked;
-    setHeaders((headers) => {
-      const updatedHeaders = [...headers];
-      updatedHeaders[headerIndex].excludeHeader = checked;
-      handleChange(null, headerIndex);
-      return updatedHeaders;
-    });
+    handleChange(null, headerIndex);
+    const myAction = {
+      checked: checked,
+      headerIndex: headerIndex,
+    };
+    dispatch(setExcludeCheckbox(myAction));
+
     return;
   }
   //newProperty is the property we are mapping the header at headerIndex to
@@ -163,18 +171,11 @@ function MappingTable() {
       return updatedPropertyList;
     });
 
-    //map the header to this property
-    setHeaders((headers) => {
-      const updatedHeaders = [...headers];
-      //we only map to the property is newProperty is not null
-      if (newProperty) {
-        updatedHeaders[headerIndex].mapped = true;
-      } else {
-        updatedHeaders[headerIndex].mapped = false;
-      }
-      updatedHeaders[headerIndex].property = newProperty;
-      return updatedHeaders;
-    });
+    const myAction = {
+      newProperty: newProperty,
+      headerIndex: headerIndex,
+    };
+    dispatch(setHeaderProperties(myAction));
   }
 
   return (
