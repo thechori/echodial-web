@@ -190,7 +190,7 @@ function MappingTable() {
         <DrawerContent />
       </Drawer>
 
-      <Container fluid pb={100}>
+      <Container fluid pb={125}>
         <Flex justify="center" py="xs">
           <Title order={2}>
             Map columns in your file to contact properties
@@ -198,7 +198,7 @@ function MappingTable() {
         </Flex>
         <Flex justify="center" py="xs">
           <Text c="dimmed">
-            Each column header below should be mapped to a contact property{" "}
+            Each column header below should be mapped to a contact property
           </Text>
         </Flex>
 

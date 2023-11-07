@@ -6,6 +6,8 @@ import {
   Space,
   Modal,
   Table,
+  Title,
+  Text,
 } from "@mantine/core";
 import { useState } from "react";
 import { useAppSelector } from "../../store/hooks";
@@ -63,8 +65,19 @@ function ImportLeads() {
         <Stepper.Step label="Confirmation"></Stepper.Step>
       </Stepper>
       <MappingTable />
-      <Modal opened={opened} onClose={exitModal} title="Confirmation" centered>
-        <Table>
+      <Modal opened={opened} onClose={exitModal} centered>
+        <Flex justify="center">
+          <Title order={2}>Confirmation</Title>
+        </Flex>
+        <Flex justify="center" py="xs">
+          <Text c="dimmed">Excluded headers aren't shown</Text>
+        </Flex>
+        <Table
+          highlightOnHover
+          horizontalSpacing="lg"
+          verticalSpacing="xs"
+          py="xl"
+        >
           <thead>
             <tr>
               <th>Column Header</th>
@@ -73,7 +86,9 @@ function ImportLeads() {
           </thead>
           <tbody>{mappingTable}</tbody>
         </Table>
-        <Button>Submit</Button>
+        <Flex justify="center" py="lg">
+          <Button>Submit</Button>
+        </Flex>
       </Modal>
       <Paper
         style={{
