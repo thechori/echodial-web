@@ -1,15 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-export type TTrialDetails = {
-  status: string;
-  trial_start: number;
-  trial_end: number;
-};
+//
+import { TrialCredit } from "../types";
 
 const apiBaseUrl = import.meta.env.VITE_API_HOST;
 
-export const stripeApi = createApi({
-  reducerPath: "stripeApi",
+export const trialCreditApi = createApi({
+  reducerPath: "trialCreditApi",
   baseQuery: fetchBaseQuery({
     baseUrl: apiBaseUrl,
     prepareHeaders: (headers) => {
@@ -19,15 +15,15 @@ export const stripeApi = createApi({
       }
     },
   }),
-  tagTypes: ["Trial"],
+  tagTypes: ["TrialCredit"],
   endpoints: (builder) => ({
-    getStripeTrialDetails: builder.query<TTrialDetails, void>({
-      query: () => "/stripe/trial-status",
-      providesTags: ["Trial"],
+    getTrialCredits: builder.query<TrialCredit, void>({
+      query: () => "/trial-credit",
+      providesTags: ["TrialCredit"],
     }),
   }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetStripeTrialDetailsQuery } = stripeApi;
+export const { useGetTrialCreditsQuery } = trialCreditApi;

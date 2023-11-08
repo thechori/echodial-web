@@ -125,8 +125,6 @@ function AlphaDialer() {
 
   // Begin calling the current index
   async function startCall() {
-    console.log("startCall");
-
     // Clear error
     dialStateInstance.error = "";
     dispatch(setError(dialStateInstance.error));
@@ -169,6 +167,7 @@ function AlphaDialer() {
     const params = {
       To: dialQueue[dialStateInstance.dialQueueIndex].phone,
       From: fromNumber,
+      user_id: jwtDecoded?.id || null,
     };
 
     // Start Call

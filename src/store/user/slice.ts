@@ -34,8 +34,7 @@ export const UserSlice = createSlice({
     },
     signOut: (state) => {
       state.jwt = null;
-      localStorage.removeItem("jwt");
-      localStorage.removeItem("jwtDecoded");
+      localStorage.clear();
     },
   },
 });

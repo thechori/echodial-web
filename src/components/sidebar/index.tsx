@@ -13,12 +13,11 @@ import { Box, Button, Center, Divider, Progress, Text } from "@mantine/core";
 import colors from "../../styles/colors";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setAlphaDialerVisible } from "../../store/dialer/slice";
-import { useGetStripeTrialDetailsQuery } from "../../services/stripe";
-import { differenceInDays, fromUnixTime } from "date-fns";
+import { useGetTrialCreditsQuery } from "../../services/trial-credit";
 
 const Sidebar = () => {
   const { alphaDialerVisible } = useAppSelector((state) => state.dialer);
-  const { data } = useGetStripeTrialDetailsQuery();
+  const { data } = useGetTrialCreditsQuery();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
@@ -47,24 +46,15 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (!data) {
-      return console.log("No trial found");
+      return console.log("No trial credits found");
     }
 
-    const trialStart = fromUnixTime(data.trial_start);
-    const trialEnd = fromUnixTime(data.trial_end);
-    const daysTotal = differenceInDays(trialEnd, trialStart);
-    const today = new Date();
-    const daysLeft = differenceInDays(trialEnd, today) + 1;
-
-    const text =
-      daysLeft === 1
-        ? `${daysLeft} day left in trial`
-        : `${daysLeft} days left in trial`;
-
-    setDaysLeftText(text);
+    setDaysLeftText(
+      `${data.remaining_amount} of ${data.initial_amount} credits left`
+    );
 
     // Percentage = remaining / total * 100
-    setTrialPercentage((daysLeft / daysTotal) * 100);
+    setTrialPercentage((data.remaining_amount / data.initial_amount) * 100);
   }, [data]);
 
   return (
