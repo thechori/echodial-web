@@ -26,6 +26,18 @@ export const leadApi = createApi({
       query: (id) => `lead/${id}`,
       providesTags: ["Lead"],
     }),
+    getLeadStandardProperties: builder.query<Lead[], void>({
+      query: () => `lead/property/standard`,
+      providesTags: ["Lead"],
+    }),
+    getLeadCustomProperties: builder.query<Lead[], void>({
+      query: () => `lead/property/custom`,
+      providesTags: ["Lead"],
+    }),
+    getLeadPropertyGroup: builder.query<Lead[], void>({
+      query: () => `lead/property/group`,
+      providesTags: ["Lead"],
+    }),
     addLead: builder.mutation<Lead, Partial<Lead>>({
       query(body) {
         return {
@@ -85,4 +97,7 @@ export const {
   useAddLeadsViaCsvMutation,
   useUpdateLeadMutation,
   useDeleteMultipleLeadsMutation,
+  useGetLeadStandardPropertiesQuery,
+  useGetLeadCustomPropertiesQuery,
+  useGetLeadPropertyGroupQuery
 } = leadApi;
