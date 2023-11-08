@@ -49,12 +49,17 @@ const Sidebar = () => {
       return console.log("No trial credits found");
     }
 
-    setDaysLeftText(
-      `${data.remaining_amount} of ${data.initial_amount} credits left`
-    );
-
     // Percentage = remaining / total * 100
-    setTrialPercentage((data.remaining_amount / data.initial_amount) * 100);
+    // Handle 0 or negative scenario first
+    if (data.remaining_amount <= 0) {
+      setTrialPercentage(0);
+      setDaysLeftText(`0 credits left`);
+    } else {
+      setTrialPercentage((data.remaining_amount / data.initial_amount) * 100);
+      setDaysLeftText(
+        `${data.remaining_amount} of ${data.initial_amount} credits left`
+      );
+    }
   }, [data]);
 
   return (
@@ -163,7 +168,13 @@ const Sidebar = () => {
           <div className="footer">
             <Divider />
             <Box className="trial-details" p="lg" bg="black">
-              <Text size="xs" mb="xs">
+              <Text
+                size="xs"
+                ta="center"
+                weight={500}
+                mb="xs"
+                color={trialPercentage === 0 ? "red" : ""}
+              >
                 {daysLeftText}
               </Text>
               <Progress mb="md" value={trialPercentage} />
