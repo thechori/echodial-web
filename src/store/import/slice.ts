@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { HeaderObject } from "../../pages/import-leads/DummyProperties";
+import { HeaderObject } from "../../pages/import-leads/import-data";
 
 export type importSliceType = {
     allMapped: boolean,

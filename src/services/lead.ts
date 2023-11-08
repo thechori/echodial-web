@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 //
-import { Lead } from "../types";
+import { Lead, LeadCustomProperty, LeadPropertyGroup, LeadStandardProperty} from "../types";
 
 const apiBaseUrl = import.meta.env.VITE_API_HOST;
 
@@ -26,15 +26,15 @@ export const leadApi = createApi({
       query: (id) => `lead/${id}`,
       providesTags: ["Lead"],
     }),
-    getLeadStandardProperties: builder.query<Lead[], void>({
+    getLeadStandardProperties: builder.query<LeadStandardProperty[], void>({
       query: () => `lead/property/standard`,
       providesTags: ["Lead"],
     }),
-    getLeadCustomProperties: builder.query<Lead[], void>({
+    getLeadCustomProperties: builder.query<LeadCustomProperty[], void>({
       query: () => `lead/property/custom`,
       providesTags: ["Lead"],
     }),
-    getLeadPropertyGroup: builder.query<Lead[], void>({
+    getLeadPropertyGroup: builder.query<LeadPropertyGroup[], void>({
       query: () => `lead/property/group`,
       providesTags: ["Lead"],
     }),

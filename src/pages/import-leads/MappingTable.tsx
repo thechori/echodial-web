@@ -23,16 +23,11 @@ import {
 } from "../../store/import/slice";
 import { useAppSelector } from "../../store/hooks";
 import {
-  dummyProperties,
   addNewPropertySelectItem,
   HeaderObject,
-} from "./DummyProperties";
+  useRenderProperties,
+} from "./import-data";
 import DrawerContent from "./DrawerContent";
-import {
-  useGetLeadStandardPropertiesQuery,
-  useGetLeadCustomPropertiesQuery,
-  useGetLeadPropertyGroupQuery,
-} from "../../services/lead";
 
 function MappingTable() {
   const dispatch = useDispatch();
@@ -43,48 +38,18 @@ function MappingTable() {
     (state) => state.importLeads.headersToProperties
   );
 
-  const [properties, setProperties] = useState<SelectItem[]>(dummyProperties);
+  const [properties, setProperties] = useState<SelectItem[]>(
+    useRenderProperties()
+  );
   const [mappingTable, setMappingTable] = useState([]);
 
   // values for opening/closing drawer
   const [opened, { open, close }] = useDisclosure(false);
 
-  //Standard Properties
-  const {
-    data: standardProperties,
-    isLoading: isStandardPropertiesLoading,
-    error: standadPropertiesError,
-  } = useGetLeadStandardPropertiesQuery();
-
-  //Custom Properties
-  const {
-    data: customProperties,
-    isLoading: isCustomPropertiesLoading,
-    error: customPropertiesError,
-  } = useGetLeadCustomPropertiesQuery();
-
-  //Property Groups
-  const {
-    data: propertyGroups,
-    isLoading: isPropertyGroupsLoading,
-    error: propertyGroupsError,
-  } = useGetLeadPropertyGroupQuery();
-
   // set the state header variable to have the values from the fileHeaders global variable
   // for the preview, we grab the first 3 values
   useEffect(() => {
-    console.log(
-      customProperties,
-      isCustomPropertiesLoading,
-      customPropertiesError
-    );
-    console.log(
-      standardProperties,
-      isStandardPropertiesLoading,
-      standadPropertiesError
-    );
-    console.log(propertyGroups, isPropertyGroupsLoading, propertyGroupsError);
-
+    console.log(properties);
     const tempHeaders: HeaderObject[] = [];
     for (let i = 0; i < fileHeaders.length; i++) {
       tempHeaders.push({
