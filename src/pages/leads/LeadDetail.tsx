@@ -23,7 +23,7 @@ import { notifications } from "@mantine/notifications";
 //
 import { LeadDetailStyled } from "./LeadDetail.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { useGetLeadStatusesQuery } from "../../services/lead-status";
+import { useGetLeadStatusesQuery } from "../../services/lead.status";
 import { useUpdateLeadMutation } from "../../services/lead";
 import { setSelectedRows } from "../../store/leads/slice";
 import { extractErrorMessage } from "../../utils/error";

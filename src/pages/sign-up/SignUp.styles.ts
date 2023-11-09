@@ -6,9 +6,9 @@ const SignUpStyled = styled.div`
   width: 100vw;
   min-height: 100vh;
   background: linear-gradient(
-      129deg,
-      rgba(242, 47, 70, 0.85),
-      rgba(0, 140, 255, 0.85)
+      142deg,
+      rgba(0, 0, 0, 0.95),
+      rgba(0, 140, 255, 0.95)
     ),
     url(img/try-bg.png) 50% 50% no-repeat;
 

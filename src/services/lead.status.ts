@@ -19,7 +19,7 @@ export const leadStatusApi = createApi({
   tagTypes: ["LeadStatus"],
   endpoints: (builder) => ({
     getLeadStatuses: builder.query<LeadStatus[], void>({
-      query: () => "lead-status",
+      query: () => "lead/status",
       providesTags: ["LeadStatus"],
     }),
   }),

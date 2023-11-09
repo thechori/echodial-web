@@ -26,7 +26,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useGetLeadsQuery } from "../../services/lead";
 import LeadsFilterDrawer from "./LeadsFilterDrawer";
 import { leadColDefs } from "./leadColDefs";
-import { useGetLeadStatusesQuery } from "../../services/lead-status";
+import { useGetLeadStatusesQuery } from "../../services/lead.status";
 import { SelectionChangedEvent } from "ag-grid-community";
 import {
   setAlphaDialerVisible,

@@ -32,7 +32,11 @@ const BetaDialer = () => {
       return "";
     }
 
-    return `${dialQueue[dialQueueIndex].first_name} ${dialQueue[dialQueueIndex].last_name}`;
+    const lead = dialQueue[dialQueueIndex];
+
+    if (!lead) return "";
+
+    return `${lead.first_name} ${lead.last_name}`;
   };
 
   const renderPhoneNumber = () => {
@@ -40,7 +44,11 @@ const BetaDialer = () => {
       return "";
     }
 
-    return phoneFormatter(dialQueue[dialQueueIndex].phone);
+    const lead = dialQueue[dialQueueIndex];
+
+    if (!lead) return "";
+
+    return phoneFormatter(lead.phone);
   };
 
   return (

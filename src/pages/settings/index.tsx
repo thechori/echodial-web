@@ -31,6 +31,8 @@ import { APP_NAME } from "../../configs/constants";
 import { setShowOptions } from "../../store/dialer/slice";
 import { PhoneInput } from "../../components/phone-input";
 import { PiPhone } from "react-icons/pi";
+import { useDisclosure } from "@mantine/hooks";
+import DeleteAccountModal from "./DeleteAccountConfirmationModal";
 
 function Settings() {
   const dispatch = useAppDispatch();
@@ -39,6 +41,7 @@ function Settings() {
   const phone = useAppSelector(selectPhone);
   const firstName = useAppSelector(selectFirstName);
   const lastName = useAppSelector(selectLastName);
+  const [opened, { open, close }] = useDisclosure(false);
 
   function handleSignOut() {
     dispatch(signOut());
@@ -47,6 +50,10 @@ function Settings() {
 
   function openDialerSettingsModal() {
     dispatch(setShowOptions(true));
+  }
+
+  function openDeleteConfirmationModal() {
+    open();
   }
 
   return (
@@ -199,21 +206,17 @@ function Settings() {
 
             <Box py="md">
               <Text>
-                Need to pause your account? Put your account on hold to keep
-                your data for 60 days, free of charge.
-              </Text>
-              <Text italic size="sm">
-                Note: You can only do this once per year
+                Need to make changes to your account? Click the button below to
+                manage your subscription.
               </Text>
             </Box>
 
             <Flex align="center" justify="space-between">
               <Button
-                color="red"
                 variant="outline"
                 onClick={() => alert("Please email us to complete this step")}
               >
-                Pause subscription
+                Manage subscription
               </Button>
             </Flex>
           </Card>
@@ -226,15 +229,13 @@ function Settings() {
               Not happy with {APP_NAME} any more? Feel free to cancel at any
               time.
             </Text>
-            <Button
-              color="red"
-              onClick={() => alert("Please email us to complete this step")}
-            >
+            <Button color="red" onClick={openDeleteConfirmationModal}>
               Delete account
             </Button>
           </Card>
         </Grid.Col>
       </Grid>
+      <DeleteAccountModal opened={opened} close={close} />
     </Container>
   );
 }

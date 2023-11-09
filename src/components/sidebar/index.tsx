@@ -13,9 +13,11 @@ import { Box, Divider } from "@mantine/core";
 import colors from "../../styles/colors";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setAlphaDialerVisible } from "../../store/dialer/slice";
+import { SidebarSubscriptionDetail } from "./SubscriptionDetail";
 
 const Sidebar = () => {
   const { alphaDialerVisible } = useAppSelector((state) => state.dialer);
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
@@ -139,6 +141,11 @@ const Sidebar = () => {
               <div>Settings</div>
             </NavLink>
           </div>
+        </div>
+
+        <div className="footer">
+          <Divider />
+          <SidebarSubscriptionDetail />
         </div>
       </div>
     </SidebarStyled>

@@ -22,7 +22,7 @@ import { format } from "date-fns";
 //
 import { LeadDetailStyled } from "../leads/LeadDetail.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { useGetLeadStatusesQuery } from "../../services/lead-status";
+import { useGetLeadStatusesQuery } from "../../services/lead.status";
 import { useUpdateLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
 import { Lead } from "../../types";
