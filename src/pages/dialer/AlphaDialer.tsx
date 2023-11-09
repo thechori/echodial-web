@@ -85,15 +85,6 @@ function AlphaDialer() {
       codecPreferences: ["opus", "pcmu"],
     });
 
-    // Disable all default Twilio sounds because they are slow and ugly
-    // Hacky workaround found here: https://github.com/twilio/twilio-voice.js/issues/14
-    // @ts-ignore
-    device.audio.incoming(false);
-    // @ts-ignore
-    device.audio.outgoing(false);
-    // @ts-ignore
-    device.audio.disconnect(false);
-
     device.on("incoming", () => {
       notifications.show({
         title: "Incoming call",
@@ -663,11 +654,6 @@ function AlphaDialer() {
                       mx={4}
                       style={{ border: "1px solid red" }}
                       className="disabled-button"
-                      onClick={() =>
-                        alert(
-                          "It looks like you've run out of trial credits or your subscription is currently inactive. Please upgrade your subscription to enable feature this feature again 😊"
-                        )
-                      }
                       leftIcon={<IconPlayerPlay />}
                     >
                       Start dialer
