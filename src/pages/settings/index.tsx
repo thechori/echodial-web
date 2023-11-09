@@ -199,21 +199,17 @@ function Settings() {
 
             <Box py="md">
               <Text>
-                Need to pause your account? Put your account on hold to keep
-                your data for 60 days, free of charge.
-              </Text>
-              <Text italic size="sm">
-                Note: You can only do this once per year
+                Need to make changes to your account? Click the button below to
+                manage your subscription.
               </Text>
             </Box>
 
             <Flex align="center" justify="space-between">
               <Button
-                color="red"
                 variant="outline"
                 onClick={() => alert("Please email us to complete this step")}
               >
-                Pause subscription
+                Manage subscription
               </Button>
             </Flex>
           </Card>
