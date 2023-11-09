@@ -37,10 +37,9 @@ function MappingTable() {
   const headers = useAppSelector(
     (state) => state.importLeads.headersToProperties
   );
-
-  const [properties, setProperties] = useState<SelectItem[]>(
-    useRenderProperties()
-  );
+  const renderedProperties = useRenderProperties();
+  const [properties, setProperties] =
+    useState<SelectItem[]>(renderedProperties);
   const [mappingTable, setMappingTable] = useState([]);
 
   // values for opening/closing drawer
@@ -49,7 +48,6 @@ function MappingTable() {
   // set the state header variable to have the values from the fileHeaders global variable
   // for the preview, we grab the first 3 values
   useEffect(() => {
-    console.log(properties);
     const tempHeaders: HeaderObject[] = [];
     for (let i = 0; i < fileHeaders.length; i++) {
       tempHeaders.push({

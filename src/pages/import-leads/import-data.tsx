@@ -21,7 +21,7 @@ export type HeaderObject = {
 export function useRenderProperties(): SelectItem[] {
   const properties: SelectItem[] = [];
   //Standard Properties
-  const { data: standardProperties, error: standadPropertiesError } =
+  const { data: standardProperties, error: standardPropertiesError } =
     useGetLeadStandardPropertiesQuery();
 
   //Custom Properties
@@ -32,14 +32,13 @@ export function useRenderProperties(): SelectItem[] {
   const { data: propertyGroups, error: propertyGroupsError } =
     useGetLeadPropertyGroupQuery();
 
-  if (standadPropertiesError) {
-    throw standadPropertiesError;
+  if (standardPropertiesError) {
+    throw standardPropertiesError;
   } else if (customPropertiesError) {
     throw customPropertiesError;
   } else if (propertyGroupsError) {
     throw propertyGroupsError;
   }
-
   if (propertyGroups && standardProperties) {
     const groupIdToGroupName: any = {};
     propertyGroups.forEach((item) => {

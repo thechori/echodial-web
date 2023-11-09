@@ -38,6 +38,17 @@ export const leadApi = createApi({
       query: () => `lead/property/group`,
       providesTags: ["Lead"],
     }),
+    addCustomProperty: builder.mutation<LeadCustomProperty, any>({
+      query(body) {
+        console.log(body);
+        return {
+          url: `lead/property/custom`,
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: ["Lead"],
+    }),
     addLead: builder.mutation<Lead, Partial<Lead>>({
       query(body) {
         return {
@@ -99,5 +110,6 @@ export const {
   useDeleteMultipleLeadsMutation,
   useGetLeadStandardPropertiesQuery,
   useGetLeadCustomPropertiesQuery,
-  useGetLeadPropertyGroupQuery
+  useGetLeadPropertyGroupQuery,
+  useAddCustomPropertyMutation
 } = leadApi;
