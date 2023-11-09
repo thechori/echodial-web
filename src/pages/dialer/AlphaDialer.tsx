@@ -175,17 +175,12 @@ function AlphaDialer() {
     // assuming that ringing will get to `true` since the initial (and only returned value now)
     // is `false` ... address this in  the future if issues occur
     c.once("ringing", async () => {
-      console.log("********************* ringing *********************");
-
+      // "currentCallId exists, skipping creation of new Call record" ??
       if (dialStateInstance.currentCallId !== null) {
-        console.info(
-          "currentCallId exists, skipping creation of new Call record"
-        );
         return;
       }
 
       if (dialStateInstance.dialQueueIndex === null) {
-        console.error("dialQueueIndex is not set");
         return;
       }
 
@@ -272,17 +267,9 @@ function AlphaDialer() {
   // - Current attempts is beneath options.maxAttempts
   // - If there is another Lead in the Queue to continue to
   async function startCallTimer() {
-    console.log("starting new call timer!");
-
     const timer = setTimeout(async () => {
-      console.log("maxRingTimeInSeconds hit! moving on...");
-
       // When time expires, check to see if connected or not
       if (dialStateInstance.wasCallConnected) {
-        console.log(
-          "Call connected! Clearing the timer to avoid ending the call..."
-        );
-
         clearTimeout(dialStateInstance.currentCallTimer);
         dialStateInstance.currentCallTimer = null;
 
@@ -302,16 +289,13 @@ function AlphaDialer() {
   async function determineNextAction() {
     // Check for error
     if (dialStateInstance.error) {
-      console.info(`Error: ${dialStateInstance.error}`);
+      console.error(`Error: ${dialStateInstance.error}`);
       return;
     }
 
     // Call was connected, stop here to allow the user time to take notes
     // and regroup before proceeding to next call (could be overwhelming if it just keeps going)
     if (dialStateInstance.wasCallConnected) {
-      console.info(
-        "Connected call has ended, pausing here until user explicitly decides to continue"
-      );
       // End call
       await stopCall();
       dispatch(setRequestAction("stopCall"));
@@ -325,13 +309,11 @@ function AlphaDialer() {
 
     // Dialing has gone past allowed ring time, determine if retrying or continuing
     if (dialStateInstance.currentDialAttempts >= options.maxCallTries) {
-      console.info("Max attempts reached, moving to next Lead...");
       await continueToNextLead();
       return;
     }
 
     // Retry lead!
-    console.log("Calling Lead again...");
     await startCall();
   }
 
@@ -387,22 +369,13 @@ function AlphaDialer() {
   // - An error occurs
   // - Call disconnects ?
   async function stopCall() {
-    console.log("stopCall");
-
-    // Ensure a Call exists before proceeding
-    if (!dialStateInstance.call) {
-      console.info("No call to end found");
-    }
-
     // Bug: no call is found when this gets invoked
     if (dialStateInstance.call) {
-      console.info("Call found, ending it now...");
       dialStateInstance.call.disconnect();
     }
 
     // Stop timer
     if (dialStateInstance.currentCallTimer) {
-      console.log("found a call timer, clearing it..");
       clearTimeout(dialStateInstance.currentCallTimer);
     }
 
@@ -410,10 +383,7 @@ function AlphaDialer() {
       console.info("No Call ID found");
     } else {
       try {
-        const res = await endCallViaId(
-          dialStateInstance.currentCallId
-        ).unwrap();
-        console.log("res", res);
+        await endCallViaId(dialStateInstance.currentCallId).unwrap();
       } catch (e) {
         notifications.show({
           title: "Error",
@@ -509,7 +479,6 @@ function AlphaDialer() {
   }
 
   async function handleError() {
-    console.log("ERROR!");
     stopDialing();
   }
 
