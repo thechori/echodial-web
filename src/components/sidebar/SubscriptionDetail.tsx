@@ -37,6 +37,8 @@ export const SidebarSubscriptionDetail = () => {
   const { data: subscriptionStatus, isLoading: isSubscriptionStatusLoading } =
     useGetSubscriptionStatusQuery();
 
+  console.log(trialCredits);
+
   const text = useMemo(() => {
     let text = "";
 

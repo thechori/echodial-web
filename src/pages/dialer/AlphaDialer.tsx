@@ -4,6 +4,7 @@ import {
   ActionIcon,
   Button,
   Card,
+  HoverCard,
   Text,
   ThemeIcon,
   Title,
@@ -63,6 +64,7 @@ function AlphaDialer() {
     alphaDialerVisible,
     error,
   } = useAppSelector((state) => state.dialer);
+  const { subscriptionActive } = useAppSelector((state) => state.user);
   //
   const [addCall] = useAddCallMutation();
   const [updateCallViaId] = useUpdateCallViaIdMutation();
@@ -648,7 +650,32 @@ function AlphaDialer() {
             </Flex>
 
             <Flex align="flex-end" h={60}>
-              {dialStateInstance.dialQueueIndex === null ? (
+              {!subscriptionActive ? (
+                <HoverCard width={280} shadow="md">
+                  <HoverCard.Target>
+                    <Button
+                      mx={4}
+                      style={{ border: "1px solid red" }}
+                      className="disabled-button"
+                      onClick={() =>
+                        alert(
+                          "It looks like you've run out of trial credits or your subscription is currently inactive. Please upgrade your subscription to enable feature this feature again 😊"
+                        )
+                      }
+                      leftIcon={<IconPlayerPlay />}
+                    >
+                      Start dialer
+                    </Button>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown>
+                    <Text size="sm">
+                      It looks like you've run out of trial credits or your
+                      subscription is currently inactive. Please upgrade your
+                      subscription to enable feature this feature again 😊
+                    </Text>
+                  </HoverCard.Dropdown>
+                </HoverCard>
+              ) : dialStateInstance.dialQueueIndex === null ? (
                 <Tooltip
                   label="Begin making calls to the leads in the Call queue"
                   openDelay={500}
