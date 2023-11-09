@@ -9,7 +9,6 @@ import {
   setAlphaDialerVisible,
   setShowOptions,
 } from "../../store/dialer/slice";
-import ProtectedBetaModal from "../protected-beta-modal";
 import { Box } from "@mantine/core";
 import AlphaDialer from "../../pages/dialer/AlphaDialer";
 import AlphaDialerFab from "../../pages/dialer/AlphaDialerFab";
@@ -55,7 +54,6 @@ const AuthenticatedUserLayout = ({ children }: any) => {
         opened={isDialerOptionsModalOpen}
         onClose={() => dispatch(setShowOptions(false))}
       />
-      <ProtectedBetaModal />
       <AlphaDialer />
       <AlphaDialerFab />
     </Container>
