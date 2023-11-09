@@ -37,8 +37,6 @@ export const SidebarSubscriptionDetail = () => {
   const { data: subscriptionStatus, isLoading: isSubscriptionStatusLoading } =
     useGetSubscriptionStatusQuery();
 
-  console.log(trialCredits);
-
   const text = useMemo(() => {
     let text = "";
 
@@ -49,8 +47,12 @@ export const SidebarSubscriptionDetail = () => {
       // Subscription active
       text = subscriptionStatus.description || "Subscription active";
       dispatch(setSubscriptionActive(true));
-    } else if (subscriptionStatus) {
-      // Subscription not active
+    } else if (
+      subscriptionStatus &&
+      trialCredits &&
+      trialCredits.remaining_amount <= 0
+    ) {
+      // Subscription not active (and trial credits depleted)
       text = "Subscription not active";
     } else if (trialCredits) {
       // Trial found
