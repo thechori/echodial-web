@@ -4,7 +4,7 @@ import { useGetTrialCreditsQuery } from "../../services/trial-credit";
 import { useGetSubscriptionStatusQuery } from "../../services/stripe";
 import { useAppDispatch } from "../../store/hooks";
 import { setSubscriptionActive } from "../../store/user/slice";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { notifications } from "@mantine/notifications";
 
 /**
@@ -32,6 +32,7 @@ import { notifications } from "@mantine/notifications";
  */
 export const SidebarSubscriptionDetail = () => {
   const dispatch = useAppDispatch();
+  const [status, setStatus] = useState<null | "low" | "empty">(null);
   const { data: trialCredits, isLoading: isTrialCreditsLoading } =
     useGetTrialCreditsQuery();
   const { data: subscriptionStatus, isLoading: isSubscriptionStatusLoading } =
@@ -43,6 +44,7 @@ export const SidebarSubscriptionDetail = () => {
     if (!trialCredits && !subscriptionStatus) {
       // No trial or subscription found
       text = "Error fetching subscription details";
+      dispatch(setSubscriptionActive(false));
     } else if (subscriptionStatus && subscriptionStatus.status === "active") {
       // Subscription active
       text = subscriptionStatus.description || "Subscription active";
@@ -54,12 +56,14 @@ export const SidebarSubscriptionDetail = () => {
     ) {
       // Subscription not active (and trial credits depleted)
       text = "Subscription not active";
+      dispatch(setSubscriptionActive(false));
     } else if (trialCredits) {
       // Trial found
       // Handle 0 or negative scenario first
       // Percentage = remaining / total * 100
       if (trialCredits.remaining_amount <= 0) {
         text = "0 credits left";
+        dispatch(setSubscriptionActive(false));
       } else {
         text = `${trialCredits.remaining_amount} of ${trialCredits.initial_amount} credits left`;
         dispatch(setSubscriptionActive(true));
@@ -67,6 +71,7 @@ export const SidebarSubscriptionDetail = () => {
     } else {
       // Error
       text = "Error fetching subscription details";
+      dispatch(setSubscriptionActive(false));
     }
 
     return text;
@@ -92,16 +97,30 @@ export const SidebarSubscriptionDetail = () => {
     }
 
     // Less than 25% - show a notification warning
-    if (percent < 25) {
-      notifications.show({
-        autoClose: false,
-        message:
-          "You've got less than 25% credits left for the month. Consider upgrading your account to avoid service disruption!",
-      });
+    if (percent === 0) {
+      setStatus("empty");
+    } else if (percent < 25) {
+      setStatus("low");
     }
 
     return percent;
   }, [subscriptionStatus, trialCredits]);
+
+  useEffect(() => {
+    if (status === "empty") {
+      notifications.show({
+        color: "red",
+        autoClose: false,
+        message:
+          "You are out of trial credits and no subscription is active. Upgrade your account to enable the dialer 👍",
+      });
+    } else if (status === "low") {
+      notifications.show({
+        message:
+          "You're running low on credits. Upgrade your account to avoid service disruption 👍",
+      });
+    }
+  }, [status]);
 
   return (
     <Box className="trial-details" p="lg" bg="black">

@@ -21,9 +21,22 @@ export const trialCreditApi = createApi({
       query: () => "/trial-credit",
       providesTags: ["TrialCredit"],
     }),
+    deductTrialCredit: builder.mutation<TrialCredit, number>({
+      query(number) {
+        return {
+          url: "/trial-credit/deduct",
+          method: "POST",
+          body: {
+            amount: number,
+          },
+        };
+      },
+      invalidatesTags: ["TrialCredit"],
+    }),
   }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetTrialCreditsQuery } = trialCreditApi;
+export const { useGetTrialCreditsQuery, useDeductTrialCreditMutation } =
+  trialCreditApi;

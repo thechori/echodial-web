@@ -47,6 +47,7 @@ import {
 import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
 import { PiPhone, PiPhoneDisconnect } from "react-icons/pi";
+import { useDeductTrialCreditMutation } from "../../services/trial-credit";
 
 function AlphaDialer() {
   const dispatch = useAppDispatch();
@@ -69,6 +70,7 @@ function AlphaDialer() {
   const [addCall] = useAddCallMutation();
   const [updateCallViaId] = useUpdateCallViaIdMutation();
   const [endCallViaId] = useEndCallMutation();
+  const [deductTrialCredit] = useDeductTrialCreditMutation();
 
   async function initializeDevice() {
     dispatch(setError(""));
@@ -208,9 +210,13 @@ function AlphaDialer() {
       };
 
       try {
-        const a = await addCall(newCall).unwrap();
-        dialStateInstance.currentCallId = a.id;
+        // Create Call record
+        const newCallRecord = await addCall(newCall).unwrap();
+        dialStateInstance.currentCallId = newCallRecord.id;
         dispatch(setCurrentCallId(dialStateInstance.currentCallId));
+
+        // Deduct (1) credit from trial
+        await deductTrialCredit(1);
       } catch (e) {
         notifications.show({
           title: "Error",
