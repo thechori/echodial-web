@@ -12,11 +12,13 @@ export type TJwtDecoded = User & {
 export type TUserState = {
   jwt: string | null;
   jwtDecoded: TJwtDecoded | null;
+  subscriptionActive: boolean;
 };
 
 const buildInitialState = (): TUserState => ({
   jwt: localStorage.getItem("jwt") || null,
   jwtDecoded: JSON.parse(localStorage.getItem("jwtDecoded") || "null"),
+  subscriptionActive: false,
 });
 
 export const UserSlice = createSlice({
@@ -36,10 +38,13 @@ export const UserSlice = createSlice({
       state.jwt = null;
       localStorage.clear();
     },
+    setSubscriptionActive: (state, action) => {
+      state.subscriptionActive = action.payload;
+    },
   },
 });
 
-export const { setJwt, signOut } = UserSlice.actions;
+export const { setJwt, signOut, setSubscriptionActive } = UserSlice.actions;
 
 export const selectJwt = (state: RootState) => state.user.jwt;
 export const selectJwtDecoded = (state: RootState) => state.user.jwtDecoded;
