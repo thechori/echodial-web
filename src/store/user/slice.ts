@@ -28,12 +28,11 @@ export const UserSlice = createSlice({
     setJwt: (state, action) => {
       const jwtDecoded = jwt_decode(action.payload) || null;
 
-      // Persist in local storage (must do this before setting in the state to avoid a race condition - apiService was failing before in the AlphaDialer because it relied on localStorage but this wasn't updating until it was too late)
-      localStorage.setItem("jwt", action.payload);
-      localStorage.setItem("jwtDecoded", JSON.stringify(jwtDecoded));
-
       state.jwt = action.payload;
       state.jwtDecoded = jwtDecoded as TJwtDecoded | null;
+
+      localStorage.setItem("jwt", action.payload);
+      localStorage.setItem("jwtDecoded", JSON.stringify(jwtDecoded));
     },
     signOut: (state) => {
       state.jwt = null;
