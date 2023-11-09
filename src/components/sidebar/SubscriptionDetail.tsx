@@ -40,9 +40,6 @@ export const SidebarSubscriptionDetail = () => {
   const text = useMemo(() => {
     let text = "";
 
-    console.log("subscriptionStatus", subscriptionStatus);
-    console.log("trialCredits", trialCredits);
-
     if (!trialCredits && !subscriptionStatus) {
       // No trial or subscription found
       text = "Error fetching subscription details";

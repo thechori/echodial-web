@@ -19,7 +19,6 @@ export const extractErrorMessage = (
   }
   // RTK Query errors
   if (error && typeof error === "object" && "data" in error) {
-    console.log("RTK Query error");
     // TODO: Fix bug here -- caused an app crash when DB connection timed out during
     // initial dashboard load
 

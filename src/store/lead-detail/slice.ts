@@ -20,7 +20,6 @@ export const LeadDetailSlice = createSlice({
       state.isOpen = action.payload;
     },
     setSelectedLead: (state, action) => {
-      console.log("setSelectedLead", action.payload);
       state.selectedLead = action.payload;
     },
   },
