@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaCreditCard, FaAddressBook } from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
@@ -9,15 +9,15 @@ import { AiOutlineMenu } from "react-icons/ai";
 import SidebarStyled from "./Sidebar.styles";
 import routes from "../../configs/routes";
 import logo from "../../assets/EchoDial-temp-logo-full.png";
-import { Box, Button, Center, Divider, Progress, Text } from "@mantine/core";
+import { Box, Divider } from "@mantine/core";
 import colors from "../../styles/colors";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setAlphaDialerVisible } from "../../store/dialer/slice";
-import { useGetTrialCreditsQuery } from "../../services/trial-credit";
+import { SidebarSubscriptionDetail } from "./SubscriptionDetail";
 
 const Sidebar = () => {
   const { alphaDialerVisible } = useAppSelector((state) => state.dialer);
-  const { data } = useGetTrialCreditsQuery();
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
@@ -40,27 +40,6 @@ const Sidebar = () => {
       nextAction();
     }
   };
-
-  const [daysLeftText, setDaysLeftText] = useState("");
-  const [trialPercentage, setTrialPercentage] = useState(100);
-
-  useEffect(() => {
-    if (!data) {
-      return console.log("No trial credits found");
-    }
-
-    // Percentage = remaining / total * 100
-    // Handle 0 or negative scenario first
-    if (data.remaining_amount <= 0) {
-      setTrialPercentage(0);
-      setDaysLeftText(`0 credits left`);
-    } else {
-      setTrialPercentage((data.remaining_amount / data.initial_amount) * 100);
-      setDaysLeftText(
-        `${data.remaining_amount} of ${data.initial_amount} credits left`
-      );
-    }
-  }, [data]);
 
   return (
     <SidebarStyled>
@@ -164,28 +143,10 @@ const Sidebar = () => {
           </div>
         </div>
 
-        {data && (
-          <div className="footer">
-            <Divider />
-            <Box className="trial-details" p="lg" bg="black">
-              <Text
-                size="xs"
-                ta="center"
-                weight={500}
-                mb="xs"
-                color={trialPercentage === 0 ? "red" : ""}
-              >
-                {daysLeftText}
-              </Text>
-              <Progress mb="md" value={trialPercentage} />
-              <Center>
-                <Button size="xs" compact variant="gradient">
-                  Upgrade
-                </Button>
-              </Center>
-            </Box>
-          </div>
-        )}
+        <div className="footer">
+          <Divider />
+          <SidebarSubscriptionDetail />
+        </div>
       </div>
     </SidebarStyled>
   );

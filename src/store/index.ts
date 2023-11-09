@@ -13,6 +13,7 @@ import { callerIdApi } from "../services/caller-id";
 import { callApi } from "../services/call";
 import { metricApi } from "../services/metric";
 import { trialCreditApi } from "../services/trial-credit";
+import { stripeApi } from "../services/stripe";
 
 const store = configureStore({
   reducer: {
@@ -29,6 +30,7 @@ const store = configureStore({
     [callApi.reducerPath]: callApi.reducer,
     [metricApi.reducerPath]: metricApi.reducer,
     [trialCreditApi.reducerPath]: trialCreditApi.reducer,
+    [stripeApi.reducerPath]: stripeApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -39,7 +41,8 @@ const store = configureStore({
       callerIdApi.middleware,
       callApi.middleware,
       metricApi.middleware,
-      trialCreditApi.middleware
+      trialCreditApi.middleware,
+      stripeApi.middleware
     ),
 });
 
