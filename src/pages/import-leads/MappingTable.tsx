@@ -22,24 +22,88 @@ import {
   setExcludeCheckbox,
 } from "../../store/import/slice";
 import { useAppSelector } from "../../store/hooks";
-import {
-  addNewPropertySelectItem,
-  HeaderObject,
-  useRenderProperties,
-} from "./import-data";
+import { addNewPropertySelectItem, HeaderObject } from "./import-data";
 import DrawerContent from "./DrawerContent";
+import {
+  useGetLeadStandardPropertiesQuery,
+  useGetLeadCustomPropertiesQuery,
+  useGetLeadPropertyGroupQuery,
+} from "../../services/lead";
 
 function MappingTable() {
   const dispatch = useDispatch();
   const fileHeaders = useAppSelector((state) => state.importLeads.fileHeaders);
   const fileRows = useAppSelector((state) => state.importLeads.fileRows);
 
+  //Standard Properties
+  const {
+    data: standardProperties,
+    error: standardPropertiesError,
+    isLoading: standardPropertiesLoading,
+  } = useGetLeadStandardPropertiesQuery();
+
+  //Custom Properties
+  const {
+    data: customProperties,
+    error: customPropertiesError,
+    isLoading: customPropertiesLoading,
+  } = useGetLeadCustomPropertiesQuery();
+  //Property Groups
+  const {
+    data: propertyGroups,
+    error: propertyGroupsError,
+    isLoading: propertyGroupsLoading,
+  } = useGetLeadPropertyGroupQuery();
+
+  const [properties, setProperties] = useState<SelectItem[]>([]);
+  useEffect(() => {
+    const tempProperties: SelectItem[] = [];
+
+    if (standardPropertiesError) {
+      throw standardPropertiesError;
+    } else if (customPropertiesError) {
+      throw customPropertiesError;
+    } else if (propertyGroupsError) {
+      throw propertyGroupsError;
+    }
+    if (propertyGroups && standardProperties) {
+      const groupIdToGroupName: any = {};
+      propertyGroups.forEach((item) => {
+        groupIdToGroupName[item.id] = item.label;
+      });
+      for (const standardProperty of standardProperties) {
+        tempProperties.push({
+          value: standardProperty.name,
+          label: standardProperty.label,
+          disabled: false,
+          group: groupIdToGroupName[standardProperty.lead_property_group_id],
+        });
+      }
+      if (customProperties && customProperties.length > 0) {
+        for (const customProperty of customProperties) {
+          tempProperties.push({
+            value: customProperty.name,
+            label: customProperty.label,
+            disabled: false,
+            group: groupIdToGroupName[customProperty.lead_property_group_id],
+          });
+        }
+      }
+    }
+    tempProperties.push(addNewPropertySelectItem);
+    setProperties(tempProperties);
+  }, [
+    standardProperties,
+    customProperties,
+    standardPropertiesLoading,
+    customPropertiesLoading,
+    propertyGroupsLoading,
+  ]);
+
   const headers = useAppSelector(
     (state) => state.importLeads.headersToProperties
   );
-  const renderedProperties = useRenderProperties();
-  const [properties, setProperties] =
-    useState<SelectItem[]>(renderedProperties);
+
   const [mappingTable, setMappingTable] = useState([]);
 
   // values for opening/closing drawer

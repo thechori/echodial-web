@@ -40,7 +40,6 @@ export const leadApi = createApi({
     }),
     addCustomProperty: builder.mutation<LeadCustomProperty, any>({
       query(body) {
-        console.log(body);
         return {
           url: `lead/property/custom`,
           method: "POST",
