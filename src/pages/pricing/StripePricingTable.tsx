@@ -5,9 +5,11 @@ const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
 type TStripePricingTable = {
   customerEmail?: string;
+  userId?: number;
 };
 
-const StripePricingTable = ({ customerEmail }: TStripePricingTable) => {
+const StripePricingTable = ({ customerEmail, userId }: TStripePricingTable) => {
+  console.log("userId: ", userId);
   console.log("customerEmail: ", customerEmail);
 
   return createElement("stripe-pricing-table", {
@@ -17,6 +19,7 @@ const StripePricingTable = ({ customerEmail }: TStripePricingTable) => {
     "pricing-table-id": pricingTableId,
     "publishable-key": publishableKey,
     "customer-email": customerEmail,
+    "client-reference-id": userId,
   });
 };
 

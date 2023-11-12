@@ -22,7 +22,10 @@ const SubscriptionPage = () => {
   return (
     <div>
       <Title>Subscription</Title>
-      <StripePricingTable customerEmail={jwtDecoded.email} />
+      <StripePricingTable
+        customerEmail={jwtDecoded.email}
+        userId={jwtDecoded.id}
+      />
     </div>
   );
 };

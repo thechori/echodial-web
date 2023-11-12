@@ -36,10 +36,12 @@ import DeleteAccountModal from "./DeleteAccountConfirmationModal";
 import { extractErrorMessage } from "../../utils/error";
 import { useState } from "react";
 import apiService from "../../services/api";
+import { useGetSubscriptionStatusQuery } from "../../services/stripe";
 
 function Settings() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { data: subscription } = useGetSubscriptionStatusQuery();
   const [stripeError, setStripeError] = useState("");
   const [stripeLoading, setStripeLoading] = useState(false);
   const email = useAppSelector(selectEmail);
@@ -61,7 +63,14 @@ function Settings() {
     open();
   }
 
-  async function loadStripeCustomerPortal() {
+  async function manageSubscription() {
+    // If user has no subscription, take them to the /subscription page to enroll in a NEW subscription
+    if (!subscription || subscription.status === null) {
+      navigate(routes.subscription);
+      return;
+    }
+
+    // If user has an existing subscription, generate a short-life link via Stripe to the Customer Portal
     try {
       setStripeError("");
       setStripeLoading(true);
@@ -69,8 +78,6 @@ function Settings() {
       const res = await apiService.post(
         "/stripe/create-customer-portal-session"
       );
-
-      console.log(res);
 
       // API call to generate short-lived URL
       const { url } = res.data;
@@ -243,7 +250,7 @@ function Settings() {
               <Button
                 loading={stripeLoading}
                 variant="outline"
-                onClick={loadStripeCustomerPortal}
+                onClick={manageSubscription}
               >
                 Manage subscription
               </Button>
