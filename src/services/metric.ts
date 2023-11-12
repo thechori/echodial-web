@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 //
 import { Call } from "../types";
+import { LOCAL_STORAGE_JWT } from "../configs/local-storage";
 
 export type TMetricResolution = "day" | "week" | "month";
 
@@ -23,7 +24,7 @@ export const metricApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: apiBaseUrl,
     prepareHeaders: (headers) => {
-      const jwt = localStorage.getItem("jwt");
+      const jwt = localStorage.getItem(LOCAL_STORAGE_JWT);
       if (jwt) {
         headers.set("authorization", `Bearer ${jwt}`);
       }

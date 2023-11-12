@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import Stripe from "stripe";
+import { LOCAL_STORAGE_JWT } from "../configs/local-storage";
 
 const apiBaseUrl = import.meta.env.VITE_API_HOST;
 
@@ -14,7 +15,7 @@ export const stripeApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: apiBaseUrl,
     prepareHeaders: (headers) => {
-      const jwt = localStorage.getItem("jwt");
+      const jwt = localStorage.getItem(LOCAL_STORAGE_JWT);
       if (jwt) {
         headers.set("authorization", `Bearer ${jwt}`);
       }

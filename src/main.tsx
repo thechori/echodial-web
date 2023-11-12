@@ -33,6 +33,8 @@ import Billing from "./pages/billing";
 import CallHistory from "./pages/call-history";
 import ForgotPassword from "./pages/forgot-password";
 import ResetPassword from "./pages/reset-password";
+import Subscription from "./pages/subscription";
+import { SubscriptionCallback } from "./pages/subscription/SubscriptionCallback";
 
 Sentry.init({
   dsn: "https://dbc6c090143fce815721f48b790b3810@o4505859893231616.ingest.sentry.io/4505859896442880",
@@ -175,6 +177,28 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path={routes.subscription}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
+                      <Subscription />
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.subscriptionCallback}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
+                      <SubscriptionCallback />
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* 404 page */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

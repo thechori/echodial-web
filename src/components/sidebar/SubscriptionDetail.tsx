@@ -6,6 +6,8 @@ import { useAppDispatch } from "../../store/hooks";
 import { setSubscriptionActive } from "../../store/user/slice";
 import { useEffect, useMemo, useState } from "react";
 import { notifications } from "@mantine/notifications";
+import { useNavigate } from "react-router-dom";
+import routes from "../../configs/routes";
 
 /**
  *
@@ -13,7 +15,7 @@ import { notifications } from "@mantine/notifications";
  *
  * [x] Initialize with TrialCredits (since a new user has no proper subscription)
  * [x] Notify the user is almost out of TrialCredits - advise they upgrade to avoid any service disruptions
- * [ ] Notify the user is out of TrialCredits - advise they must upgrade to gain access to dialer again
+ * [x] Notify the user is out of TrialCredits - advise they must upgrade to gain access to dialer again
  * [ ] Display the subscription tier they are currently signed up for
  * [ ] Allow clicking sub tier to take them to page to change sub
  *
@@ -32,11 +34,16 @@ import { notifications } from "@mantine/notifications";
  */
 export const SidebarSubscriptionDetail = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [status, setStatus] = useState<null | "low" | "empty">(null);
   const { data: trialCredits, isLoading: isTrialCreditsLoading } =
     useGetTrialCreditsQuery();
   const { data: subscriptionStatus, isLoading: isSubscriptionStatusLoading } =
     useGetSubscriptionStatusQuery();
+
+  const handleUpgrade = () => {
+    navigate(routes.subscription);
+  };
 
   const text = useMemo(() => {
     let text = "";
@@ -140,7 +147,7 @@ export const SidebarSubscriptionDetail = () => {
       <Progress mb="md" value={getPercent} />
       <Center>
         {/* TODO: Don't show button if user has unlimited plan */}
-        <Button size="xs" compact variant="gradient">
+        <Button size="xs" compact variant="gradient" onClick={handleUpgrade}>
           Upgrade
         </Button>
       </Center>

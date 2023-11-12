@@ -1,4 +1,5 @@
 import axios from "axios";
+import { LOCAL_STORAGE_JWT } from "../../configs/local-storage";
 
 // BUG: local storage gets mounted ONCE for this when the app spins up
 const apiService = axios.create({
@@ -6,7 +7,7 @@ const apiService = axios.create({
 });
 
 apiService.interceptors.request.use((config) => {
-  const jwt = localStorage.getItem("jwt");
+  const jwt = localStorage.getItem(LOCAL_STORAGE_JWT);
 
   if (jwt) {
     config.headers.Authorization = `Bearer ${jwt}`;

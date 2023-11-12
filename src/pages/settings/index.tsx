@@ -33,10 +33,15 @@ import { PhoneInput } from "../../components/phone-input";
 import { PiPhone } from "react-icons/pi";
 import { useDisclosure } from "@mantine/hooks";
 import DeleteAccountModal from "./DeleteAccountConfirmationModal";
+import { extractErrorMessage } from "../../utils/error";
+import { useState } from "react";
+import apiService from "../../services/api";
 
 function Settings() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [stripeError, setStripeError] = useState("");
+  const [stripeLoading, setStripeLoading] = useState(false);
   const email = useAppSelector(selectEmail);
   const phone = useAppSelector(selectPhone);
   const firstName = useAppSelector(selectFirstName);
@@ -54,6 +59,29 @@ function Settings() {
 
   function openDeleteConfirmationModal() {
     open();
+  }
+
+  async function loadStripeCustomerPortal() {
+    try {
+      setStripeError("");
+      setStripeLoading(true);
+
+      const res = await apiService.post(
+        "/stripe/create-customer-portal-session"
+      );
+
+      console.log(res);
+
+      // API call to generate short-lived URL
+      const { url } = res.data;
+
+      // Redirect
+      window.location.replace(url);
+    } catch (e) {
+      setStripeError(extractErrorMessage(e));
+    } finally {
+      setStripeLoading(false);
+    }
   }
 
   return (
@@ -213,11 +241,15 @@ function Settings() {
 
             <Flex align="center" justify="space-between">
               <Button
+                loading={stripeLoading}
                 variant="outline"
-                onClick={() => alert("Please email us to complete this step")}
+                onClick={loadStripeCustomerPortal}
               >
                 Manage subscription
               </Button>
+              <Text color="red" size="sm">
+                {stripeError}
+              </Text>
             </Flex>
           </Card>
         </Grid.Col>
