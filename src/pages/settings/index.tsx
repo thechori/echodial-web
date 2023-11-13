@@ -12,6 +12,7 @@ import {
 } from "../../store/user/slice";
 import routes from "../../configs/routes";
 import {
+  Accordion,
   Anchor,
   Box,
   Button,
@@ -20,6 +21,7 @@ import {
   Flex,
   Grid,
   List,
+  Progress,
   Text,
   TextInput,
   ThemeIcon,
@@ -97,7 +99,7 @@ function Settings() {
         <Grid.Col xs={12} sm={6}>
           <Card withBorder shadow="md" mb="md">
             <Flex align="center" justify="space-between">
-              <Title order={3}>Account</Title>
+              <Title order={3}>Profile</Title>
               <Tooltip
                 className="hoverable"
                 label="This feature is currently under construction. Check back for an update soon!"
@@ -181,63 +183,35 @@ function Settings() {
         </Grid.Col>
 
         <Grid.Col xs={12} sm={6}>
-          <Card withBorder shadow="md">
-            <Title order={3}>Support</Title>
-            <Box py="md">
-              <Text>
-                Need help with something? Contact our support team and one of
-                our agents should have a response for you within 24 hours.
+          <Card withBorder py="md" h="100%">
+            <Title order={3}>Plan Usage</Title>
+            <Flex align="center" justify="space-between" py="sm">
+              <Text c="dimmed">
+                Your plan includes {9999} minutes of voice calling per month
               </Text>
-              <List
-                spacing="xs"
-                size="sm"
-                p="md"
-                center
-                icon={
-                  <ThemeIcon color="teal" size={24} radius="xl">
-                    <IconCircleCheck size="1rem" />
-                  </ThemeIcon>
-                }
-              >
-                <List.Item>
-                  <Anchor href="mailto:support@echodial.com">
-                    support@echodial.com
-                  </Anchor>
-                </List.Item>
-                {/* Note: hiding phone for now until this is ready to be fully supported */}
-                {/* <List.Item>
-                <Anchor mr="sm" href={`tel:${phoneNumberSupport}`}>
-                  {phoneFormatter(phoneNumberSupport)}
-                </Anchor>
-                (Monday-Friday 8:00am CST - 5:00pm CST)
-              </List.Item> */}
-              </List>
-            </Box>
+              <Text c="dimmed">
+                {1200} min used of {9999} min
+              </Text>
+            </Flex>
+
+            <Progress radius="xs" size="lg" value={10} />
+            <Text c="dimmed" py="sm">
+              Last month you used {1200} minutes
+            </Text>
+            <Accordion variant="filled" radius="xs" chevronPosition="left">
+              <Accordion.Item key={1} value={"hello"}>
+                <Accordion.Control>
+                  <Text c="dimmed">How does this work?</Text>
+                </Accordion.Control>
+                <Accordion.Panel>See our FAQ</Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
           </Card>
         </Grid.Col>
 
         <Grid.Col xs={12} sm={6}>
           <Card withBorder shadow="md">
-            <Title order={3}>Dialer</Title>
-            <Box>
-              <Text py="md">
-                Configure your call settings to maximize productivity in your
-                unique situation.
-              </Text>
-              <Button
-                variant="outline"
-                onClick={openDialerSettingsModal}
-                leftIcon={<PiPhone fontSize="1rem" />}
-              >
-                Open dialer settings
-              </Button>
-            </Box>
-          </Card>
-        </Grid.Col>
-
-        <Grid.Col xs={12} sm={6}>
-          <Card withBorder shadow="md">
-            <Title order={3}>Subscription</Title>
+            <Title order={3}>Manage subscription</Title>
 
             <Box py="md">
               <Text>
@@ -262,6 +236,25 @@ function Settings() {
         </Grid.Col>
 
         <Grid.Col xs={12} sm={6}>
+          <Card withBorder shadow="md">
+            <Title order={3}>Dialer</Title>
+            <Box>
+              <Text py="md">
+                Configure your call settings to maximize productivity in your
+                unique situation.
+              </Text>
+              <Button
+                variant="outline"
+                onClick={openDialerSettingsModal}
+                leftIcon={<PiPhone fontSize="1rem" />}
+              >
+                Open dialer settings
+              </Button>
+            </Box>
+          </Card>
+        </Grid.Col>
+
+        <Grid.Col xs={12} sm={6}>
           <Card withBorder shadow="md" color="red">
             <Title order={3}>Danger zone</Title>
             <Text py="md">
@@ -270,6 +263,15 @@ function Settings() {
             </Text>
             <Button color="red" onClick={openDeleteConfirmationModal}>
               Delete account
+            </Button>
+
+            <Button
+              onClick={async () => {
+                const { data } = await apiService.get("/lead");
+                console.log(data);
+              }}
+            >
+              Test
             </Button>
           </Card>
         </Grid.Col>

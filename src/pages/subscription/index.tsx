@@ -1,11 +1,16 @@
-import { Box, Title } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
+import { Box, Button, Center, Container, Text, Title } from "@mantine/core";
+//
 import StripePricingTable from "../pricing/StripePricingTable";
 import { useAppSelector } from "../../store/hooks";
 
 const SubscriptionPage = () => {
+  const navigate = useNavigate();
   const { jwtDecoded } = useAppSelector((state) => state.user);
 
-  console.log(jwtDecoded);
+  const handleBack = () => {
+    navigate(-1);
+  };
 
   if (!jwtDecoded) {
     return (
@@ -20,13 +25,34 @@ const SubscriptionPage = () => {
   // If found, redirect them to the stripe customer portal
 
   return (
-    <div>
-      <Title>Subscription</Title>
-      <StripePricingTable
-        customerEmail={jwtDecoded.email}
-        userId={jwtDecoded.id}
-      />
-    </div>
+    <Container fluid p={0} mt="xl">
+      <Title ta="center" order={1} weight={300}>
+        Subscription
+      </Title>
+
+      <Box mx="auto" py="lg" maw={500}>
+        <Text ta="center" py={4}>
+          All plans include full access to our platform.
+        </Text>
+        <Text ta="center" py={4}>
+          Avoid the headaches of constantly having to top-off your account
+          balances with our straightforward price structures.
+        </Text>
+      </Box>
+
+      <Box py="md">
+        <StripePricingTable
+          customerEmail={jwtDecoded.email}
+          userId={jwtDecoded.id}
+        />
+      </Box>
+
+      <Center mt="xl">
+        <Button onClick={handleBack} variant="subtle">
+          Back
+        </Button>
+      </Center>
+    </Container>
   );
 };
 

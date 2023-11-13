@@ -2,7 +2,6 @@ import axios from "axios";
 //
 import { LOCAL_STORAGE_JWT } from "../../configs/local-storage";
 
-// BUG: local storage gets mounted ONCE for this when the app spins up
 const apiService = axios.create({
   baseURL: import.meta.env.VITE_API_HOST,
   withCredentials: true,
@@ -17,5 +16,19 @@ apiService.interceptors.request.use((config) => {
 
   return config;
 });
+
+apiService.interceptors.response.use(
+  function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    return response;
+  },
+  function (error) {
+    console.log("!!!!");
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    return Promise.reject(error);
+  }
+);
 
 export default apiService;

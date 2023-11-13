@@ -12,13 +12,7 @@ const ProtectedRoute = ({ children }: any) => {
 
   // Handle no JWT
   if (!jwt || !jwtDecoded) {
-    return <Navigate to={routes.signIn} replace />;
-  }
-
-  // Politely handle expired JWT
-  const currentTime = new Date().getTime() / 1000;
-  if (currentTime > jwtDecoded.exp) {
-    notifications.show({ message: "Session expired. Please log in again" });
+    notifications.show({ message: "No session found. Please log in again" });
     dispatch(signOut());
     return <Navigate to={routes.signIn} replace />;
   }

@@ -2,7 +2,7 @@ import { MouseEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaCreditCard, FaAddressBook } from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
-import { IoIosSettings } from "react-icons/io";
+import { IoMdPerson } from "react-icons/io";
 import { MdGroups } from "react-icons/md";
 import { AiOutlineMenu } from "react-icons/ai";
 //
@@ -78,14 +78,14 @@ const Sidebar = () => {
                   <div>Call History</div>
                 </NavLink>
 
-                <NavLink to={routes.billing}>
-                  <FaCreditCard fontSize="1.5rem" />
-                  <div>Billing</div>
+                <NavLink to={routes.settings}>
+                  <IoMdPerson fontSize="1.5rem" />
+                  <div>Account</div>
                 </NavLink>
 
-                <NavLink to={routes.settings}>
-                  <IoIosSettings fontSize="1.5rem" />
-                  <div>Settings</div>
+                <NavLink to={routes.billing}>
+                  <FaCreditCard fontSize="1.5rem" />
+                  <div>Support</div>
                 </NavLink>
               </div>
             </div>
@@ -128,17 +128,18 @@ const Sidebar = () => {
 
             <Divider color={colors.darkBluerBackgroundLightened} />
 
+            <NavLink to={routes.settings}>
+              <Box w={36}>
+                <IoMdPerson size="1.4rem" />
+              </Box>
+              <div>Account</div>
+            </NavLink>
+
             <NavLink to={routes.billing}>
               <Box w={36}>
                 <FaCreditCard size="1.2rem" />
               </Box>
-              <div>Billing</div>
-            </NavLink>
-            <NavLink to={routes.settings}>
-              <Box w={36}>
-                <IoIosSettings size="1.4rem" />
-              </Box>
-              <div>Settings</div>
+              <div>Support</div>
             </NavLink>
           </div>
         </div>

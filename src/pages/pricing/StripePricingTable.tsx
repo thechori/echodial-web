@@ -9,9 +9,6 @@ type TStripePricingTable = {
 };
 
 const StripePricingTable = ({ customerEmail, userId }: TStripePricingTable) => {
-  console.log("userId: ", userId);
-  console.log("customerEmail: ", customerEmail);
-
   return createElement("stripe-pricing-table", {
     style: {
       width: "100%",
