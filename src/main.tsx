@@ -9,6 +9,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { Notifications } from "@mantine/notifications";
 import * as Sentry from "@sentry/react";
+import * as amplitude from "@amplitude/analytics-browser";
 //
 import "./index.css";
 import Landing from "./pages/landing";
@@ -51,6 +52,10 @@ Sentry.init({
   // Session Replay
   replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
   replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+});
+
+amplitude.init(import.meta.env.VITE_AMPLITUDE_KEY, {
+  defaultTracking: true,
 });
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

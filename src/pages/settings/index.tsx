@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { IconCircleCheck } from "@tabler/icons-react";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -13,18 +12,15 @@ import {
 import routes from "../../configs/routes";
 import {
   Accordion,
-  Anchor,
   Box,
   Button,
   Card,
   Container,
   Flex,
   Grid,
-  List,
   Progress,
   Text,
   TextInput,
-  ThemeIcon,
   Title,
   Tooltip,
 } from "@mantine/core";

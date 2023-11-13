@@ -1,6 +1,6 @@
 import { MouseEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaCreditCard, FaAddressBook } from "react-icons/fa6";
+import { FaCreditCard } from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
 import { IoMdPerson } from "react-icons/io";
 import { MdGroups } from "react-icons/md";
@@ -68,10 +68,10 @@ const Sidebar = () => {
                   <div>Leads</div>
                 </NavLink>
 
-                <NavLink to={routes.callerIds}>
+                {/* <NavLink to={routes.callerIds}>
                   <FaAddressBook fontSize="1.5rem" />
                   <div>My numbers</div>
-                </NavLink>
+                </NavLink> */}
 
                 <NavLink to={routes.callHistory}>
                   <GoHistory fontSize="1.5rem" />
@@ -112,12 +112,12 @@ const Sidebar = () => {
               <div>Leads</div>
             </NavLink>
 
-            <NavLink to={routes.callerIds}>
+            {/* <NavLink to={routes.callerIds}>
               <Box w={36}>
                 <FaAddressBook size="1.2rem" />
               </Box>
               <div>My numbers</div>
-            </NavLink>
+            </NavLink> */}
 
             <NavLink to={routes.callHistory}>
               <Box w={36}>
