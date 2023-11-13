@@ -6,10 +6,6 @@ import { LOCAL_STORAGE_JWT } from "../../configs/local-storage";
 const apiService = axios.create({
   baseURL: import.meta.env.VITE_API_HOST,
   withCredentials: true,
-  headers: {
-    "Access-Control-Allow-Origin": "*",
-    "Content-Type": "application/json",
-  },
 });
 
 apiService.interceptors.request.use((config) => {
