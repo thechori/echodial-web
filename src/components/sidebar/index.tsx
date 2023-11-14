@@ -68,11 +68,6 @@ const Sidebar = () => {
                   <div>Leads</div>
                 </NavLink>
 
-                {/* <NavLink to={routes.callerIds}>
-                  <FaAddressBook fontSize="1.5rem" />
-                  <div>My numbers</div>
-                </NavLink> */}
-
                 <NavLink to={routes.callHistory}>
                   <GoHistory fontSize="1.5rem" />
                   <div>Call History</div>
@@ -111,13 +106,6 @@ const Sidebar = () => {
               </Box>
               <div>Leads</div>
             </NavLink>
-
-            {/* <NavLink to={routes.callerIds}>
-              <Box w={36}>
-                <FaAddressBook size="1.2rem" />
-              </Box>
-              <div>My numbers</div>
-            </NavLink> */}
 
             <NavLink to={routes.callHistory}>
               <Box w={36}>

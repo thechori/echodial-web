@@ -18,8 +18,8 @@ import apiService from "../../services/api";
  * [x] Initialize with TrialCredits (since a new user has no proper subscription)
  * [x] Notify the user is almost out of TrialCredits - advise they upgrade to avoid any service disruptions
  * [x] Notify the user is out of TrialCredits - advise they must upgrade to gain access to dialer again
- * [ ] Display the subscription tier they are currently signed up for
- * [ ] Allow clicking sub tier to take them to page to change sub
+ * [x] Display the subscription tier they are currently signed up for
+ * [x] Allow clicking sub tier to take them to page to change sub
  *
  * States:
  *
@@ -28,11 +28,6 @@ import apiService from "../../services/api";
  * - Account with trial and sub (good good - least common IMO)
  * - Accounts with expired trial and sub (good - most common)
  *
- * Logic:
- *
- * 1. check for subscription, this is the most important thing - no need to show trial details
- * 1. display subscription if found
- * 1. check for
  */
 export const SidebarSubscriptionDetail = () => {
   const dispatch = useAppDispatch();
