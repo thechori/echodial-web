@@ -1,11 +1,11 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Center, Checkbox, Modal, Text } from "@mantine/core";
 //
-import { useState } from "react";
 import { extractErrorMessage } from "../../utils/error";
 import apiService from "../../services/api";
 import { useAppDispatch } from "../../store/hooks";
 import { signOut } from "../../store/user/slice";
-import { useNavigate } from "react-router-dom";
 
 type TDeleteAccountModalProps = {
   opened: boolean;
@@ -23,8 +23,7 @@ const DeleteAccountModal = ({ opened, close }: TDeleteAccountModalProps) => {
     try {
       setError("");
       setLoading(true);
-      const res = await apiService.delete("/user");
-      console.log(res);
+      await apiService.delete("/user");
       dispatch(signOut());
       navigate("/");
     } catch (e) {

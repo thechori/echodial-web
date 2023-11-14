@@ -3,25 +3,11 @@ import {
   FetchArgs,
   FetchBaseQueryError,
   createApi,
-  fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 //
 import { CallerId } from "../types";
-import { LOCAL_STORAGE_JWT } from "../configs/local-storage";
 import { setJwt, signOut } from "../store/user/slice";
-
-const apiBaseUrl = import.meta.env.VITE_API_HOST;
-
-const baseQuery = fetchBaseQuery({
-  baseUrl: apiBaseUrl,
-  credentials: "include",
-  prepareHeaders: (headers) => {
-    const jwt = localStorage.getItem(LOCAL_STORAGE_JWT);
-    if (jwt) {
-      headers.set("authorization", `Bearer ${jwt}`);
-    }
-  },
-});
+import { baseQuery } from "./helpers/base-query";
 
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,

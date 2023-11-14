@@ -1,15 +1,8 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
-//
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import {
-  selectEmail,
-  selectFirstName,
-  selectLastName,
-  selectPhone,
-  signOut,
-} from "../../store/user/slice";
-import routes from "../../configs/routes";
+import { PiPhone } from "react-icons/pi";
+import { useDisclosure } from "@mantine/hooks";
 import {
   Accordion,
   Box,
@@ -25,14 +18,20 @@ import {
   Tooltip,
 } from "@mantine/core";
 //
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  selectEmail,
+  selectFirstName,
+  selectLastName,
+  selectPhone,
+  signOut,
+} from "../../store/user/slice";
+import routes from "../../configs/routes";
 import { APP_NAME } from "../../configs/constants";
 import { setShowOptions } from "../../store/dialer/slice";
 import { PhoneInput } from "../../components/phone-input";
-import { PiPhone } from "react-icons/pi";
-import { useDisclosure } from "@mantine/hooks";
 import DeleteAccountModal from "./DeleteAccountConfirmationModal";
 import { extractErrorMessage } from "../../utils/error";
-import { useState } from "react";
 import apiService from "../../services/api";
 import { useGetSubscriptionStatusQuery } from "../../services/stripe";
 
@@ -180,7 +179,7 @@ function Settings() {
 
         <Grid.Col xs={12} sm={6}>
           <Card withBorder py="md" h="100%">
-            <Title order={3}>Plan Usage</Title>
+            <Title order={3}>Plan usage</Title>
             <Flex align="center" justify="space-between" py="sm">
               <Text c="dimmed">
                 Your plan includes {9999} minutes of voice calling per month
@@ -259,15 +258,6 @@ function Settings() {
             </Text>
             <Button color="red" onClick={openDeleteConfirmationModal}>
               Delete account
-            </Button>
-
-            <Button
-              onClick={async () => {
-                const { data } = await apiService.get("/lead");
-                console.log(data);
-              }}
-            >
-              Test
             </Button>
           </Card>
         </Grid.Col>

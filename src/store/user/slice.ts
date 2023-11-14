@@ -27,7 +27,6 @@ export const UserSlice = createSlice({
   reducers: {
     setJwt: (state, action) => {
       const jwtDecoded = jwt_decode(action.payload) || null;
-      console.log("jwtDecoded", jwtDecoded);
 
       state.jwt = action.payload;
       state.jwtDecoded = jwtDecoded as TJwtDecoded | null;

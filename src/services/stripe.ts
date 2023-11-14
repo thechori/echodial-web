@@ -3,30 +3,16 @@ import {
   FetchArgs,
   FetchBaseQueryError,
   createApi,
-  fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 import Stripe from "stripe";
-import { LOCAL_STORAGE_JWT } from "../configs/local-storage";
 import { setJwt, signOut } from "../store/user/slice";
-
-const apiBaseUrl = import.meta.env.VITE_API_HOST;
+import { baseQuery } from "./helpers/base-query";
 
 type TSubscriptionStatus = {
   description: string | null;
   status: Stripe.Subscription.Status | null;
   items: Stripe.ApiList<Stripe.SubscriptionItem> | null;
 };
-
-const baseQuery = fetchBaseQuery({
-  baseUrl: apiBaseUrl,
-  credentials: "include",
-  prepareHeaders: (headers) => {
-    const jwt = localStorage.getItem(LOCAL_STORAGE_JWT);
-    if (jwt) {
-      headers.set("authorization", `Bearer ${jwt}`);
-    }
-  },
-});
 
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
