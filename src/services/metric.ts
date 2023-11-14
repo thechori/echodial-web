@@ -1,6 +1,13 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  BaseQueryFn,
+  FetchArgs,
+  FetchBaseQueryError,
+  createApi,
+} from "@reduxjs/toolkit/query/react";
 //
 import { Call } from "../types";
+import { setJwt, signOut } from "../store/user/slice";
+import { baseQuery } from "./helpers/base-query";
 
 export type TMetricResolution = "day" | "week" | "month";
 
@@ -15,20 +22,33 @@ export type TMetrics = {
   averageCallDurationInSecondsCurrentPeriod: number | null;
 };
 
-const apiBaseUrl = import.meta.env.VITE_API_HOST;
+const baseQueryWithReauth: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+  let result = await baseQuery(args, api, extraOptions);
 
-// Define a service using a base URL and expected endpoints
+  if (result.error && result.error.status === 401) {
+    const refreshResult = await baseQuery(
+      "/auth/refresh-token",
+      api,
+      extraOptions
+    );
+
+    if (refreshResult.data) {
+      api.dispatch(setJwt(refreshResult.data));
+      result = await baseQuery(args, api, extraOptions);
+    } else {
+      api.dispatch(signOut());
+    }
+  }
+  return result;
+};
+
 export const metricApi = createApi({
   reducerPath: "metricApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: apiBaseUrl,
-    prepareHeaders: (headers) => {
-      const jwt = localStorage.getItem("jwt");
-      if (jwt) {
-        headers.set("authorization", `Bearer ${jwt}`);
-      }
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ["Metric"],
   endpoints: (builder) => ({
     getDashboardMetrics: builder.query<TMetrics, TMetricResolution>({

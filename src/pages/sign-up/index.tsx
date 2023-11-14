@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
+import * as amplitude from "@amplitude/analytics-browser";
 import { useNavigate } from "react-router-dom";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { isPossiblePhoneNumber } from "react-phone-number-input";
@@ -41,6 +42,8 @@ function SignUp() {
 
   async function handleFormSubmit(e: FormEvent) {
     e.preventDefault();
+
+    amplitude.track("Sign Up");
 
     // Clear errors
     setError("");

@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from "react";
+import * as amplitude from "@amplitude/analytics-browser";
 import { useWindowEvent } from "@mantine/hooks";
 import { createSelector } from "@reduxjs/toolkit";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
@@ -142,6 +143,8 @@ function LeadsFilteredList() {
 
     // Open dialer
     dispatch(setAlphaDialerVisible(true));
+
+    amplitude.track("Start dial session");
   };
 
   const openImportModal = () => {

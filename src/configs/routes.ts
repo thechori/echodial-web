@@ -19,6 +19,8 @@ const routes = {
   reports: "/reports",
   callerIds: "/caller-ids",
   billing: "/billing",
+  subscription: "/subscription",
+  subscriptionCallback: "/subscription/callback",
 };
 
 export default routes;

@@ -6,6 +6,10 @@ import { useAppDispatch } from "../../store/hooks";
 import { setSubscriptionActive } from "../../store/user/slice";
 import { useEffect, useMemo, useState } from "react";
 import { notifications } from "@mantine/notifications";
+import { useNavigate } from "react-router-dom";
+import routes from "../../configs/routes";
+import { extractErrorMessage } from "../../utils/error";
+import apiService from "../../services/api";
 
 /**
  *
@@ -13,9 +17,9 @@ import { notifications } from "@mantine/notifications";
  *
  * [x] Initialize with TrialCredits (since a new user has no proper subscription)
  * [x] Notify the user is almost out of TrialCredits - advise they upgrade to avoid any service disruptions
- * [ ] Notify the user is out of TrialCredits - advise they must upgrade to gain access to dialer again
- * [ ] Display the subscription tier they are currently signed up for
- * [ ] Allow clicking sub tier to take them to page to change sub
+ * [x] Notify the user is out of TrialCredits - advise they must upgrade to gain access to dialer again
+ * [x] Display the subscription tier they are currently signed up for
+ * [x] Allow clicking sub tier to take them to page to change sub
  *
  * States:
  *
@@ -24,19 +28,51 @@ import { notifications } from "@mantine/notifications";
  * - Account with trial and sub (good good - least common IMO)
  * - Accounts with expired trial and sub (good - most common)
  *
- * Logic:
- *
- * 1. check for subscription, this is the most important thing - no need to show trial details
- * 1. display subscription if found
- * 1. check for
  */
 export const SidebarSubscriptionDetail = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [status, setStatus] = useState<null | "low" | "empty">(null);
+  const [stripeCustomerPortalLinkError, setStripeCustomerPortalLinkError] =
+    useState("");
+  const [stripeCustomerPortalLinkLoading, setStripeCustomerPortalLinkLoading] =
+    useState(false);
   const { data: trialCredits, isLoading: isTrialCreditsLoading } =
     useGetTrialCreditsQuery();
   const { data: subscriptionStatus, isLoading: isSubscriptionStatusLoading } =
     useGetSubscriptionStatusQuery();
+
+  const handleUpgradeSubscription = () => {
+    navigate(routes.subscription);
+  };
+
+  async function handleManageSubscription() {
+    // If user has no subscription, take them to the /subscription page to enroll in a NEW subscription
+    if (!subscriptionStatus) {
+      navigate(routes.subscription);
+      return;
+    }
+
+    // If user has an existing subscription, generate a short-life link via Stripe to the Customer Portal
+    try {
+      setStripeCustomerPortalLinkError("");
+      setStripeCustomerPortalLinkLoading(true);
+
+      const res = await apiService.post(
+        "/stripe/create-customer-portal-session"
+      );
+
+      // API call to generate short-lived URL
+      const { url } = res.data;
+
+      // Redirect
+      window.location.replace(url);
+    } catch (e) {
+      setStripeCustomerPortalLinkError(extractErrorMessage(e));
+    } finally {
+      setStripeCustomerPortalLinkLoading(false);
+    }
+  }
 
   const text = useMemo(() => {
     let text = "";
@@ -45,9 +81,12 @@ export const SidebarSubscriptionDetail = () => {
       // No trial or subscription found
       text = "Error fetching subscription details";
       dispatch(setSubscriptionActive(false));
-    } else if (subscriptionStatus && subscriptionStatus.status === "active") {
+    } else if (
+      subscriptionStatus &&
+      subscriptionStatus.subscription.status === "active"
+    ) {
       // Subscription active
-      text = subscriptionStatus.description || "Subscription active";
+      text = subscriptionStatus.product.name;
       dispatch(setSubscriptionActive(true));
     } else if (
       subscriptionStatus &&
@@ -62,10 +101,10 @@ export const SidebarSubscriptionDetail = () => {
       // Handle 0 or negative scenario first
       // Percentage = remaining / total * 100
       if (trialCredits.remaining_amount <= 0) {
-        text = "0 credits left";
+        text = "0 trial credits left";
         dispatch(setSubscriptionActive(false));
       } else {
-        text = `${trialCredits.remaining_amount} of ${trialCredits.initial_amount} credits left`;
+        text = `${trialCredits.remaining_amount} trial credits left`;
         dispatch(setSubscriptionActive(true));
       }
     } else {
@@ -81,7 +120,10 @@ export const SidebarSubscriptionDetail = () => {
     let percent = 100;
 
     // Handle valid subscription
-    if (subscriptionStatus && subscriptionStatus.status === "active") {
+    if (
+      subscriptionStatus &&
+      subscriptionStatus.subscription.status === "active"
+    ) {
       // TODO: fix this
       // Hard code at 100 for now
       percent = 100;
@@ -138,11 +180,32 @@ export const SidebarSubscriptionDetail = () => {
         )}
       </Text>
       <Progress mb="md" value={getPercent} />
+
+      {/* [x] Show "Upgrade" if user has no active account */}
+      {/* [x] Show "Manage" if user has active account */}
+      {/* [x] Don't show button if user has unlimited plan */}
       <Center>
-        {/* TODO: Don't show button if user has unlimited plan */}
-        <Button size="xs" compact variant="gradient">
-          Upgrade
-        </Button>
+        {!subscriptionStatus ? (
+          <Button
+            size="xs"
+            compact
+            variant="gradient"
+            onClick={handleUpgradeSubscription}
+          >
+            Upgrade
+          </Button>
+        ) : subscriptionStatus.product.name !== "Unlimited plan" ? (
+          <Button
+            size="xs"
+            compact
+            variant="gradient"
+            onClick={handleManageSubscription}
+            loading={stripeCustomerPortalLinkLoading}
+          >
+            Manage
+          </Button>
+        ) : null}
+        <Text color="red">{stripeCustomerPortalLinkError}</Text>
       </Center>
     </Box>
   );

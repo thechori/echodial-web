@@ -1,6 +1,22 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { IconCircleCheck } from "@tabler/icons-react";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
+import { PiPhone } from "react-icons/pi";
+import { useDisclosure } from "@mantine/hooks";
+import {
+  Accordion,
+  Box,
+  Button,
+  Card,
+  Container,
+  Flex,
+  Grid,
+  Progress,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from "@mantine/core";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -11,32 +27,20 @@ import {
   signOut,
 } from "../../store/user/slice";
 import routes from "../../configs/routes";
-import {
-  Anchor,
-  Box,
-  Button,
-  Card,
-  Container,
-  Flex,
-  Grid,
-  List,
-  Text,
-  TextInput,
-  ThemeIcon,
-  Title,
-  Tooltip,
-} from "@mantine/core";
-//
 import { APP_NAME } from "../../configs/constants";
 import { setShowOptions } from "../../store/dialer/slice";
 import { PhoneInput } from "../../components/phone-input";
-import { PiPhone } from "react-icons/pi";
-import { useDisclosure } from "@mantine/hooks";
 import DeleteAccountModal from "./DeleteAccountConfirmationModal";
+import { extractErrorMessage } from "../../utils/error";
+import apiService from "../../services/api";
+import { useGetSubscriptionStatusQuery } from "../../services/stripe";
 
 function Settings() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { data: subscription } = useGetSubscriptionStatusQuery();
+  const [stripeError, setStripeError] = useState("");
+  const [stripeLoading, setStripeLoading] = useState(false);
   const email = useAppSelector(selectEmail);
   const phone = useAppSelector(selectPhone);
   const firstName = useAppSelector(selectFirstName);
@@ -56,13 +60,41 @@ function Settings() {
     open();
   }
 
+  async function manageSubscription() {
+    // If user has no subscription, take them to the /subscription page to enroll in a NEW subscription
+    if (!subscription) {
+      navigate(routes.subscription);
+      return;
+    }
+
+    // If user has an existing subscription, generate a short-life link via Stripe to the Customer Portal
+    try {
+      setStripeError("");
+      setStripeLoading(true);
+
+      const res = await apiService.post(
+        "/stripe/create-customer-portal-session"
+      );
+
+      // API call to generate short-lived URL
+      const { url } = res.data;
+
+      // Redirect
+      window.location.replace(url);
+    } catch (e) {
+      setStripeError(extractErrorMessage(e));
+    } finally {
+      setStripeLoading(false);
+    }
+  }
+
   return (
     <Container fluid p="md">
       <Grid>
         <Grid.Col xs={12} sm={6}>
           <Card withBorder shadow="md" mb="md">
             <Flex align="center" justify="space-between">
-              <Title order={3}>Account</Title>
+              <Title order={3}>Profile</Title>
               <Tooltip
                 className="hoverable"
                 label="This feature is currently under construction. Check back for an update soon!"
@@ -145,39 +177,62 @@ function Settings() {
           </Card>
         </Grid.Col>
 
+        {subscription && (
+          <Grid.Col xs={12} sm={6}>
+            <Card withBorder py="md" h="100%">
+              <Title order={3}>{subscription.product.name} usage</Title>
+              <Flex align="center" justify="space-between" py="sm">
+                <Text c="dimmed">{subscription?.product.description}</Text>
+                {/* <Text c="dimmed">
+                  {1200} min used of {9999} min
+                </Text> */}
+              </Flex>
+
+              <Progress radius="xs" size="lg" value={100} />
+
+              {/* <Text c="dimmed" py="sm">
+                Last month you used {1200} minutes
+              </Text> */}
+
+              <Accordion variant="filled" radius="xs" chevronPosition="left">
+                <Accordion.Item key={1} value={"hello"}>
+                  <Accordion.Control>
+                    <Text c="dimmed">How does this work?</Text>
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    Every month, your account balance is refreshed with the
+                    number of minutes included in your plan. See our FAQ on the
+                    home page for more details.
+                  </Accordion.Panel>
+                </Accordion.Item>
+              </Accordion>
+            </Card>
+          </Grid.Col>
+        )}
+
         <Grid.Col xs={12} sm={6}>
           <Card withBorder shadow="md">
-            <Title order={3}>Support</Title>
+            <Title order={3}>Manage subscription</Title>
+
             <Box py="md">
               <Text>
-                Need help with something? Contact our support team and one of
-                our agents should have a response for you within 24 hours.
+                Need to make changes to your account? Click the button below to
+                manage your subscription.
               </Text>
-              <List
-                spacing="xs"
-                size="sm"
-                p="md"
-                center
-                icon={
-                  <ThemeIcon color="teal" size={24} radius="xl">
-                    <IconCircleCheck size="1rem" />
-                  </ThemeIcon>
-                }
-              >
-                <List.Item>
-                  <Anchor href="mailto:support@echodial.com">
-                    support@echodial.com
-                  </Anchor>
-                </List.Item>
-                {/* Note: hiding phone for now until this is ready to be fully supported */}
-                {/* <List.Item>
-                <Anchor mr="sm" href={`tel:${phoneNumberSupport}`}>
-                  {phoneFormatter(phoneNumberSupport)}
-                </Anchor>
-                (Monday-Friday 8:00am CST - 5:00pm CST)
-              </List.Item> */}
-              </List>
             </Box>
+
+            <Flex align="center" justify="space-between">
+              <Button
+                loading={stripeLoading}
+                variant="outline"
+                onClick={manageSubscription}
+              >
+                Manage subscription
+              </Button>
+              <Text color="red" size="sm">
+                {stripeError}
+              </Text>
+            </Flex>
           </Card>
         </Grid.Col>
 
@@ -197,28 +252,6 @@ function Settings() {
                 Open dialer settings
               </Button>
             </Box>
-          </Card>
-        </Grid.Col>
-
-        <Grid.Col xs={12} sm={6}>
-          <Card withBorder shadow="md">
-            <Title order={3}>Subscription</Title>
-
-            <Box py="md">
-              <Text>
-                Need to make changes to your account? Click the button below to
-                manage your subscription.
-              </Text>
-            </Box>
-
-            <Flex align="center" justify="space-between">
-              <Button
-                variant="outline"
-                onClick={() => alert("Please email us to complete this step")}
-              >
-                Manage subscription
-              </Button>
-            </Flex>
           </Card>
         </Grid.Col>
 
