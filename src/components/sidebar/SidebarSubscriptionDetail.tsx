@@ -116,6 +116,10 @@ export const SidebarSubscriptionDetail = () => {
     return text;
   }, [subscriptionStatus, trialCredits]);
 
+  // [x] Valid trial + no sub
+  // [x] Expired trial + no sub
+  // [ ] Sub with credits
+  // [ ] Expired sub
   const getPercent = useMemo(() => {
     let percent = 100;
 
@@ -150,7 +154,7 @@ export const SidebarSubscriptionDetail = () => {
     }
 
     return percent;
-  }, [subscriptionStatus, trialCredits]);
+  }, [subscriptionStatus, trialCredits, isSubscriptionStatusLoading]);
 
   // [x] Active sub (show nothing)
   // [x] Low trials credits + no subscription (show warning)
