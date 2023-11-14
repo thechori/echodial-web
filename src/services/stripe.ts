@@ -9,9 +9,8 @@ import { setJwt, signOut } from "../store/user/slice";
 import { baseQuery } from "./helpers/base-query";
 
 type TSubscriptionStatus = {
-  description: string | null;
-  status: Stripe.Subscription.Status | null;
-  items: Stripe.ApiList<Stripe.SubscriptionItem> | null;
+  subscription: Stripe.Subscription;
+  product: Stripe.Product;
 };
 
 const baseQueryWithReauth: BaseQueryFn<

@@ -62,7 +62,7 @@ function Settings() {
 
   async function manageSubscription() {
     // If user has no subscription, take them to the /subscription page to enroll in a NEW subscription
-    if (!subscription || subscription.status === null) {
+    if (!subscription) {
       navigate(routes.subscription);
       return;
     }
@@ -177,32 +177,38 @@ function Settings() {
           </Card>
         </Grid.Col>
 
-        <Grid.Col xs={12} sm={6}>
-          <Card withBorder py="md" h="100%">
-            <Title order={3}>Plan usage</Title>
-            <Flex align="center" justify="space-between" py="sm">
-              <Text c="dimmed">
-                Your plan includes {9999} minutes of voice calling per month
-              </Text>
-              <Text c="dimmed">
-                {1200} min used of {9999} min
-              </Text>
-            </Flex>
+        {subscription && (
+          <Grid.Col xs={12} sm={6}>
+            <Card withBorder py="md" h="100%">
+              <Title order={3}>{subscription.product.name} usage</Title>
+              <Flex align="center" justify="space-between" py="sm">
+                <Text c="dimmed">{subscription?.product.description}</Text>
+                {/* <Text c="dimmed">
+                  {1200} min used of {9999} min
+                </Text> */}
+              </Flex>
 
-            <Progress radius="xs" size="lg" value={10} />
-            <Text c="dimmed" py="sm">
-              Last month you used {1200} minutes
-            </Text>
-            <Accordion variant="filled" radius="xs" chevronPosition="left">
-              <Accordion.Item key={1} value={"hello"}>
-                <Accordion.Control>
-                  <Text c="dimmed">How does this work?</Text>
-                </Accordion.Control>
-                <Accordion.Panel>See our FAQ</Accordion.Panel>
-              </Accordion.Item>
-            </Accordion>
-          </Card>
-        </Grid.Col>
+              <Progress radius="xs" size="lg" value={100} />
+
+              {/* <Text c="dimmed" py="sm">
+                Last month you used {1200} minutes
+              </Text> */}
+
+              <Accordion variant="filled" radius="xs" chevronPosition="left">
+                <Accordion.Item key={1} value={"hello"}>
+                  <Accordion.Control>
+                    <Text c="dimmed">How does this work?</Text>
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    Every month, your account balance is refreshed with the
+                    number of minutes included in your plan. See our FAQ on the
+                    home page for more details.
+                  </Accordion.Panel>
+                </Accordion.Item>
+              </Accordion>
+            </Card>
+          </Grid.Col>
+        )}
 
         <Grid.Col xs={12} sm={6}>
           <Card withBorder shadow="md">

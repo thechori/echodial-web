@@ -5,15 +5,15 @@ import { GoHistory } from "react-icons/go";
 import { IoMdPerson } from "react-icons/io";
 import { MdGroups } from "react-icons/md";
 import { AiOutlineMenu } from "react-icons/ai";
+import { Box, Divider } from "@mantine/core";
 //
 import SidebarStyled from "./Sidebar.styles";
 import routes from "../../configs/routes";
 import logo from "../../assets/EchoDial-temp-logo-full.png";
-import { Box, Divider } from "@mantine/core";
 import colors from "../../styles/colors";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setAlphaDialerVisible } from "../../store/dialer/slice";
-import { SidebarSubscriptionDetail } from "./SubscriptionDetail";
+import { SidebarSubscriptionDetail } from "./SidebarSubscriptionDetail";
 
 const Sidebar = () => {
   const { alphaDialerVisible } = useAppSelector((state) => state.dialer);

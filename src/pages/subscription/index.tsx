@@ -3,10 +3,13 @@ import { Box, Button, Center, Container, Text, Title } from "@mantine/core";
 //
 import StripePricingTable from "../pricing/StripePricingTable";
 import { useAppSelector } from "../../store/hooks";
+import { useGetSubscriptionStatusQuery } from "../../services/stripe";
+import routes from "../../configs/routes";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
   const { jwtDecoded } = useAppSelector((state) => state.user);
+  const { data: subscription } = useGetSubscriptionStatusQuery();
 
   const handleBack = () => {
     navigate(-1);
@@ -23,6 +26,9 @@ const SubscriptionPage = () => {
 
   // Only show this page if no subscription is found
   // If found, redirect them to the stripe customer portal
+  if (subscription) {
+    navigate(routes.settings);
+  }
 
   return (
     <Container fluid p={0} mt="xl">
