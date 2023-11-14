@@ -6,13 +6,15 @@ export type importSliceType = {
     fileHeaders: [],
     fileRows: [],
     headersToProperties: HeaderObject[];
+    file: any;
 }
 
 const initialState: importSliceType = {
     allMapped: false,
     fileHeaders: [],
     fileRows: [],
-    headersToProperties: []
+    headersToProperties: [],
+    file: undefined
 }
 export const importSlice = createSlice({ 
     name: "import",
@@ -20,6 +22,9 @@ export const importSlice = createSlice({
     reducers: { 
         setAllMapped: (state, action) => { 
             state.allMapped = action.payload;
+        },
+        setFile: (state, action) => {
+            state.file = action.payload;
         },
         setFileHeaders: (state, action) => { 
             state.fileHeaders = action.payload;
@@ -49,5 +54,5 @@ export const importSlice = createSlice({
         }
     }
 });
-export const { setAllMapped, setFileHeaders, setFileRows, setHeaderProperties, initializeHeaderToProperties, setExcludeCheckbox } = importSlice.actions;
+export const { setAllMapped, setFileHeaders, setFileRows, setHeaderProperties, initializeHeaderToProperties, setExcludeCheckbox, setFile } = importSlice.actions;
 export default importSlice.reducer;

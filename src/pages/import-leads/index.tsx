@@ -13,7 +13,7 @@ import { useState } from "react";
 import { useAppSelector } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
-
+import { useAddLeadsViaCsvMutation } from "../../services/lead";
 import routes from "../../configs/routes";
 import styled from "@emotion/styled";
 import MappingTable from "./MappingTable";
@@ -27,6 +27,8 @@ function ImportLeads() {
   const [active, setActive] = useState(1);
   const [opened, { open, close }] = useDisclosure(false);
   const showButton = useAppSelector((state) => state.importLeads.allMapped);
+  const file = useAppSelector((state) => state.importLeads.file);
+  const [addLeadsViaCsv, { isLoading }] = useAddLeadsViaCsvMutation();
 
   const headerToProperties = useAppSelector(
     (state) => state.importLeads.headersToProperties
@@ -48,6 +50,22 @@ function ImportLeads() {
     }
     setMappingTable(tempTable);
   };
+  async function submitModalHandler() {
+    try {
+      const headerToPropertiesString = JSON.stringify(headerToProperties);
+
+      const value = file.get("headerToProperties");
+      if (value) {
+        file.delete("headerToProperties");
+      }
+      file.append("headerToProperties", headerToPropertiesString);
+      await addLeadsViaCsv(file).unwrap();
+
+      close();
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   function exitModal() {
     close();
@@ -87,7 +105,9 @@ function ImportLeads() {
           <tbody>{mappingTable}</tbody>
         </Table>
         <Flex justify="center" py="lg">
-          <Button>Submit</Button>
+          <Button loading={isLoading} onClick={submitModalHandler}>
+            Submit
+          </Button>
         </Flex>
       </Modal>
       <Paper

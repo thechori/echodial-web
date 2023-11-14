@@ -20,7 +20,7 @@ import routes from "../../configs/routes";
 import { useNavigate } from "react-router-dom";
 import Papa from "papaparse";
 import { useDispatch } from "react-redux";
-import { setFileHeaders, setFileRows } from "../../store/import/slice";
+import { setFileHeaders, setFileRows, setFile } from "../../store/import/slice";
 
 const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
   const navigate = useNavigate();
@@ -46,7 +46,9 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
     }
 
     const csvFile = form.values.file;
-
+    const formData = new FormData();
+    formData.append("file", form.values.file);
+    dispatch(setFile(formData));
     if (csvFile) {
       Papa.parse(csvFile, {
         header: true,
