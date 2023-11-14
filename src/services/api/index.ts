@@ -1,6 +1,10 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { Store } from "@reduxjs/toolkit";
+import { notifications } from "@mantine/notifications";
 //
 import { LOCAL_STORAGE_JWT } from "../../configs/local-storage";
+import { setJwt, signOut } from "../../store/user/slice";
+import { EXPIRED_SESSION_MESSAGE } from "../../configs/error-messages";
 
 const apiService = axios.create({
   baseURL: import.meta.env.VITE_API_HOST,
@@ -19,16 +23,35 @@ apiService.interceptors.request.use((config) => {
 
 apiService.interceptors.response.use(
   function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
     return response;
   },
-  function (error) {
-    console.log("!!!!");
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    return Promise.reject(error);
+  async function ({ config }: AxiosError) {
+    try {
+      if (!config) throw Error("No error response config found");
+
+      const { data } = await apiService.get("/auth/refresh-token");
+      store.dispatch(setJwt(data));
+
+      // Update req.headers["Authorization"] with new access_token
+      config.headers["Authorization"] = `Bearer ${localStorage.getItem(
+        LOCAL_STORAGE_JWT
+      )};`;
+
+      const response = await apiService(config);
+
+      return response;
+    } catch (e) {
+      notifications.show({ message: EXPIRED_SESSION_MESSAGE });
+      store.dispatch(signOut());
+      return Promise.reject(e);
+    }
   }
 );
 
 export default apiService;
+
+let store: Store;
+
+export const injectStore = (_store: Store) => {
+  store = _store;
+};

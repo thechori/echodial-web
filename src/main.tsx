@@ -36,6 +36,10 @@ import ForgotPassword from "./pages/forgot-password";
 import ResetPassword from "./pages/reset-password";
 import Subscription from "./pages/subscription";
 import { SubscriptionCallback } from "./pages/subscription/SubscriptionCallback";
+import { injectStore } from "./services/api";
+
+// Inject Redux store into Axios instance to support access to the state and dispatch of actions
+injectStore(store);
 
 Sentry.init({
   dsn: "https://dbc6c090143fce815721f48b790b3810@o4505859893231616.ingest.sentry.io/4505859896442880",
@@ -43,7 +47,7 @@ Sentry.init({
     new Sentry.BrowserTracing({
       // TODO: update these values to be proper or remove
       // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-      tracePropagationTargets: ["localhost", "https:yourserver.io/api/"],
+      tracePropagationTargets: ["localhost", "https://api.echodial.com/"],
     }),
     new Sentry.Replay(),
   ],
