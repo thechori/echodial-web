@@ -28,6 +28,7 @@ import {
   useGetLeadStandardPropertiesQuery,
   useGetLeadCustomPropertiesQuery,
   useGetLeadPropertyGroupQuery,
+  useAddValidateDataCsvMutation,
 } from "../../services/lead";
 
 function MappingTable() {
@@ -54,6 +55,10 @@ function MappingTable() {
     error: propertyGroupsError,
     isLoading: propertyGroupsLoading,
   } = useGetLeadPropertyGroupQuery();
+
+  const [addValidateDataCsv] = useAddValidateDataCsvMutation();
+
+  //Validating a header to property
 
   const [properties, setProperties] = useState<SelectItem[]>([]);
   useEffect(() => {
@@ -103,6 +108,9 @@ function MappingTable() {
   const headers = useAppSelector(
     (state) => state.importLeads.headersToProperties
   );
+
+  const emptyStringArray = Array.from({ length: headers.length }, () => "");
+  const [errorMessageArray, setErrorMessageArray] = useState(emptyStringArray);
 
   const [mappingTable, setMappingTable] = useState([]);
 
@@ -169,6 +177,7 @@ function MappingTable() {
                 searchable
                 clearable
                 disabled={headers[i].excludeHeader}
+                error={errorMessageArray[i]}
               />
             </Flex>
           </td>
@@ -208,40 +217,58 @@ function MappingTable() {
     return;
   }
   //newProperty is the property we are mapping the header at headerIndex to
-  function handleChange(newProperty: any, headerIndex: any) {
-    //if the newProperty is the add property option, we open the drawer
-    if (newProperty === addNewPropertySelectItem.value) {
-      open();
-      return;
-    }
-    //this if condition checks if the header is already mapped, if it is we have to make the property that it was mapped to available again
-    if (headers[headerIndex].mapped) {
-      const resetProperty = headers[headerIndex].property;
+  async function handleChange(newProperty: any, headerIndex: any) {
+    try {
+      const columnHeader = headers[headerIndex].columnHeader;
+      const columnData = fileRows.map((entry) => entry[columnHeader]);
+      await addValidateDataCsv({
+        propertyToCheck: newProperty,
+        columnData: JSON.stringify(columnData),
+      });
+
+      //if the newProperty is the add property option, we open the drawer
+      if (newProperty === addNewPropertySelectItem.value) {
+        open();
+        return;
+      }
+      //this if condition checks if the header is already mapped, if it is we have to make the property that it was mapped to available again
+      if (headers[headerIndex].mapped) {
+        const resetProperty = headers[headerIndex].property;
+        setProperties((prevProperties) => {
+          const updatedPropertyList = prevProperties.map((property) =>
+            property.value === resetProperty
+              ? { ...property, disabled: false }
+              : property
+          );
+          return updatedPropertyList;
+        });
+      }
+
+      //we disable this property so other headers can't be mapped to it
       setProperties((prevProperties) => {
         const updatedPropertyList = prevProperties.map((property) =>
-          property.value === resetProperty
-            ? { ...property, disabled: false }
+          property.value === newProperty
+            ? { ...property, disabled: true }
             : property
         );
         return updatedPropertyList;
       });
+
+      const myAction = {
+        newProperty: newProperty,
+        headerIndex: headerIndex,
+      };
+      dispatch(setHeaderProperties(myAction));
+      close();
+    } catch (error) {
+      const tempErrorMessageArray = errorMessageArray;
+      if (error instanceof Error) {
+        tempErrorMessageArray[headerIndex] = error.message.toString();
+      } else {
+        tempErrorMessageArray[headerIndex] = "";
+      }
+      setErrorMessageArray(tempErrorMessageArray);
     }
-
-    //we disable this property so other headers can't be mapped to it
-    setProperties((prevProperties) => {
-      const updatedPropertyList = prevProperties.map((property) =>
-        property.value === newProperty
-          ? { ...property, disabled: true }
-          : property
-      );
-      return updatedPropertyList;
-    });
-
-    const myAction = {
-      newProperty: newProperty,
-      headerIndex: headerIndex,
-    };
-    dispatch(setHeaderProperties(myAction));
   }
 
   return (
@@ -256,7 +283,7 @@ function MappingTable() {
         <DrawerContent />
       </Drawer>
 
-      <Container fluid pb={125}>
+      <Container fluid pb={125} style={{ overflowX: "scroll" }}>
         <Flex justify="center" py="xs">
           <Title order={2}>
             Map columns in your file to contact properties
@@ -267,7 +294,6 @@ function MappingTable() {
             Each column header below should be mapped to a contact property
           </Text>
         </Flex>
-
         <Table
           highlightOnHover
           horizontalSpacing="lg"

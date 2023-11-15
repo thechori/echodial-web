@@ -68,6 +68,16 @@ export const leadApi = createApi({
       },
       invalidatesTags: ["Lead"],
     }),
+    addValidateDataCsv: builder.mutation<Lead[], any>({
+      query(body) {
+        return {
+          url: `lead/csv/validate`,
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: ["Lead"],
+    }),
     updateLead: builder.mutation<Lead, Partial<Lead>>({
       query(data) {
         const { id, ...body } = data;
@@ -110,5 +120,6 @@ export const {
   useGetLeadStandardPropertiesQuery,
   useGetLeadCustomPropertiesQuery,
   useGetLeadPropertyGroupQuery,
-  useAddCustomPropertyMutation
+  useAddCustomPropertyMutation,
+  useAddValidateDataCsvMutation
 } = leadApi;

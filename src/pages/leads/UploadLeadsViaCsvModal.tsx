@@ -55,8 +55,16 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
         dynamicTyping: true,
         complete: function (results) {
           if (results.meta.fields && results.data) {
+            const firstRowLength = Object.getOwnPropertyNames(
+              results.data[0]
+            ).length;
+
+            const filteredRows = results.data.filter((row) => {
+              const rowKeys = Object.getOwnPropertyNames(row);
+              return rowKeys.length === firstRowLength;
+            });
             dispatch(setFileHeaders(results.meta.fields));
-            dispatch(setFileRows(results.data));
+            dispatch(setFileRows(filteredRows));
             navigate(routes.importLeads);
           }
         },
