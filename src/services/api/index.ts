@@ -5,6 +5,7 @@ import { notifications } from "@mantine/notifications";
 import { LOCAL_STORAGE_JWT } from "../../configs/local-storage";
 import { setJwt, signOut } from "../../store/user/slice";
 import { EXPIRED_SESSION_MESSAGE } from "../../configs/error-messages";
+import { extractErrorMessage } from "../../utils/error";
 
 const apiService = axios.create({
   baseURL: import.meta.env.VITE_API_HOST,
@@ -25,10 +26,22 @@ apiService.interceptors.response.use(
   function (response) {
     return response;
   },
-  async function ({ config }: AxiosError) {
+  async function (error: AxiosError) {
+    const { config } = error;
+
+    // Only retry the call if the failed message is errorMessages.EXPIRED_SESSION_MESSAGE
+    if (extractErrorMessage(error) !== EXPIRED_SESSION_MESSAGE) {
+      throw error;
+    }
+
     try {
       if (!config) throw Error("No error response config found");
 
+      // @ts-ignore
+      if (config.hasRetriedAlready) throw error;
+
+      // @ts-ignore
+      config.hasRetriedAlready = true;
       const { data } = await apiService.get("/auth/refresh-token");
       store.dispatch(setJwt(data));
 

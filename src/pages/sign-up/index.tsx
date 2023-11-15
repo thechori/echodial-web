@@ -23,7 +23,7 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { APP_NAME } from "../../configs/constants";
+import { APP_NAME } from "../../configs/labels";
 import { PhoneInput } from "../../components/phone-input";
 
 function SignUp() {

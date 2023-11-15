@@ -116,8 +116,16 @@ export const SidebarSubscriptionDetail = () => {
     return text;
   }, [subscriptionStatus, trialCredits]);
 
+  // [x] Valid trial + no sub
+  // [x] Expired trial + no sub
+  // [ ] Sub with credits
+  // [ ] Expired sub
   const getPercent = useMemo(() => {
     let percent = 100;
+
+    if (isSubscriptionStatusLoading) {
+      return percent;
+    }
 
     // Handle valid subscription
     if (
@@ -146,8 +154,11 @@ export const SidebarSubscriptionDetail = () => {
     }
 
     return percent;
-  }, [subscriptionStatus, trialCredits]);
+  }, [subscriptionStatus, trialCredits, isSubscriptionStatusLoading]);
 
+  // [x] Active sub (show nothing)
+  // [x] Low trials credits + no subscription (show warning)
+  // [x] Empty trials credits + no subscription (show error)
   useEffect(() => {
     if (status === "empty") {
       notifications.show({
@@ -162,7 +173,7 @@ export const SidebarSubscriptionDetail = () => {
           "You're running low on credits. Upgrade your account to avoid service disruption 👍",
       });
     }
-  }, [status]);
+  }, [status, subscriptionStatus]);
 
   return (
     <Box className="trial-details" p="lg" bg="black">

@@ -681,7 +681,7 @@ function AlphaDialer() {
               <Tooltip label="Skip to next Lead">
                 <Button
                   variant="outline"
-                  disabled={!call}
+                  disabled={!call || !subscriptionActive}
                   leftIcon={<IconPlayerSkipForward />}
                   onClick={continueToNextLead}
                   mx={4}

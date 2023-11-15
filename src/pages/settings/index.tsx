@@ -27,7 +27,7 @@ import {
   signOut,
 } from "../../store/user/slice";
 import routes from "../../configs/routes";
-import { APP_NAME } from "../../configs/constants";
+import { APP_NAME } from "../../configs/labels";
 import { setShowOptions } from "../../store/dialer/slice";
 import { PhoneInput } from "../../components/phone-input";
 import DeleteAccountModal from "./DeleteAccountConfirmationModal";
