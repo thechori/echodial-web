@@ -23,6 +23,7 @@ import apiService from "../../services/api";
  *
  * States:
  *
+ * - Account with no trial (legacy + post subscription)
  * - Account with trial and no sub (good - most common, but shortest)
  * - Account with expired trial and no sub (bad - 2nd most common [i'd imagine])
  * - Account with trial and sub (good good - least common IMO)
@@ -32,7 +33,7 @@ import apiService from "../../services/api";
 export const SidebarSubscriptionDetail = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [status, setStatus] = useState<null | "low" | "empty">(null);
+  const [status, setStatus] = useState<null | "low" | "empty" | "warn">(null);
   const [stripeCustomerPortalLinkError, setStripeCustomerPortalLinkError] =
     useState("");
   const [stripeCustomerPortalLinkLoading, setStripeCustomerPortalLinkLoading] =
@@ -79,7 +80,7 @@ export const SidebarSubscriptionDetail = () => {
 
     if (!trialCredits && !subscriptionStatus) {
       // No trial or subscription found
-      text = "Error fetching subscription details";
+      text = "No trial or subscription found";
       dispatch(setSubscriptionActive(false));
     } else if (
       subscriptionStatus &&
@@ -127,6 +128,10 @@ export const SidebarSubscriptionDetail = () => {
       return percent;
     }
 
+    if (!trialCredits && !subscriptionStatus) {
+      percent = -1;
+    }
+
     // Handle valid subscription
     if (
       subscriptionStatus &&
@@ -149,6 +154,8 @@ export const SidebarSubscriptionDetail = () => {
     // Less than 25% - show a notification warning
     if (percent === 0) {
       setStatus("empty");
+    } else if (percent === -1) {
+      setStatus("warn");
     } else if (percent < 25) {
       setStatus("low");
     }
@@ -182,7 +189,7 @@ export const SidebarSubscriptionDetail = () => {
         ta="center"
         weight={500}
         mb="xs"
-        color={getPercent === 0 ? "red" : ""}
+        color={status === "empty" ? "red" : ""}
       >
         {isTrialCreditsLoading || isSubscriptionStatusLoading ? (
           <Loader size="sm" />
@@ -190,7 +197,11 @@ export const SidebarSubscriptionDetail = () => {
           text
         )}
       </Text>
-      <Progress mb="md" value={getPercent} />
+      <Progress
+        mb="md"
+        value={getPercent}
+        color={status === "empty" ? "red" : status === "warn" ? "yellow" : ""}
+      />
 
       {/* [x] Show "Upgrade" if user has no active account */}
       {/* [x] Show "Manage" if user has active account */}
