@@ -3,6 +3,7 @@ import jwt_decode from "jwt-decode";
 //
 import type { RootState } from "../";
 import { User } from "../../types";
+import { windowRefreshSignal } from "../../providers/window-reloader";
 
 export type TJwtDecoded = User & {
   iat: number;
@@ -37,6 +38,7 @@ export const UserSlice = createSlice({
     signOut: (state) => {
       state.jwt = null;
       localStorage.clear();
+      windowRefreshSignal.value = 1;
     },
     setSubscriptionActive: (state, action) => {
       state.subscriptionActive = action.payload;

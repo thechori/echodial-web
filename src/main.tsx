@@ -37,6 +37,7 @@ import ResetPassword from "./pages/reset-password";
 import Subscription from "./pages/subscription";
 import { SubscriptionCallback } from "./pages/subscription/SubscriptionCallback";
 import { injectStore } from "./services/api";
+import { WindowReloader } from "./providers/window-reloader";
 
 // Inject Redux store into Axios instance to support access to the state and dispatch of actions
 injectStore(store);
@@ -67,7 +68,10 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <Provider store={store}>
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <StyleProvider>
+          {/* Global providers */}
           <Notifications position="bottom-left" />
+          <WindowReloader />
+
           <BrowserRouter>
             <Routes>
               <Route
