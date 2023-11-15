@@ -59,7 +59,6 @@ function MappingTable() {
   const [addValidateDataCsv] = useAddValidateDataCsvMutation();
 
   //Validating a header to property
-
   const [properties, setProperties] = useState<SelectItem[]>([]);
   useEffect(() => {
     const tempProperties: SelectItem[] = [];
@@ -119,7 +118,10 @@ function MappingTable() {
   // set the state header variable to have the values from the fileHeaders global variable
   // for the preview, we grab the first 3 values
   useEffect(() => {
-    const emptyStringArray = Array.from({ length: headers.length }, () => "");
+    const emptyStringArray = Array.from(
+      { length: fileHeaders.length },
+      () => ""
+    );
     setErrorMessageArray(emptyStringArray);
     const tempHeaders: HeaderObject[] = [];
     for (let i = 0; i < fileHeaders.length; i++) {

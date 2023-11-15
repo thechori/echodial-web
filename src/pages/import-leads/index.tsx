@@ -9,6 +9,7 @@ import {
   Title,
   Text,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import { useAppSelector } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +18,7 @@ import { useAddLeadsViaCsvMutation } from "../../services/lead";
 import routes from "../../configs/routes";
 import styled from "@emotion/styled";
 import MappingTable from "./MappingTable";
+
 const ImportLeadsStyled = styled.div`
   min-height: calc(100vh);
   z-index: 200;
@@ -34,6 +36,8 @@ function ImportLeads() {
     (state) => state.importLeads.headersToProperties
   );
   const [mappingTable, setMappingTable] = useState([]);
+  const navigate = useNavigate();
+
   const openModal = () => {
     open();
     setActive((current) => (current < 2 ? current + 1 : current));
@@ -60,8 +64,9 @@ function ImportLeads() {
       }
       file.append("headerToProperties", headerToPropertiesString);
       await addLeadsViaCsv(file).unwrap();
-
+      notifications.show({ message: "Leads successfully uploaded!" });
       close();
+      navigate(routes.leads);
     } catch (error) {
       console.log(error);
     }
@@ -71,8 +76,6 @@ function ImportLeads() {
     close();
     setActive((current) => (current > 0 ? current - 1 : current));
   }
-
-  const navigate = useNavigate();
 
   return (
     <ImportLeadsStyled>
