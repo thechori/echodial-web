@@ -15,6 +15,7 @@ import { useAppSelector } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
 import { useAddLeadsViaCsvMutation } from "../../services/lead";
+import { useEffect } from "react";
 import routes from "../../configs/routes";
 import styled from "@emotion/styled";
 import MappingTable from "./MappingTable";
@@ -37,6 +38,12 @@ function ImportLeads() {
   );
   const [mappingTable, setMappingTable] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!file) {
+      navigate(routes.leads);
+    }
+  });
 
   const openModal = () => {
     open();
@@ -62,6 +69,7 @@ function ImportLeads() {
       if (value) {
         file.delete("headerToProperties");
       }
+
       file.append("headerToProperties", headerToPropertiesString);
       await addLeadsViaCsv(file).unwrap();
       notifications.show({ message: "Leads successfully uploaded!" });

@@ -44,10 +44,11 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
     if (!form.values.file) {
       return setError("Upload file before submitting");
     }
-
     const csvFile = form.values.file;
     const formData = new FormData();
     formData.append("file", form.values.file);
+    formData.append("source", form.values.source);
+
     dispatch(setFile(formData));
     if (csvFile) {
       Papa.parse(csvFile, {
