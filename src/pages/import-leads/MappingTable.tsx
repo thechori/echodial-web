@@ -109,8 +109,7 @@ function MappingTable() {
     (state) => state.importLeads.headersToProperties
   );
 
-  const emptyStringArray = Array.from({ length: headers.length }, () => "");
-  const [errorMessageArray, setErrorMessageArray] = useState(emptyStringArray);
+  const [errorMessageArray, setErrorMessageArray] = useState<string[]>([]);
 
   const [mappingTable, setMappingTable] = useState([]);
 
@@ -120,6 +119,8 @@ function MappingTable() {
   // set the state header variable to have the values from the fileHeaders global variable
   // for the preview, we grab the first 3 values
   useEffect(() => {
+    const emptyStringArray = Array.from({ length: headers.length }, () => "");
+    setErrorMessageArray(emptyStringArray);
     const tempHeaders: HeaderObject[] = [];
     for (let i = 0; i < fileHeaders.length; i++) {
       tempHeaders.push({
@@ -188,7 +189,7 @@ function MappingTable() {
       );
     }
     setMappingTable(renderedData);
-  }, [headers, properties]);
+  }, [headers, properties, errorMessageArray]);
 
   //if all the headers are either mapped or excluded, then we display the "next" button for the user
   //to proceed
@@ -221,10 +222,13 @@ function MappingTable() {
     try {
       const columnHeader = headers[headerIndex].columnHeader;
       const columnData = fileRows.map((entry) => entry[columnHeader]);
-      await addValidateDataCsv({
+      const result: any = await addValidateDataCsv({
         propertyToCheck: newProperty,
         columnData: JSON.stringify(columnData),
       });
+      if (result.data.error) {
+        throw new Error(result.data.message);
+      }
 
       //if the newProperty is the add property option, we open the drawer
       if (newProperty === addNewPropertySelectItem.value) {
@@ -259,15 +263,21 @@ function MappingTable() {
         headerIndex: headerIndex,
       };
       dispatch(setHeaderProperties(myAction));
-      close();
+
+      //remove error message
+      const updatedErrorMessageArray = errorMessageArray.map((item, index) =>
+        index === headerIndex ? "" : item
+      );
+      setErrorMessageArray(updatedErrorMessageArray);
     } catch (error) {
-      const tempErrorMessageArray = errorMessageArray;
+      let errorMessage = "";
       if (error instanceof Error) {
-        tempErrorMessageArray[headerIndex] = error.message.toString();
-      } else {
-        tempErrorMessageArray[headerIndex] = "";
+        errorMessage = error.message.toString();
       }
-      setErrorMessageArray(tempErrorMessageArray);
+      const updatedErrorMessageArray = errorMessageArray.map((item, index) =>
+        index === headerIndex ? errorMessage : item
+      );
+      setErrorMessageArray(updatedErrorMessageArray);
     }
   }
 

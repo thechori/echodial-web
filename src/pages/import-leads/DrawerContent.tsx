@@ -29,7 +29,7 @@ function DrawerContent() {
       }));
       setPropertyGroupList(groupData);
     }
-  }, []);
+  }, [propertyGroups, propertyGroupsError]);
 
   function newGroupHandler(group: any) {
     setNewGroup(group);

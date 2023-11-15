@@ -68,7 +68,7 @@ export const leadApi = createApi({
       },
       invalidatesTags: ["Lead"],
     }),
-    addValidateDataCsv: builder.mutation<Lead[], any>({
+    addValidateDataCsv: builder.mutation<any, any>({
       query(body) {
         return {
           url: `lead/csv/validate`,
@@ -76,7 +76,6 @@ export const leadApi = createApi({
           body,
         };
       },
-      invalidatesTags: ["Lead"],
     }),
     updateLead: builder.mutation<Lead, Partial<Lead>>({
       query(data) {
