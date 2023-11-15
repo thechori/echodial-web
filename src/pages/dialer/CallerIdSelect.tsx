@@ -8,7 +8,7 @@ import phoneFormatter from "../../utils/phone-formatter";
 import numbers from "../../configs/numbers";
 import { useNavigate } from "react-router-dom";
 import routes from "../../configs/routes";
-import { APP_NAME } from "../../configs/constants";
+import { APP_NAME } from "../../configs/labels";
 
 function CallerIdSelect(props: any) {
   const dispatch = useAppDispatch();

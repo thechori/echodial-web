@@ -4,7 +4,7 @@ import {
   IconFreeRights,
   IconMoodCheck,
 } from "@tabler/icons-react";
-import { APP_NAME } from "../../configs/constants";
+import { APP_NAME } from "../../configs/labels";
 
 const features = [
   {
