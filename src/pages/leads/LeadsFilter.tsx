@@ -5,7 +5,7 @@ import { MdGroups } from "react-icons/md";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import NewLeadsMenu from "./NewLeadsMenu";
-import UploadLeadsViaCsvModal from "./UploadLeadsViaCsvModal";
+import UploadLeadsViaCsvModal from "../import-leads/UploadLeadsViaCsvModal";
 import ManualInputLeadModal from "./ManualInputLeadModal";
 import {
   setRequestForImportLeadsModal,

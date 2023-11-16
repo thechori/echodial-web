@@ -292,7 +292,7 @@ function MappingTable() {
         position="right"
         withCloseButton={false}
       >
-        <DrawerContent />
+        <DrawerContent close={close} />
       </Drawer>
 
       <Container fluid pb={125} style={{ overflowX: "scroll" }}>

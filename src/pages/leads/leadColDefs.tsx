@@ -63,7 +63,7 @@ export const leadColDefs: ColDef<Lead>[] = [
   },
   {
     field: "source",
-    headerName: "Lead vendor",
+    headerName: "Source",
     resizable: true,
     sortable: true,
     filter: true,

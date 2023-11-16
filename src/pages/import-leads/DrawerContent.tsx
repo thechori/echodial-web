@@ -1,22 +1,17 @@
-import { Text, Input, Button, Select, Alert } from "@mantine/core";
+import { Text, Input, Button, Select } from "@mantine/core";
 import { useState } from "react";
 import {
   useGetLeadPropertyGroupQuery,
   useAddCustomPropertyMutation,
 } from "../../services/lead";
 import { useEffect } from "react";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 import { extractErrorMessage } from "../../utils/error";
-
-function DrawerContent() {
+function DrawerContent(props: any) {
   const [newLabel, setNewLabel] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newGroup, setNewGroup] = useState("");
   const [propertyGroupList, setPropertyGroupList] = useState([]);
-  const [displayError, setDisplayError] = useState(false);
-  const [displaySuccess, setSuccess] = useState(false);
-
-  const [errorMessage, setErrorMessage] = useState("");
   const [addCustomProperty] = useAddCustomPropertyMutation();
   const { data: propertyGroups, error: propertyGroupsError } =
     useGetLeadPropertyGroupQuery();
@@ -52,15 +47,13 @@ function DrawerContent() {
         label: newLabel,
         description: newDescription,
       }).unwrap();
-      setDisplayError(false);
-      setErrorMessage("");
-
-      setSuccess(true);
+      notifications.show({ message: "Custom property successfully created!" });
+      props.close();
     } catch (e) {
-      setDisplayError(true);
-      setSuccess(false);
-
-      setErrorMessage(extractErrorMessage(e));
+      const error = extractErrorMessage(e);
+      notifications.show({
+        message: "Failed to create custom property: " + error,
+      });
     }
   }
   return (
@@ -93,27 +86,6 @@ function DrawerContent() {
       >
         Submit
       </Button>
-
-      {displayError && (
-        <Alert
-          icon={<IconAlertCircle size="1rem" />}
-          title="Error!"
-          color="red"
-          py="lg"
-        >
-          {errorMessage}
-        </Alert>
-      )}
-      {displaySuccess && (
-        <Alert
-          icon={<IconAlertCircle size="1rem" />}
-          title="Success!"
-          color="green"
-          py="lg"
-        >
-          New property {newLabel} was created!
-        </Alert>
-      )}
     </>
   );
 }
