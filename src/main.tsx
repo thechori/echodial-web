@@ -211,8 +211,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   </ProtectedRoute>
                 }
               />
-
-              {/* 404 page */}
               <Route
                 path={routes.importLeads}
                 element={
@@ -221,6 +219,8 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   </ProtectedRoute>
                 }
               />
+
+              {/* 404 page */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
