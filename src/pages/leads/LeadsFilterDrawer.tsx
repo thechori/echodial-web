@@ -6,7 +6,6 @@ import {
   Flex,
   Stack,
   List,
-  Switch,
   Text,
   TextInput,
   Title,
@@ -21,14 +20,12 @@ import { IconPlus, IconSearch, IconX } from "@tabler/icons-react";
 //
 import { LeadsFilterDrawerStyled } from "./LeadsFilterDrawer.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setAppliedFilters, setOptions } from "../../store/leads/slice";
+import { setAppliedFilters } from "../../store/leads/slice";
 import { availableFilters } from "../../store/leads/available-filters";
-import { recommendedFilters } from "../../store/leads/recommended-filters";
-import { TLeadOptions } from "../../store/leads/types";
 
 const LeadsFilterDrawer = ({ opened, onClose }: any) => {
   const dispatch = useAppDispatch();
-  const { appliedFilters, options } = useAppSelector((state) => state.leads);
+  const { appliedFilters } = useAppSelector((state) => state.leads);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [filteredFilters, setFilteredFilters] = useState(availableFilters);
@@ -186,7 +183,8 @@ const LeadsFilterDrawer = ({ opened, onClose }: any) => {
               </Button>
             </Center>
 
-            <Box my="lg">
+            {/* Note: Hiding this until functional */}
+            {/* <Box my="lg">
               <Title order={3}>Recommended filters</Title>
 
               <Box>
@@ -210,7 +208,7 @@ const LeadsFilterDrawer = ({ opened, onClose }: any) => {
                   })}
                 </Stack>
               </Box>
-            </Box>
+            </Box> */}
           </Box>
         )}
       </Drawer>

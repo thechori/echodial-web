@@ -10,7 +10,7 @@ import {
   rem,
 } from "@mantine/core";
 import features from "./features.data";
-import { APP_NAME } from "../../configs/constants";
+import { APP_NAME } from "../../configs/labels";
 import routes from "../../configs/routes";
 import { useNavigate } from "react-router-dom";
 

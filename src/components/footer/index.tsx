@@ -14,7 +14,7 @@ import {
 } from "@tabler/icons-react";
 //
 import logo from "../../assets/EchoDial-temp-logo-full-dark.png";
-import { APP_MOTTO, APP_NAME } from "../../configs/constants";
+import { APP_MOTTO, APP_NAME } from "../../configs/labels";
 
 const useStyles = createStyles((theme) => ({
   footer: {

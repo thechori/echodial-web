@@ -19,7 +19,12 @@ const routes = {
   reports: "/reports",
   callerIds: "/caller-ids",
   billing: "/billing",
+<<<<<<< HEAD
   importLeads: "/import", 
+=======
+  subscription: "/subscription",
+  subscriptionCallback: "/subscription/callback",
+>>>>>>> main
 };
 
 export default routes;

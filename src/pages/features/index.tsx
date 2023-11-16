@@ -48,7 +48,6 @@ function Features() {
                   big competitors)
                 </List.Item>
                 <List.Item>Web-based, no need to download an app</List.Item>
-                <List.Item>100% satisfaction guarantee</List.Item>
               </List>
             </Box>
             <Center>

@@ -16,25 +16,27 @@ export enum Table {
   LeadStandardProperty = "lead_standard_property",
   LeadStatus = "lead_status",
   PasswordResetToken = "password_reset_token",
+  TrialCredit = "trial_credit",
   User = "user",
 }
 
 export type Tables = {
-  "bucket": Bucket,
-  "bucket_lead": BucketLead,
-  "call": Call,
-  "caller_id": CallerId,
-  "incoming_number": IncomingNumber,
-  "knex_migrations": KnexMigrations,
-  "knex_migrations_lock": KnexMigrationsLock,
-  "lead": Lead,
-  "lead_custom_property": LeadCustomProperty,
-  "lead_property_group": LeadPropertyGroup,
-  "lead_property_type": LeadPropertyType,
-  "lead_standard_property": LeadStandardProperty,
-  "lead_status": LeadStatus,
-  "password_reset_token": PasswordResetToken,
-  "user": User,
+  bucket: Bucket;
+  bucket_lead: BucketLead;
+  call: Call;
+  caller_id: CallerId;
+  incoming_number: IncomingNumber;
+  knex_migrations: KnexMigrations;
+  knex_migrations_lock: KnexMigrationsLock;
+  lead: Lead;
+  lead_custom_property: LeadCustomProperty;
+  lead_property_group: LeadPropertyGroup;
+  lead_property_type: LeadPropertyType;
+  lead_standard_property: LeadStandardProperty;
+  lead_status: LeadStatus;
+  password_reset_token: PasswordResetToken;
+  trial_credit: TrialCredit;
+  user: User;
 };
 
 export type Bucket = {
@@ -199,6 +201,15 @@ export type PasswordResetToken = {
   updated_at: Date;
 };
 
+export type TrialCredit = {
+  id: number;
+  user_id: number;
+  initial_amount: number;
+  remaining_amount: number;
+  created_at: Date;
+  updated_at: Date;
+};
+
 export type User = {
   id: number;
   email: string;
@@ -210,5 +221,7 @@ export type User = {
   created_at: Date;
   updated_at: Date;
   approved_for_beta: boolean | null;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
 };
 

@@ -8,7 +8,7 @@ import phoneFormatter from "../../utils/phone-formatter";
 import numbers from "../../configs/numbers";
 import { useNavigate } from "react-router-dom";
 import routes from "../../configs/routes";
-import { APP_NAME } from "../../configs/constants";
+import { APP_NAME } from "../../configs/labels";
 
 function CallerIdSelect(props: any) {
   const dispatch = useAppDispatch();
@@ -21,6 +21,12 @@ function CallerIdSelect(props: any) {
     value: "-1",
     group: "Options",
     label: "+ Add new number",
+  };
+
+  const manageCallerIdSelectItem: SelectItem = {
+    value: "-1",
+    group: "Options",
+    label: "Manage numbers",
   };
 
   useEffect(() => {
@@ -36,7 +42,12 @@ function CallerIdSelect(props: any) {
         value: n.value,
         label: n.label,
       }));
-      setCallerIdItems([...items, ...appCallerIds, addNewCallerIdSelectItem]);
+      setCallerIdItems([
+        ...items,
+        ...appCallerIds,
+        addNewCallerIdSelectItem,
+        manageCallerIdSelectItem,
+      ]);
     }
   }, [callerIds]);
 

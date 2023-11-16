@@ -1,24 +1,44 @@
 import { MouseEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaCreditCard, FaAddressBook } from "react-icons/fa6";
+import { FaCreditCard } from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
-import { IoIosSettings } from "react-icons/io";
+import { IoMdPerson } from "react-icons/io";
 import { MdGroups } from "react-icons/md";
 import { AiOutlineMenu } from "react-icons/ai";
+import { Box, Divider } from "@mantine/core";
 //
 import SidebarStyled from "./Sidebar.styles";
 import routes from "../../configs/routes";
 import logo from "../../assets/EchoDial-temp-logo-full.png";
-import { Box, Divider } from "@mantine/core";
 import colors from "../../styles/colors";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setAlphaDialerVisible } from "../../store/dialer/slice";
+import { SidebarSubscriptionDetail } from "./SidebarSubscriptionDetail";
 
 const Sidebar = () => {
+  const { alphaDialerVisible } = useAppSelector((state) => state.dialer);
+
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
 
   const handleClickOff = (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     setExpanded(false);
+  };
+
+  // Click wrapper to handle hiding the dialer whenever a nav change is requested
+  const clickWrapper = (nextAction: any) => {
+    // Check for visible dialer
+    if (alphaDialerVisible) {
+      // Hide dialer if found
+      dispatch(setAlphaDialerVisible(false));
+    }
+
+    // Continue
+    if (nextAction) {
+      nextAction();
+    }
   };
 
   return (
@@ -29,11 +49,11 @@ const Sidebar = () => {
             className="hoverable"
             src={logo}
             alt="EchoDial logo"
-            onClick={() => navigate(routes.leads)}
+            onClick={() => clickWrapper(navigate(routes.leads))}
           />
           <div
             className="hamburger-menu"
-            onClick={() => setExpanded(!expanded)}
+            onClick={() => clickWrapper(setExpanded(!expanded))}
           >
             <AiOutlineMenu fontSize="26px" color="white" />
           </div>
@@ -48,24 +68,19 @@ const Sidebar = () => {
                   <div>Leads</div>
                 </NavLink>
 
-                <NavLink to={routes.callerIds}>
-                  <FaAddressBook fontSize="1.5rem" />
-                  <div>My numbers</div>
-                </NavLink>
-
                 <NavLink to={routes.callHistory}>
                   <GoHistory fontSize="1.5rem" />
                   <div>Call History</div>
                 </NavLink>
 
-                <NavLink to={routes.billing}>
-                  <FaCreditCard fontSize="1.5rem" />
-                  <div>Billing</div>
+                <NavLink to={routes.settings}>
+                  <IoMdPerson fontSize="1.5rem" />
+                  <div>Account</div>
                 </NavLink>
 
-                <NavLink to={routes.settings}>
-                  <IoIosSettings fontSize="1.5rem" />
-                  <div>Settings</div>
+                <NavLink to={routes.billing}>
+                  <FaCreditCard fontSize="1.5rem" />
+                  <div>Support</div>
                 </NavLink>
               </div>
             </div>
@@ -80,7 +95,7 @@ const Sidebar = () => {
               src={logo}
               alt="EchoDial logo"
               className="hoverable"
-              onClick={() => navigate(routes.leads)}
+              onClick={() => clickWrapper(navigate(routes.leads))}
             />
           </div>
 
@@ -92,13 +107,6 @@ const Sidebar = () => {
               <div>Leads</div>
             </NavLink>
 
-            <NavLink to={routes.callerIds}>
-              <Box w={36}>
-                <FaAddressBook size="1.2rem" />
-              </Box>
-              <div>My numbers</div>
-            </NavLink>
-
             <NavLink to={routes.callHistory}>
               <Box w={36}>
                 <GoHistory size="1.2rem" />
@@ -108,24 +116,26 @@ const Sidebar = () => {
 
             <Divider color={colors.darkBluerBackgroundLightened} />
 
+            <NavLink to={routes.settings}>
+              <Box w={36}>
+                <IoMdPerson size="1.4rem" />
+              </Box>
+              <div>Account</div>
+            </NavLink>
+
             <NavLink to={routes.billing}>
               <Box w={36}>
                 <FaCreditCard size="1.2rem" />
               </Box>
-              <div>Billing</div>
-            </NavLink>
-            <NavLink to={routes.settings}>
-              <Box w={36}>
-                <IoIosSettings size="1.4rem" />
-              </Box>
-              <div>Settings</div>
+              <div>Support</div>
             </NavLink>
           </div>
         </div>
 
-        {/* <div className="footer">
-          
-        </div> */}
+        <div className="footer">
+          <Divider />
+          <SidebarSubscriptionDetail />
+        </div>
       </div>
     </SidebarStyled>
   );

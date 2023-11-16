@@ -4,6 +4,7 @@ import {
   ActionIcon,
   Button,
   Card,
+  HoverCard,
   Text,
   ThemeIcon,
   Title,
@@ -46,6 +47,7 @@ import {
 import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
 import { PiPhone, PiPhoneDisconnect } from "react-icons/pi";
+import { useDeductTrialCreditMutation } from "../../services/trial-credit";
 
 function AlphaDialer() {
   const dispatch = useAppDispatch();
@@ -63,10 +65,12 @@ function AlphaDialer() {
     alphaDialerVisible,
     error,
   } = useAppSelector((state) => state.dialer);
+  const { subscriptionActive } = useAppSelector((state) => state.user);
   //
   const [addCall] = useAddCallMutation();
   const [updateCallViaId] = useUpdateCallViaIdMutation();
   const [endCallViaId] = useEndCallMutation();
+  const [deductTrialCredit] = useDeductTrialCreditMutation();
 
   async function initializeDevice() {
     dispatch(setError(""));
@@ -80,15 +84,6 @@ function AlphaDialer() {
       // @ts-ignore
       codecPreferences: ["opus", "pcmu"],
     });
-
-    // Disable all default Twilio sounds because they are slow and ugly
-    // Hacky workaround found here: https://github.com/twilio/twilio-voice.js/issues/14
-    // @ts-ignore
-    device.audio.incoming(false);
-    // @ts-ignore
-    device.audio.outgoing(false);
-    // @ts-ignore
-    device.audio.disconnect(false);
 
     device.on("incoming", () => {
       notifications.show({
@@ -125,8 +120,6 @@ function AlphaDialer() {
 
   // Begin calling the current index
   async function startCall() {
-    console.log("startCall");
-
     // Clear error
     dialStateInstance.error = "";
     dispatch(setError(dialStateInstance.error));
@@ -169,6 +162,7 @@ function AlphaDialer() {
     const params = {
       To: dialQueue[dialStateInstance.dialQueueIndex].phone,
       From: fromNumber,
+      user_id: jwtDecoded?.id || null,
     };
 
     // Start Call
@@ -181,17 +175,12 @@ function AlphaDialer() {
     // assuming that ringing will get to `true` since the initial (and only returned value now)
     // is `false` ... address this in  the future if issues occur
     c.once("ringing", async () => {
-      console.log("********************* ringing *********************");
-
+      // "currentCallId exists, skipping creation of new Call record" ??
       if (dialStateInstance.currentCallId !== null) {
-        console.info(
-          "currentCallId exists, skipping creation of new Call record"
-        );
         return;
       }
 
       if (dialStateInstance.dialQueueIndex === null) {
-        console.error("dialQueueIndex is not set");
         return;
       }
 
@@ -207,9 +196,13 @@ function AlphaDialer() {
       };
 
       try {
-        const a = await addCall(newCall).unwrap();
-        dialStateInstance.currentCallId = a.id;
+        // Create Call record
+        const newCallRecord = await addCall(newCall).unwrap();
+        dialStateInstance.currentCallId = newCallRecord.id;
         dispatch(setCurrentCallId(dialStateInstance.currentCallId));
+
+        // Deduct (1) credit from trial
+        await deductTrialCredit(1);
       } catch (e) {
         notifications.show({
           title: "Error",
@@ -274,17 +267,9 @@ function AlphaDialer() {
   // - Current attempts is beneath options.maxAttempts
   // - If there is another Lead in the Queue to continue to
   async function startCallTimer() {
-    console.log("starting new call timer!");
-
     const timer = setTimeout(async () => {
-      console.log("maxRingTimeInSeconds hit! moving on...");
-
       // When time expires, check to see if connected or not
       if (dialStateInstance.wasCallConnected) {
-        console.log(
-          "Call connected! Clearing the timer to avoid ending the call..."
-        );
-
         clearTimeout(dialStateInstance.currentCallTimer);
         dialStateInstance.currentCallTimer = null;
 
@@ -304,16 +289,13 @@ function AlphaDialer() {
   async function determineNextAction() {
     // Check for error
     if (dialStateInstance.error) {
-      console.info(`Error: ${dialStateInstance.error}`);
+      console.error(`Error: ${dialStateInstance.error}`);
       return;
     }
 
     // Call was connected, stop here to allow the user time to take notes
     // and regroup before proceeding to next call (could be overwhelming if it just keeps going)
     if (dialStateInstance.wasCallConnected) {
-      console.info(
-        "Connected call has ended, pausing here until user explicitly decides to continue"
-      );
       // End call
       await stopCall();
       dispatch(setRequestAction("stopCall"));
@@ -327,13 +309,11 @@ function AlphaDialer() {
 
     // Dialing has gone past allowed ring time, determine if retrying or continuing
     if (dialStateInstance.currentDialAttempts >= options.maxCallTries) {
-      console.info("Max attempts reached, moving to next Lead...");
       await continueToNextLead();
       return;
     }
 
     // Retry lead!
-    console.log("Calling Lead again...");
     await startCall();
   }
 
@@ -389,22 +369,13 @@ function AlphaDialer() {
   // - An error occurs
   // - Call disconnects ?
   async function stopCall() {
-    console.log("stopCall");
-
-    // Ensure a Call exists before proceeding
-    if (!dialStateInstance.call) {
-      console.info("No call to end found");
-    }
-
     // Bug: no call is found when this gets invoked
     if (dialStateInstance.call) {
-      console.info("Call found, ending it now...");
       dialStateInstance.call.disconnect();
     }
 
     // Stop timer
     if (dialStateInstance.currentCallTimer) {
-      console.log("found a call timer, clearing it..");
       clearTimeout(dialStateInstance.currentCallTimer);
     }
 
@@ -412,10 +383,7 @@ function AlphaDialer() {
       console.info("No Call ID found");
     } else {
       try {
-        const res = await endCallViaId(
-          dialStateInstance.currentCallId
-        ).unwrap();
-        console.log("res", res);
+        await endCallViaId(dialStateInstance.currentCallId).unwrap();
       } catch (e) {
         notifications.show({
           title: "Error",
@@ -511,7 +479,6 @@ function AlphaDialer() {
   }
 
   async function handleError() {
-    console.log("ERROR!");
     stopDialing();
   }
 
@@ -649,7 +616,27 @@ function AlphaDialer() {
             </Flex>
 
             <Flex align="flex-end" h={60}>
-              {dialStateInstance.dialQueueIndex === null ? (
+              {!subscriptionActive ? (
+                <HoverCard width={280} shadow="md">
+                  <HoverCard.Target>
+                    <Button
+                      mx={4}
+                      style={{ border: "1px solid red" }}
+                      className="disabled-button"
+                      leftIcon={<IconPlayerPlay />}
+                    >
+                      Start dialer
+                    </Button>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown>
+                    <Text size="sm">
+                      It looks like you've run out of trial credits or your
+                      subscription is currently inactive. Please upgrade your
+                      subscription to enable feature this feature again 😊
+                    </Text>
+                  </HoverCard.Dropdown>
+                </HoverCard>
+              ) : dialStateInstance.dialQueueIndex === null ? (
                 <Tooltip
                   label="Begin making calls to the leads in the Call queue"
                   openDelay={500}
@@ -694,7 +681,7 @@ function AlphaDialer() {
               <Tooltip label="Skip to next Lead">
                 <Button
                   variant="outline"
-                  disabled={!call}
+                  disabled={!call || !subscriptionActive}
                   leftIcon={<IconPlayerSkipForward />}
                   onClick={continueToNextLead}
                   mx={4}

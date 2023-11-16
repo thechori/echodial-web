@@ -18,10 +18,6 @@ class DialerState {
   status: DialerStateStatus;
 
   constructor() {
-    // log
-    console.log("DialerState initializing...");
-
-    // init
     this.isDialing = false;
     this.error = "";
     this.wasCallConnected = false;
@@ -35,10 +31,6 @@ class DialerState {
     this.currentCallDuration = null;
     this.totalDialingDuration = null;
     this.status = "idle";
-  }
-
-  getState() {
-    console.log(this);
   }
 }
 

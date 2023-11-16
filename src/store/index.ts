@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-
 //
 import userReducer from "./user/slice";
 import dialerReducer from "./dialer/slice";
@@ -10,10 +9,12 @@ import leadReducer from "./leads/slice";
 import importReducer from "./import/slice";
 import leadDetailReducer from "./lead-detail/slice";
 import { leadApi } from "../services/lead";
-import { leadStatusApi } from "../services/lead-status";
+import { leadStatusApi } from "../services/lead.status";
 import { callerIdApi } from "../services/caller-id";
 import { callApi } from "../services/call";
 import { metricApi } from "../services/metric";
+import { trialCreditApi } from "../services/trial-credit";
+import { stripeApi } from "../services/stripe";
 
 const store = configureStore({
   reducer: {
@@ -30,6 +31,8 @@ const store = configureStore({
     [callerIdApi.reducerPath]: callerIdApi.reducer,
     [callApi.reducerPath]: callApi.reducer,
     [metricApi.reducerPath]: metricApi.reducer,
+    [trialCreditApi.reducerPath]: trialCreditApi.reducer,
+    [stripeApi.reducerPath]: stripeApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -39,7 +42,9 @@ const store = configureStore({
       leadStatusApi.middleware,
       callerIdApi.middleware,
       callApi.middleware,
-      metricApi.middleware
+      metricApi.middleware,
+      trialCreditApi.middleware,
+      stripeApi.middleware
     ),
 });
 

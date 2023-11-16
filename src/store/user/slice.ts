@@ -3,6 +3,7 @@ import jwt_decode from "jwt-decode";
 //
 import type { RootState } from "../";
 import { User } from "../../types";
+import { windowRefreshSignal } from "../../providers/window-reloader";
 
 export type TJwtDecoded = User & {
   iat: number;
@@ -12,11 +13,13 @@ export type TJwtDecoded = User & {
 export type TUserState = {
   jwt: string | null;
   jwtDecoded: TJwtDecoded | null;
+  subscriptionActive: boolean;
 };
 
 const buildInitialState = (): TUserState => ({
   jwt: localStorage.getItem("jwt") || null,
   jwtDecoded: JSON.parse(localStorage.getItem("jwtDecoded") || "null"),
+  subscriptionActive: false,
 });
 
 export const UserSlice = createSlice({
@@ -24,23 +27,26 @@ export const UserSlice = createSlice({
   initialState: buildInitialState(),
   reducers: {
     setJwt: (state, action) => {
-      state.jwt = action.payload; // string
-      const jwtDecoded = jwt_decode(action.payload) || null; //
+      const jwtDecoded = jwt_decode(action.payload) || null;
+
+      state.jwt = action.payload;
       state.jwtDecoded = jwtDecoded as TJwtDecoded | null;
 
-      // Persist in local storage
       localStorage.setItem("jwt", action.payload);
       localStorage.setItem("jwtDecoded", JSON.stringify(jwtDecoded));
     },
     signOut: (state) => {
       state.jwt = null;
-      localStorage.removeItem("jwt");
-      localStorage.removeItem("jwtDecoded");
+      localStorage.clear();
+      windowRefreshSignal.value = 1;
+    },
+    setSubscriptionActive: (state, action) => {
+      state.subscriptionActive = action.payload;
     },
   },
 });
 
-export const { setJwt, signOut } = UserSlice.actions;
+export const { setJwt, signOut, setSubscriptionActive } = UserSlice.actions;
 
 export const selectJwt = (state: RootState) => state.user.jwt;
 export const selectJwtDecoded = (state: RootState) => state.user.jwtDecoded;

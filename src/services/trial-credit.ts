@@ -5,7 +5,7 @@ import {
   createApi,
 } from "@reduxjs/toolkit/query/react";
 //
-import { CallerId } from "../types";
+import { TrialCredit } from "../types";
 import { setJwt, signOut } from "../store/user/slice";
 import { baseQuery } from "./helpers/base-query";
 
@@ -33,48 +33,31 @@ const baseQueryWithReauth: BaseQueryFn<
   return result;
 };
 
-export const callerIdApi = createApi({
-  reducerPath: "callerIdApi",
+export const trialCreditApi = createApi({
+  reducerPath: "trialCreditApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["CallerId"],
+  tagTypes: ["TrialCredit"],
   endpoints: (builder) => ({
-    getCallerIds: builder.query<CallerId[], void>({
-      query: () => "caller-id",
-      providesTags: ["CallerId"],
+    getTrialCredits: builder.query<TrialCredit, void>({
+      query: () => "/trial-credit",
+      providesTags: ["TrialCredit"],
     }),
-    addCallerId: builder.mutation<CallerId, string>({
-      query(phoneNumber) {
+    deductTrialCredit: builder.mutation<TrialCredit, number>({
+      query(number) {
         return {
-          url: `caller-id`,
+          url: "/trial-credit/deduct",
           method: "POST",
           body: {
-            phone_number: phoneNumber,
+            amount: number,
           },
         };
       },
-      invalidatesTags: ["CallerId"],
-    }),
-    deleteCallerId: builder.mutation<void, { id: number; twilio_sid: string }>({
-      query(body) {
-        return {
-          url: "caller-id/delete",
-          method: "POST",
-          body: {
-            id: body.id,
-            twilio_sid: body.twilio_sid,
-          },
-        };
-      },
-      invalidatesTags: ["CallerId"],
+      invalidatesTags: ["TrialCredit"],
     }),
   }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const {
-  useAddCallerIdMutation,
-  useGetCallerIdsQuery,
-  useLazyGetCallerIdsQuery,
-  useDeleteCallerIdMutation,
-} = callerIdApi;
+export const { useGetTrialCreditsQuery, useDeductTrialCreditMutation } =
+  trialCreditApi;

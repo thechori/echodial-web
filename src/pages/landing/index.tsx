@@ -5,7 +5,7 @@ import dashboardScreenshot from "../../assets/dashboard-screenshot.png";
 import routes from "../../configs/routes";
 import { Button, Container, Text, Title } from "@mantine/core";
 import { FeaturesGrid } from "../features/FeaturesGrid";
-import { APP_MOTTO } from "../../configs/constants";
+import { APP_MOTTO } from "../../configs/labels";
 
 function Landing() {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ function Landing() {
                 lh="2.5rem"
                 weight={600}
                 variant="gradient"
-                gradient={{ from: "gold", to: "orange", deg: 90 }}
+                gradient={{ from: "blue", to: "teal", deg: 90 }}
               >
                 {APP_MOTTO}
               </Title>

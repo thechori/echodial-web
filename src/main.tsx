@@ -9,6 +9,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { Notifications } from "@mantine/notifications";
 import * as Sentry from "@sentry/react";
+import * as amplitude from "@amplitude/analytics-browser";
 //
 import "./index.css";
 import Landing from "./pages/landing";
@@ -34,6 +35,13 @@ import CallHistory from "./pages/call-history";
 import ForgotPassword from "./pages/forgot-password";
 import ResetPassword from "./pages/reset-password";
 import ImportLeads from "./pages/import-leads";
+import Subscription from "./pages/subscription";
+import { SubscriptionCallback } from "./pages/subscription/SubscriptionCallback";
+import { injectStore } from "./services/api";
+import { WindowReloader } from "./providers/window-reloader";
+
+// Inject Redux store into Axios instance to support access to the state and dispatch of actions
+injectStore(store);
 
 Sentry.init({
   dsn: "https://dbc6c090143fce815721f48b790b3810@o4505859893231616.ingest.sentry.io/4505859896442880",
@@ -41,7 +49,7 @@ Sentry.init({
     new Sentry.BrowserTracing({
       // TODO: update these values to be proper or remove
       // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-      tracePropagationTargets: ["localhost", "https:yourserver.io/api/"],
+      tracePropagationTargets: ["localhost", "https://api.echodial.com/"],
     }),
     new Sentry.Replay(),
   ],
@@ -52,12 +60,19 @@ Sentry.init({
   replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
 });
 
+amplitude.init(import.meta.env.VITE_AMPLITUDE_KEY, {
+  defaultTracking: true,
+});
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <Provider store={store}>
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <StyleProvider>
+          {/* Global providers */}
           <Notifications position="bottom-left" />
+          <WindowReloader />
+
           <BrowserRouter>
             <Routes>
               <Route
@@ -176,6 +191,28 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path={routes.subscription}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
+                      <Subscription />
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.subscriptionCallback}
+                element={
+                  <ProtectedRoute>
+                    <AuthenticatedUserLayout>
+                      <SubscriptionCallback />
+                    </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* 404 page */}
               <Route
                 path={routes.importLeads}
                 element={
