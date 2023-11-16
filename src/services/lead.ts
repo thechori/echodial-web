@@ -5,13 +5,9 @@ import {
   createApi,
 } from "@reduxjs/toolkit/query/react";
 //
-<<<<<<< HEAD
 import { Lead, LeadCustomProperty, LeadPropertyGroup, LeadStandardProperty} from "../types";
-=======
-import { Lead } from "../types";
 import { setJwt, signOut } from "../store/user/slice";
 import { baseQuery } from "./helpers/base-query";
->>>>>>> main
 
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
