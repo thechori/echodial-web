@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Box, Button, Modal, Text, TextInput, Flex } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { FileWithPath } from "@mantine/dropzone";
-
 import Dropzone from "./Dropzone";
 import { extractErrorMessage } from "../../utils/error";
 import routes from "../../configs/routes";
