@@ -76,7 +76,10 @@ function ImportLeads() {
       close();
       navigate(routes.leads);
     } catch (error) {
-      console.log(error);
+      notifications.show({
+        message:
+          "There was an error uploading leads. Please double check your values",
+      });
     }
   }
 

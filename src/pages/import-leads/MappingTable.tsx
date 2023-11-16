@@ -79,7 +79,7 @@ function MappingTable() {
         tempProperties.push({
           value: standardProperty.name,
           label: standardProperty.label,
-          disabled: false,
+          disabled: standardProperty.lead_property_type_id != 7,
           group: groupIdToGroupName[standardProperty.lead_property_group_id],
         });
       }
@@ -303,7 +303,9 @@ function MappingTable() {
         </Flex>
         <Flex justify="center" py="xs">
           <Text c="dimmed">
-            Each column header below should be mapped to a contact property
+            Each column header below must be manually mapped to a contact
+            property. Option to add a property can be found at the bottom of the
+            dropdown menus.
           </Text>
         </Flex>
         <Table
