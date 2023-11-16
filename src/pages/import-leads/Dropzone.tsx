@@ -2,6 +2,8 @@ import { Group, Text, useMantineTheme, rem } from "@mantine/core";
 import { IconFileUpload, IconFileCheck, IconX } from "@tabler/icons-react";
 import { Dropzone as DropzoneMantine, MIME_TYPES } from "@mantine/dropzone";
 
+export const MAX_FILE_SIZE_IN_MB = 5;
+
 function Dropzone({
   filename,
   onDrop,
@@ -16,9 +18,10 @@ function Dropzone({
     <DropzoneMantine
       onDrop={onDrop}
       onReject={onReject}
-      maxSize={3 * 1024 ** 2}
+      maxSize={MAX_FILE_SIZE_IN_MB * 1024 ** 2}
       accept={[MIME_TYPES.csv, MIME_TYPES.xls, MIME_TYPES.xlsx]}
       maxFiles={1}
+      multiple={false}
     >
       <Group
         position="center"
@@ -53,10 +56,10 @@ function Dropzone({
           ) : (
             <>
               <Text size="md" inline align="center">
-                Drag file here or click to select a file (.csv or .xls)
+                Drag file here or click to select a file (.csv or .xlsx)
               </Text>
-              <Text size="xs" color="dimmed" inline mt={7} align="center">
-                Attach one file at a time (max 5mb)
+              <Text size="xs" color="dimmed" inline mt={10} align="center">
+                Max file size {MAX_FILE_SIZE_IN_MB} MB
               </Text>
             </>
           )}
