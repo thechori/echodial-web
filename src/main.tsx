@@ -34,6 +34,7 @@ import Billing from "./pages/billing";
 import CallHistory from "./pages/call-history";
 import ForgotPassword from "./pages/forgot-password";
 import ResetPassword from "./pages/reset-password";
+import ImportLeads from "./pages/import-leads";
 import Subscription from "./pages/subscription";
 import { SubscriptionCallback } from "./pages/subscription/SubscriptionCallback";
 import { injectStore } from "./services/api";
@@ -207,6 +208,14 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                     <AuthenticatedUserLayout>
                       <SubscriptionCallback />
                     </AuthenticatedUserLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routes.importLeads}
+                element={
+                  <ProtectedRoute>
+                    <ImportLeads />
                   </ProtectedRoute>
                 }
               />

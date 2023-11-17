@@ -19,6 +19,7 @@ const routes = {
   reports: "/reports",
   callerIds: "/caller-ids",
   billing: "/billing",
+  importLeads: "/import", 
   subscription: "/subscription",
   subscriptionCallback: "/subscription/callback",
 };

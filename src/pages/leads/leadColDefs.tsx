@@ -34,7 +34,7 @@ export const leadColDefs: ColDef<Lead>[] = [
     resizable: true,
     filter: true,
     valueGetter: (params) =>
-      `${params.data?.first_name} ${params.data?.last_name}`,
+      `${params.data?.first_name || ""} ${params.data?.last_name || ""}`,
   },
   {
     field: "phone",
@@ -63,7 +63,7 @@ export const leadColDefs: ColDef<Lead>[] = [
   },
   {
     field: "source",
-    headerName: "Lead vendor",
+    headerName: "Source",
     resizable: true,
     sortable: true,
     filter: true,

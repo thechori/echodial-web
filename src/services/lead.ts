@@ -5,7 +5,7 @@ import {
   createApi,
 } from "@reduxjs/toolkit/query/react";
 //
-import { Lead } from "../types";
+import { Lead, LeadCustomProperty, LeadPropertyGroup, LeadStandardProperty} from "../types";
 import { setJwt, signOut } from "../store/user/slice";
 import { baseQuery } from "./helpers/base-query";
 
@@ -46,6 +46,28 @@ export const leadApi = createApi({
       query: (id) => `lead/${id}`,
       providesTags: ["Lead"],
     }),
+    getLeadStandardProperties: builder.query<LeadStandardProperty[], void>({
+      query: () => `lead/property/standard`,
+      providesTags: ["Lead"],
+    }),
+    getLeadCustomProperties: builder.query<LeadCustomProperty[], void>({
+      query: () => `lead/property/custom`,
+      providesTags: ["Lead"],
+    }),
+    getLeadPropertyGroup: builder.query<LeadPropertyGroup[], void>({
+      query: () => `lead/property/group`,
+      providesTags: ["Lead"],
+    }),
+    addCustomProperty: builder.mutation<LeadCustomProperty, any>({
+      query(body) {
+        return {
+          url: `lead/property/custom`,
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: ["Lead"],
+    }),
     addLead: builder.mutation<Lead, Partial<Lead>>({
       query(body) {
         return {
@@ -65,6 +87,15 @@ export const leadApi = createApi({
         };
       },
       invalidatesTags: ["Lead"],
+    }),
+    addValidateDataCsv: builder.mutation<any, any>({
+      query(body) {
+        return {
+          url: `lead/csv/validate`,
+          method: "POST",
+          body,
+        };
+      },
     }),
     updateLead: builder.mutation<Lead, Partial<Lead>>({
       query(data) {
@@ -105,4 +136,9 @@ export const {
   useAddLeadsViaCsvMutation,
   useUpdateLeadMutation,
   useDeleteMultipleLeadsMutation,
+  useGetLeadStandardPropertiesQuery,
+  useGetLeadCustomPropertiesQuery,
+  useGetLeadPropertyGroupQuery,
+  useAddCustomPropertyMutation,
+  useAddValidateDataCsvMutation
 } = leadApi;

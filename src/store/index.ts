@@ -6,6 +6,7 @@ import bucketReducer from "./buckets/slice";
 import metricReducer from "./metric/slice";
 import billingReducer from "./billing/slice";
 import leadReducer from "./leads/slice";
+import importReducer from "./import/slice";
 import leadDetailReducer from "./lead-detail/slice";
 import { leadApi } from "../services/lead";
 import { leadStatusApi } from "../services/lead.status";
@@ -24,6 +25,7 @@ const store = configureStore({
     leads: leadReducer,
     leadDetail: leadDetailReducer,
     billing: billingReducer,
+    importLeads: importReducer,
     [leadApi.reducerPath]: leadApi.reducer,
     [leadStatusApi.reducerPath]: leadStatusApi.reducer,
     [callerIdApi.reducerPath]: callerIdApi.reducer,
