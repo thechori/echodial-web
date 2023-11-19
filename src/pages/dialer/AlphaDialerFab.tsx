@@ -1,29 +1,24 @@
 import { Box, Flex, Tooltip } from "@mantine/core";
 import { PiPhone } from "react-icons/pi";
 //
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setAlphaDialerVisible } from "../../store/dialer/slice";
 import AlphaDialerFabStyled from "./AlphaDialerFab.styles";
 import BetaDialer from "./BetaDialer";
 import { AiOutlineClose } from "react-icons/ai";
+import { dialerSignal } from "./Dialer.signal";
 
 const AlphaDialerFab = () => {
-  const dispatch = useAppDispatch();
-
-  const { alphaDialerVisible } = useAppSelector((state) => state.dialer);
-
   return (
     <AlphaDialerFabStyled>
       <BetaDialer />
 
       <Box id="fab">
-        {alphaDialerVisible ? (
+        {dialerSignal.visible ? (
           <Tooltip label="Hide dialer" openDelay={500}>
             <Flex align="center" justify="center">
               <AiOutlineClose
                 size={30}
                 color="white"
-                onClick={() => dispatch(setAlphaDialerVisible(false))}
+                onClick={() => (dialerSignal.visible = false)}
               />
             </Flex>
           </Tooltip>
@@ -33,7 +28,7 @@ const AlphaDialerFab = () => {
               <PiPhone
                 size={40}
                 color="white"
-                onClick={() => dispatch(setAlphaDialerVisible(true))}
+                onClick={() => (dialerSignal.visible = true)}
               />
             </Flex>
           </Tooltip>

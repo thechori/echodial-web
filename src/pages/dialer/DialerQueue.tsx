@@ -15,15 +15,10 @@ import {
 import clsx from "clsx";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import {
-  setAlphaDialerVisible,
-  setDialQueue,
-  setDialQueueIndex,
-  setRequestAction,
-} from "../../store/dialer/slice";
+import { setDialQueue, setRequestAction } from "../../store/dialer/slice";
 import DialerQueueStyled from "./DialerQueue.styles";
 import CallButtonSimple from "../../components/call-buttons/CallButtonSimple";
-import { dialStateInstance } from "./DialState.class";
+import { dialerSignal } from "./Dialer.signal";
 import { IconRefresh } from "@tabler/icons-react";
 
 function DialerQueue() {
@@ -34,9 +29,7 @@ function DialerQueue() {
   );
 
   function startCall(index: number) {
-    dialStateInstance.dialQueueIndex = index;
-    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-    dispatch(setRequestAction("startCall"));
+    dialerSignal.dialQueueIndex = index;
   }
 
   function stopCall() {
@@ -44,10 +37,9 @@ function DialerQueue() {
   }
 
   function resetDialer() {
-    dialStateInstance.dialQueueIndex = null;
-    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
+    dialerSignal.dialQueueIndex = null;
     dispatch(setDialQueue([]));
-    dispatch(setAlphaDialerVisible(false));
+    dialerSignal.visible = false;
   }
 
   const rows = dialQueue.length ? (
@@ -56,13 +48,13 @@ function DialerQueue() {
       let activeIndex = false;
 
       if (
-        dialStateInstance.dialQueueIndex !== null &&
-        dialQueue[dialStateInstance.dialQueueIndex].id === lead.id
+        dialerSignal.dialQueueIndex !== null &&
+        dialQueue[dialerSignal.dialQueueIndex].id === lead.id
       ) {
         activeIndex = true;
       }
 
-      if (activeIndex && dialStateInstance.call) {
+      if (activeIndex && dialerSignal.call) {
         active = true;
       }
 
@@ -88,7 +80,7 @@ function DialerQueue() {
           </td>
           <td className="call-icon hoverable">
             <CallButtonSimple
-              active={!(dialStateInstance.call && active)}
+              active={!(dialerSignal.call && active)}
               onInactiveClick={stopCall}
               onActiveClick={() => startCall(index)}
             />

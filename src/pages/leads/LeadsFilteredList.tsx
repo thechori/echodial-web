@@ -1,5 +1,4 @@
-import { useMemo, useRef, useState } from "react";
-import * as amplitude from "@amplitude/analytics-browser";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useWindowEvent } from "@mantine/hooks";
 import { createSelector } from "@reduxjs/toolkit";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
@@ -10,14 +9,12 @@ import {
   Button,
   Card,
   Flex,
-  HoverCard,
   MultiSelect,
   SelectItem,
   Text,
   TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { PiPhone } from "react-icons/pi";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 //
@@ -30,12 +27,7 @@ import { leadColDefs } from "./leadColDefs";
 import { useGetLeadStatusesQuery } from "../../services/lead.status";
 import { SelectionChangedEvent } from "ag-grid-community";
 import {
-  setAlphaDialerVisible,
-  setDialQueue,
-  setDialQueueIndex,
-} from "../../store/dialer/slice";
-import { dialStateInstance } from "../dialer/DialState.class";
-import {
+  setGridRef,
   setRequestForImportLeadsModal,
   setRequestForManualCreateLeadsModal,
   setSelectedRows,
@@ -131,22 +123,6 @@ function LeadsFilteredList() {
     dispatch(setSelectedRows(event.api.getSelectedRows()));
   };
 
-  const startDialer = () => {
-    // Reset index
-    dialStateInstance.dialQueueIndex = null;
-    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-
-    // Load up leads into queue from selected items
-    const selectedLeads = gridRef.current?.api.getSelectedRows();
-
-    dispatch(setDialQueue(selectedLeads));
-
-    // Open dialer
-    dispatch(setAlphaDialerVisible(true));
-
-    amplitude.track("Start dial session");
-  };
-
   const openImportModal = () => {
     dispatch(setRequestForImportLeadsModal(true));
   };
@@ -173,6 +149,13 @@ function LeadsFilteredList() {
       }
     }
   });
+
+  // Lift gridRef into global state for use in other components
+  useEffect(() => {
+    if (gridRef) {
+      dispatch(setGridRef(gridRef));
+    }
+  }, [gridRef, setGridRef]);
 
   return (
     <LeadsFilteredListStyled>
@@ -225,42 +208,6 @@ function LeadsFilteredList() {
                 Delete
               </Button>
             )}
-
-            <HoverCard
-              width={280}
-              shadow="md"
-              openDelay={selectedRows.length === 0 ? 0 : 500}
-            >
-              <HoverCard.Target>
-                {selectedRows.length !== 0 ? (
-                  <Button
-                    mx={8}
-                    leftIcon={<PiPhone size={16} />}
-                    onClick={startDialer}
-                    variant="gradient"
-                    style={{ pointerEvents: "all" }}
-                  >
-                    Start dial session
-                  </Button>
-                ) : (
-                  <Button
-                    mx={8}
-                    leftIcon={<PiPhone size={16} />}
-                    variant="light"
-                    className="disabled-button start-dial-session-disabled-button"
-                  >
-                    Start dial session
-                  </Button>
-                )}
-              </HoverCard.Target>
-              <HoverCard.Dropdown>
-                <Text size="sm">
-                  {selectedRows.length !== 0
-                    ? 'Clicking "Start dial session" will load the selected leads into your dialer queue to begin dialing.'
-                    : "Select at least one lead from the table to begin the dial session."}
-                </Text>
-              </HoverCard.Dropdown>
-            </HoverCard>
           </Flex>
         </Flex>
 

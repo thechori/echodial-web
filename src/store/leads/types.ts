@@ -18,6 +18,7 @@ export type TLeadOptions = {
 };
 
 export type TLeadsState = {
+  gridRef: any;
   keyword: string;
   filteredRows: Lead[];
   appliedFilters: TFilter[];

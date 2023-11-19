@@ -25,6 +25,7 @@ const buildOptions = (): TLeadOptions => {
 
 const buildInitialState = (): TLeadsState => ({
   keyword: "",
+  gridRef: null,
   filteredRows: [],
   appliedFilters: [],
   selectedRows: [],
@@ -65,6 +66,9 @@ export const LeadsSlice = createSlice({
     setRequestForManualCreateLeadsModal: (state, action) => {
       state.shouldManualCreateLeadModalOpen = action.payload;
     },
+    setGridRef: (state, action) => {
+      state.gridRef = action.payload;
+    },
   },
 });
 
@@ -76,6 +80,7 @@ export const {
   setRequestForImportLeadsModal,
   setRequestForManualCreateLeadsModal,
   setOptions,
+  setGridRef,
 } = LeadsSlice.actions;
 
 export default LeadsSlice.reducer;

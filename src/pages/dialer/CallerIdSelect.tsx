@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { Select, SelectItem } from "@mantine/core";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setAlphaDialerVisible, setFromNumber } from "../../store/dialer/slice";
+import { setFromNumber } from "../../store/dialer/slice";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
 import phoneFormatter from "../../utils/phone-formatter";
 import numbers from "../../configs/numbers";
 import { useNavigate } from "react-router-dom";
 import routes from "../../configs/routes";
 import { APP_NAME } from "../../configs/labels";
+import { dialerSignal } from "./Dialer.signal";
 
 function CallerIdSelect(props: any) {
   const dispatch = useAppDispatch();
@@ -54,7 +55,7 @@ function CallerIdSelect(props: any) {
   function handleSelect(value: string) {
     // Check for "Add new number" item click
     if (value === addNewCallerIdSelectItem.value) {
-      dispatch(setAlphaDialerVisible(false));
+      dialerSignal.visible = false;
       navigate(routes.callerIds);
       return;
     }
