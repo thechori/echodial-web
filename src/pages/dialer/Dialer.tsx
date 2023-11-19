@@ -543,6 +543,8 @@ function Dialer() {
     stopDialing,
   ]);
 
+  if (dialQueue.length === 0) return;
+
   return (
     <DialerStyled $visible={isDialerOpen}>
       <Box className="controls">

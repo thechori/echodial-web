@@ -37,6 +37,9 @@ function NewLeadsMenu({ onCsvUpload, onManualInput }: TNewLeadsMenuProps) {
     dispatch(setIsDialerOpen(true));
 
     amplitude.track("Start dial session");
+
+    // Clear selection on Leads page
+    gridRef.current?.api.deselectAll();
   };
 
   return (
