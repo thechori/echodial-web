@@ -1,16 +1,5 @@
-import {
-  Button,
-  Center,
-  Flex,
-  Group,
-  NumberInput,
-  Text,
-  Tooltip,
-} from "@mantine/core";
-import { IconInfoCircle } from "@tabler/icons-react";
+import { Button, Group, Text } from "@mantine/core";
 //
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setOptions } from "../../store/dialer/slice";
 import { StyledModal } from "./DialerOptionsModal.styles";
 
 type TDialerOptionsModalProps = {
@@ -19,10 +8,6 @@ type TDialerOptionsModalProps = {
 };
 
 const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
-  const dispatch = useAppDispatch();
-  const { options } = useAppSelector((state) => state.dialer);
-  const { maxCallTries, cooldownTimeInSeconds, maxRingTimeInSeconds } = options;
-
   return (
     <StyledModal opened={opened} onClose={onClose} title="Dialer settings">
       <Text>
@@ -31,7 +16,11 @@ const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
       </Text>
 
       <Group spacing="md" p="md">
-        <NumberInput
+        <Text py="xl" italic color="dimmed">
+          Nothing here yet
+        </Text>
+
+        {/* <NumberInput
           label={
             <Flex align="center" justify="space-between">
               <Text pr="xs">Max ringing time (in seconds)</Text>
@@ -56,9 +45,9 @@ const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
               setOptions({ ...options, maxRingTimeInSeconds: newValue })
             );
           }}
-        />
+        /> */}
 
-        <NumberInput
+        {/* <NumberInput
           label={
             <Flex align="center" justify="space-between">
               <Text pr="xs">Call attempts per lead</Text>
@@ -81,9 +70,9 @@ const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
           onChange={(newValue) => {
             dispatch(setOptions({ ...options, maxCallTries: newValue }));
           }}
-        />
+        /> */}
 
-        <NumberInput
+        {/* <NumberInput
           label={
             <Flex align="center" justify="space-between">
               <Text pr="xs">Cooldown time (in seconds)</Text>
@@ -107,7 +96,7 @@ const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
               setOptions({ ...options, cooldownTimeInSeconds: newValue })
             );
           }}
-        />
+        /> */}
 
         <Button fullWidth onClick={onClose}>
           Close

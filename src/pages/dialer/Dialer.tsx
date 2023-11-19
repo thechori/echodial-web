@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { Call, Device } from "@twilio/voice-sdk";
-import {
-  ActionIcon,
-  Button,
-  Card,
-  HoverCard,
-  Text,
-  Tooltip,
-} from "@mantine/core";
+import { ActionIcon, Card, Text, Tooltip } from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 //
@@ -32,20 +25,23 @@ import {
   setIsDialing,
   setDialQueueIndex,
   setShowOptions,
+  setIsDialerOpen,
+  setStatus,
 } from "../../store/dialer/slice";
-import DialerStyled from "./Dialer.styles";
+import { DialerStyled, DialerStatus } from "./Dialer.styles";
 import { Call as TCall } from "../../types";
 import DialerQueue from "./DialerQueue";
 import CallerIdSelect from "./CallerIdSelect";
 import {
   IconAdjustments,
-  IconPlayerPlay,
+  IconChevronDown,
+  IconChevronUp,
   IconPlayerSkipForward,
 } from "@tabler/icons-react";
 import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
-import { PiPhoneDisconnect } from "react-icons/pi";
 import { useDeductTrialCreditMutation } from "../../services/trial-credit";
+import { DialerPrimaryButton } from "./DialerPrimaryButton";
 
 function Dialer() {
   const dispatch = useAppDispatch();
@@ -62,6 +58,7 @@ function Dialer() {
     options,
     isDialerOpen,
     error,
+    status,
   } = useAppSelector((state) => state.dialer);
   const { subscriptionActive } = useAppSelector((state) => state.user);
   //
@@ -211,8 +208,12 @@ function Dialer() {
     // - Call goes to voicemail
     c.on("accept", async (call: Call) => {
       const now = new Date();
+
       dialStateInstance.connectedAt = now;
       dispatch(setConnectedAt(dialStateInstance.connectedAt));
+      dialStateInstance.status = call.status();
+      dispatch(setStatus(dialStateInstance.status));
+
       notifications.show({ message: "Call accepted" });
 
       // Begin timer to track duration of call
@@ -238,14 +239,19 @@ function Dialer() {
 
     // Occurs when:
     // - Call ends (user hangs up, lead hangs up, voicemail ends)
-    c.on("disconnect", async () => {
+    c.on("disconnect", async (call) => {
       dispatch(setRequestAction("determineNextAction"));
+
+      dialStateInstance.status = call.status();
+      dispatch(setStatus(dialStateInstance.status));
+
       notifications.show({ message: "Call ended" });
     });
 
     // Occurs when:
     // - An error is thrown
     c.on("error", async (e: unknown) => {
+      console.log("error", e);
       const errorMessage = extractErrorMessage(e);
       notifications.show({
         title: "Call error",
@@ -253,6 +259,9 @@ function Dialer() {
       });
       dialStateInstance.error = errorMessage;
       dispatch(setError(dialStateInstance.error));
+
+      dialStateInstance.status = call?.status() || Call.State.Closed;
+      dispatch(setStatus(dialStateInstance.status));
 
       dispatch(setRequestAction("determineNextAction"));
     });
@@ -312,6 +321,10 @@ function Dialer() {
 
     // Retry lead!
     await startCall();
+  }
+
+  function requestStopDialer() {
+    dispatch(setRequestAction("stopDialing"));
   }
 
   // Invoked when:
@@ -428,40 +441,6 @@ function Dialer() {
     dispatch(setError(dialStateInstance.error));
     dialStateInstance.currentDialAttempts = 0;
     dispatch(setCurrentDialAttempts(dialStateInstance.currentDialAttempts));
-  }
-
-  function requestStartDialer() {
-    // Start from 0 UNLESS there is a currently selected index
-    const newIndex =
-      dialStateInstance.dialQueueIndex === null
-        ? 0
-        : dialStateInstance.dialQueueIndex;
-    dialStateInstance.dialQueueIndex = newIndex;
-    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-    dispatch(setRequestAction("startCall"));
-  }
-
-  function requestContinue() {
-    if (dialStateInstance.dialQueueIndex === null) {
-      dialStateInstance.error = "Dial queue index is null";
-      dispatch(setError(dialStateInstance.error));
-      return;
-    }
-
-    // Check for next index
-    if (dialStateInstance.dialQueueIndex === dialQueue.length - 1) {
-      dialStateInstance.dialQueueIndex = 0;
-      dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-    } else {
-      dialStateInstance.dialQueueIndex = dialStateInstance.dialQueueIndex + 1;
-      dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-    }
-
-    startCall();
-  }
-
-  function requestStopDialer() {
-    dispatch(setRequestAction("stopDialing"));
   }
 
   async function startDialing() {
@@ -581,105 +560,78 @@ function Dialer() {
           >
             <Flex justify="flex-start" align="center">
               <Flex align="flex-end">
-                {!subscriptionActive ? (
-                  <HoverCard width={280} shadow="md">
-                    <HoverCard.Target>
-                      <Button
-                        mx={4}
-                        style={{ border: "1px solid red" }}
-                        className="disabled-button"
-                        leftIcon={<IconPlayerPlay />}
-                      >
-                        Start dialer
-                      </Button>
-                    </HoverCard.Target>
-                    <HoverCard.Dropdown>
-                      <Text size="sm">
-                        It looks like you've run out of trial credits or your
-                        subscription is currently inactive. Please upgrade your
-                        subscription to enable feature this feature again 😊
-                      </Text>
-                    </HoverCard.Dropdown>
-                  </HoverCard>
-                ) : dialStateInstance.dialQueueIndex === null ? (
-                  <Tooltip
-                    label="Begin making calls to the leads in the Call queue"
-                    openDelay={500}
-                  >
-                    <Button
-                      mx={4}
-                      variant="gradient"
-                      onClick={requestStartDialer}
-                      leftIcon={<IconPlayerPlay />}
-                    >
-                      Start dialer
-                    </Button>
-                  </Tooltip>
-                ) : (
-                  <Tooltip
-                    label="Continue to the next lead in the Call queue"
-                    openDelay={500}
-                  >
-                    <Button
-                      mx={4}
-                      variant="gradient"
-                      onClick={requestContinue}
-                      leftIcon={<IconPlayerPlay />}
-                      disabled={!!call}
-                    >
-                      Continue
-                    </Button>
-                  </Tooltip>
-                )}
+                <DialerPrimaryButton />
 
-                <Tooltip
-                  openDelay={500}
-                  position="bottom"
-                  label="The selected phone number is what we will use to call your
-                      leads. This number will appear as your caller ID on the lead's phone."
-                >
-                  <div>
-                    <CallerIdSelect pr="xs" w={180} />
-                  </div>
-                </Tooltip>
-
-                <Tooltip label="Open dialer settings" openDelay={500}>
+                <Tooltip label="Skip to next Lead">
                   <ActionIcon
                     variant="outline"
-                    onClick={openDialerOptions}
-                    size="lg"
                     color="blue"
+                    size="lg"
+                    disabled={!call || !subscriptionActive}
+                    onClick={continueToNextLead}
+                    mx={4}
                   >
-                    <IconAdjustments />
+                    <IconPlayerSkipForward />
                   </ActionIcon>
                 </Tooltip>
+
+                <DialerStatus $visible={status === Call.State.Open}>
+                  <div>{"00:00"}</div>
+                </DialerStatus>
+
+                <Box>
+                  <Text>Sylvester Stallone</Text>
+                  <Text>333-333-3333</Text>
+                </Box>
               </Flex>
             </Flex>
 
             <Flex align="flex-end" h={60}>
-              <Tooltip label="Hang up" openDelay={500}>
-                <Button
-                  mx={4}
-                  color="red"
-                  onClick={requestStopDialer}
-                  disabled={!call}
-                  leftIcon={<PiPhoneDisconnect fontSize="1.5rem" />}
-                >
-                  Hang up
-                </Button>
+              <Tooltip
+                openDelay={500}
+                position="bottom"
+                label="The selected phone number is what we will use to call your
+                      leads. This number will appear as your caller ID on the lead's phone."
+              >
+                <div>
+                  <CallerIdSelect pr="xs" w={180} />
+                </div>
               </Tooltip>
 
-              <Tooltip label="Skip to next Lead">
-                <Button
+              <Tooltip label="Open dialer settings" openDelay={500}>
+                <ActionIcon
                   variant="outline"
-                  disabled={!call || !subscriptionActive}
-                  leftIcon={<IconPlayerSkipForward />}
-                  onClick={continueToNextLead}
-                  mx={4}
+                  onClick={openDialerOptions}
+                  size="lg"
+                  color="blue"
                 >
-                  Next lead
-                </Button>
+                  <IconAdjustments />
+                </ActionIcon>
               </Tooltip>
+
+              <Box ml="xs">
+                <Tooltip label="Toggle visibility of the dialer">
+                  {isDialerOpen ? (
+                    <ActionIcon
+                      variant="outline"
+                      color="blue"
+                      size="lg"
+                      onClick={() => dispatch(setIsDialerOpen(false))}
+                    >
+                      <IconChevronDown />
+                    </ActionIcon>
+                  ) : (
+                    <ActionIcon
+                      variant="outline"
+                      color="blue"
+                      size="lg"
+                      onClick={() => dispatch(setIsDialerOpen(true))}
+                    >
+                      <IconChevronUp />
+                    </ActionIcon>
+                  )}
+                </Tooltip>
+              </Box>
             </Flex>
           </Card>
         </Flex>

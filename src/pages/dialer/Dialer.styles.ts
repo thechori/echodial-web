@@ -2,12 +2,16 @@ import { styled } from "styled-components";
 //
 import devices from "../../styles/devices";
 
-const DialerStyled = styled.div<{ $visible: boolean }>`
+export const DialerStatus = styled.div<{ $visible: boolean }>`
+  width: ${(props) => (props.$visible ? "150px" : "0px")};
+  opacity: ${(props) => (props.$visible ? 1 : 0)};
+`;
+
+export const DialerStyled = styled.div<{ $visible: boolean }>`
   background-color: #e1e1e1;
 
-  opacity: ${(props) => (props.$visible ? 1 : 0)};
   transform: ${(props) =>
-    props.$visible ? "translateY(0px)" : "translateY(100vh)"};
+    props.$visible ? "translateY(0px)" : "translateY(90vh)"};
 
   position: fixed;
   left: 0;
@@ -108,5 +112,3 @@ const DialerStyled = styled.div<{ $visible: boolean }>`
     /* width: 600px; */
   }
 `;
-
-export default DialerStyled;

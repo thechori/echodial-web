@@ -9,6 +9,7 @@ export const LOCAL_STORAGE_KEY__DIALER_OPTIONS = "dialer__options";
 export const LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER = "dialer__from_number";
 export const LOCAL_STORAGE_KEY__DIAL_QUEUE = "dialer__dial_queue";
 export const LOCAL_STORAGE_KEY__DIAL_QUEUE_INDEX = "dialer__dial_queue_index";
+export const LOCAL_STORAGE_KEY__DIALER_IS_OPEN = "dialer__is_open";
 
 const buildOptions = (): TDialerOptions => {
   // Check for local storage
@@ -56,7 +57,7 @@ interface IDialerState {
   currentDialAttempts: null | number;
   call: null | Call;
   currentCallId: null | number;
-  status: "idle" | "calling" | "failed" | "stopped" | "connected";
+  status: Call.State;
   muted: boolean;
   token: null | string;
   tokenLoading: boolean;
@@ -71,7 +72,10 @@ interface IDialerState {
 const buildInitialState = (): IDialerState => ({
   requestAction: null,
   //
-  isDialerOpen: false,
+  isDialerOpen:
+    localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_IS_OPEN) === "false"
+      ? false
+      : true,
   tokenLoading: false,
   device: null,
   isDialing: false,
@@ -85,7 +89,7 @@ const buildInitialState = (): IDialerState => ({
     localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER) ||
     numbers[2].value,
   error: "",
-  status: "idle",
+  status: Call.State.Closed,
   token: null,
   identity: null,
   dialQueue: JSON.parse(
@@ -108,6 +112,13 @@ export const DialerSlice = createSlice({
     },
     setIsDialerOpen: (state, action) => {
       state.isDialerOpen = action.payload;
+
+      console.log("!", action.payload);
+
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY__DIALER_IS_OPEN,
+        JSON.stringify(action.payload)
+      );
     },
     setDevice: (state, action) => {
       state.device = action.payload;

@@ -10,7 +10,11 @@ import { useNavigate } from "react-router-dom";
 import routes from "../../configs/routes";
 import { APP_NAME } from "../../configs/labels";
 
-function CallerIdSelect(props: any) {
+type TCallerIdSelectProps = {
+  label?: string;
+};
+
+function CallerIdSelect(props: TCallerIdSelectProps & any) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [callerIdItems, setCallerIdItems] = useState<SelectItem[]>([]);
@@ -64,7 +68,7 @@ function CallerIdSelect(props: any) {
 
   return (
     <Select
-      label="My number"
+      label={props.label}
       placeholder="Pick one"
       data={callerIdItems}
       value={fromNumber}
