@@ -56,7 +56,6 @@ function Dialer() {
     token,
     fromNumber,
     dialQueue,
-    options,
     isDialerOpen,
     error,
     status,
@@ -215,8 +214,6 @@ function Dialer() {
       dialStateInstance.status = call.status();
       dispatch(setStatus(dialStateInstance.status));
 
-      notifications.show({ message: "Call accepted" });
-
       // Begin timer to track duration of call
       startCallTimer();
 
@@ -241,12 +238,8 @@ function Dialer() {
     // Occurs when:
     // - Call ends (user hangs up, lead hangs up, voicemail ends)
     c.on("disconnect", async (call) => {
-      dispatch(setRequestAction("determineNextAction"));
-
       dialStateInstance.status = call.status();
       dispatch(setStatus(dialStateInstance.status));
-
-      notifications.show({ message: "Call ended" });
     });
 
     // Occurs when:
@@ -263,8 +256,6 @@ function Dialer() {
 
       dialStateInstance.status = call?.status() || Call.State.Closed;
       dispatch(setStatus(dialStateInstance.status));
-
-      dispatch(setRequestAction("determineNextAction"));
     });
 
     dialStateInstance.call = c;
@@ -287,41 +278,6 @@ function Dialer() {
   function stopCallTimer() {
     clearInterval(dialStateInstance.currentCallTimer);
     dialStateInstance.currentCallTimer = null;
-  }
-
-  // [x] Should retry call if no answer AND under option.maxAttempts
-  // [x] Should continue to next call if nobody answered AND over option.maxAttempts
-  // [x] Should stop if a call connects then ends (e.g., users wants to write notes, update Lead data, etc)
-  // [x] Should stop if an error exists
-  async function determineNextAction() {
-    // Check for error
-    if (dialStateInstance.error) {
-      console.error(`Error: ${dialStateInstance.error}`);
-      return;
-    }
-
-    // Call was connected, stop here to allow the user time to take notes
-    // and regroup before proceeding to next call (could be overwhelming if it just keeps going)
-    if (dialStateInstance.connectedAt) {
-      // End call
-      await stopCall();
-      dispatch(setRequestAction("stopCall"));
-
-      return;
-    }
-
-    // End call
-    await stopCall();
-    dispatch(setRequestAction("stopCall"));
-
-    // Dialing has gone past allowed ring time, determine if retrying or continuing
-    if (dialStateInstance.currentDialAttempts >= options.maxCallTries) {
-      await continueToNextLead();
-      return;
-    }
-
-    // Retry lead!
-    await startCall();
   }
 
   function requestStopDialer() {
@@ -371,6 +327,7 @@ function Dialer() {
       return console.info("No more leads to dial");
     }
 
+    console.log("in continue to next lead, startCall() ");
     // We're safe to proceed
     startCall();
   }
@@ -424,6 +381,7 @@ function Dialer() {
   function resetDialerState() {
     dialStateInstance.isDialing = false;
     dispatch(setIsDialing(dialStateInstance.isDialing));
+    console.log("reset dialer state - call is now null");
     dialStateInstance.call = null;
     dispatch(setCall(dialStateInstance.call));
     dialStateInstance.currentCallId = null;
@@ -512,12 +470,6 @@ function Dialer() {
         break;
       }
 
-      case "determineNextAction": {
-        determineNextAction();
-        dispatch(setRequestAction(null));
-        break;
-      }
-
       case "resetDialer": {
         resetDialer();
         dispatch(setRequestAction(null));
@@ -534,19 +486,9 @@ function Dialer() {
         dispatch(setRequestAction(null));
       }
     }
-  }, [
-    requestAction,
-    call,
-    determineNextAction,
-    dispatch,
-    resetDialer,
-    stopCall,
-    stopDialing,
-  ]);
+  }, [requestAction, call, dispatch, resetDialer, stopCall, stopDialing]);
 
   if (dialQueue.length === 0) return;
-
-  console.log(status);
 
   // Name, phone
   let name = "";
@@ -582,7 +524,7 @@ function Dialer() {
                     variant="outline"
                     color="blue"
                     size="lg"
-                    disabled={!call || !subscriptionActive}
+                    disabled={!subscriptionActive}
                     onClick={continueToNextLead}
                     mx={4}
                   >

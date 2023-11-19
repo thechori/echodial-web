@@ -113,8 +113,6 @@ export const DialerSlice = createSlice({
     setIsDialerOpen: (state, action) => {
       state.isDialerOpen = action.payload;
 
-      console.log("!", action.payload);
-
       localStorage.setItem(
         LOCAL_STORAGE_KEY__DIALER_IS_OPEN,
         JSON.stringify(action.payload)

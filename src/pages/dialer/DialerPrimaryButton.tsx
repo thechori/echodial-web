@@ -5,6 +5,7 @@ import { PiPhoneDisconnect } from "react-icons/pi";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { dialStateInstance } from "./DialState.class";
 import { setDialQueueIndex, setRequestAction } from "../../store/dialer/slice";
+import { Call } from "@twilio/voice-sdk";
 
 /**
  * Primary action button for the dialer
@@ -30,25 +31,6 @@ const DialerPrimaryButton = () => {
     dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
     dispatch(setRequestAction("startCall"));
   }
-
-  // function requestContinue() {
-  //   if (dialStateInstance.dialQueueIndex === null) {
-  //     dialStateInstance.error = "Dial queue index is null";
-  //     dispatch(setError(dialStateInstance.error));
-  //     return;
-  //   }
-
-  //   // Check for next index
-  //   if (dialStateInstance.dialQueueIndex === dialQueue.length - 1) {
-  //     dialStateInstance.dialQueueIndex = 0;
-  //     dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-  //   } else {
-  //     dialStateInstance.dialQueueIndex = dialStateInstance.dialQueueIndex + 1;
-  //     dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-  //   }
-
-  //   dispatch(setRequestAction("startCall"));
-  // }
 
   function requestStopDialer() {
     dispatch(setRequestAction("stopDialing"));
@@ -77,7 +59,7 @@ const DialerPrimaryButton = () => {
               </Text>
             </HoverCard.Dropdown>
           </HoverCard>
-        ) : dialStateInstance.dialQueueIndex === null && !call ? (
+        ) : !call ? (
           <Tooltip
             label="Begin making calls to the leads in the Call queue"
             openDelay={500}
@@ -95,9 +77,8 @@ const DialerPrimaryButton = () => {
           <Tooltip label="Hang up" openDelay={500}>
             <Button
               mx={4}
-              color={status === "connected" ? "red" : "purple"}
+              color={status === Call.State.Open ? "red" : "purple"}
               onClick={requestStopDialer}
-              disabled={!call}
               leftIcon={<PiPhoneDisconnect fontSize="1.5rem" />}
             >
               Hang up
