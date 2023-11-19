@@ -169,7 +169,10 @@ function Dialer() {
     // Note: Using `once` instead to avoid multiple calls, this poses a risk because we are now
     // assuming that ringing will get to `true` since the initial (and only returned value now)
     // is `false` ... address this in  the future if issues occur
-    c.once("ringing", async () => {
+    c.once("ringing", async (call) => {
+      dialStateInstance.status = call.status();
+      dispatch(setStatus(dialStateInstance.status));
+
       // "currentCallId exists, skipping creation of new Call record" ??
       if (dialStateInstance.currentCallId !== null) {
         return;
@@ -207,12 +210,12 @@ function Dialer() {
     // - Lead answers the call
     // - Call goes to voicemail
     c.on("accept", async (call: Call) => {
-      const now = new Date();
-
-      dialStateInstance.connectedAt = now;
-      dispatch(setConnectedAt(dialStateInstance.connectedAt));
       dialStateInstance.status = call.status();
       dispatch(setStatus(dialStateInstance.status));
+
+      const now = new Date();
+      dialStateInstance.connectedAt = now;
+      dispatch(setConnectedAt(dialStateInstance.connectedAt));
 
       // Begin timer to track duration of call
       startCallTimer();
@@ -245,6 +248,9 @@ function Dialer() {
     // Occurs when:
     // - An error is thrown
     c.on("error", async (e: unknown) => {
+      dialStateInstance.status = Call.State.Closed;
+      dispatch(setStatus(dialStateInstance.status));
+
       console.log("error", e);
       const errorMessage = extractErrorMessage(e);
       notifications.show({
@@ -253,9 +259,6 @@ function Dialer() {
       });
       dialStateInstance.error = errorMessage;
       dispatch(setError(dialStateInstance.error));
-
-      dialStateInstance.status = call?.status() || Call.State.Closed;
-      dispatch(setStatus(dialStateInstance.status));
     });
 
     dialStateInstance.call = c;
@@ -287,6 +290,9 @@ function Dialer() {
   // Invoked when:
   // - Next arrow is click
   async function continueToNextLead() {
+    // Stop call
+    stopCall();
+
     // Check for existing index before proceeding
     if (dialStateInstance.dialQueueIndex === dialQueue.length - 1) {
       notifications.show({
@@ -322,12 +328,8 @@ function Dialer() {
       return console.error("No active contact index found");
     }
 
-    // Stop if we're at the last index of the queue
-    if (dialStateInstance.dialQueueIndex === dialQueue.length - 1) {
-      return console.info("No more leads to dial");
-    }
+    console.log("startCall from continue fn");
 
-    console.log("in continue to next lead, startCall() ");
     // We're safe to proceed
     startCall();
   }
