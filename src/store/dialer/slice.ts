@@ -52,7 +52,7 @@ interface IDialerState {
   isDialerOpen: boolean;
   isDialing: boolean;
   device: any | Device;
-  wasCallConnected: null | boolean;
+  connectedAt: null | Date;
   currentDialAttempts: null | number;
   call: null | Call;
   currentCallId: null | number;
@@ -77,7 +77,7 @@ const buildInitialState = (): IDialerState => ({
   isDialing: false,
   call: null,
   currentCallId: null,
-  wasCallConnected: null,
+  connectedAt: null,
   currentDialAttempts: null,
   muted: false,
   // TODO: Remove this hardcoded value in favor of values from API
@@ -175,8 +175,8 @@ export const DialerSlice = createSlice({
     setIsMuted: (state, action) => {
       state.muted = action.payload;
     },
-    setWasCallConnected: (state, action) => {
-      state.wasCallConnected = action.payload;
+    setConnectedAt: (state, action) => {
+      state.connectedAt = action.payload;
     },
     setStatus: (state, action) => {
       state.status = action.payload;
@@ -276,7 +276,7 @@ export const {
   moveLeadUpInQueue,
   moveLeadDownInQueue,
   deleteLeadFromQueue,
-  setWasCallConnected,
+  setConnectedAt,
   updateLeadById,
 } = DialerSlice.actions;
 

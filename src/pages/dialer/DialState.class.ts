@@ -5,7 +5,7 @@ type DialerStateStatus = "idle" | "connecting" | "ringing" | "inCall";
 class DialerState {
   error: string;
   isDialing: boolean;
-  wasCallConnected: boolean;
+  connectedAt: Date | null;
   currentCallId: number | null;
   dialQueueIndex: number | null;
   currentDialAttempts: number;
@@ -20,7 +20,7 @@ class DialerState {
   constructor() {
     this.isDialing = false;
     this.error = "";
-    this.wasCallConnected = false;
+    this.connectedAt = null;
     this.currentCallId = null;
     this.dialQueueIndex = null;
     this.currentDialAttempts = 0;

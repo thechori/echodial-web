@@ -30,7 +30,7 @@ import {
   setToken,
   setCurrentDialAttempts,
   setRequestAction,
-  setWasCallConnected,
+  setConnectedAt,
   setIsDialing,
   setDialQueueIndex,
   setShowOptions,
@@ -184,10 +184,6 @@ function AlphaDialer() {
         return;
       }
 
-      // Begin timer BEFORE any API requests to avoid backend latency skewing
-      // results that are directly tied to a user's time option settings
-      startCallTimer();
-
       const newCall: Partial<TCall> = {
         user_id: jwtDecoded?.id,
         lead_id: dialQueue[dialStateInstance.dialQueueIndex].id,
@@ -216,9 +212,13 @@ function AlphaDialer() {
     // - Lead answers the call
     // - Call goes to voicemail
     c.on("accept", async (call: Call) => {
-      dialStateInstance.wasCallConnected = true;
-      dispatch(setWasCallConnected(dialStateInstance.wasCallConnected));
+      const now = new Date();
+      dialStateInstance.connectedAt = now;
+      dispatch(setConnectedAt(dialStateInstance.connectedAt));
       notifications.show({ message: "Call accepted" });
+
+      // Begin timer to track duration of call
+      startCallTimer();
 
       try {
         if (dialStateInstance.currentCallId === null) {
@@ -263,24 +263,22 @@ function AlphaDialer() {
     dispatch(setCall(dialStateInstance.call));
   }
 
-  // Start timer that will check to see if:
-  // - Call has connected or not
-  // - Current attempts is beneath options.maxAttempts
-  // - If there is another Lead in the Queue to continue to
+  // TODO: consider setting a variable like `callConnectedAt` and generating a new Date object to use
+  // with date-fns to properly track the difference between the two dates -- this seems MUCH more accurate
+  // because the current increment of a "second" ever 1000ms seems way too fast...
+  //
+  // Call timer tracks the current call duration to show the user how long they've been on the call for
   async function startCallTimer() {
-    const timer = setTimeout(async () => {
-      // When time expires, check to see if connected or not
-      if (dialStateInstance.wasCallConnected) {
-        clearTimeout(dialStateInstance.currentCallTimer);
-        dialStateInstance.currentCallTimer = null;
-
-        return;
-      }
-
-      dispatch(setRequestAction("determineNextAction"));
-    }, options.maxRingTimeInSeconds * 1000);
+    const timer = setInterval(async () => {
+      console.info("1 sec has passed");
+    }, 1000);
 
     dialStateInstance.currentCallTimer = timer;
+  }
+
+  function stopCallTimer() {
+    clearInterval(dialStateInstance.currentCallTimer);
+    dialStateInstance.currentCallTimer = null;
   }
 
   // [x] Should retry call if no answer AND under option.maxAttempts
@@ -296,7 +294,7 @@ function AlphaDialer() {
 
     // Call was connected, stop here to allow the user time to take notes
     // and regroup before proceeding to next call (could be overwhelming if it just keeps going)
-    if (dialStateInstance.wasCallConnected) {
+    if (dialStateInstance.connectedAt) {
       // End call
       await stopCall();
       dispatch(setRequestAction("stopCall"));
@@ -377,7 +375,7 @@ function AlphaDialer() {
 
     // Stop timer
     if (dialStateInstance.currentCallTimer) {
-      clearTimeout(dialStateInstance.currentCallTimer);
+      stopCallTimer();
     }
 
     if (dialStateInstance.currentCallId === null) {
@@ -418,8 +416,8 @@ function AlphaDialer() {
     dispatch(setCall(dialStateInstance.call));
     dialStateInstance.currentCallId = null;
     dispatch(setCurrentCallId(dialStateInstance.currentCallId));
-    dialStateInstance.wasCallConnected = false;
-    dispatch(setWasCallConnected(dialStateInstance.wasCallConnected));
+    dialStateInstance.connectedAt = null;
+    dispatch(setConnectedAt(dialStateInstance.connectedAt));
     dialStateInstance.currentCallTimer = null;
   }
 

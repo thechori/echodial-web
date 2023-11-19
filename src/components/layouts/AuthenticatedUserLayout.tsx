@@ -11,7 +11,6 @@ import {
 } from "../../store/dialer/slice";
 import { Box } from "@mantine/core";
 import AlphaDialer from "../../pages/dialer/AlphaDialer";
-import AlphaDialerFab from "../../pages/dialer/AlphaDialerFab";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -55,7 +54,6 @@ const AuthenticatedUserLayout = ({ children }: any) => {
         onClose={() => dispatch(setShowOptions(false))}
       />
       <AlphaDialer />
-      <AlphaDialerFab />
     </Container>
   );
 };
