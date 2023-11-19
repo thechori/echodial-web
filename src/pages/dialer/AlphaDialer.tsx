@@ -105,7 +105,11 @@ function AlphaDialer() {
       dialerSignal.dialQueueIndex = 0;
     }
 
-    dialerSignal.isDialing = true;
+    // Check for phone number
+    if (!dialQueue[dialerSignal.dialQueueIndex].phone) {
+      dialerSignal.error = "No phone number found";
+      return;
+    }
 
     // Initialize or increment current dial attempts
     if (dialerSignal.currentDialAttempts === null) {
@@ -122,11 +126,14 @@ function AlphaDialer() {
     const params = {
       To: dialQueue[dialerSignal.dialQueueIndex].phone,
       From: fromNumber,
-      // user_id: jwtDecoded.id, // TODO: evaluate if this was necessary
+      user_id: jwtDecoded.id, // TODO: evaluate if this was necessary
     };
 
     // Start Call
+    console.log("starting call... device", dialerSignal.device);
     const c = (await dialerSignal.device.connect({ params })) as Call;
+
+    dialerSignal.isDialing = true;
 
     // Occurs when:
     // - Call initializes (initially returns as `false`)
@@ -146,11 +153,18 @@ function AlphaDialer() {
         return;
       }
 
+      const lead = dialQueue[dialerSignal.dialQueueIndex];
+
+      if (!lead) {
+        dialerSignal.error = "No lead found";
+        return;
+      }
+
       const newCall: Partial<TCall> = {
         user_id: jwtDecoded?.id,
-        lead_id: dialQueue[dialerSignal.dialQueueIndex].id,
+        lead_id: lead.id,
         from_number: fromNumber,
-        to_number: dialQueue[dialerSignal.dialQueueIndex].phone,
+        to_number: lead.phone || undefined,
       };
 
       try {
@@ -189,8 +203,8 @@ function AlphaDialer() {
 
     // Occurs when:
     // - Call ends (user hangs up, lead hangs up, voicemail ends)
-    c.on("disconnect", async () => {
-      console.info("call.disconnect");
+    c.on("disconnect", async (a) => {
+      console.info("call.disconnect", a);
     });
 
     // Occurs when:
@@ -293,11 +307,12 @@ function AlphaDialer() {
     dialerSignal.currentDialAttempts = 0;
   }
 
-  function requestStartDialer() {
+  function startDialer() {
     // Start from 0 UNLESS there is a currently selected index
     const newIndex =
       dialerSignal.dialQueueIndex === null ? 0 : dialerSignal.dialQueueIndex;
     dialerSignal.dialQueueIndex = newIndex;
+    startCall();
   }
 
   function requestContinue() {
@@ -399,7 +414,7 @@ function AlphaDialer() {
                   <Button
                     mx={4}
                     variant="gradient"
-                    onClick={requestStartDialer}
+                    onClick={startDialer}
                     leftIcon={<IconPlayerPlay />}
                   >
                     Start dialer
