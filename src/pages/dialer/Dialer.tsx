@@ -42,6 +42,7 @@ import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
 import { useDeductTrialCreditMutation } from "../../services/trial-credit";
 import { DialerPrimaryButton } from "./DialerPrimaryButton";
+import phoneFormatter from "../../utils/phone-formatter";
 
 function Dialer() {
   const dispatch = useAppDispatch();
@@ -545,6 +546,18 @@ function Dialer() {
 
   if (dialQueue.length === 0) return;
 
+  console.log(status);
+
+  // Name, phone
+  let name = "";
+  let phone = "";
+
+  if (dialQueue && dialStateInstance.dialQueueIndex !== null) {
+    const lead = dialQueue[dialStateInstance.dialQueueIndex];
+    name = `${lead.first_name || ""} ${lead.last_name || ""}`;
+    phone = phoneFormatter(lead.phone) || "";
+  }
+
   return (
     <DialerStyled $visible={isDialerOpen}>
       <Box className="controls">
@@ -561,7 +574,7 @@ function Dialer() {
             }}
           >
             <Flex justify="flex-start" align="center">
-              <Flex align="flex-end">
+              <Flex align="center">
                 <DialerPrimaryButton />
 
                 <Tooltip label="Skip to next Lead">
@@ -578,17 +591,23 @@ function Dialer() {
                 </Tooltip>
 
                 <DialerStatus $visible={status === Call.State.Open}>
-                  <div>{"00:00"}</div>
+                  <Text size="sm" fw={500} className="duration">
+                    {"00:00"}
+                  </Text>
                 </DialerStatus>
 
                 <Box>
-                  <Text>Sylvester Stallone</Text>
-                  <Text>333-333-3333</Text>
+                  <Text fw={500} lh="1.1rem">
+                    {name}
+                  </Text>
+                  <Text size="sm" lh="1.1rem">
+                    {phone}
+                  </Text>
                 </Box>
               </Flex>
             </Flex>
 
-            <Flex align="flex-end" h={60}>
+            <Flex align="center" h={60}>
               <Tooltip
                 openDelay={500}
                 position="bottom"

@@ -3,8 +3,19 @@ import { styled } from "styled-components";
 import devices from "../../styles/devices";
 
 export const DialerStatus = styled.div<{ $visible: boolean }>`
-  width: ${(props) => (props.$visible ? "150px" : "0px")};
+  width: ${(props) => (props.$visible ? "100px" : "0px")};
+  text-align: center;
   opacity: ${(props) => (props.$visible ? 1 : 0)};
+  transition: all 1s ease;
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  .duration {
+    background-color: #d3f9d8;
+    color: #2b8a3e;
+    padding: 0.1rem 0.25rem;
+    border-radius: 8px;
+  }
 `;
 
 export const DialerStyled = styled.div<{ $visible: boolean }>`
