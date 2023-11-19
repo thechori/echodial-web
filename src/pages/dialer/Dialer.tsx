@@ -36,7 +36,7 @@ import {
   IconAdjustments,
   IconChevronDown,
   IconChevronUp,
-  IconPlayerSkipForward,
+  IconPlayerSkipForwardFilled,
 } from "@tabler/icons-react";
 import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
@@ -243,6 +243,7 @@ function Dialer() {
     c.on("disconnect", async () => {
       dialStateInstance.status = Call.State.Closed;
       dispatch(setStatus(dialStateInstance.status));
+      dispatch(setRequestAction("stopCall"));
     });
 
     // Occurs when:
@@ -250,6 +251,7 @@ function Dialer() {
     c.on("error", async (e: unknown) => {
       dialStateInstance.status = Call.State.Closed;
       dispatch(setStatus(dialStateInstance.status));
+      dispatch(setRequestAction("stopCall"));
 
       const errorMessage = extractErrorMessage(e);
       notifications.show({
@@ -519,14 +521,12 @@ function Dialer() {
 
                 <Tooltip label="Skip to next Lead">
                   <ActionIcon
-                    variant="outline"
-                    color="blue"
                     size="lg"
                     disabled={!subscriptionActive}
                     onClick={continueToNextLead}
                     mx={4}
                   >
-                    <IconPlayerSkipForward />
+                    <IconPlayerSkipForwardFilled />
                   </ActionIcon>
                 </Tooltip>
 
@@ -564,7 +564,6 @@ function Dialer() {
                   variant="outline"
                   onClick={openDialerOptions}
                   size="lg"
-                  color="blue"
                 >
                   <IconAdjustments />
                 </ActionIcon>
@@ -575,7 +574,6 @@ function Dialer() {
                   {isDialerOpen ? (
                     <ActionIcon
                       variant="outline"
-                      color="blue"
                       size="lg"
                       onClick={() => dispatch(setIsDialerOpen(false))}
                     >
@@ -584,7 +582,6 @@ function Dialer() {
                   ) : (
                     <ActionIcon
                       variant="outline"
-                      color="blue"
                       size="lg"
                       onClick={() => dispatch(setIsDialerOpen(true))}
                     >

@@ -1,11 +1,13 @@
 import { Box, Button, Flex, HoverCard, Text, Tooltip } from "@mantine/core";
 import { IconPlayerPlay } from "@tabler/icons-react";
 import { PiPhoneDisconnect } from "react-icons/pi";
+import { MdPhone } from "react-icons/md";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { dialStateInstance } from "./DialState.class";
 import { setDialQueueIndex, setRequestAction } from "../../store/dialer/slice";
 import { Call } from "@twilio/voice-sdk";
+import { EndButton, StartButton } from "./DialerPrimaryButton.styles";
 
 /**
  * Primary action button for the dialer
@@ -38,7 +40,7 @@ const DialerPrimaryButton = () => {
 
   return (
     <Flex>
-      <Box>
+      <Box mx="sm">
         {!subscriptionActive ? (
           <HoverCard width={280} shadow="md">
             <HoverCard.Target>
@@ -64,25 +66,19 @@ const DialerPrimaryButton = () => {
             label="Begin making calls to the leads in the Call queue"
             openDelay={500}
           >
-            <Button
-              mx={4}
-              variant="gradient"
-              onClick={requestStartDialer}
-              leftIcon={<IconPlayerPlay />}
-            >
-              Start dialer
-            </Button>
+            <StartButton onClick={requestStartDialer} className="hoverable">
+              <MdPhone fontSize="1.5rem" />
+            </StartButton>
           </Tooltip>
         ) : (
           <Tooltip label="Hang up" openDelay={500}>
-            <Button
-              mx={4}
-              color={status === Call.State.Open ? "red" : "purple"}
+            <EndButton
               onClick={requestStopDialer}
-              leftIcon={<PiPhoneDisconnect fontSize="1.5rem" />}
+              $active={status === Call.State.Open}
+              className="hoverable"
             >
-              Hang up
-            </Button>
+              <PiPhoneDisconnect fontSize="1.5rem" />
+            </EndButton>
           </Tooltip>
         )}
       </Box>
