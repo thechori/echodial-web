@@ -6,8 +6,6 @@ import {
   Card,
   HoverCard,
   Text,
-  ThemeIcon,
-  Title,
   Tooltip,
 } from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
@@ -35,7 +33,7 @@ import {
   setDialQueueIndex,
   setShowOptions,
 } from "../../store/dialer/slice";
-import AlphaDialerStyled from "./AlphaDialer.styles";
+import DialerStyled from "./Dialer.styles";
 import { Call as TCall } from "../../types";
 import DialerQueue from "./DialerQueue";
 import CallerIdSelect from "./CallerIdSelect";
@@ -46,10 +44,10 @@ import {
 } from "@tabler/icons-react";
 import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
-import { PiPhone, PiPhoneDisconnect } from "react-icons/pi";
+import { PiPhoneDisconnect } from "react-icons/pi";
 import { useDeductTrialCreditMutation } from "../../services/trial-credit";
 
-function AlphaDialer() {
+function Dialer() {
   const dispatch = useAppDispatch();
   const [starting, setStarting] = useState(false);
 
@@ -567,7 +565,7 @@ function AlphaDialer() {
   ]);
 
   return (
-    <AlphaDialerStyled $visible={isDialerOpen}>
+    <DialerStyled $visible={isDialerOpen}>
       <Box className="controls">
         <Flex align="flex-start" justify="space-between">
           <Card
@@ -582,14 +580,58 @@ function AlphaDialer() {
             }}
           >
             <Flex justify="flex-start" align="center">
-              <Flex justify="flex-start" align="flex-end" mr={36}>
-                <ThemeIcon mr="xs" size="xl" variant="gradient">
-                  <PiPhone fontSize="1.75rem" />
-                </ThemeIcon>
-                <Title order={2}>Dialer</Title>
-              </Flex>
-
               <Flex align="flex-end">
+                {!subscriptionActive ? (
+                  <HoverCard width={280} shadow="md">
+                    <HoverCard.Target>
+                      <Button
+                        mx={4}
+                        style={{ border: "1px solid red" }}
+                        className="disabled-button"
+                        leftIcon={<IconPlayerPlay />}
+                      >
+                        Start dialer
+                      </Button>
+                    </HoverCard.Target>
+                    <HoverCard.Dropdown>
+                      <Text size="sm">
+                        It looks like you've run out of trial credits or your
+                        subscription is currently inactive. Please upgrade your
+                        subscription to enable feature this feature again 😊
+                      </Text>
+                    </HoverCard.Dropdown>
+                  </HoverCard>
+                ) : dialStateInstance.dialQueueIndex === null ? (
+                  <Tooltip
+                    label="Begin making calls to the leads in the Call queue"
+                    openDelay={500}
+                  >
+                    <Button
+                      mx={4}
+                      variant="gradient"
+                      onClick={requestStartDialer}
+                      leftIcon={<IconPlayerPlay />}
+                    >
+                      Start dialer
+                    </Button>
+                  </Tooltip>
+                ) : (
+                  <Tooltip
+                    label="Continue to the next lead in the Call queue"
+                    openDelay={500}
+                  >
+                    <Button
+                      mx={4}
+                      variant="gradient"
+                      onClick={requestContinue}
+                      leftIcon={<IconPlayerPlay />}
+                      disabled={!!call}
+                    >
+                      Continue
+                    </Button>
+                  </Tooltip>
+                )}
+
                 <Tooltip
                   openDelay={500}
                   position="bottom"
@@ -615,56 +657,6 @@ function AlphaDialer() {
             </Flex>
 
             <Flex align="flex-end" h={60}>
-              {!subscriptionActive ? (
-                <HoverCard width={280} shadow="md">
-                  <HoverCard.Target>
-                    <Button
-                      mx={4}
-                      style={{ border: "1px solid red" }}
-                      className="disabled-button"
-                      leftIcon={<IconPlayerPlay />}
-                    >
-                      Start dialer
-                    </Button>
-                  </HoverCard.Target>
-                  <HoverCard.Dropdown>
-                    <Text size="sm">
-                      It looks like you've run out of trial credits or your
-                      subscription is currently inactive. Please upgrade your
-                      subscription to enable feature this feature again 😊
-                    </Text>
-                  </HoverCard.Dropdown>
-                </HoverCard>
-              ) : dialStateInstance.dialQueueIndex === null ? (
-                <Tooltip
-                  label="Begin making calls to the leads in the Call queue"
-                  openDelay={500}
-                >
-                  <Button
-                    mx={4}
-                    variant="gradient"
-                    onClick={requestStartDialer}
-                    leftIcon={<IconPlayerPlay />}
-                  >
-                    Start dialer
-                  </Button>
-                </Tooltip>
-              ) : (
-                <Tooltip
-                  label="Continue to the next lead in the Call queue"
-                  openDelay={500}
-                >
-                  <Button
-                    mx={4}
-                    variant="gradient"
-                    onClick={requestContinue}
-                    leftIcon={<IconPlayerPlay />}
-                    disabled={!!call}
-                  >
-                    Continue
-                  </Button>
-                </Tooltip>
-              )}
               <Tooltip label="Hang up" openDelay={500}>
                 <Button
                   mx={4}
@@ -708,8 +700,8 @@ function AlphaDialer() {
           </Box>
         </Flex>
       </Box>
-    </AlphaDialerStyled>
+    </DialerStyled>
   );
 }
 
-export default AlphaDialer;
+export default Dialer;

@@ -10,7 +10,7 @@ import {
   setShowOptions,
 } from "../../store/dialer/slice";
 import { Box } from "@mantine/core";
-import AlphaDialer from "../../pages/dialer/AlphaDialer";
+import Dialer from "../../pages/dialer/Dialer";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -53,7 +53,7 @@ const AuthenticatedUserLayout = ({ children }: any) => {
         opened={isDialerOptionsModalOpen}
         onClose={() => dispatch(setShowOptions(false))}
       />
-      <AlphaDialer />
+      <Dialer />
     </Container>
   );
 };
