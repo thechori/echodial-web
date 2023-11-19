@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Call, Device } from "@twilio/voice-sdk";
 import {
+  ActionIcon,
   Button,
   Card,
   HoverCard,
@@ -20,21 +21,50 @@ import {
 import apiService from "../../services/api";
 import { selectJwtDecoded } from "../../store/user/slice";
 import { extractErrorMessage } from "../../utils/error";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  setError,
+  setDevice,
+  setCall,
+  setCurrentCallId,
+  setToken,
+  setCurrentDialAttempts,
+  setRequestAction,
+  setWasCallConnected,
+  setIsDialing,
+  setDialQueueIndex,
+  setShowOptions,
+} from "../../store/dialer/slice";
 import AlphaDialerStyled from "./AlphaDialer.styles";
 import { Call as TCall } from "../../types";
 import DialerQueue from "./DialerQueue";
 import CallerIdSelect from "./CallerIdSelect";
-import { IconPlayerPlay, IconPlayerSkipForward } from "@tabler/icons-react";
+import {
+  IconAdjustments,
+  IconPlayerPlay,
+  IconPlayerSkipForward,
+} from "@tabler/icons-react";
 import { DialerLeadDetail } from "./DialerLeadDetail";
+import { dialStateInstance } from "./DialState.class";
 import { PiPhone, PiPhoneDisconnect } from "react-icons/pi";
 import { useDeductTrialCreditMutation } from "../../services/trial-credit";
-import { dialerSignal } from "./Dialer.signal";
 
 function AlphaDialer() {
+  const dispatch = useAppDispatch();
   const [starting, setStarting] = useState(false);
-  const { dialQueue, fromNumber } = useAppSelector((state) => state.dialer);
+
   const jwtDecoded = useAppSelector(selectJwtDecoded);
+  const {
+    requestAction,
+    call,
+    device,
+    token,
+    fromNumber,
+    dialQueue,
+    options,
+    isDialerOpen,
+    error,
+  } = useAppSelector((state) => state.dialer);
   const { subscriptionActive } = useAppSelector((state) => state.user);
   //
   const [addCall] = useAddCallMutation();
@@ -43,14 +73,14 @@ function AlphaDialer() {
   const [deductTrialCredit] = useDeductTrialCreditMutation();
 
   async function initializeDevice() {
-    dialerSignal.error = "";
+    dispatch(setError(""));
 
-    if (!dialerSignal.token) {
-      dialerSignal.error = "No token found";
+    if (!dialStateInstance.token) {
+      dispatch(setError("No token found"));
       return;
     }
 
-    const device = new Device(dialerSignal.token, {
+    const device = new Device(dialStateInstance.token, {
       // @ts-ignore
       codecPreferences: ["opus", "pcmu"],
     });
@@ -64,7 +94,9 @@ function AlphaDialer() {
 
     // Device must be registered in order to receive incoming calls
     device.register();
-    dialerSignal.device = device;
+
+    dialStateInstance.device = device;
+    dispatch(setDevice(device));
   }
 
   // TODO: Reevaluate for performance enhancements
@@ -74,66 +106,67 @@ function AlphaDialer() {
     try {
       const { data } = await apiService("/dialer/token");
       const token = data.token;
-      dialerSignal.token = token;
+      dispatch(setToken(token));
+      dialStateInstance.token = token;
       initializeDevice();
     } catch (err) {
-      dialerSignal.error =
-        "An error occurred. See your browser console for more information.";
+      dispatch(
+        setError(
+          "An error occurred. See your browser console for more information."
+        )
+      );
     }
   }
 
   // Begin calling the current index
   async function startCall() {
     // Clear error
-    dialerSignal.error = "";
+    dialStateInstance.error = "";
+    dispatch(setError(dialStateInstance.error));
 
     // Check for device
-    if (!dialerSignal.device) {
-      dialerSignal.error = "No device initialized";
+    if (!dialStateInstance.device) {
+      dispatch(setError("No device initialized"));
       return;
     }
 
     // Check for items in queue
     if (dialQueue.length === 0) {
-      dialerSignal.error =
-        "No leads in call queue, be sure to add some before running the dialer";
+      dispatch(
+        setError(
+          "No leads in call queue, be sure to add some before running the dialer"
+        )
+      );
       return;
     }
 
     // Initialize index if none provided AND current index is not set
-    if (dialerSignal.dialQueueIndex === null) {
-      dialerSignal.dialQueueIndex = 0;
+    if (dialStateInstance.dialQueueIndex === null) {
+      dialStateInstance.dialQueueIndex = 0;
     }
 
-    // Check for phone number
-    if (!dialQueue[dialerSignal.dialQueueIndex].phone) {
-      dialerSignal.error = "No phone number found";
-      return;
-    }
+    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
+    dialStateInstance.isDialing = true;
+    dispatch(setIsDialing(dialStateInstance.isDialing));
 
     // Initialize or increment current dial attempts
-    if (dialerSignal.currentDialAttempts === null) {
-      dialerSignal.currentDialAttempts = 0;
+    if (dialStateInstance.currentDialAttempts === null) {
+      dialStateInstance.currentDialAttempts = 0;
     } else {
-      dialerSignal.currentDialAttempts = dialerSignal.currentDialAttempts + 1;
+      dialStateInstance.currentDialAttempts =
+        dialStateInstance.currentDialAttempts + 1;
     }
 
-    if (jwtDecoded === null || jwtDecoded.id === null) {
-      dialerSignal.error = "No jwt or user id found";
-      return;
-    }
+    dispatch(setCurrentDialAttempts(dialStateInstance.currentDialAttempts));
 
     const params = {
-      To: dialQueue[dialerSignal.dialQueueIndex].phone,
+      To: dialQueue[dialStateInstance.dialQueueIndex].phone,
       From: fromNumber,
-      user_id: jwtDecoded.id, // TODO: evaluate if this was necessary
+      user_id: jwtDecoded?.id || null,
     };
 
     // Start Call
-    console.log("starting call... device", dialerSignal.device);
-    const c = (await dialerSignal.device.connect({ params })) as Call;
-
-    dialerSignal.isDialing = true;
+    const c = (await device.connect({ params })) as Call;
 
     // Occurs when:
     // - Call initializes (initially returns as `false`)
@@ -142,40 +175,40 @@ function AlphaDialer() {
     // assuming that ringing will get to `true` since the initial (and only returned value now)
     // is `false` ... address this in  the future if issues occur
     c.once("ringing", async () => {
-      console.info("call.ringing");
-
       // "currentCallId exists, skipping creation of new Call record" ??
-      if (dialerSignal.currentCallId !== null) {
+      if (dialStateInstance.currentCallId !== null) {
         return;
       }
 
-      if (dialerSignal.dialQueueIndex === null) {
+      if (dialStateInstance.dialQueueIndex === null) {
         return;
       }
 
-      const lead = dialQueue[dialerSignal.dialQueueIndex];
-
-      if (!lead) {
-        dialerSignal.error = "No lead found";
-        return;
-      }
+      // Begin timer BEFORE any API requests to avoid backend latency skewing
+      // results that are directly tied to a user's time option settings
+      startCallTimer();
 
       const newCall: Partial<TCall> = {
         user_id: jwtDecoded?.id,
-        lead_id: lead.id,
+        lead_id: dialQueue[dialStateInstance.dialQueueIndex].id,
         from_number: fromNumber,
-        to_number: lead.phone || undefined,
+        to_number:
+          dialQueue[dialStateInstance.dialQueueIndex].phone || undefined,
       };
 
       try {
         // Create Call record
         const newCallRecord = await addCall(newCall).unwrap();
-        dialerSignal.currentCallId = newCallRecord.id;
+        dialStateInstance.currentCallId = newCallRecord.id;
+        dispatch(setCurrentCallId(dialStateInstance.currentCallId));
 
         // Deduct (1) credit from trial
         await deductTrialCredit(1);
       } catch (e) {
-        dialerSignal.error = extractErrorMessage(e);
+        notifications.show({
+          title: "Error",
+          message: extractErrorMessage(e),
+        });
       }
     });
 
@@ -183,74 +216,148 @@ function AlphaDialer() {
     // - Lead answers the call
     // - Call goes to voicemail
     c.on("accept", async (call: Call) => {
-      console.info("call.accept");
-      dialerSignal.wasCallConnected = true;
+      dialStateInstance.wasCallConnected = true;
+      dispatch(setWasCallConnected(dialStateInstance.wasCallConnected));
+      notifications.show({ message: "Call accepted" });
 
       try {
-        if (dialerSignal.currentCallId === null) {
+        if (dialStateInstance.currentCallId === null) {
           throw Error("No call ID found");
         }
 
         await updateCallViaId({
-          id: dialerSignal.currentCallId,
+          id: dialStateInstance.currentCallId,
           twilio_call_sid: call.parameters["CallSid"],
           was_answered: true,
         }).unwrap();
       } catch (e) {
-        dialerSignal.error = extractErrorMessage(e);
+        notifications.show({
+          title: "Error",
+          message: extractErrorMessage(e),
+        });
       }
     });
 
     // Occurs when:
     // - Call ends (user hangs up, lead hangs up, voicemail ends)
-    c.on("disconnect", async (a) => {
-      console.info("call.disconnect", a);
+    c.on("disconnect", async () => {
+      dispatch(setRequestAction("determineNextAction"));
+      notifications.show({ message: "Call ended" });
     });
 
     // Occurs when:
     // - An error is thrown
     c.on("error", async (e: unknown) => {
-      console.info("call.error");
-      dialerSignal.error = extractErrorMessage(e);
+      const errorMessage = extractErrorMessage(e);
+      notifications.show({
+        title: "Call error",
+        message: errorMessage,
+      });
+      dialStateInstance.error = errorMessage;
+      dispatch(setError(dialStateInstance.error));
+
+      dispatch(setRequestAction("determineNextAction"));
     });
 
-    dialerSignal.call = c;
+    dialStateInstance.call = c;
+    dispatch(setCall(dialStateInstance.call));
+  }
+
+  // Start timer that will check to see if:
+  // - Call has connected or not
+  // - Current attempts is beneath options.maxAttempts
+  // - If there is another Lead in the Queue to continue to
+  async function startCallTimer() {
+    const timer = setTimeout(async () => {
+      // When time expires, check to see if connected or not
+      if (dialStateInstance.wasCallConnected) {
+        clearTimeout(dialStateInstance.currentCallTimer);
+        dialStateInstance.currentCallTimer = null;
+
+        return;
+      }
+
+      dispatch(setRequestAction("determineNextAction"));
+    }, options.maxRingTimeInSeconds * 1000);
+
+    dialStateInstance.currentCallTimer = timer;
+  }
+
+  // [x] Should retry call if no answer AND under option.maxAttempts
+  // [x] Should continue to next call if nobody answered AND over option.maxAttempts
+  // [x] Should stop if a call connects then ends (e.g., users wants to write notes, update Lead data, etc)
+  // [x] Should stop if an error exists
+  async function determineNextAction() {
+    // Check for error
+    if (dialStateInstance.error) {
+      console.error(`Error: ${dialStateInstance.error}`);
+      return;
+    }
+
+    // Call was connected, stop here to allow the user time to take notes
+    // and regroup before proceeding to next call (could be overwhelming if it just keeps going)
+    if (dialStateInstance.wasCallConnected) {
+      // End call
+      await stopCall();
+      dispatch(setRequestAction("stopCall"));
+
+      return;
+    }
+
+    // End call
+    await stopCall();
+    dispatch(setRequestAction("stopCall"));
+
+    // Dialing has gone past allowed ring time, determine if retrying or continuing
+    if (dialStateInstance.currentDialAttempts >= options.maxCallTries) {
+      await continueToNextLead();
+      return;
+    }
+
+    // Retry lead!
+    await startCall();
   }
 
   // Invoked when:
   // - Next arrow is click
   async function continueToNextLead() {
     // Check for existing index before proceeding
-    if (dialerSignal.dialQueueIndex === dialQueue.length - 1) {
+    if (dialStateInstance.dialQueueIndex === dialQueue.length - 1) {
       notifications.show({
         message: "You've made it through all of your leads! Great job 🎉",
       });
 
-      dialerSignal.dialQueueIndex = null;
+      requestStopDialer();
+      dialStateInstance.dialQueueIndex = null;
+      dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
       return;
     }
 
     // Check for null dial index
-    if (dialerSignal.dialQueueIndex === null) {
-      dialerSignal.error =
-        "Dial index is null. Try selecting a different lead and trying again";
+    if (dialStateInstance.dialQueueIndex === null) {
+      notifications.show({
+        message:
+          "Dial index is null. Try selecting a different lead and trying again",
+      });
       return;
     }
 
     // Point to the next Lead in the queue
-    const value = dialerSignal.dialQueueIndex + 1;
-    dialerSignal.dialQueueIndex = value;
+    const value = dialStateInstance.dialQueueIndex + 1;
+    dialStateInstance.dialQueueIndex = value;
+    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
 
     // Reset attempt count
-    dialerSignal.currentDialAttempts = 0;
+    dialStateInstance.currentDialAttempts = 0;
+    dispatch(setCurrentDialAttempts(dialStateInstance.currentDialAttempts));
 
     // Check for null active index
-    if (dialerSignal.dialQueueIndex === null) {
+    if (dialStateInstance.dialQueueIndex === null) {
       return console.error("No active contact index found");
     }
 
     // Stop if we're at the last index of the queue
-    if (dialerSignal.dialQueueIndex === dialQueue.length - 1) {
+    if (dialStateInstance.dialQueueIndex === dialQueue.length - 1) {
       return console.info("No more leads to dial");
     }
 
@@ -264,20 +371,20 @@ function AlphaDialer() {
   // - Call disconnects ?
   async function stopCall() {
     // Bug: no call is found when this gets invoked
-    if (dialerSignal.call) {
-      dialerSignal.call.disconnect();
+    if (dialStateInstance.call) {
+      dialStateInstance.call.disconnect();
     }
 
     // Stop timer
-    if (dialerSignal.currentCallTimer) {
-      clearTimeout(dialerSignal.currentCallTimer);
+    if (dialStateInstance.currentCallTimer) {
+      clearTimeout(dialStateInstance.currentCallTimer);
     }
 
-    if (dialerSignal.currentCallId === null) {
-      dialerSignal.error = "No Call ID found";
+    if (dialStateInstance.currentCallId === null) {
+      console.info("No Call ID found");
     } else {
       try {
-        await endCallViaId(dialerSignal.currentCallId).unwrap();
+        await endCallViaId(dialStateInstance.currentCallId).unwrap();
       } catch (e) {
         notifications.show({
           title: "Error",
@@ -286,11 +393,18 @@ function AlphaDialer() {
       }
     }
 
-    if (dialerSignal.currentCallId !== null) {
+    if (dialStateInstance.currentCallId !== null) {
       try {
+        // await updateCallViaId({
+        //   id: currentCallId,
+        //   status: didErrorOccur ? "Error" : "Success",
+        // }).unwrap();
         await endCallViaId;
       } catch (e) {
-        dialerSignal.error = extractErrorMessage(e);
+        notifications.show({
+          title: "Error",
+          message: extractErrorMessage(e),
+        });
       }
     }
 
@@ -298,38 +412,80 @@ function AlphaDialer() {
   }
 
   function resetDialerState() {
-    dialerSignal.isDialing = false;
-    dialerSignal.call = null;
-    dialerSignal.currentCallId = null;
-    dialerSignal.wasCallConnected = false;
-    dialerSignal.currentCallTimer = null;
-    dialerSignal.error = "";
-    dialerSignal.currentDialAttempts = 0;
+    dialStateInstance.isDialing = false;
+    dispatch(setIsDialing(dialStateInstance.isDialing));
+    dialStateInstance.call = null;
+    dispatch(setCall(dialStateInstance.call));
+    dialStateInstance.currentCallId = null;
+    dispatch(setCurrentCallId(dialStateInstance.currentCallId));
+    dialStateInstance.wasCallConnected = false;
+    dispatch(setWasCallConnected(dialStateInstance.wasCallConnected));
+    dialStateInstance.currentCallTimer = null;
   }
 
-  function startDialer() {
+  async function resetDialer() {
+    // End the call
+    stopCall();
+
+    // Additional state cleanup
+    dialStateInstance.error = "";
+    dispatch(setError(dialStateInstance.error));
+    dialStateInstance.currentDialAttempts = 0;
+    dispatch(setCurrentDialAttempts(dialStateInstance.currentDialAttempts));
+  }
+
+  function requestStartDialer() {
     // Start from 0 UNLESS there is a currently selected index
     const newIndex =
-      dialerSignal.dialQueueIndex === null ? 0 : dialerSignal.dialQueueIndex;
-    dialerSignal.dialQueueIndex = newIndex;
-    startCall();
+      dialStateInstance.dialQueueIndex === null
+        ? 0
+        : dialStateInstance.dialQueueIndex;
+    dialStateInstance.dialQueueIndex = newIndex;
+    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
+    dispatch(setRequestAction("startCall"));
   }
 
   function requestContinue() {
-    if (dialerSignal.dialQueueIndex === null) {
-      dialerSignal.error = "Dial queue index is null";
+    if (dialStateInstance.dialQueueIndex === null) {
+      dialStateInstance.error = "Dial queue index is null";
+      dispatch(setError(dialStateInstance.error));
       return;
     }
 
     // Check for next index
-    if (dialerSignal.dialQueueIndex === dialQueue.length - 1) {
-      dialerSignal.dialQueueIndex = 0;
+    if (dialStateInstance.dialQueueIndex === dialQueue.length - 1) {
+      dialStateInstance.dialQueueIndex = 0;
+      dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
     } else {
-      dialerSignal.dialQueueIndex = dialerSignal.dialQueueIndex + 1;
+      dialStateInstance.dialQueueIndex = dialStateInstance.dialQueueIndex + 1;
+      dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
     }
 
     startCall();
   }
+
+  function requestStopDialer() {
+    dispatch(setRequestAction("stopDialing"));
+  }
+
+  async function startDialing() {
+    dialStateInstance.isDialing = true;
+    dispatch(setIsDialing(dialStateInstance.isDialing));
+  }
+
+  async function stopDialing() {
+    dialStateInstance.isDialing = false;
+    dispatch(setIsDialing(dialStateInstance.isDialing));
+    await stopCall();
+  }
+
+  async function handleError() {
+    stopDialing();
+  }
+
+  const openDialerOptions = () => {
+    dispatch(setShowOptions(true));
+  };
 
   //////////////////////// HOOKS ///////////////////////////
 
@@ -343,13 +499,77 @@ function AlphaDialer() {
     setStarting(true);
 
     // No token found, get it
-    if (!dialerSignal.token) {
+    if (!token) {
       fetchToken();
     }
-  }, [starting, setStarting, fetchToken]);
+  }, [token, starting, setStarting]);
+
+  // Handle request actions
+  // TODO: reconsider if this is necessary now that we have the DialState class singleton (ftw)
+  useEffect(() => {
+    if (!requestAction) {
+      return;
+    }
+
+    switch (requestAction) {
+      case "startDialing": {
+        startDialing();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      case "startCall": {
+        startCall();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      case "stopCall": {
+        stopCall();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      case "stopDialing": {
+        stopDialing();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      case "determineNextAction": {
+        determineNextAction();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      case "resetDialer": {
+        resetDialer();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      case "error": {
+        handleError();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
+      default: {
+        dispatch(setRequestAction(null));
+      }
+    }
+  }, [
+    requestAction,
+    call,
+    determineNextAction,
+    dispatch,
+    resetDialer,
+    stopCall,
+    stopDialing,
+  ]);
 
   return (
-    <AlphaDialerStyled $visible={dialerSignal.visible}>
+    <AlphaDialerStyled $visible={isDialerOpen}>
       <Box className="controls">
         <Flex align="flex-start" justify="space-between">
           <Card
@@ -382,6 +602,17 @@ function AlphaDialer() {
                     <CallerIdSelect pr="xs" w={180} />
                   </div>
                 </Tooltip>
+
+                <Tooltip label="Open dialer settings" openDelay={500}>
+                  <ActionIcon
+                    variant="outline"
+                    onClick={openDialerOptions}
+                    size="lg"
+                    color="blue"
+                  >
+                    <IconAdjustments />
+                  </ActionIcon>
+                </Tooltip>
               </Flex>
             </Flex>
 
@@ -406,7 +637,7 @@ function AlphaDialer() {
                     </Text>
                   </HoverCard.Dropdown>
                 </HoverCard>
-              ) : dialerSignal.dialQueueIndex === null ? (
+              ) : dialStateInstance.dialQueueIndex === null ? (
                 <Tooltip
                   label="Begin making calls to the leads in the Call queue"
                   openDelay={500}
@@ -414,7 +645,7 @@ function AlphaDialer() {
                   <Button
                     mx={4}
                     variant="gradient"
-                    onClick={startDialer}
+                    onClick={requestStartDialer}
                     leftIcon={<IconPlayerPlay />}
                   >
                     Start dialer
@@ -430,7 +661,7 @@ function AlphaDialer() {
                     variant="gradient"
                     onClick={requestContinue}
                     leftIcon={<IconPlayerPlay />}
-                    disabled={!!dialerSignal.call}
+                    disabled={!!call}
                   >
                     Continue
                   </Button>
@@ -440,9 +671,9 @@ function AlphaDialer() {
                 <Button
                   mx={4}
                   color="red"
-                  disabled={!dialerSignal.call}
+                  onClick={requestStopDialer}
+                  disabled={!call}
                   leftIcon={<PiPhoneDisconnect fontSize="1.5rem" />}
-                  onClick={stopCall}
                 >
                   Hang up
                 </Button>
@@ -451,7 +682,7 @@ function AlphaDialer() {
               <Tooltip label="Skip to next Lead">
                 <Button
                   variant="outline"
-                  disabled={!dialerSignal.call || !subscriptionActive}
+                  disabled={!call || !subscriptionActive}
                   leftIcon={<IconPlayerSkipForward />}
                   onClick={continueToNextLead}
                   mx={4}
@@ -467,10 +698,10 @@ function AlphaDialer() {
           <Box m="md">
             <DialerQueue />
 
-            {dialerSignal.error && (
+            {error && (
               <Card withBorder mt="md">
                 <Text>Error</Text>
-                <Text color="red">{dialerSignal.error}</Text>
+                <Text color="red">{error}</Text>
               </Card>
             )}
           </Box>

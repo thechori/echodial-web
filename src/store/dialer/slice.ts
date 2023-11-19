@@ -49,7 +49,7 @@ interface IDialerState {
   requestAction: TRequestAction;
   //
   error: string;
-  alphaDialerVisible: boolean;
+  isDialerOpen: boolean;
   isDialing: boolean;
   device: any | Device;
   wasCallConnected: null | boolean;
@@ -71,7 +71,7 @@ interface IDialerState {
 const buildInitialState = (): IDialerState => ({
   requestAction: null,
   //
-  alphaDialerVisible: false,
+  isDialerOpen: false,
   tokenLoading: false,
   device: null,
   isDialing: false,
@@ -106,8 +106,8 @@ export const DialerSlice = createSlice({
     setRequestAction: (state, action: PayloadAction<TRequestAction>) => {
       state.requestAction = action.payload;
     },
-    setAlphaDialerVisible: (state, action) => {
-      state.alphaDialerVisible = action.payload;
+    setIsDialerOpen: (state, action) => {
+      state.isDialerOpen = action.payload;
     },
     setDevice: (state, action) => {
       state.device = action.payload;
@@ -256,7 +256,7 @@ export const DialerSlice = createSlice({
 
 export const {
   setRequestAction,
-  setAlphaDialerVisible,
+  setIsDialerOpen,
   setIsDialing,
   setCall,
   setCurrentCallId,
@@ -295,7 +295,7 @@ export const selectActiveFullName = (state: RootState) => {
 };
 
 export const selectShowAlphaDialer = (state: RootState) =>
-  state.dialer.alphaDialerVisible;
+  state.dialer.isDialerOpen;
 
 export const selectIsDialerOptionsModalOpen = (state: RootState) =>
   state.dialer.showOptions;

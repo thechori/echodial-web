@@ -17,17 +17,11 @@ import { MdPerson } from "react-icons/md";
 import { useAppSelector } from "../../store/hooks";
 // import { setShowOptions } from "../../store/dialer/slice";
 import phoneFormatter from "../../utils/phone-formatter";
-import { dialerSignal } from "./Dialer.signal";
 
 const BetaDialer = () => {
-  // const dispatch = useAppDispatch();
-  const { call, dialQueue, dialQueueIndex } = useAppSelector(
+  const { call, dialQueue, dialQueueIndex, isDialerOpen } = useAppSelector(
     (state) => state.dialer
   );
-
-  // const openDialerOptions = () => {
-  //   dispatch(setShowOptions(true));
-  // };
 
   const renderFullName = () => {
     if (!dialQueue || dialQueueIndex === null) {
@@ -62,8 +56,8 @@ const BetaDialer = () => {
         overflow: "visible",
         display: dialQueue.length ? "flex" : "none",
         alignItems: "center",
-        opacity: dialerSignal.visible ? 0.3 : 1,
-        pointerEvents: dialerSignal.visible ? "none" : "all",
+        opacity: isDialerOpen ? 0.3 : 1,
+        pointerEvents: isDialerOpen ? "none" : "all",
       }}
       pl="1rem"
       pr="2.5rem"

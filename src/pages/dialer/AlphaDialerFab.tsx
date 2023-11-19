@@ -4,24 +4,25 @@ import { AiOutlineClose } from "react-icons/ai";
 //
 import AlphaDialerFabStyled from "./AlphaDialerFab.styles";
 import BetaDialer from "./BetaDialer";
-import { dialerSignal } from "./Dialer.signal";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setIsDialerOpen } from "../../store/dialer/slice";
 
 const AlphaDialerFab = () => {
-  const { dialQueue } = useAppSelector((state) => state.dialer);
+  const dispatch = useAppDispatch();
+  const { dialQueue, isDialerOpen } = useAppSelector((state) => state.dialer);
   return (
     <AlphaDialerFabStyled>
       <BetaDialer />
 
       {!!dialQueue.length && (
         <Box id="fab">
-          {dialerSignal.visible ? (
+          {isDialerOpen ? (
             <Tooltip label="Hide dialer" openDelay={500}>
               <Flex align="center" justify="center">
                 <AiOutlineClose
                   size={30}
                   color="white"
-                  onClick={() => (dialerSignal.visible = false)}
+                  onClick={() => dispatch(setIsDialerOpen(false))}
                 />
               </Flex>
             </Tooltip>
@@ -31,7 +32,7 @@ const AlphaDialerFab = () => {
                 <PiPhone
                   size={40}
                   color="white"
-                  onClick={() => (dialerSignal.visible = true)}
+                  onClick={() => dispatch(setIsDialerOpen(true))}
                 />
               </Flex>
             </Tooltip>

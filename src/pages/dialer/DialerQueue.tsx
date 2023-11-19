@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { IconRefresh } from "@tabler/icons-react";
 import { PiPhone, PiPhoneOutgoing, PiQueue } from "react-icons/pi";
 import {
   Button,
@@ -15,11 +16,15 @@ import {
 import clsx from "clsx";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setDialQueue, setRequestAction } from "../../store/dialer/slice";
+import {
+  setDialQueue,
+  setDialQueueIndex,
+  setIsDialerOpen,
+  setRequestAction,
+} from "../../store/dialer/slice";
 import DialerQueueStyled from "./DialerQueue.styles";
 import CallButtonSimple from "../../components/call-buttons/CallButtonSimple";
-import { dialerSignal } from "./Dialer.signal";
-import { IconRefresh } from "@tabler/icons-react";
+import { dialStateInstance } from "./DialState.class";
 
 function DialerQueue() {
   const dispatch = useAppDispatch();
@@ -29,7 +34,8 @@ function DialerQueue() {
   );
 
   function startCall(index: number) {
-    dialerSignal.dialQueueIndex = index;
+    dialStateInstance.dialQueueIndex = index;
+    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
   }
 
   function stopCall() {
@@ -37,9 +43,10 @@ function DialerQueue() {
   }
 
   function resetDialer() {
-    dialerSignal.dialQueueIndex = null;
+    dialStateInstance.dialQueueIndex = null;
     dispatch(setDialQueue([]));
-    dialerSignal.visible = false;
+
+    dispatch(setIsDialerOpen(false));
   }
 
   const rows = dialQueue.length ? (
@@ -48,13 +55,13 @@ function DialerQueue() {
       let activeIndex = false;
 
       if (
-        dialerSignal.dialQueueIndex !== null &&
-        dialQueue[dialerSignal.dialQueueIndex].id === lead.id
+        dialStateInstance.dialQueueIndex !== null &&
+        dialQueue[dialStateInstance.dialQueueIndex].id === lead.id
       ) {
         activeIndex = true;
       }
 
-      if (activeIndex && dialerSignal.call) {
+      if (activeIndex && dialStateInstance.call) {
         active = true;
       }
 
@@ -80,7 +87,7 @@ function DialerQueue() {
           </td>
           <td className="call-icon hoverable">
             <CallButtonSimple
-              active={!(dialerSignal.call && active)}
+              active={!(dialStateInstance.call && active)}
               onInactiveClick={stopCall}
               onActiveClick={() => startCall(index)}
             />

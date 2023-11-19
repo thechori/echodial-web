@@ -2,12 +2,11 @@ import { Button, Flex, HoverCard, Text } from "@mantine/core";
 import { IconUpload, IconPlus } from "@tabler/icons-react";
 import { PiPhone } from "react-icons/pi";
 import * as amplitude from "@amplitude/analytics-browser";
-
-//
-import { setDialQueue } from "../../store/dialer/slice";
-import { dialerSignal } from "../dialer/Dialer.signal";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { notifications } from "@mantine/notifications";
+//
+import { setDialQueue, setIsDialerOpen } from "../../store/dialer/slice";
+import { dialStateInstance } from "../dialer/DialState.class";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 type TNewLeadsMenuProps = {
   onCsvUpload: () => void;
@@ -20,7 +19,7 @@ function NewLeadsMenu({ onCsvUpload, onManualInput }: TNewLeadsMenuProps) {
 
   const startDialSession = () => {
     // Reset index
-    dialerSignal.dialQueueIndex = null;
+    dialStateInstance.dialQueueIndex = null;
 
     if (!gridRef) {
       notifications.show({
@@ -35,7 +34,7 @@ function NewLeadsMenu({ onCsvUpload, onManualInput }: TNewLeadsMenuProps) {
     dispatch(setDialQueue(selectedLeads));
 
     // Open dialer
-    dialerSignal.visible = true;
+    dispatch(setIsDialerOpen(true));
 
     amplitude.track("Start dial session");
   };
