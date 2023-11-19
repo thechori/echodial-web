@@ -169,8 +169,8 @@ function Dialer() {
     // Note: Using `once` instead to avoid multiple calls, this poses a risk because we are now
     // assuming that ringing will get to `true` since the initial (and only returned value now)
     // is `false` ... address this in  the future if issues occur
-    c.once("ringing", async (call) => {
-      dialStateInstance.status = call.status();
+    c.once("ringing", async () => {
+      dialStateInstance.status = Call.State.Ringing;
       dispatch(setStatus(dialStateInstance.status));
 
       // "currentCallId exists, skipping creation of new Call record" ??
@@ -240,8 +240,8 @@ function Dialer() {
 
     // Occurs when:
     // - Call ends (user hangs up, lead hangs up, voicemail ends)
-    c.on("disconnect", async (call) => {
-      dialStateInstance.status = call.status();
+    c.on("disconnect", async () => {
+      dialStateInstance.status = Call.State.Closed;
       dispatch(setStatus(dialStateInstance.status));
     });
 
@@ -251,7 +251,6 @@ function Dialer() {
       dialStateInstance.status = Call.State.Closed;
       dispatch(setStatus(dialStateInstance.status));
 
-      console.log("error", e);
       const errorMessage = extractErrorMessage(e);
       notifications.show({
         title: "Call error",
@@ -291,7 +290,7 @@ function Dialer() {
   // - Next arrow is click
   async function continueToNextLead() {
     // Stop call
-    stopCall();
+    await stopCall();
 
     // Check for existing index before proceeding
     if (dialStateInstance.dialQueueIndex === dialQueue.length - 1) {
@@ -327,8 +326,6 @@ function Dialer() {
     if (dialStateInstance.dialQueueIndex === null) {
       return console.error("No active contact index found");
     }
-
-    console.log("startCall from continue fn");
 
     // We're safe to proceed
     startCall();
@@ -383,7 +380,6 @@ function Dialer() {
   function resetDialerState() {
     dialStateInstance.isDialing = false;
     dispatch(setIsDialing(dialStateInstance.isDialing));
-    console.log("reset dialer state - call is now null");
     dialStateInstance.call = null;
     dispatch(setCall(dialStateInstance.call));
     dialStateInstance.currentCallId = null;
