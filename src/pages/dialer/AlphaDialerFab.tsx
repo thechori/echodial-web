@@ -3,7 +3,6 @@ import { PiPhone } from "react-icons/pi";
 import { AiOutlineClose } from "react-icons/ai";
 //
 import AlphaDialerFabStyled from "./AlphaDialerFab.styles";
-import BetaDialer from "./BetaDialer";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setIsDialerOpen } from "../../store/dialer/slice";
 
@@ -12,8 +11,6 @@ const AlphaDialerFab = () => {
   const { dialQueue, isDialerOpen } = useAppSelector((state) => state.dialer);
   return (
     <AlphaDialerFabStyled>
-      <BetaDialer />
-
       {!!dialQueue.length && (
         <Box id="fab">
           {isDialerOpen ? (
