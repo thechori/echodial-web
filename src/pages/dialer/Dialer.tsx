@@ -530,9 +530,13 @@ function Dialer() {
                   </ActionIcon>
                 </Tooltip>
 
-                <DialerStatus $visible={status === Call.State.Open}>
+                <DialerStatus
+                  $visible={
+                    status === Call.State.Ringing || status === Call.State.Open
+                  }
+                >
                   <Text size="sm" fw={500} className="duration">
-                    {"00:00"}
+                    {status === Call.State.Ringing ? "Calling..." : "00:00"}
                   </Text>
                 </DialerStatus>
 
