@@ -27,12 +27,6 @@ function CallerIdSelect(props: TCallerIdSelectProps & any) {
     label: "+ Add new number",
   };
 
-  const manageCallerIdSelectItem: SelectItem = {
-    value: "-1",
-    group: "Options",
-    label: "Manage numbers",
-  };
-
   useEffect(() => {
     if (callerIds) {
       const items: SelectItem[] = callerIds.map((cid) => ({
@@ -46,12 +40,7 @@ function CallerIdSelect(props: TCallerIdSelectProps & any) {
         value: n.value,
         label: n.label,
       }));
-      setCallerIdItems([
-        ...items,
-        ...appCallerIds,
-        addNewCallerIdSelectItem,
-        manageCallerIdSelectItem,
-      ]);
+      setCallerIdItems([...items, ...appCallerIds, addNewCallerIdSelectItem]);
     }
   }, [callerIds]);
 
@@ -71,7 +60,7 @@ function CallerIdSelect(props: TCallerIdSelectProps & any) {
       label={props.label}
       placeholder="Pick one"
       data={callerIdItems}
-      value={fromNumber}
+      value={fromNumber || ""}
       onChange={handleSelect}
       {...props}
     />

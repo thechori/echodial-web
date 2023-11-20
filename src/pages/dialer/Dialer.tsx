@@ -33,7 +33,7 @@ import {
 import { DialerStyled, DialerStatus } from "./Dialer.styles";
 import { Call as TCall } from "../../types";
 import DialerQueue from "./DialerQueue";
-import CallerIdSelect from "./CallerIdSelect";
+// import CallerIdSelect from "./CallerIdSelect";
 import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
 import { useDeductTrialCreditMutation } from "../../services/trial-credit";
@@ -515,7 +515,7 @@ function Dialer() {
               <Flex align="center">
                 <DialerPrimaryButton />
 
-                <Tooltip label="Skip to next Lead">
+                <Tooltip label="Skip to next Lead" openDelay={500}>
                   <ActionIcon
                     size="lg"
                     disabled={!subscriptionActive}
@@ -554,9 +554,7 @@ function Dialer() {
                 label="The selected phone number is what we will use to call your
                       leads. This number will appear as your caller ID on the lead's phone."
               >
-                <div>
-                  <CallerIdSelect pr="xs" w={180} />
-                </div>
+                <div>{/* <CallerIdSelect pr="xs" w={180} /> */}</div>
               </Tooltip>
 
               <Tooltip label="Open dialer settings" openDelay={500}>
@@ -569,7 +567,7 @@ function Dialer() {
                 </ActionIcon>
               </Tooltip>
 
-              <Tooltip label="Toggle visibility of the dialer">
+              <Tooltip label="Toggle visibility of the dialer" openDelay={500}>
                 <Flex ml="xs" align="center">
                   {isDialerOpen ? (
                     <MdExpandMore

@@ -1,7 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Device, Call } from "@twilio/voice-sdk";
 //
-import numbers from "../../configs/numbers";
 import { RootState } from "..";
 import { Lead } from "../../types";
 
@@ -18,8 +17,6 @@ const buildOptions = (): TDialerOptions => {
   if (cachedOptions) {
     return JSON.parse(cachedOptions);
   }
-
-  // Check for APP_VERSION difference, clear settings if found to leave room for enhancements to the user experience
 
   return {
     maxRingTimeInSeconds: 10, // 10 seems like a good sweet spot
@@ -84,10 +81,7 @@ const buildInitialState = (): IDialerState => ({
   connectedAt: null,
   currentDialAttempts: null,
   muted: false,
-  // TODO: Remove this hardcoded value in favor of values from API
-  fromNumber:
-    localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER) ||
-    numbers[2].value,
+  fromNumber: localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER) || "",
   error: "",
   status: Call.State.Closed,
   token: null,
