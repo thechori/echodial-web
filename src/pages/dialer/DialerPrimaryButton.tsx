@@ -33,8 +33,8 @@ const DialerPrimaryButton = () => {
     dispatch(setRequestAction("startCall"));
   }
 
-  function requestStopDialer() {
-    dispatch(setRequestAction("stopDialing"));
+  function hangUp() {
+    dispatch(setRequestAction("stopCall"));
   }
 
   return (
@@ -69,7 +69,7 @@ const DialerPrimaryButton = () => {
         ) : (
           <Tooltip label="Hang up" openDelay={500}>
             <EndButton
-              onClick={requestStopDialer}
+              onClick={hangUp}
               $active={status === Call.State.Open}
               className="hoverable"
             >

@@ -2,7 +2,6 @@ import { Call, Device } from "@twilio/voice-sdk";
 
 class DialerState {
   error: string;
-  isDialing: boolean;
   connectedAt: Date | null;
   currentCallId: number | null;
   dialQueueIndex: number | null;
@@ -17,7 +16,6 @@ class DialerState {
   gridRef: any;
 
   constructor() {
-    this.isDialing = false;
     this.error = "";
     this.connectedAt = null;
     this.currentCallId = null;

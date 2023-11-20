@@ -31,15 +31,7 @@ export type TDialerOptions = {
   cooldownTimeInSeconds: number;
 };
 
-export type TRequestAction =
-  | null
-  | "startDialing"
-  | "startCall"
-  | "stopCall"
-  | "stopDialing"
-  | "determineNextAction"
-  | "resetDialer"
-  | "error";
+export type TRequestAction = null | "startCall" | "stopCall";
 
 interface IDialerState {
   // This variable is to manage the state across the app, while being explicit about the ONE thing the
@@ -48,7 +40,6 @@ interface IDialerState {
   //
   error: string;
   isDialerOpen: boolean;
-  isDialing: boolean;
   device: any | Device;
   connectedAt: null | Date;
   currentDialAttempts: null | number;
@@ -75,7 +66,6 @@ const buildInitialState = (): IDialerState => ({
       : true,
   tokenLoading: false,
   device: null,
-  isDialing: false,
   call: null,
   currentCallId: null,
   connectedAt: null,
@@ -117,9 +107,6 @@ export const DialerSlice = createSlice({
     },
     setTokenLoading: (state, action) => {
       state.tokenLoading = action.payload;
-    },
-    setIsDialing: (state, action) => {
-      state.isDialing = action.payload;
     },
     setCall: (state, action) => {
       state.call = action.payload;
@@ -260,7 +247,6 @@ export const DialerSlice = createSlice({
 export const {
   setRequestAction,
   setIsDialerOpen,
-  setIsDialing,
   setCall,
   setCurrentCallId,
   setCurrentDialAttempts,

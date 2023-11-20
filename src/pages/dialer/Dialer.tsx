@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Call, Device } from "@twilio/voice-sdk";
 import { ActionIcon, Card, Text, Tooltip } from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
@@ -24,7 +24,6 @@ import {
   setCurrentDialAttempts,
   setRequestAction,
   setConnectedAt,
-  setIsDialing,
   setDialQueueIndex,
   setShowOptions,
   setIsDialerOpen,
@@ -39,10 +38,12 @@ import { dialStateInstance } from "./DialState.class";
 import { useDeductTrialCreditMutation } from "../../services/trial-credit";
 import { DialerPrimaryButton } from "./DialerPrimaryButton";
 import phoneFormatter from "../../utils/phone-formatter";
+import { Duration, intervalToDuration } from "date-fns";
 
 function Dialer() {
   const dispatch = useAppDispatch();
   const [starting, setStarting] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState("0:00:00");
 
   const jwtDecoded = useAppSelector(selectJwtDecoded);
   const {
@@ -55,6 +56,7 @@ function Dialer() {
     isDialerOpen,
     error,
     status,
+    connectedAt,
   } = useAppSelector((state) => state.dialer);
   const { subscriptionActive } = useAppSelector((state) => state.user);
   //
@@ -63,7 +65,7 @@ function Dialer() {
   const [endCallViaId] = useEndCallMutation();
   const [deductTrialCredit] = useDeductTrialCreditMutation();
 
-  async function initializeDevice() {
+  const initializeDevice = useCallback(async () => {
     dispatch(setError(""));
 
     if (!dialStateInstance.token) {
@@ -88,12 +90,12 @@ function Dialer() {
 
     dialStateInstance.device = device;
     dispatch(setDevice(device));
-  }
+  }, [dispatch]);
 
   // TODO: Reevaluate for performance enhancements
   // Consider: lags that happens when opening websocket
   // Consider: lag to init start up client before call (even more delay before call - users not happy)
-  async function fetchToken() {
+  const fetchToken = useCallback(async () => {
     try {
       const { data } = await apiService("/dialer/token");
       const token = data.token;
@@ -107,10 +109,12 @@ function Dialer() {
         )
       );
     }
-  }
+  }, [dispatch, initializeDevice]);
 
   // Begin calling the current index
-  async function startCall() {
+  const startCall = useCallback(async () => {
+    console.log("startCall");
+
     // Clear error
     dialStateInstance.error = "";
     dispatch(setError(dialStateInstance.error));
@@ -123,11 +127,9 @@ function Dialer() {
 
     // Check for items in queue
     if (dialQueue.length === 0) {
-      dispatch(
-        setError(
-          "No leads in call queue, be sure to add some before running the dialer"
-        )
-      );
+      dialStateInstance.error =
+        "No leads in call queue, be sure to add some before running the dialer";
+      dispatch(setError(dialStateInstance.error));
       return;
     }
 
@@ -137,8 +139,6 @@ function Dialer() {
     }
 
     dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-    dialStateInstance.isDialing = true;
-    dispatch(setIsDialing(dialStateInstance.isDialing));
 
     // Initialize or increment current dial attempts
     if (dialStateInstance.currentDialAttempts === null) {
@@ -216,9 +216,6 @@ function Dialer() {
       dialStateInstance.connectedAt = now;
       dispatch(setConnectedAt(dialStateInstance.connectedAt));
 
-      // Begin timer to track duration of call
-      startCallTimer();
-
       try {
         if (dialStateInstance.currentCallId === null) {
           throw Error("No call ID found");
@@ -263,33 +260,32 @@ function Dialer() {
 
     dialStateInstance.call = c;
     dispatch(setCall(dialStateInstance.call));
-  }
 
-  // TODO: consider setting a variable like `callConnectedAt` and generating a new Date object to use
-  // with date-fns to properly track the difference between the two dates -- this seems MUCH more accurate
-  // because the current increment of a "second" ever 1000ms seems way too fast...
-  //
-  // Call timer tracks the current call duration to show the user how long they've been on the call for
-  async function startCallTimer() {
-    const timer = setInterval(async () => {
-      console.info("1 sec has passed");
-    }, 1000);
+    return true;
+  }, [
+    addCall,
+    deductTrialCredit,
+    device,
+    dialQueue,
+    dispatch,
+    fromNumber,
+    jwtDecoded?.id,
+    updateCallViaId,
+  ]);
 
-    dialStateInstance.currentCallTimer = timer;
-  }
-
-  function stopCallTimer() {
-    clearInterval(dialStateInstance.currentCallTimer);
-    dialStateInstance.currentCallTimer = null;
-  }
-
-  function requestStopDialer() {
-    dispatch(setRequestAction("stopDialing"));
-  }
+  const resetDialerState = useCallback(() => {
+    console.log("resetDialerState");
+    dialStateInstance.call = null;
+    dispatch(setCall(dialStateInstance.call));
+    dialStateInstance.currentCallId = null;
+    dispatch(setCurrentCallId(dialStateInstance.currentCallId));
+  }, [dispatch]);
 
   // Invoked when:
   // - Next arrow is click
-  async function continueToNextLead() {
+  async function skipToNextLead() {
+    console.log("skipToNextLead.start");
+
     // Stop call
     await stopCall();
 
@@ -299,7 +295,6 @@ function Dialer() {
         message: "You've made it through all of your leads! Great job 🎉",
       });
 
-      requestStopDialer();
       dialStateInstance.dialQueueIndex = null;
       dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
       return;
@@ -328,6 +323,8 @@ function Dialer() {
       return console.error("No active contact index found");
     }
 
+    console.log("skipToNextLead.end");
+
     // We're safe to proceed
     startCall();
   }
@@ -335,16 +332,14 @@ function Dialer() {
   // Invoked when:
   // - Stop button is clicked
   // - An error occurs
-  // - Call disconnects ?
-  async function stopCall() {
+  // - Call disconnects
+  const stopCall = useCallback(async () => {
+    dialStateInstance.connectedAt = null;
+    dispatch(setConnectedAt(dialStateInstance.connectedAt));
+
     // Bug: no call is found when this gets invoked
     if (dialStateInstance.call) {
       dialStateInstance.call.disconnect();
-    }
-
-    // Stop timer
-    if (dialStateInstance.currentCallTimer) {
-      stopCallTimer();
     }
 
     if (dialStateInstance.currentCallId === null) {
@@ -362,10 +357,6 @@ function Dialer() {
 
     if (dialStateInstance.currentCallId !== null) {
       try {
-        // await updateCallViaId({
-        //   id: currentCallId,
-        //   status: didErrorOccur ? "Error" : "Success",
-        // }).unwrap();
         await endCallViaId;
       } catch (e) {
         notifications.show({
@@ -374,47 +365,11 @@ function Dialer() {
         });
       }
     }
-
+    console.log("end of stopCall");
     resetDialerState();
-  }
 
-  function resetDialerState() {
-    dialStateInstance.isDialing = false;
-    dispatch(setIsDialing(dialStateInstance.isDialing));
-    dialStateInstance.call = null;
-    dispatch(setCall(dialStateInstance.call));
-    dialStateInstance.currentCallId = null;
-    dispatch(setCurrentCallId(dialStateInstance.currentCallId));
-    dialStateInstance.connectedAt = null;
-    dispatch(setConnectedAt(dialStateInstance.connectedAt));
-    dialStateInstance.currentCallTimer = null;
-  }
-
-  async function resetDialer() {
-    // End the call
-    stopCall();
-
-    // Additional state cleanup
-    dialStateInstance.error = "";
-    dispatch(setError(dialStateInstance.error));
-    dialStateInstance.currentDialAttempts = 0;
-    dispatch(setCurrentDialAttempts(dialStateInstance.currentDialAttempts));
-  }
-
-  async function startDialing() {
-    dialStateInstance.isDialing = true;
-    dispatch(setIsDialing(dialStateInstance.isDialing));
-  }
-
-  async function stopDialing() {
-    dialStateInstance.isDialing = false;
-    dispatch(setIsDialing(dialStateInstance.isDialing));
-    await stopCall();
-  }
-
-  async function handleError() {
-    stopDialing();
-  }
+    return true;
+  }, [dispatch, endCallViaId, resetDialerState]);
 
   const openDialerOptions = () => {
     dispatch(setShowOptions(true));
@@ -435,7 +390,7 @@ function Dialer() {
     if (!token) {
       fetchToken();
     }
-  }, [token, starting, setStarting]);
+  }, [token, starting, setStarting, fetchToken]);
 
   // Handle request actions
   // TODO: reconsider if this is necessary now that we have the DialState class singleton (ftw)
@@ -445,12 +400,6 @@ function Dialer() {
     }
 
     switch (requestAction) {
-      case "startDialing": {
-        startDialing();
-        dispatch(setRequestAction(null));
-        break;
-      }
-
       case "startCall": {
         startCall();
         dispatch(setRequestAction(null));
@@ -463,30 +412,33 @@ function Dialer() {
         break;
       }
 
-      case "stopDialing": {
-        stopDialing();
-        dispatch(setRequestAction(null));
-        break;
-      }
-
-      case "resetDialer": {
-        resetDialer();
-        dispatch(setRequestAction(null));
-        break;
-      }
-
-      case "error": {
-        handleError();
-        dispatch(setRequestAction(null));
-        break;
-      }
-
       default: {
         dispatch(setRequestAction(null));
       }
     }
-  }, [requestAction, call, dispatch, resetDialer, stopCall, stopDialing]);
+  }, [requestAction, call, dispatch, stopCall, startCall]);
 
+  useEffect(() => {
+    if (!connectedAt) return;
+
+    const interval = setInterval(() => {
+      const now = new Date();
+      const duration = intervalToDuration({ start: connectedAt, end: now });
+      const formattedTime = formatDuration(duration);
+      setElapsedTime(formattedTime);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [connectedAt]);
+
+  const formatDuration = (duration: Duration) => {
+    const hours = String(duration.hours).padStart(1, "0");
+    const minutes = String(duration.minutes).padStart(2, "0");
+    const seconds = String(duration.seconds).padStart(2, "0");
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
+  // Don't show the Dialer if there are no leads in the queue
   if (dialQueue.length === 0) return;
 
   // Name, phone
@@ -522,7 +474,7 @@ function Dialer() {
                   <ActionIcon
                     size="lg"
                     disabled={!subscriptionActive}
-                    onClick={continueToNextLead}
+                    onClick={skipToNextLead}
                     mx={4}
                   >
                     <IconPlayerSkipForwardFilled />
@@ -541,7 +493,7 @@ function Dialer() {
                       ? "Starting..."
                       : status === Call.State.Ringing
                       ? "Calling..."
-                      : "00:00"}
+                      : elapsedTime}
                   </Text>
                 </DialerStatus>
 
