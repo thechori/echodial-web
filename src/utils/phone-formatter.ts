@@ -3,7 +3,7 @@
  * @param number Twilio-compliant phone number (string)
  * @returns Human readable string
  */
-function phoneFormatter(number?: string) {
+function phoneFormatter(number: string | null | undefined) {
   // Handle undefined
   if (!number) return null;
 

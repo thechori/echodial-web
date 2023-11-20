@@ -4,7 +4,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { MdGroups } from "react-icons/md";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import NewLeadsMenu from "./NewLeadsMenu";
+import NewLeadsMenu from "./LeadsHeader";
 import UploadLeadsViaCsvModal from "../import-leads/UploadLeadsViaCsvModal";
 import ManualInputLeadModal from "./ManualInputLeadModal";
 import {

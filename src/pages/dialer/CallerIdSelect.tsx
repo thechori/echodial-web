@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Select, SelectItem } from "@mantine/core";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setAlphaDialerVisible, setFromNumber } from "../../store/dialer/slice";
+import { setFromNumber, setIsDialerOpen } from "../../store/dialer/slice";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
 import phoneFormatter from "../../utils/phone-formatter";
 import numbers from "../../configs/numbers";
@@ -10,7 +10,11 @@ import { useNavigate } from "react-router-dom";
 import routes from "../../configs/routes";
 import { APP_NAME } from "../../configs/labels";
 
-function CallerIdSelect(props: any) {
+type TCallerIdSelectProps = {
+  label?: string;
+};
+
+function CallerIdSelect(props: TCallerIdSelectProps & any) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [callerIdItems, setCallerIdItems] = useState<SelectItem[]>([]);
@@ -21,12 +25,6 @@ function CallerIdSelect(props: any) {
     value: "-1",
     group: "Options",
     label: "+ Add new number",
-  };
-
-  const manageCallerIdSelectItem: SelectItem = {
-    value: "-1",
-    group: "Options",
-    label: "Manage numbers",
   };
 
   useEffect(() => {
@@ -42,19 +40,14 @@ function CallerIdSelect(props: any) {
         value: n.value,
         label: n.label,
       }));
-      setCallerIdItems([
-        ...items,
-        ...appCallerIds,
-        addNewCallerIdSelectItem,
-        manageCallerIdSelectItem,
-      ]);
+      setCallerIdItems([...items, ...appCallerIds, addNewCallerIdSelectItem]);
     }
   }, [callerIds]);
 
   function handleSelect(value: string) {
     // Check for "Add new number" item click
     if (value === addNewCallerIdSelectItem.value) {
-      dispatch(setAlphaDialerVisible(false));
+      dispatch(setIsDialerOpen(false));
       navigate(routes.callerIds);
       return;
     }
@@ -64,10 +57,10 @@ function CallerIdSelect(props: any) {
 
   return (
     <Select
-      label="My number"
+      label={props.label}
       placeholder="Pick one"
       data={callerIdItems}
-      value={fromNumber}
+      value={fromNumber || ""}
       onChange={handleSelect}
       {...props}
     />

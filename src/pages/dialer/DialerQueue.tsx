@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { IconRefresh } from "@tabler/icons-react";
 import { PiPhone, PiPhoneOutgoing, PiQueue } from "react-icons/pi";
 import {
   Button,
@@ -7,6 +8,7 @@ import {
   Flex,
   Group,
   HoverCard,
+  Overlay,
   Table,
   Text,
   ThemeIcon,
@@ -16,19 +18,19 @@ import clsx from "clsx";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
-  setAlphaDialerVisible,
   setDialQueue,
   setDialQueueIndex,
+  setIsDialerOpen,
   setRequestAction,
 } from "../../store/dialer/slice";
 import DialerQueueStyled from "./DialerQueue.styles";
 import CallButtonSimple from "../../components/call-buttons/CallButtonSimple";
 import { dialStateInstance } from "./DialState.class";
-import { IconRefresh } from "@tabler/icons-react";
 
 function DialerQueue() {
   const dispatch = useAppDispatch();
 
+  const { subscriptionActive } = useAppSelector((state) => state.user);
   const { call, dialQueue, dialQueueIndex } = useAppSelector(
     (state) => state.dialer
   );
@@ -45,9 +47,9 @@ function DialerQueue() {
 
   function resetDialer() {
     dialStateInstance.dialQueueIndex = null;
-    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
     dispatch(setDialQueue([]));
-    dispatch(setAlphaDialerVisible(false));
+
+    dispatch(setIsDialerOpen(false));
   }
 
   const rows = dialQueue.length ? (
@@ -151,6 +153,8 @@ function DialerQueue() {
 
         <div className="fade" />
         <div className="scroll-area">
+          {!subscriptionActive && <Overlay color="#fff" opacity={0.85} />}
+
           <Table horizontalSpacing="xs" verticalSpacing="sm">
             <thead>
               <tr>

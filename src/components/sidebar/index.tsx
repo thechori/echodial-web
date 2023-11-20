@@ -11,15 +11,14 @@ import SidebarStyled from "./Sidebar.styles";
 import routes from "../../configs/routes";
 import logo from "../../assets/EchoDial-temp-logo-full.png";
 import colors from "../../styles/colors";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setAlphaDialerVisible } from "../../store/dialer/slice";
 import { SidebarSubscriptionDetail } from "./SidebarSubscriptionDetail";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setIsDialerOpen } from "../../store/dialer/slice";
 
 const Sidebar = () => {
-  const { alphaDialerVisible } = useAppSelector((state) => state.dialer);
-
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { isDialerOpen } = useAppSelector((state) => state.dialer);
   const [expanded, setExpanded] = useState(false);
 
   const handleClickOff = (e: MouseEvent<HTMLDivElement>) => {
@@ -30,9 +29,9 @@ const Sidebar = () => {
   // Click wrapper to handle hiding the dialer whenever a nav change is requested
   const clickWrapper = (nextAction: any) => {
     // Check for visible dialer
-    if (alphaDialerVisible) {
+    if (isDialerOpen) {
       // Hide dialer if found
-      dispatch(setAlphaDialerVisible(false));
+      dispatch(setIsDialerOpen(false));
     }
 
     // Continue

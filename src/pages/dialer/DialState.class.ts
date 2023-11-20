@@ -1,11 +1,8 @@
 import { Call, Device } from "@twilio/voice-sdk";
 
-type DialerStateStatus = "idle" | "connecting" | "ringing" | "inCall";
-
 class DialerState {
   error: string;
-  isDialing: boolean;
-  wasCallConnected: boolean;
+  connectedAt: Date | null;
   currentCallId: number | null;
   dialQueueIndex: number | null;
   currentDialAttempts: number;
@@ -15,12 +12,12 @@ class DialerState {
   currentCallTimer: any;
   currentCallDuration: number | null;
   totalDialingDuration: number | null;
-  status: DialerStateStatus;
+  status: Call.State;
+  gridRef: any;
 
   constructor() {
-    this.isDialing = false;
     this.error = "";
-    this.wasCallConnected = false;
+    this.connectedAt = null;
     this.currentCallId = null;
     this.dialQueueIndex = null;
     this.currentDialAttempts = 0;
@@ -30,7 +27,8 @@ class DialerState {
     this.currentCallTimer = null;
     this.currentCallDuration = null;
     this.totalDialingDuration = null;
-    this.status = "idle";
+    this.status = Call.State.Closed;
+    this.gridRef = null;
   }
 }
 
