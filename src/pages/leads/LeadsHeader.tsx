@@ -8,20 +8,20 @@ import { setDialQueue, setIsDialerOpen } from "../../store/dialer/slice";
 import { dialStateInstance } from "../dialer/DialState.class";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
-type TNewLeadsMenuProps = {
+type TLeadsHeaderProps = {
   onCsvUpload: () => void;
   onManualInput: () => void;
 };
 
-function NewLeadsMenu({ onCsvUpload, onManualInput }: TNewLeadsMenuProps) {
+function LeadsHeader({ onCsvUpload, onManualInput }: TLeadsHeaderProps) {
   const dispatch = useAppDispatch();
-  const { selectedRows, gridRef } = useAppSelector((state) => state.leads);
+  const { selectedRows } = useAppSelector((state) => state.leads);
 
   const startDialSession = () => {
     // Reset index
     dialStateInstance.dialQueueIndex = null;
 
-    if (!gridRef) {
+    if (!dialStateInstance.gridRef) {
       notifications.show({
         message: "gridRef not found. Please try again later.",
       });
@@ -29,7 +29,9 @@ function NewLeadsMenu({ onCsvUpload, onManualInput }: TNewLeadsMenuProps) {
     }
 
     // Load up leads into queue from selected items
-    const selectedLeads = gridRef.current?.api.getSelectedRows();
+    // const selectedLeads = gridRef.current?.api.getSelectedRows();
+    const selectedLeads =
+      dialStateInstance.gridRef.current?.api.getSelectedRows();
 
     dispatch(setDialQueue(selectedLeads));
 
@@ -39,7 +41,7 @@ function NewLeadsMenu({ onCsvUpload, onManualInput }: TNewLeadsMenuProps) {
     amplitude.track("Start dial session");
 
     // Clear selection on Leads page
-    gridRef.current?.api.deselectAll();
+    dialStateInstance.gridRef.current?.api.deselectAll();
   };
 
   return (
@@ -103,4 +105,4 @@ function NewLeadsMenu({ onCsvUpload, onManualInput }: TNewLeadsMenuProps) {
   );
 }
 
-export default NewLeadsMenu;
+export default LeadsHeader;

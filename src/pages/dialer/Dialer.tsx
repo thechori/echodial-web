@@ -3,6 +3,8 @@ import { Call, Device } from "@twilio/voice-sdk";
 import { ActionIcon, Card, Text, Tooltip } from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { MdOutlineTune, MdExpandLess, MdExpandMore } from "react-icons/md";
+import { IconPlayerSkipForwardFilled } from "@tabler/icons-react";
 //
 import {
   useAddCallMutation,
@@ -32,12 +34,6 @@ import { DialerStyled, DialerStatus } from "./Dialer.styles";
 import { Call as TCall } from "../../types";
 import DialerQueue from "./DialerQueue";
 import CallerIdSelect from "./CallerIdSelect";
-import {
-  IconAdjustments,
-  IconChevronDown,
-  IconChevronUp,
-  IconPlayerSkipForwardFilled,
-} from "@tabler/icons-react";
 import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
 import { useDeductTrialCreditMutation } from "../../services/trial-credit";
@@ -569,31 +565,29 @@ function Dialer() {
                   onClick={openDialerOptions}
                   size="lg"
                 >
-                  <IconAdjustments />
+                  <MdOutlineTune />
                 </ActionIcon>
               </Tooltip>
 
-              <Box ml="xs">
-                <Tooltip label="Toggle visibility of the dialer">
+              <Tooltip label="Toggle visibility of the dialer">
+                <Flex ml="xs" align="center">
                   {isDialerOpen ? (
-                    <ActionIcon
-                      variant="outline"
-                      size="lg"
+                    <MdExpandMore
+                      className="hoverable"
+                      fontSize="2rem"
+                      color="grey"
                       onClick={() => dispatch(setIsDialerOpen(false))}
-                    >
-                      <IconChevronDown />
-                    </ActionIcon>
+                    />
                   ) : (
-                    <ActionIcon
-                      variant="outline"
-                      size="lg"
+                    <MdExpandLess
+                      className="hoverable"
+                      fontSize="2rem"
+                      color="grey"
                       onClick={() => dispatch(setIsDialerOpen(true))}
-                    >
-                      <IconChevronUp />
-                    </ActionIcon>
+                    />
                   )}
-                </Tooltip>
-              </Box>
+                </Flex>
+              </Tooltip>
             </Flex>
           </Card>
         </Flex>

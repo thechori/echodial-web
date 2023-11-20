@@ -27,13 +27,13 @@ import { leadColDefs } from "./leadColDefs";
 import { useGetLeadStatusesQuery } from "../../services/lead.status";
 import { SelectionChangedEvent } from "ag-grid-community";
 import {
-  setGridRef,
   setRequestForImportLeadsModal,
   setRequestForManualCreateLeadsModal,
   setSelectedRows,
 } from "../../store/leads/slice";
 import { TableActionCell } from "./TableActionCell";
 import { LeadsFilteredListStyled } from "./LeadsFilteredList.styles";
+import { dialStateInstance } from "../dialer/DialState.class";
 
 function LeadsFilteredList() {
   const { data: leadStatuses } = useGetLeadStatusesQuery();
@@ -152,10 +152,8 @@ function LeadsFilteredList() {
 
   // Lift gridRef into global state for use in other components
   useEffect(() => {
-    if (gridRef) {
-      dispatch(setGridRef(gridRef));
-    }
-  }, [gridRef, setGridRef]);
+    dialStateInstance.gridRef = gridRef;
+  }, [gridRef]);
 
   return (
     <LeadsFilteredListStyled>

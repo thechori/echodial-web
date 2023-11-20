@@ -14,6 +14,7 @@ class DialerState {
   currentCallDuration: number | null;
   totalDialingDuration: number | null;
   status: Call.State;
+  gridRef: any;
 
   constructor() {
     this.isDialing = false;
@@ -29,6 +30,7 @@ class DialerState {
     this.currentCallDuration = null;
     this.totalDialingDuration = null;
     this.status = Call.State.Closed;
+    this.gridRef = null;
   }
 }
 

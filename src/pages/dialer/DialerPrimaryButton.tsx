@@ -1,5 +1,4 @@
-import { Box, Button, Flex, HoverCard, Text, Tooltip } from "@mantine/core";
-import { IconPlayerPlay } from "@tabler/icons-react";
+import { Box, Flex, HoverCard, Text, Tooltip } from "@mantine/core";
 import { PiPhoneDisconnect } from "react-icons/pi";
 import { MdPhone } from "react-icons/md";
 //
@@ -44,14 +43,11 @@ const DialerPrimaryButton = () => {
         {!subscriptionActive ? (
           <HoverCard width={280} shadow="md">
             <HoverCard.Target>
-              <Button
-                mx={4}
-                style={{ border: "1px solid red" }}
-                className="disabled-button"
-                leftIcon={<IconPlayerPlay />}
-              >
-                Start
-              </Button>
+              <div>
+                <StartButton disabled={!subscriptionActive}>
+                  <MdPhone fontSize="1.5rem" />
+                </StartButton>
+              </div>
             </HoverCard.Target>
             <HoverCard.Dropdown>
               <Text size="sm">
