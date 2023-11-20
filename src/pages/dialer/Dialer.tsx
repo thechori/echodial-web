@@ -159,6 +159,9 @@ function Dialer() {
     // Start Call
     const c = (await device.connect({ params })) as Call;
 
+    dialStateInstance.status = Call.State.Connecting;
+    dispatch(setStatus(dialStateInstance.status));
+
     // Occurs when:
     // - Call initializes (initially returns as `false`)
     // - Call connects and begins ringing
@@ -528,11 +531,17 @@ function Dialer() {
 
                 <DialerStatus
                   $visible={
-                    status === Call.State.Ringing || status === Call.State.Open
+                    status === Call.State.Connecting ||
+                    status === Call.State.Ringing ||
+                    status === Call.State.Open
                   }
                 >
                   <Text size="sm" fw={500} className="duration">
-                    {status === Call.State.Ringing ? "Calling..." : "00:00"}
+                    {status === Call.State.Connecting
+                      ? "Starting..."
+                      : status === Call.State.Ringing
+                      ? "Calling..."
+                      : "00:00"}
                   </Text>
                 </DialerStatus>
 
