@@ -8,6 +8,7 @@ import {
   Flex,
   Group,
   HoverCard,
+  Overlay,
   Table,
   Text,
   ThemeIcon,
@@ -29,6 +30,7 @@ import { dialStateInstance } from "./DialState.class";
 function DialerQueue() {
   const dispatch = useAppDispatch();
 
+  const { subscriptionActive } = useAppSelector((state) => state.user);
   const { call, dialQueue, dialQueueIndex } = useAppSelector(
     (state) => state.dialer
   );
@@ -151,6 +153,8 @@ function DialerQueue() {
 
         <div className="fade" />
         <div className="scroll-area">
+          {!subscriptionActive && <Overlay color="#fff" opacity={0.85} />}
+
           <Table horizontalSpacing="xs" verticalSpacing="sm">
             <thead>
               <tr>
