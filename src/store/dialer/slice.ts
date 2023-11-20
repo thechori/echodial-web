@@ -31,7 +31,7 @@ export type TDialerOptions = {
   cooldownTimeInSeconds: number;
 };
 
-export type TRequestAction = null | "startCall" | "stopCall";
+export type TRequestAction = null | "startCall" | "stopCall" | "skipToNextLead";
 
 interface IDialerState {
   // This variable is to manage the state across the app, while being explicit about the ONE thing the

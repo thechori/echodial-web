@@ -412,11 +412,17 @@ function Dialer() {
         break;
       }
 
+      case "skipToNextLead": {
+        skipToNextLead();
+        dispatch(setRequestAction(null));
+        break;
+      }
+
       default: {
         dispatch(setRequestAction(null));
       }
     }
-  }, [requestAction, call, dispatch, stopCall, startCall]);
+  }, [requestAction, call, dispatch, stopCall, startCall, skipToNextLead]);
 
   useEffect(() => {
     if (!connectedAt) return;
@@ -474,7 +480,7 @@ function Dialer() {
                   <ActionIcon
                     size="lg"
                     disabled={!subscriptionActive}
-                    onClick={skipToNextLead}
+                    onClick={() => dispatch(setRequestAction("skipToNextLead"))}
                     mx={4}
                   >
                     <IconPlayerSkipForwardFilled />
