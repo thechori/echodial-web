@@ -10,7 +10,7 @@ function NotFound() {
           No page found
           <br />
           <br />
-          <a href={routes.landing}>Go home</a>
+          <a href={routes.signIn}>Go home</a>
         </p>
       </div>
     </NotFoundStyled>

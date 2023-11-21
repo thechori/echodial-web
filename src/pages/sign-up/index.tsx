@@ -5,7 +5,7 @@ import { IconCircleCheck } from "@tabler/icons-react";
 import { isPossiblePhoneNumber } from "react-phone-number-input";
 //
 import SignUpStyled from "./SignUp.styles";
-import echodialLogo from "../../assets/EchoDial-temp-logo-full.png";
+import appLogo from "../../assets/EchoDial-temp-logo-full.png";
 import routes from "../../configs/routes";
 import { extractErrorMessage } from "../../utils/error";
 import { useAppDispatch } from "../../store/hooks";
@@ -25,6 +25,7 @@ import {
 } from "@mantine/core";
 import { APP_NAME } from "../../configs/labels";
 import { PhoneInput } from "../../components/phone-input";
+import { MARKETING_SITE_URL } from "../../configs/urls";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -91,9 +92,9 @@ function SignUp() {
           <Box
             py="md"
             className="logo-container hoverable"
-            onClick={() => navigate(routes.landing)}
+            onClick={() => document.location.replace(MARKETING_SITE_URL)}
           >
-            <img src={echodialLogo} alt="EchoDial logo" />
+            <img src={appLogo} alt={`${APP_NAME} logo`} />
           </Box>
 
           <Box py="md">
@@ -109,7 +110,7 @@ function SignUp() {
         <div className="card">
           <div className="left">
             <div className="value-proposition">
-              <div className="title">With EchoDial you get:</div>
+              <div className="title">With {APP_NAME} you get:</div>
               <List
                 spacing="md"
                 size="md"
@@ -200,8 +201,8 @@ function SignUp() {
                   }
                 />
                 <Text size="xs">
-                  I accept the <a href="#">EchoDial Terms of Service</a> and
-                  have read the <a href="#">EchoDial Privacy Notice</a>.
+                  I accept the <a href="#">{APP_NAME} Terms of Service</a> and
+                  have read the <a href="#">{APP_NAME} Privacy Notice</a>.
                 </Text>
               </Flex>
 

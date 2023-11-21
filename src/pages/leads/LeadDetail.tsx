@@ -53,7 +53,7 @@ export const LeadDetail = () => {
         return /^\S+@\S+$/.test(val) ? null : "Invalid email";
       },
       phone: (val: any) => {
-        if (!val) return "Phone number required";
+        if (!val) return null;
         const isValid = isPossiblePhoneNumber(val);
         return isValid ? null : "Invalid phone number";
       },

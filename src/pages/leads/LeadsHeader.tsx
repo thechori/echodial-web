@@ -4,7 +4,11 @@ import { PiPhone } from "react-icons/pi";
 import * as amplitude from "@amplitude/analytics-browser";
 import { notifications } from "@mantine/notifications";
 //
-import { setDialQueue, setIsDialerOpen } from "../../store/dialer/slice";
+import {
+  setDialQueue,
+  setDialQueueIndex,
+  setIsDialerOpen,
+} from "../../store/dialer/slice";
 import { dialStateInstance } from "../dialer/DialState.class";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
@@ -38,6 +42,10 @@ function LeadsHeader({ onCsvUpload, onManualInput }: TLeadsHeaderProps) {
     // Open dialer
     dispatch(setIsDialerOpen(true));
 
+    // Set index to 0
+    dialStateInstance.dialQueueIndex = 0;
+    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
+
     amplitude.track("Start dial session");
 
     // Clear selection on Leads page
@@ -45,7 +53,7 @@ function LeadsHeader({ onCsvUpload, onManualInput }: TLeadsHeaderProps) {
   };
 
   return (
-    <Flex>
+    <Flex align="center">
       <Button
         mx={4}
         size="sm"

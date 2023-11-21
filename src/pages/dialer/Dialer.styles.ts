@@ -2,6 +2,8 @@ import { styled } from "styled-components";
 //
 import devices from "../../styles/devices";
 
+type TDialerState = "hidden" | "expanded" | "collapsed";
+
 export const DialerStatus = styled.div<{ $visible: boolean }>`
   width: ${(props) => (props.$visible ? "110px" : "0px")};
   text-align: center;
@@ -18,11 +20,28 @@ export const DialerStatus = styled.div<{ $visible: boolean }>`
   }
 `;
 
-export const DialerStyled = styled.div<{ $visible: boolean }>`
+export const DialerStyled = styled.div<{ $state: TDialerState }>`
   background-color: #e1e1e1;
 
-  transform: ${(props) =>
-    props.$visible ? "translateY(0px)" : "translateY(90vh)"};
+  transform: ${(props) => {
+    switch (props.$state) {
+      case "collapsed": {
+        return "translateY(calc(100vh - 93px))";
+      }
+
+      case "expanded": {
+        return "translateY(0px)";
+      }
+
+      case "hidden": {
+        return "translateY(100vh)";
+      }
+
+      default: {
+        return "translateY(0px)";
+      }
+    }
+  }};
 
   position: fixed;
   left: 0;
@@ -77,35 +96,6 @@ export const DialerStyled = styled.div<{ $visible: boolean }>`
 
       div div {
         line-height: 1rem;
-      }
-    }
-  }
-
-  .controls {
-    .control-buttons {
-      display: flex;
-      align-items: flex-end;
-
-      padding: 0.25rem;
-
-      /* svg {
-        font-size: 2.5rem;
-      } */
-
-      & > div {
-        padding: 0 0.5rem;
-      }
-    }
-
-    .call-details {
-      display: flex;
-
-      & > div {
-        padding: 0rem 0.5rem;
-
-        @media ${devices.tablet} {
-          padding: 0rem 1rem;
-        }
       }
     }
   }

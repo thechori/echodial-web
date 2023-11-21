@@ -5,7 +5,13 @@ import {
   createApi,
 } from "@reduxjs/toolkit/query/react";
 //
-import { Lead, LeadCustomProperty, LeadPropertyGroup, LeadStandardProperty} from "../types";
+import {
+  Lead,
+  LeadCustomProperty,
+  LeadPropertyGroup,
+  LeadPropertyType,
+  LeadStandardProperty,
+} from "../types";
 import { setJwt, signOut } from "../store/user/slice";
 import { baseQuery } from "./helpers/base-query";
 
@@ -36,7 +42,13 @@ const baseQueryWithReauth: BaseQueryFn<
 export const leadApi = createApi({
   reducerPath: "leadApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["Lead"],
+  tagTypes: [
+    "Lead",
+    "LeadStandardProperty",
+    "LeadCustomProperty",
+    "LeadPropertyGroup",
+    "LeadPropertyType",
+  ],
   endpoints: (builder) => ({
     getLeads: builder.query<Lead[], void>({
       query: () => "lead",
@@ -48,15 +60,19 @@ export const leadApi = createApi({
     }),
     getLeadStandardProperties: builder.query<LeadStandardProperty[], void>({
       query: () => `lead/property/standard`,
-      providesTags: ["Lead"],
+      providesTags: ["LeadStandardProperty"],
     }),
     getLeadCustomProperties: builder.query<LeadCustomProperty[], void>({
       query: () => `lead/property/custom`,
-      providesTags: ["Lead"],
+      providesTags: ["LeadCustomProperty"],
     }),
     getLeadPropertyGroup: builder.query<LeadPropertyGroup[], void>({
       query: () => `lead/property/group`,
-      providesTags: ["Lead"],
+      providesTags: ["LeadPropertyGroup"],
+    }),
+    getLeadPropertyTypes: builder.query<LeadPropertyType[], void>({
+      query: () => `lead/property/type`,
+      providesTags: ["LeadPropertyType"],
     }),
     addCustomProperty: builder.mutation<LeadCustomProperty, any>({
       query(body) {
@@ -66,7 +82,7 @@ export const leadApi = createApi({
           body,
         };
       },
-      invalidatesTags: ["Lead"],
+      invalidatesTags: ["LeadCustomProperty"],
     }),
     addLead: builder.mutation<Lead, Partial<Lead>>({
       query(body) {
@@ -140,5 +156,6 @@ export const {
   useGetLeadCustomPropertiesQuery,
   useGetLeadPropertyGroupQuery,
   useAddCustomPropertyMutation,
-  useAddValidateDataCsvMutation
+  useAddValidateDataCsvMutation,
+  useGetLeadPropertyTypesQuery,
 } = leadApi;

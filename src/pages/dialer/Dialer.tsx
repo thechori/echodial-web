@@ -113,7 +113,8 @@ function Dialer() {
 
   // Begin calling the current index
   const startCall = useCallback(async () => {
-    console.log("startCall");
+    // Stop call
+    await stopCall();
 
     // Clear error
     dialStateInstance.error = "";
@@ -274,7 +275,6 @@ function Dialer() {
   ]);
 
   const resetDialerState = useCallback(() => {
-    console.log("resetDialerState");
     dialStateInstance.call = null;
     dispatch(setCall(dialStateInstance.call));
     dialStateInstance.currentCallId = null;
@@ -284,8 +284,6 @@ function Dialer() {
   // Invoked when:
   // - Next arrow is click
   async function skipToNextLead() {
-    console.log("skipToNextLead.start");
-
     // Stop call
     await stopCall();
 
@@ -323,8 +321,6 @@ function Dialer() {
       return console.error("No active contact index found");
     }
 
-    console.log("skipToNextLead.end");
-
     // We're safe to proceed
     startCall();
   }
@@ -337,35 +333,23 @@ function Dialer() {
     dialStateInstance.connectedAt = null;
     dispatch(setConnectedAt(dialStateInstance.connectedAt));
 
-    // Bug: no call is found when this gets invoked
-    if (dialStateInstance.call) {
-      dialStateInstance.call.disconnect();
+    try {
+      if (dialStateInstance.call) {
+        dialStateInstance.call.disconnect();
+      }
+
+      if (dialStateInstance.currentCallId === null) {
+        throw "No Call ID found";
+      }
+
+      await endCallViaId(dialStateInstance.currentCallId).unwrap();
+    } catch (e) {
+      notifications.show({
+        title: "Error",
+        message: extractErrorMessage(e),
+      });
     }
 
-    if (dialStateInstance.currentCallId === null) {
-      console.info("No Call ID found");
-    } else {
-      try {
-        await endCallViaId(dialStateInstance.currentCallId).unwrap();
-      } catch (e) {
-        notifications.show({
-          title: "Error",
-          message: extractErrorMessage(e),
-        });
-      }
-    }
-
-    if (dialStateInstance.currentCallId !== null) {
-      try {
-        await endCallViaId;
-      } catch (e) {
-        notifications.show({
-          title: "Error",
-          message: extractErrorMessage(e),
-        });
-      }
-    }
-    console.log("end of stopCall");
     resetDialerState();
 
     return true;
@@ -444,9 +428,6 @@ function Dialer() {
     return `${hours}:${minutes}:${seconds}`;
   };
 
-  // Don't show the Dialer if there are no leads in the queue
-  if (dialQueue.length === 0) return;
-
   // Name, phone
   let name = "";
   let phone = "";
@@ -458,123 +439,133 @@ function Dialer() {
   }
 
   return (
-    <DialerStyled $visible={isDialerOpen}>
-      <Box className="controls">
-        <Flex align="flex-start" justify="space-between">
-          <Card
-            withBorder
-            pt="0.5rem"
-            style={{
-              overflow: "visible",
-              display: "flex",
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Flex justify="flex-start" align="center">
-              <Flex align="center">
-                <DialerPrimaryButton />
+    // Don't show the Dialer if there are no leads in the queue
+    <DialerStyled
+      $state={
+        dialQueue.length === 0
+          ? "hidden"
+          : isDialerOpen
+          ? "expanded"
+          : "collapsed"
+      }
+    >
+      <Flex
+        align="flex-start"
+        justify="space-between"
+        bg="white"
+        p="md"
+        style={{ borderTop: "1px solid lightgrey" }}
+      >
+        <Flex
+          align="center"
+          justify="space-between"
+          style={{
+            overflow: "visible",
+            flex: 1,
+          }}
+        >
+          <Flex justify="flex-start" align="center">
+            <Flex align="center">
+              <DialerPrimaryButton />
 
-                <Tooltip label="Skip to next Lead" openDelay={500}>
-                  <ActionIcon
-                    size="lg"
-                    disabled={!subscriptionActive}
-                    onClick={() => dispatch(setRequestAction("skipToNextLead"))}
-                    mx={4}
-                  >
-                    <IconPlayerSkipForwardFilled />
-                  </ActionIcon>
-                </Tooltip>
-
-                <DialerStatus
-                  $visible={
-                    status === Call.State.Connecting ||
-                    status === Call.State.Ringing ||
-                    status === Call.State.Open
-                  }
-                >
-                  <Text size="sm" fw={500} className="duration">
-                    {status === Call.State.Connecting
-                      ? "Starting..."
-                      : status === Call.State.Ringing
-                      ? "Calling..."
-                      : elapsedTime}
-                  </Text>
-                </DialerStatus>
-
-                <Box>
-                  <Text fw={500} lh="1.1rem">
-                    {name}
-                  </Text>
-                  <Text size="sm" lh="1.1rem">
-                    {phone}
-                  </Text>
-                </Box>
-              </Flex>
-            </Flex>
-
-            <Flex align="center" h={60}>
-              <Tooltip
-                openDelay={500}
-                position="bottom"
-                label="The selected phone number is what we will use to call your
-                      leads. This number will appear as your caller ID on the lead's phone."
-              >
-                <div>
-                  <CallerIdSelect pr="xs" w={180} />
-                </div>
-              </Tooltip>
-
-              <Tooltip label="Open dialer settings" openDelay={500}>
+              <Tooltip label="Skip to next Lead" openDelay={500}>
                 <ActionIcon
-                  variant="outline"
-                  onClick={openDialerOptions}
                   size="lg"
+                  disabled={!subscriptionActive}
+                  onClick={() => dispatch(setRequestAction("skipToNextLead"))}
+                  mx={4}
                 >
-                  <MdOutlineTune />
+                  <IconPlayerSkipForwardFilled />
                 </ActionIcon>
               </Tooltip>
 
-              <Tooltip label="Toggle visibility of the dialer" openDelay={500}>
-                <Flex ml="xs" align="center">
-                  {isDialerOpen ? (
-                    <MdExpandMore
-                      className="hoverable"
-                      fontSize="2rem"
-                      color="grey"
-                      onClick={() => dispatch(setIsDialerOpen(false))}
-                    />
-                  ) : (
-                    <MdExpandLess
-                      className="hoverable"
-                      fontSize="2rem"
-                      color="grey"
-                      onClick={() => dispatch(setIsDialerOpen(true))}
-                    />
-                  )}
-                </Flex>
-              </Tooltip>
+              <DialerStatus
+                $visible={
+                  status === Call.State.Connecting ||
+                  status === Call.State.Ringing ||
+                  status === Call.State.Open
+                }
+              >
+                <Text size="sm" fw={500} className="duration">
+                  {status === Call.State.Connecting
+                    ? "Starting..."
+                    : status === Call.State.Ringing
+                    ? "Calling..."
+                    : elapsedTime}
+                </Text>
+              </DialerStatus>
+
+              <Box>
+                <Text fw={500} lh="1.1rem">
+                  {name}
+                </Text>
+                <Text size="sm" lh="1.1rem">
+                  {phone}
+                </Text>
+              </Box>
             </Flex>
-          </Card>
-        </Flex>
+          </Flex>
 
-        <Flex className="split">
-          <Box m="md">
-            <DialerQueue />
+          <Flex align="center" h={60}>
+            <Tooltip
+              openDelay={500}
+              position="bottom"
+              label="The selected phone number is what we will use to call your
+                      leads. This number will appear as your caller ID on the lead's phone."
+            >
+              <div>
+                <CallerIdSelect pr="xs" w={180} />
+              </div>
+            </Tooltip>
 
-            {error && (
-              <Card withBorder mt="md">
-                <Text>Error</Text>
-                <Text color="red">{error}</Text>
-              </Card>
-            )}
-          </Box>
-          <Box m="md">
-            <DialerLeadDetail />
-          </Box>
+            <Tooltip label="Open dialer settings" openDelay={500}>
+              <ActionIcon
+                variant="outline"
+                onClick={openDialerOptions}
+                size="lg"
+              >
+                <MdOutlineTune />
+              </ActionIcon>
+            </Tooltip>
+
+            <Tooltip label="Toggle visibility of the dialer" openDelay={500}>
+              <Flex ml="xs" align="center">
+                {isDialerOpen ? (
+                  <MdExpandMore
+                    className="hoverable"
+                    fontSize="2rem"
+                    color="grey"
+                    onClick={() => dispatch(setIsDialerOpen(false))}
+                  />
+                ) : (
+                  <MdExpandLess
+                    className="hoverable"
+                    fontSize="2rem"
+                    color="grey"
+                    onClick={() => dispatch(setIsDialerOpen(true))}
+                  />
+                )}
+              </Flex>
+            </Tooltip>
+          </Flex>
         </Flex>
-      </Box>
+      </Flex>
+
+      <Flex className="split">
+        <Box m="md">
+          <DialerQueue />
+
+          {error && (
+            <Card withBorder mt="md">
+              <Text>Error</Text>
+              <Text color="red">{error}</Text>
+            </Card>
+          )}
+        </Box>
+        <Box m="md">
+          <DialerLeadDetail />
+        </Box>
+      </Flex>
     </DialerStyled>
   );
 }
