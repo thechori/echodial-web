@@ -113,6 +113,9 @@ function Dialer() {
 
   // Begin calling the current index
   const startCall = useCallback(async () => {
+    // Stop call
+    await stopCall();
+
     // Clear error
     dialStateInstance.error = "";
     dispatch(setError(dialStateInstance.error));
@@ -330,34 +333,23 @@ function Dialer() {
     dialStateInstance.connectedAt = null;
     dispatch(setConnectedAt(dialStateInstance.connectedAt));
 
-    // Bug: no call is found when this gets invoked
-    if (dialStateInstance.call) {
-      dialStateInstance.call.disconnect();
+    try {
+      if (dialStateInstance.call) {
+        dialStateInstance.call.disconnect();
+      }
+
+      if (dialStateInstance.currentCallId === null) {
+        throw "No Call ID found";
+      }
+
+      await endCallViaId(dialStateInstance.currentCallId).unwrap();
+    } catch (e) {
+      notifications.show({
+        title: "Error",
+        message: extractErrorMessage(e),
+      });
     }
 
-    if (dialStateInstance.currentCallId === null) {
-      console.info("No Call ID found");
-    } else {
-      try {
-        await endCallViaId(dialStateInstance.currentCallId).unwrap();
-      } catch (e) {
-        notifications.show({
-          title: "Error",
-          message: extractErrorMessage(e),
-        });
-      }
-    }
-
-    if (dialStateInstance.currentCallId !== null) {
-      try {
-        await endCallViaId;
-      } catch (e) {
-        notifications.show({
-          title: "Error",
-          message: extractErrorMessage(e),
-        });
-      }
-    }
     resetDialerState();
 
     return true;

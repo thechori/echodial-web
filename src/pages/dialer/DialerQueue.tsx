@@ -27,7 +27,7 @@ function DialerQueue() {
     (state) => state.dialer
   );
 
-  function startCall(index: number) {
+  async function startCall(index: number) {
     dialStateInstance.dialQueueIndex = index;
     dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
     dispatch(setRequestAction("startCall"));
