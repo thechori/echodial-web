@@ -86,6 +86,7 @@ export const DialerLeadDetail = () => {
           : null,
     });
     form.resetDirty();
+    console.log(activeLead);
   }, [activeLead]);
 
   // Cancel edit

@@ -29,6 +29,7 @@ import { setSelectedRows } from "../../store/leads/slice";
 import { extractErrorMessage } from "../../utils/error";
 import { PhoneInput } from "../../components/phone-input";
 import { setSelectedLead } from "../../store/lead-detail/slice";
+import { useGetLeadCustomPropertiesQuery } from "../../services/lead";
 
 export const LeadDetail = () => {
   const dispatch = useAppDispatch();
@@ -37,6 +38,9 @@ export const LeadDetail = () => {
   const [error, setError] = useState("");
   const { data: availableStatuses } = useGetLeadStatusesQuery();
   const [updateLead, { isLoading }] = useUpdateLeadMutation();
+
+  const [customPropertiesInputs, setCustomPropertiesInputs] = useState([]);
+  const { data: customProperties } = useGetLeadCustomPropertiesQuery();
 
   const form = useForm({
     initialValues: {
@@ -61,6 +65,16 @@ export const LeadDetail = () => {
   });
 
   useEffect(() => {
+    if (customProperties) {
+      for (let i = 0; i < customProperties.length; i++) {
+        if (!(customProperties[i].name in form.values)) {
+          form.setFieldValue(customProperties[i].name, "");
+        }
+      }
+    }
+  }, [customProperties]);
+
+  useEffect(() => {
     form.setValues({
       ...selectedLead,
       // Note: We must manually set the value to "" in order to avoid having stale values linger -- very confusing and misleading to users
@@ -74,6 +88,24 @@ export const LeadDetail = () => {
     });
     form.resetDirty();
   }, [selectedLead]);
+
+  useEffect(() => {
+    let customInputs: any = [];
+    if (customProperties) {
+      for (let i = 0; i < customProperties.length; i++) {
+        customInputs.push(
+          <TextInput
+            key={i}
+            w="100%"
+            mb="xs"
+            label={customProperties[i].label}
+            {...form.getInputProps(customProperties[i].name)}
+          />
+        );
+      }
+      setCustomPropertiesInputs(customInputs);
+    }
+  }, [form.values]);
 
   // Close icon
   function handleClose() {
@@ -96,11 +128,11 @@ export const LeadDetail = () => {
           : null,
     });
     form.resetDirty();
+    setCustomPropertiesInputs([]);
   }
 
   async function editLead() {
     form.validate();
-
     if (!form.isValid()) {
       return;
     }
@@ -108,9 +140,25 @@ export const LeadDetail = () => {
     if (!form.values) {
       return;
     }
-
+    const propertyNames = customProperties?.map((property) => property.name);
+    const newConstantProperties = propertyNames?.reduce(
+      (acc: any, property) => {
+        acc[property] = "";
+        return acc;
+      },
+      {}
+    );
+    const updatedProperties: any = {};
+    for (const [key, value] of Object.entries(form.values)) {
+      if (key in newConstantProperties) {
+        newConstantProperties[key] = value;
+      } else if (key != "custom_properties") {
+        updatedProperties[key] = value;
+      }
+    }
+    updatedProperties["custom_properties"] = newConstantProperties;
     try {
-      await updateLead(form.values).unwrap();
+      await updateLead(updatedProperties).unwrap();
       notifications.show({ message: "Successfully updated lead" });
       dispatch(setSelectedRows([]));
       handleClose();
@@ -272,6 +320,11 @@ export const LeadDetail = () => {
               {...form.getInputProps("sale_notes")}
             />
           </Group>
+          <Text size="sm" color="dimmed" mt="md">
+            Custom Properties
+          </Text>
+          <Divider py={8} />
+          <Group>{customPropertiesInputs}</Group>
         </Box>
 
         <Box id="footer-buttons-overlay" />
