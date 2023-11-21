@@ -29,12 +29,15 @@ import {
   useGetLeadCustomPropertiesQuery,
   useGetLeadPropertyGroupQuery,
   useAddValidateDataCsvMutation,
+  useGetLeadPropertyTypesQuery,
 } from "../../services/lead";
+import { extractErrorMessage } from "../../utils/error";
 
 function MappingTable() {
   const dispatch = useDispatch();
   const fileHeaders = useAppSelector((state) => state.importLeads.fileHeaders);
   const fileRows = useAppSelector((state) => state.importLeads.fileRows);
+  const [error, setError] = useState("");
 
   //Standard Properties
   const {
@@ -55,47 +58,60 @@ function MappingTable() {
     error: propertyGroupsError,
     isLoading: propertyGroupsLoading,
   } = useGetLeadPropertyGroupQuery();
+  //Property Types
+  const { data: propertyTypes, isLoading: propertyTypesLoading } =
+    useGetLeadPropertyTypesQuery();
 
   const [addValidateDataCsv] = useAddValidateDataCsvMutation();
 
   //Validating a header to property
   const [properties, setProperties] = useState<SelectItem[]>([]);
   useEffect(() => {
-    const tempProperties: SelectItem[] = [];
+    try {
+      const tempProperties: SelectItem[] = [];
 
-    if (standardPropertiesError) {
-      throw standardPropertiesError;
-    } else if (customPropertiesError) {
-      throw customPropertiesError;
-    } else if (propertyGroupsError) {
-      throw propertyGroupsError;
-    }
-    if (propertyGroups && standardProperties) {
-      const groupIdToGroupName: any = {};
-      propertyGroups.forEach((item) => {
-        groupIdToGroupName[item.id] = item.label;
-      });
-      for (const standardProperty of standardProperties) {
-        tempProperties.push({
-          value: standardProperty.name,
-          label: standardProperty.label,
-          disabled: standardProperty.lead_property_type_id != 7,
-          group: groupIdToGroupName[standardProperty.lead_property_group_id],
-        });
+      // Note: We only support `text` types for now -- do a lookup for this to get the id
+      const textType = propertyTypes?.find((type) => type.name === "text");
+      if (!propertyTypesLoading && textType === undefined) {
+        throw "Issue fetching roperty types, please try again later.";
       }
-      if (customProperties && customProperties.length > 0) {
-        for (const customProperty of customProperties) {
+
+      if (standardPropertiesError) {
+        throw standardPropertiesError;
+      } else if (customPropertiesError) {
+        throw customPropertiesError;
+      } else if (propertyGroupsError) {
+        throw propertyGroupsError;
+      }
+      if (propertyGroups && standardProperties) {
+        const groupIdToGroupName: any = {};
+        propertyGroups.forEach((item) => {
+          groupIdToGroupName[item.id] = item.label;
+        });
+        for (const standardProperty of standardProperties) {
           tempProperties.push({
-            value: customProperty.name,
-            label: customProperty.label,
-            disabled: false,
-            group: groupIdToGroupName[customProperty.lead_property_group_id],
+            value: standardProperty.name,
+            label: standardProperty.label,
+            disabled: standardProperty.lead_property_type_id !== textType?.id,
+            group: groupIdToGroupName[standardProperty.lead_property_group_id],
           });
         }
+        if (customProperties && customProperties.length > 0) {
+          for (const customProperty of customProperties) {
+            tempProperties.push({
+              value: customProperty.name,
+              label: customProperty.label,
+              disabled: false,
+              group: groupIdToGroupName[customProperty.lead_property_group_id],
+            });
+          }
+        }
       }
+      tempProperties.push(addNewPropertySelectItem);
+      setProperties(tempProperties);
+    } catch (e) {
+      setError(extractErrorMessage(e));
     }
-    tempProperties.push(addNewPropertySelectItem);
-    setProperties(tempProperties);
   }, [
     standardProperties,
     customProperties,
@@ -325,6 +341,7 @@ function MappingTable() {
           </thead>
           <tbody>{mappingTable}</tbody>
         </Table>
+        <Text color="red">{error}</Text>
       </Container>
     </>
   );
