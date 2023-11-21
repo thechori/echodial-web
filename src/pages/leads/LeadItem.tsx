@@ -41,7 +41,7 @@ const LeadItem = ({
         return /^\S+@\S+$/.test(val) ? null : "Invalid email";
       },
       phone: (val: string | null) => {
-        if (!val) return "Phone number required";
+        if (!val) return null;
         // Trim and strip all non-numeric characters
         const trimmedVal = val.trim();
         const digits = trimmedVal.replace(/\D/g, "");

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { IconRefresh } from "@tabler/icons-react";
-import { PiPhone, PiPhoneOutgoing, PiQueue } from "react-icons/pi";
+import { PiPhoneOutgoing, PiQueue } from "react-icons/pi";
 import {
   Button,
   Card,
@@ -161,9 +161,7 @@ function DialerQueue() {
                 <th style={{ width: 50 }}>#</th>
                 <th>Name</th>
                 <th>Status</th>
-                <th>
-                  <PiPhone fontSize="1.5rem" />
-                </th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>{rows}</tbody>
