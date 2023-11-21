@@ -1,13 +1,10 @@
 import { useEffect } from "react";
-import { IconRefresh } from "@tabler/icons-react";
 import { PiPhoneOutgoing, PiQueue } from "react-icons/pi";
 import {
-  Button,
   Card,
   Chip,
   Flex,
   Group,
-  HoverCard,
   Overlay,
   Table,
   Text,
@@ -17,12 +14,7 @@ import {
 import clsx from "clsx";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import {
-  setDialQueue,
-  setDialQueueIndex,
-  setIsDialerOpen,
-  setRequestAction,
-} from "../../store/dialer/slice";
+import { setDialQueueIndex, setRequestAction } from "../../store/dialer/slice";
 import DialerQueueStyled from "./DialerQueue.styles";
 import CallButtonSimple from "../../components/call-buttons/CallButtonSimple";
 import { dialStateInstance } from "./DialState.class";
@@ -43,13 +35,6 @@ function DialerQueue() {
 
   function stopCall() {
     dispatch(setRequestAction("stopCall"));
-  }
-
-  function resetDialer() {
-    dialStateInstance.dialQueueIndex = null;
-    dispatch(setDialQueue([]));
-
-    dispatch(setIsDialerOpen(false));
   }
 
   const rows = dialQueue.length ? (
@@ -128,27 +113,6 @@ function DialerQueue() {
             </ThemeIcon>
             <Title order={3}>Call queue</Title>
           </Flex>
-
-          <HoverCard width={280} shadow="md" openDelay={500}>
-            <HoverCard.Target>
-              <Button
-                color="red"
-                variant="outline"
-                compact
-                onClick={resetDialer}
-                leftIcon={<IconRefresh size="1rem" />}
-              >
-                Clear
-              </Button>
-            </HoverCard.Target>
-            <HoverCard.Dropdown>
-              <Text size="sm">
-                Clicking "Clear" will remove all leads from the Call queue. You
-                can create a new queue by filtering your selection on the Leads
-                page and clicking "Start dialer"
-              </Text>
-            </HoverCard.Dropdown>
-          </HoverCard>
         </Flex>
 
         <div className="fade" />
