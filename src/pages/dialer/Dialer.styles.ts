@@ -2,6 +2,8 @@ import { styled } from "styled-components";
 //
 import devices from "../../styles/devices";
 
+type TDialerState = "hidden" | "expanded" | "collapsed";
+
 export const DialerStatus = styled.div<{ $visible: boolean }>`
   width: ${(props) => (props.$visible ? "110px" : "0px")};
   text-align: center;
@@ -18,11 +20,28 @@ export const DialerStatus = styled.div<{ $visible: boolean }>`
   }
 `;
 
-export const DialerStyled = styled.div<{ $visible: boolean }>`
+export const DialerStyled = styled.div<{ $state: TDialerState }>`
   background-color: #e1e1e1;
 
-  transform: ${(props) =>
-    props.$visible ? "translateY(0px)" : "translateY(calc(100vh - 93px))"};
+  transform: ${(props) => {
+    switch (props.$state) {
+      case "collapsed": {
+        return "translateY(calc(100vh - 93px))";
+      }
+
+      case "expanded": {
+        return "translateY(0px)";
+      }
+
+      case "hidden": {
+        return "translateY(100vh)";
+      }
+
+      default: {
+        return "translateY(0px)";
+      }
+    }
+  }};
 
   position: fixed;
   left: 0;

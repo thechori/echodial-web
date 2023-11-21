@@ -436,9 +436,6 @@ function Dialer() {
     return `${hours}:${minutes}:${seconds}`;
   };
 
-  // Don't show the Dialer if there are no leads in the queue
-  if (dialQueue.length === 0) return;
-
   // Name, phone
   let name = "";
   let phone = "";
@@ -450,7 +447,16 @@ function Dialer() {
   }
 
   return (
-    <DialerStyled $visible={isDialerOpen}>
+    // Don't show the Dialer if there are no leads in the queue
+    <DialerStyled
+      $state={
+        dialQueue.length === 0
+          ? "hidden"
+          : isDialerOpen
+          ? "expanded"
+          : "collapsed"
+      }
+    >
       <Flex
         align="flex-start"
         justify="space-between"

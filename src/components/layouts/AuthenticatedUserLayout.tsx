@@ -16,6 +16,7 @@ import { useEffect } from "react";
 
 const Container = styled.div`
   height: 100%;
+  padding-bottom: 93px;
 
   @media ${devices.tablet} {
     display: flex;
