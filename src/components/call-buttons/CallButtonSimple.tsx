@@ -1,6 +1,7 @@
-import { PiPhoneFill, PiPhoneDisconnect } from "react-icons/pi";
+import { PiPhoneDisconnect } from "react-icons/pi";
 import CallButtonSimpleStyled from "./CallButtonSimple.styles";
 import { Tooltip } from "@mantine/core";
+import { MdPhone } from "react-icons/md";
 
 export type TCallButtonSimpleProps = {
   active: boolean;
@@ -34,11 +35,7 @@ const CallButtonSimple = ({
     <CallButtonSimpleStyled>
       <Tooltip label="Call" openDelay={500}>
         <div>
-          <PiPhoneFill
-            color="green"
-            fontSize="1.5rem"
-            onClick={onActiveClick}
-          />
+          <MdPhone color="green" fontSize="1.5rem" onClick={onActiveClick} />
         </div>
       </Tooltip>
     </CallButtonSimpleStyled>
