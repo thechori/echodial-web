@@ -17,6 +17,7 @@ import { extractErrorMessage } from "../../utils/error";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectJwt, setJwt } from "../../store/user/slice";
 import apiService from "../../services/api";
+import { MARKETING_SITE_URL } from "../../configs/urls";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -90,7 +91,7 @@ function SignIn() {
         <div className="form-container">
           <div
             className="logo-container hoverable"
-            onClick={() => navigate(routes.landing)}
+            onClick={() => document.location.replace(MARKETING_SITE_URL)}
           >
             <img src={echodialLogo} alt="EchoDial logo" />
           </div>
