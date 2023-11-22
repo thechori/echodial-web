@@ -59,9 +59,12 @@ function PhoneNumbers() {
         <Grid.Col xs={12} sm={12} md={6}>
           <Card shadow="md" withBorder radius="md">
             <Flex align="center" justify="space-between" mb="sm">
-              <Title order={3}>Personal</Title>
+              <Title order={3}>My numbers</Title>
             </Flex>
-            <Text>Verified numbers available to make outbound calls from</Text>
+            <Text>
+              These are your verified numbers available to make outbound calls
+              from.
+            </Text>
 
             <Box p="lg">
               {callerIds && callerIds.length ? (
