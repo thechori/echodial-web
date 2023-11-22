@@ -28,6 +28,7 @@ import { extractErrorMessage } from "../../utils/error";
 import { Lead } from "../../types";
 import phoneFormatter from "../../utils/phone-formatter";
 import { updateLeadById } from "../../store/dialer/slice";
+import { useGetLeadCustomPropertiesQuery } from "../../services/lead";
 
 export const DialerLeadDetail = () => {
   const dispatch = useAppDispatch();
@@ -40,6 +41,8 @@ export const DialerLeadDetail = () => {
   const { data: availableStatuses } = useGetLeadStatusesQuery();
   const [updateLead, { isLoading }] = useUpdateLeadMutation();
 
+  const [customPropertiesInputs, setCustomPropertiesInputs] = useState([]);
+  const { data: customProperties } = useGetLeadCustomPropertiesQuery();
   // TODO: Fix bug here that causes following bug:
   // Warning: `value` prop on `input` should not be null. Consider using an empty string to clear the component or `undefined` for uncontrolled components.
   // Note: Seems to be remedied when you set the initial value of a field to ""
@@ -66,10 +69,39 @@ export const DialerLeadDetail = () => {
     },
   });
 
+  useEffect(() => {
+    if (customProperties) {
+      for (let i = 0; i < customProperties.length; i++) {
+        if (!(customProperties[i].name in form.values)) {
+          form.setFieldValue(customProperties[i].name, "");
+        }
+      }
+    }
+  }, [customProperties]);
+
+  useEffect(() => {
+    let customInputs: any = [];
+    if (customProperties) {
+      for (let i = 0; i < customProperties.length; i++) {
+        customInputs.push(
+          <TextInput
+            key={i}
+            w="100%"
+            mb="xs"
+            label={customProperties[i].label}
+            {...form.getInputProps(customProperties[i].name)}
+          />
+        );
+      }
+      setCustomPropertiesInputs(customInputs);
+    }
+  }, [form.values]);
+
   // Grab lead from state use queue and index
   useEffect(() => {
     if (dialQueue.length && dialQueueIndex !== null) {
       const lead = dialQueue[dialQueueIndex];
+      console.log(form);
       setActiveLead(lead);
     } else {
       setActiveLead(null);
@@ -90,7 +122,6 @@ export const DialerLeadDetail = () => {
           : null,
     });
     form.resetDirty();
-    console.log(activeLead);
   }, [activeLead]);
 
   // Cancel edit
@@ -120,9 +151,25 @@ export const DialerLeadDetail = () => {
     if (!form.values) {
       return;
     }
-
+    const propertyNames = customProperties?.map((property) => property.name);
+    const newConstantProperties = propertyNames?.reduce(
+      (acc: any, property) => {
+        acc[property] = "";
+        return acc;
+      },
+      {}
+    );
+    const updatedProperties: any = {};
+    for (const [key, value] of Object.entries(form.values)) {
+      if (key in newConstantProperties) {
+        newConstantProperties[key] = value;
+      } else if (key != "custom_properties") {
+        updatedProperties[key] = value;
+      }
+    }
+    updatedProperties["custom_properties"] = newConstantProperties;
     try {
-      await updateLead(form.values).unwrap();
+      await updateLead(updatedProperties).unwrap();
       notifications.show({ message: "Successfully updated lead" });
 
       if (form.values.id === undefined) {
@@ -276,6 +323,11 @@ export const DialerLeadDetail = () => {
               {...form.getInputProps("sale_notes")}
             />
           </Group>
+          <Text size="sm" color="dimmed" mt="md">
+            Custom Properties
+          </Text>
+          <Divider py={8} />
+          <Group>{customPropertiesInputs}</Group>
         </Box>
 
         <Box id="footer-buttons-overlay" />
