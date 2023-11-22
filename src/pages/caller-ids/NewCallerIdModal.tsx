@@ -1,7 +1,7 @@
 import { Button, Checkbox, Group, Modal, Text } from "@mantine/core";
 import { isPossiblePhoneNumber } from "react-phone-number-input";
 //
-import { useAddCallerIdMutation } from "../../services/caller-id";
+import { useRequestAddCallerIdMutation } from "../../services/caller-id";
 import { useState } from "react";
 import { extractErrorMessage } from "../../utils/error";
 import { PhoneInput } from "../../components/phone-input";
@@ -9,13 +9,18 @@ import { PhoneInput } from "../../components/phone-input";
 type TNewCallerIdModalProps = {
   opened: boolean;
   close: () => void;
+  triggerOpenValidatingModal: () => void;
 };
 
-const NewCallerIdModal = ({ opened, close }: TNewCallerIdModalProps) => {
+const NewCallerIdModal = ({
+  opened,
+  close,
+  triggerOpenValidatingModal,
+}: TNewCallerIdModalProps) => {
   const [
-    addCallerId,
-    { error: errorAddCallerId, isLoading: isLoadingAddCallerId },
-  ] = useAddCallerIdMutation();
+    requestAddCallerId,
+    { error: errorRequestAddCallerId, isLoading: isLoadingRequestAddCallerId },
+  ] = useRequestAddCallerIdMutation();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [agree, setAgree] = useState(false);
@@ -32,7 +37,8 @@ const NewCallerIdModal = ({ opened, close }: TNewCallerIdModalProps) => {
     }
 
     try {
-      await addCallerId(phoneNumber).unwrap();
+      await requestAddCallerId(phoneNumber).unwrap();
+      triggerOpenValidatingModal();
       close();
     } catch (e) {
       console.error(e);
@@ -49,9 +55,10 @@ const NewCallerIdModal = ({ opened, close }: TNewCallerIdModalProps) => {
     <Modal opened={opened} onClose={handleClose} title="Add Caller ID">
       <Modal.Body>
         <Text mb="md">
-          In order to verify that you own this number, we'll send you a text
-          message and a phone call simultaneously. Enter the Validation Code
-          that you receive via SMS in the phone call to complete this step.
+          In order to protect our users, we must securely verify that you own
+          this number. We'll send you a text message and a phone call
+          simultaneously. Enter the Validation Code that you receive via SMS
+          into the phone call to complete this step.
         </Text>
 
         <Group>
@@ -72,14 +79,14 @@ const NewCallerIdModal = ({ opened, close }: TNewCallerIdModalProps) => {
 
           <Button
             disabled={!agree || phoneNumber.length < 10}
-            loading={isLoadingAddCallerId}
+            loading={isLoadingRequestAddCallerId}
             onClick={handleSubmit}
           >
-            Submit
+            Submit request
           </Button>
 
           <Text w="100%" color="red">
-            {extractErrorMessage(errorAddCallerId)}
+            {extractErrorMessage(errorRequestAddCallerId)}
           </Text>
         </Group>
       </Modal.Body>

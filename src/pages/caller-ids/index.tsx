@@ -13,7 +13,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
-import { BiPlus, BiRefresh } from "react-icons/bi";
+import { BiPlus } from "react-icons/bi";
 //
 import phoneFormatter from "../../utils/phone-formatter";
 import PhoneNumberMenu from "./PhoneNumberMenu";
@@ -21,10 +21,10 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   useDeleteCallerIdMutation,
   useGetCallerIdsQuery,
-  useLazyGetCallerIdsQuery,
 } from "../../services/caller-id";
 import NewCallerIdModal from "./NewCallerIdModal";
 import { extractErrorMessage } from "../../utils/error";
+import NewCallerIdValidatingModal from "./NewCallerIdValidatingModal";
 
 function PhoneNumbers() {
   const [error, setError] = useState("");
@@ -39,9 +39,9 @@ function PhoneNumbers() {
     { isLoading: isLoadingDeleteCallerId, error: errorDeleteCallerId },
   ] = useDeleteCallerIdMutation();
 
-  const [getCallerIds] = useLazyGetCallerIdsQuery();
-
   const [opened, { open, close }] = useDisclosure(false);
+  const [openedValidating, { open: openValidating, close: closeValidating }] =
+    useDisclosure(false);
 
   useEffect(() => {
     if (errorCallerIds) {
@@ -59,17 +59,12 @@ function PhoneNumbers() {
         <Grid.Col xs={12} sm={12} md={6}>
           <Card shadow="md" withBorder radius="md">
             <Flex align="center" justify="space-between" mb="sm">
-              <Title order={3}>Personal</Title>
-              <Button
-                loading={isLoadingCallerIds}
-                onClick={() => getCallerIds()}
-                leftIcon={<BiRefresh />}
-                variant="outline"
-              >
-                Refresh
-              </Button>
+              <Title order={3}>My numbers</Title>
             </Flex>
-            <Text>Verified numbers available to make outbound calls from</Text>
+            <Text>
+              These are your verified numbers available to make outbound calls
+              from.
+            </Text>
 
             <Box p="lg">
               {callerIds && callerIds.length ? (
@@ -88,12 +83,7 @@ function PhoneNumbers() {
                       <Box ml={16}>{phoneFormatter(cid.phone_number)}</Box>
                     </Flex>
                     <PhoneNumberMenu
-                      onDelete={() =>
-                        deleteCallerId({
-                          id: cid.id,
-                          twilio_sid: cid.twilio_sid,
-                        })
-                      }
+                      onDelete={() => deleteCallerId(cid.phone_number)}
                       isLoading={isLoadingDeleteCallerId}
                     />
                   </Flex>
@@ -164,7 +154,15 @@ function PhoneNumbers() {
           </Grid.Col> */}
       </Grid>
 
-      <NewCallerIdModal opened={opened} close={close} />
+      <NewCallerIdModal
+        opened={opened}
+        close={close}
+        triggerOpenValidatingModal={openValidating}
+      />
+      <NewCallerIdValidatingModal
+        opened={openedValidating}
+        close={closeValidating}
+      />
     </Container>
   );
 }

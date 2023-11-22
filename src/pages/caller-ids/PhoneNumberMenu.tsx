@@ -1,4 +1,4 @@
-import { Menu, ActionIcon } from "@mantine/core";
+import { Menu, ActionIcon, Loader } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 
 function PhoneNumberMenu({
@@ -21,7 +21,7 @@ function PhoneNumberMenu({
         <Menu.Item
           onClick={onDelete}
           color="red"
-          icon={<IconTrash size={14} />}
+          icon={!isLoading ? <IconTrash size={14} /> : <Loader size="sm" />}
           disabled={isLoading}
         >
           {!isLoading ? "Yes, delete it" : "..."}

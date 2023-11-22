@@ -42,10 +42,10 @@ export const callerIdApi = createApi({
       query: () => "caller-id",
       providesTags: ["CallerId"],
     }),
-    addCallerId: builder.mutation<CallerId, string>({
+    requestAddCallerId: builder.mutation<CallerId, string>({
       query(phoneNumber) {
         return {
-          url: `caller-id`,
+          url: `caller-id/request`,
           method: "POST",
           body: {
             phone_number: phoneNumber,
@@ -54,14 +54,13 @@ export const callerIdApi = createApi({
       },
       invalidatesTags: ["CallerId"],
     }),
-    deleteCallerId: builder.mutation<void, { id: number; twilio_sid: string }>({
-      query(body) {
+    deleteCallerId: builder.mutation<void, string>({
+      query(phoneNumber) {
         return {
-          url: "caller-id/delete",
-          method: "POST",
+          url: "caller-id",
+          method: "DELETE",
           body: {
-            id: body.id,
-            twilio_sid: body.twilio_sid,
+            phone_number: phoneNumber,
           },
         };
       },
@@ -73,7 +72,7 @@ export const callerIdApi = createApi({
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
 export const {
-  useAddCallerIdMutation,
+  useRequestAddCallerIdMutation,
   useGetCallerIdsQuery,
   useLazyGetCallerIdsQuery,
   useDeleteCallerIdMutation,
