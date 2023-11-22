@@ -60,6 +60,10 @@ function Settings() {
     open();
   }
 
+  function manageCallerIDs() {
+    navigate(routes.callerIds)
+  }
+  
   async function manageSubscription() {
     // If user has no subscription, take them to the /subscription page to enroll in a NEW subscription
     if (!subscription) {
@@ -233,6 +237,23 @@ function Settings() {
                 {stripeError}
               </Text>
             </Flex>
+          </Card>
+        </Grid.Col>
+
+        <Grid.Col xs={12} sm={6}>
+          <Card withBorder shadow="md">
+            <Title order={3}>Caller IDs</Title>
+            <Box>
+              <Text py="md">
+                Manage your Caller IDs.
+              </Text>
+              <Button
+                variant="outline"
+                onClick={manageCallerIDs}
+              >
+                Manage Caller IDs
+              </Button>
+            </Box>
           </Card>
         </Grid.Col>
 
