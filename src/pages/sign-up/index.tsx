@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import * as amplitude from "@amplitude/analytics-browser";
 import { useNavigate } from "react-router-dom";
 import { IconCircleCheck } from "@tabler/icons-react";
@@ -8,8 +8,8 @@ import SignUpStyled from "./SignUp.styles";
 import appLogo from "../../assets/EchoDial-temp-logo-full.png";
 import routes from "../../configs/routes";
 import { extractErrorMessage } from "../../utils/error";
-import { useAppDispatch } from "../../store/hooks";
-import { setJwt } from "../../store/user/slice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectJwt, setJwt } from "../../store/user/slice";
 import apiService from "../../services/api";
 import {
   Box,
@@ -30,6 +30,7 @@ import { MARKETING_SITE_URL } from "../../configs/urls";
 function SignUp() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const jwt = useAppSelector(selectJwt);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -85,6 +86,13 @@ function SignUp() {
     }
   }
 
+  // Check for active session
+  useEffect(() => {
+    if (jwt) {
+      navigate(routes.leads);
+    }
+  }, [jwt]);
+
   return (
     <SignUpStyled>
       <Container>
@@ -126,7 +134,7 @@ function SignUp() {
                 <List.Item>High-quality voice calls</List.Item>
                 <List.Item>1500+ voice call minutes per month</List.Item>
                 <List.Item>Access to premium support</List.Item>
-                <List.Item>7-day free trial (unlimited access)</List.Item>
+                <List.Item>Free trial</List.Item>
               </List>
             </div>
           </div>
