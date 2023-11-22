@@ -1,7 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Device, Call } from "@twilio/voice-sdk";
 //
-import numbers from "../../configs/numbers";
 import { RootState } from "..";
 import { Lead } from "../../types";
 
@@ -9,6 +8,7 @@ export const LOCAL_STORAGE_KEY__DIALER_OPTIONS = "dialer__options";
 export const LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER = "dialer__from_number";
 export const LOCAL_STORAGE_KEY__DIAL_QUEUE = "dialer__dial_queue";
 export const LOCAL_STORAGE_KEY__DIAL_QUEUE_INDEX = "dialer__dial_queue_index";
+export const LOCAL_STORAGE_KEY__DIALER_IS_OPEN = "dialer__is_open";
 
 const buildOptions = (): TDialerOptions => {
   // Check for local storage
@@ -17,8 +17,6 @@ const buildOptions = (): TDialerOptions => {
   if (cachedOptions) {
     return JSON.parse(cachedOptions);
   }
-
-  // Check for APP_VERSION difference, clear settings if found to leave room for enhancements to the user experience
 
   return {
     maxRingTimeInSeconds: 10, // 10 seems like a good sweet spot
@@ -33,15 +31,7 @@ export type TDialerOptions = {
   cooldownTimeInSeconds: number;
 };
 
-export type TRequestAction =
-  | null
-  | "startDialing"
-  | "startCall"
-  | "stopCall"
-  | "stopDialing"
-  | "determineNextAction"
-  | "resetDialer"
-  | "error";
+export type TRequestAction = null | "startCall" | "stopCall" | "skipToNextLead";
 
 interface IDialerState {
   // This variable is to manage the state across the app, while being explicit about the ONE thing the
@@ -49,14 +39,13 @@ interface IDialerState {
   requestAction: TRequestAction;
   //
   error: string;
-  alphaDialerVisible: boolean;
-  isDialing: boolean;
+  isDialerOpen: boolean;
   device: any | Device;
-  wasCallConnected: null | boolean;
+  connectedAt: null | Date;
   currentDialAttempts: null | number;
   call: null | Call;
   currentCallId: null | number;
-  status: "idle" | "calling" | "failed" | "stopped" | "connected";
+  status: Call.State;
   muted: boolean;
   token: null | string;
   tokenLoading: boolean;
@@ -71,21 +60,20 @@ interface IDialerState {
 const buildInitialState = (): IDialerState => ({
   requestAction: null,
   //
-  alphaDialerVisible: false,
+  isDialerOpen:
+    localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_IS_OPEN) === "false"
+      ? false
+      : true,
   tokenLoading: false,
   device: null,
-  isDialing: false,
   call: null,
   currentCallId: null,
-  wasCallConnected: null,
+  connectedAt: null,
   currentDialAttempts: null,
   muted: false,
-  // TODO: Remove this hardcoded value in favor of values from API
-  fromNumber:
-    localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER) ||
-    numbers[2].value,
+  fromNumber: localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER) || "",
   error: "",
-  status: "idle",
+  status: Call.State.Closed,
   token: null,
   identity: null,
   dialQueue: JSON.parse(
@@ -106,17 +94,19 @@ export const DialerSlice = createSlice({
     setRequestAction: (state, action: PayloadAction<TRequestAction>) => {
       state.requestAction = action.payload;
     },
-    setAlphaDialerVisible: (state, action) => {
-      state.alphaDialerVisible = action.payload;
+    setIsDialerOpen: (state, action) => {
+      state.isDialerOpen = action.payload;
+
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY__DIALER_IS_OPEN,
+        JSON.stringify(action.payload)
+      );
     },
     setDevice: (state, action) => {
       state.device = action.payload;
     },
     setTokenLoading: (state, action) => {
       state.tokenLoading = action.payload;
-    },
-    setIsDialing: (state, action) => {
-      state.isDialing = action.payload;
     },
     setCall: (state, action) => {
       state.call = action.payload;
@@ -175,8 +165,8 @@ export const DialerSlice = createSlice({
     setIsMuted: (state, action) => {
       state.muted = action.payload;
     },
-    setWasCallConnected: (state, action) => {
-      state.wasCallConnected = action.payload;
+    setConnectedAt: (state, action) => {
+      state.connectedAt = action.payload;
     },
     setStatus: (state, action) => {
       state.status = action.payload;
@@ -256,8 +246,7 @@ export const DialerSlice = createSlice({
 
 export const {
   setRequestAction,
-  setAlphaDialerVisible,
-  setIsDialing,
+  setIsDialerOpen,
   setCall,
   setCurrentCallId,
   setCurrentDialAttempts,
@@ -276,7 +265,7 @@ export const {
   moveLeadUpInQueue,
   moveLeadDownInQueue,
   deleteLeadFromQueue,
-  setWasCallConnected,
+  setConnectedAt,
   updateLeadById,
 } = DialerSlice.actions;
 
@@ -295,7 +284,7 @@ export const selectActiveFullName = (state: RootState) => {
 };
 
 export const selectShowAlphaDialer = (state: RootState) =>
-  state.dialer.alphaDialerVisible;
+  state.dialer.isDialerOpen;
 
 export const selectIsDialerOptionsModalOpen = (state: RootState) =>
   state.dialer.showOptions;

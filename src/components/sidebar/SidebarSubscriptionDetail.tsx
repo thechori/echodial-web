@@ -33,7 +33,6 @@ import apiService from "../../services/api";
 export const SidebarSubscriptionDetail = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [status, setStatus] = useState<null | "low" | "empty" | "warn">(null);
   const [stripeCustomerPortalLinkError, setStripeCustomerPortalLinkError] =
     useState("");
   const [stripeCustomerPortalLinkLoading, setStripeCustomerPortalLinkLoading] =
@@ -81,14 +80,12 @@ export const SidebarSubscriptionDetail = () => {
     if (!trialCredits && !subscriptionStatus) {
       // No trial or subscription found
       text = "No trial or subscription found";
-      dispatch(setSubscriptionActive(false));
     } else if (
       subscriptionStatus &&
       subscriptionStatus.subscription.status === "active"
     ) {
       // Subscription active
       text = subscriptionStatus.product.name;
-      dispatch(setSubscriptionActive(true));
     } else if (
       subscriptionStatus &&
       trialCredits &&
@@ -96,40 +93,69 @@ export const SidebarSubscriptionDetail = () => {
     ) {
       // Subscription not active (and trial credits depleted)
       text = "Subscription not active";
-      dispatch(setSubscriptionActive(false));
     } else if (trialCredits) {
       // Trial found
       // Handle 0 or negative scenario first
       // Percentage = remaining / total * 100
       if (trialCredits.remaining_amount <= 0) {
         text = "0 trial credits left";
-        dispatch(setSubscriptionActive(false));
       } else {
         text = `${trialCredits.remaining_amount} trial credits left`;
-        dispatch(setSubscriptionActive(true));
       }
     } else {
       // Error
       text = "Error fetching subscription details";
-      dispatch(setSubscriptionActive(false));
     }
 
     return text;
   }, [subscriptionStatus, trialCredits]);
 
+  // Determine if subscription is active and upload global state
+  useEffect(() => {
+    if (!trialCredits && !subscriptionStatus) {
+      // No trial or subscription found
+      dispatch(setSubscriptionActive(false));
+    } else if (
+      subscriptionStatus &&
+      subscriptionStatus.subscription.status === "active"
+    ) {
+      // Subscription active
+      dispatch(setSubscriptionActive(true));
+    } else if (
+      subscriptionStatus &&
+      trialCredits &&
+      trialCredits.remaining_amount <= 0
+    ) {
+      // Subscription not active (and trial credits depleted)
+      dispatch(setSubscriptionActive(false));
+    } else if (trialCredits) {
+      // Trial found
+      // Handle 0 or negative scenario first
+      // Percentage = remaining / total * 100
+      if (trialCredits.remaining_amount <= 0) {
+        dispatch(setSubscriptionActive(false));
+      } else {
+        dispatch(setSubscriptionActive(true));
+      }
+    } else {
+      // Error
+      dispatch(setSubscriptionActive(false));
+    }
+  }, [trialCredits, subscriptionStatus]);
+
   // [x] Valid trial + no sub
   // [x] Expired trial + no sub
   // [ ] Sub with credits
   // [ ] Expired sub
-  const getPercent = useMemo(() => {
-    let percent = 100;
+  const percent = useMemo(() => {
+    let _percent = 100;
 
     if (isSubscriptionStatusLoading) {
-      return percent;
+      return _percent;
     }
 
     if (!trialCredits && !subscriptionStatus) {
-      percent = -1;
+      _percent = -1;
     }
 
     // Handle valid subscription
@@ -139,48 +165,39 @@ export const SidebarSubscriptionDetail = () => {
     ) {
       // TODO: fix this
       // Hard code at 100 for now
-      percent = 100;
+      _percent = 100;
     } else if (trialCredits) {
       // Percentage = remaining / total * 100
       // Handle 0 or negative scenario first
       if (trialCredits.remaining_amount <= 0) {
-        percent = 0;
+        _percent = 0;
       } else {
-        percent =
+        _percent =
           (trialCredits.remaining_amount / trialCredits.initial_amount) * 100;
       }
     }
 
-    // Less than 25% - show a notification warning
-    if (percent === 0) {
-      setStatus("empty");
-    } else if (percent === -1) {
-      setStatus("warn");
-    } else if (percent < 25) {
-      setStatus("low");
-    }
-
-    return percent;
+    return _percent;
   }, [subscriptionStatus, trialCredits, isSubscriptionStatusLoading]);
 
   // [x] Active sub (show nothing)
   // [x] Low trials credits + no subscription (show warning)
   // [x] Empty trials credits + no subscription (show error)
   useEffect(() => {
-    if (status === "empty") {
+    if (percent === 0) {
       notifications.show({
         color: "red",
         autoClose: false,
         message:
           "You are out of trial credits and no subscription is active. Upgrade your account to enable the dialer 👍",
       });
-    } else if (status === "low") {
+    } else if (percent < 25) {
       notifications.show({
         message:
           "You're running low on credits. Upgrade your account to avoid service disruption 👍",
       });
     }
-  }, [status, subscriptionStatus]);
+  }, [percent, subscriptionStatus]);
 
   return (
     <Box className="trial-details" p="lg" bg="black">
@@ -189,7 +206,7 @@ export const SidebarSubscriptionDetail = () => {
         ta="center"
         weight={500}
         mb="xs"
-        color={status === "empty" ? "red" : ""}
+        color={percent === 0 ? "red" : ""}
       >
         {isTrialCreditsLoading || isSubscriptionStatusLoading ? (
           <Loader size="sm" />
@@ -199,8 +216,8 @@ export const SidebarSubscriptionDetail = () => {
       </Text>
       <Progress
         mb="md"
-        value={getPercent}
-        color={status === "empty" ? "red" : status === "warn" ? "yellow" : ""}
+        value={percent}
+        color={percent === 0 ? "red" : percent < 25 ? "yellow" : ""}
       />
 
       {/* [x] Show "Upgrade" if user has no active account */}

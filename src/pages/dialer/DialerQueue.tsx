@@ -1,12 +1,11 @@
 import { useEffect } from "react";
-import { PiPhone, PiPhoneOutgoing, PiQueue } from "react-icons/pi";
+import { PiPhoneOutgoing, PiQueue } from "react-icons/pi";
 import {
-  Button,
   Card,
   Chip,
   Flex,
   Group,
-  HoverCard,
+  Overlay,
   Table,
   Text,
   ThemeIcon,
@@ -15,25 +14,20 @@ import {
 import clsx from "clsx";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import {
-  setAlphaDialerVisible,
-  setDialQueue,
-  setDialQueueIndex,
-  setRequestAction,
-} from "../../store/dialer/slice";
+import { setDialQueueIndex, setRequestAction } from "../../store/dialer/slice";
 import DialerQueueStyled from "./DialerQueue.styles";
 import CallButtonSimple from "../../components/call-buttons/CallButtonSimple";
 import { dialStateInstance } from "./DialState.class";
-import { IconRefresh } from "@tabler/icons-react";
 
 function DialerQueue() {
   const dispatch = useAppDispatch();
 
+  const { subscriptionActive } = useAppSelector((state) => state.user);
   const { call, dialQueue, dialQueueIndex } = useAppSelector(
     (state) => state.dialer
   );
 
-  function startCall(index: number) {
+  async function startCall(index: number) {
     dialStateInstance.dialQueueIndex = index;
     dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
     dispatch(setRequestAction("startCall"));
@@ -41,13 +35,6 @@ function DialerQueue() {
 
   function stopCall() {
     dispatch(setRequestAction("stopCall"));
-  }
-
-  function resetDialer() {
-    dialStateInstance.dialQueueIndex = null;
-    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-    dispatch(setDialQueue([]));
-    dispatch(setAlphaDialerVisible(false));
   }
 
   const rows = dialQueue.length ? (
@@ -126,40 +113,19 @@ function DialerQueue() {
             </ThemeIcon>
             <Title order={3}>Call queue</Title>
           </Flex>
-
-          <HoverCard width={280} shadow="md" openDelay={500}>
-            <HoverCard.Target>
-              <Button
-                color="red"
-                variant="outline"
-                compact
-                onClick={resetDialer}
-                leftIcon={<IconRefresh size="1rem" />}
-              >
-                Clear
-              </Button>
-            </HoverCard.Target>
-            <HoverCard.Dropdown>
-              <Text size="sm">
-                Clicking "Clear" will remove all leads from the Call queue. You
-                can create a new queue by filtering your selection on the Leads
-                page and clicking "Start dialer"
-              </Text>
-            </HoverCard.Dropdown>
-          </HoverCard>
         </Flex>
 
         <div className="fade" />
         <div className="scroll-area">
+          {!subscriptionActive && <Overlay color="#fff" opacity={0.85} />}
+
           <Table horizontalSpacing="xs" verticalSpacing="sm">
             <thead>
               <tr>
                 <th style={{ width: 50 }}>#</th>
                 <th>Name</th>
                 <th>Status</th>
-                <th>
-                  <PiPhone fontSize="1.5rem" />
-                </th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>{rows}</tbody>

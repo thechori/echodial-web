@@ -40,6 +40,10 @@ export const DialerLeadDetail = () => {
   const { data: availableStatuses } = useGetLeadStatusesQuery();
   const [updateLead, { isLoading }] = useUpdateLeadMutation();
 
+  // TODO: Fix bug here that causes following bug:
+  // Warning: `value` prop on `input` should not be null. Consider using an empty string to clear the component or `undefined` for uncontrolled components.
+  // Note: Seems to be remedied when you set the initial value of a field to ""
+  // This seems hacky, especially if we support custom fields...
   const form = useForm({
     initialValues: {
       ...activeLead,
@@ -55,7 +59,7 @@ export const DialerLeadDetail = () => {
         return /^\S+@\S+$/.test(val) ? null : "Invalid email";
       },
       phone: (val: any) => {
-        if (!val) return "Phone number required";
+        if (!val) return null;
         const isValid = isPossiblePhoneNumber(val);
         return isValid ? null : "Invalid phone number";
       },
@@ -291,14 +295,8 @@ export const DialerLeadDetail = () => {
         </Group>
 
         <Text w="100%" color="red">
-          {/*  @ts-ignore */}
-          {/* {form.errors?.map((e) => (
-            <Text color="red">{e}</Text>
-          ))} */}
           {error}
         </Text>
-        <Box></Box>
-        <Box></Box>
       </Card>
     </LeadDetailStyled>
   );

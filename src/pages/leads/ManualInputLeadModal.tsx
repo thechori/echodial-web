@@ -16,10 +16,12 @@ import { useAddLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
 import { useGetLeadStatusesQuery } from "../../services/lead.status";
 import { PhoneInput } from "../../components/phone-input";
+import { useState } from "react";
 
 const ManualInputLeadModal = ({ opened, close }: any) => {
-  const [addLead, { isLoading, error }] = useAddLeadMutation();
+  const [addLead, { isLoading }] = useAddLeadMutation();
   const { data: availableStatuses } = useGetLeadStatusesQuery();
+  const [error, setError] = useState("");
 
   const form = useForm({
     initialValues: {
@@ -36,7 +38,7 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
         return /^\S+@\S+$/.test(val) ? null : "Invalid email";
       },
       phone: (val) => {
-        if (!val) return "Phone number required";
+        if (!val) return null;
         const isValid = isPossiblePhoneNumber(val);
         return isValid ? null : "Invalid phone number";
       },
@@ -76,10 +78,11 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
       });
 
       form.reset();
+      setError("");
 
       close();
     } catch (e) {
-      console.error(extractErrorMessage(e));
+      setError(extractErrorMessage(e));
     }
   }
 
@@ -97,11 +100,7 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
 
         <Box>
           <Box pb="xs">
-            <PhoneInput
-              required
-              label="Phone number"
-              {...form.getInputProps("phone")}
-            />
+            <PhoneInput label="Phone number" {...form.getInputProps("phone")} />
           </Box>
 
           <TextInput
@@ -117,7 +116,6 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
           <TextInput pb="xs" label="Email" {...form.getInputProps("email")} />
           <Select
             label="Status"
-            required
             pb="xs"
             {...form.getInputProps("status")}
             data={
@@ -145,8 +143,7 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
         </Flex>
 
         <Text w="100%" color="red">
-          {/* @ts-ignore */}
-          {error?.status} {JSON.stringify(error?.data)}
+          {error}
         </Text>
       </Modal.Body>
     </Modal>

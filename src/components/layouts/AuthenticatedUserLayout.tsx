@@ -6,17 +6,17 @@ import DialerOptionsModal from "../../pages/dialer/DialerOptionsModal";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   selectIsDialerOptionsModalOpen,
-  setAlphaDialerVisible,
+  setIsDialerOpen,
   setShowOptions,
 } from "../../store/dialer/slice";
 import { Box } from "@mantine/core";
-import AlphaDialer from "../../pages/dialer/AlphaDialer";
-import AlphaDialerFab from "../../pages/dialer/AlphaDialerFab";
+import Dialer from "../../pages/dialer/Dialer";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 const Container = styled.div`
   height: 100%;
+  padding-bottom: 93px;
 
   @media ${devices.tablet} {
     display: flex;
@@ -29,16 +29,16 @@ const Container = styled.div`
 
 const AuthenticatedUserLayout = ({ children }: any) => {
   const dispatch = useAppDispatch();
-  const { alphaDialerVisible } = useAppSelector((state) => state.dialer);
   const isDialerOptionsModalOpen = useAppSelector(
     selectIsDialerOptionsModalOpen
   );
+  const { isDialerOpen } = useAppSelector((state) => state.dialer);
 
   // Detect route changes in order to hide the dialer overlay - improved UX to avoid them being confused when clicking side nav items and nothing happens
   const location = useLocation();
   useEffect(() => {
-    if (alphaDialerVisible) {
-      dispatch(setAlphaDialerVisible(false));
+    if (isDialerOpen) {
+      dispatch(setIsDialerOpen(false));
     }
   }, [location]);
 
@@ -54,8 +54,7 @@ const AuthenticatedUserLayout = ({ children }: any) => {
         opened={isDialerOptionsModalOpen}
         onClose={() => dispatch(setShowOptions(false))}
       />
-      <AlphaDialer />
-      <AlphaDialerFab />
+      <Dialer />
     </Container>
   );
 };
