@@ -12,7 +12,7 @@ function PhoneNumberMenu({
     <Menu shadow="md" width={200}>
       <Menu.Target>
         <ActionIcon color="red" size="sm">
-          <IconTrash />
+          {!isLoading ? <IconTrash /> : <Loader size="sm" />}
         </ActionIcon>
       </Menu.Target>
 

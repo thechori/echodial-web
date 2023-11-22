@@ -12,7 +12,7 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconCircleCheck } from "@tabler/icons-react";
+import { IconCircleCheck, IconAlertCircle } from "@tabler/icons-react";
 import { BiPlus } from "react-icons/bi";
 //
 import phoneFormatter from "../../utils/phone-formatter";
@@ -77,8 +77,16 @@ function PhoneNumbers() {
                     w={250}
                   >
                     <Flex align="center">
-                      <ThemeIcon color="teal" size={24} radius="xl">
-                        <IconCircleCheck size="1rem" />
+                      <ThemeIcon
+                        color={cid.twilio_sid ? "teal" : "yellow"}
+                        size={24}
+                        radius="xl"
+                      >
+                        {cid.twilio_sid ? (
+                          <IconCircleCheck size="1rem" />
+                        ) : (
+                          <IconAlertCircle size="1rem" />
+                        )}
                       </ThemeIcon>
                       <Box ml={16}>{phoneFormatter(cid.phone_number)}</Box>
                     </Flex>
