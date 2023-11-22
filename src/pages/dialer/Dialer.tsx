@@ -57,6 +57,7 @@ function Dialer() {
     error,
     status,
     connectedAt,
+    dialQueueIndex,
   } = useAppSelector((state) => state.dialer);
   const { subscriptionActive } = useAppSelector((state) => state.user);
   //
@@ -113,6 +114,16 @@ function Dialer() {
 
   // Begin calling the current index
   const startCall = useCallback(async () => {
+    // Check for caller ID select
+    if (!fromNumber) {
+      notifications.show({
+        message: "Please select a phone number to call from",
+        color: "yellow",
+      });
+      dispatch(setError("Please select a phone number to call from"));
+      return;
+    }
+
     // Stop call
     await stopCall();
 
@@ -338,11 +349,9 @@ function Dialer() {
         dialStateInstance.call.disconnect();
       }
 
-      if (dialStateInstance.currentCallId === null) {
-        throw "No Call ID found";
+      if (dialStateInstance.currentCallId !== null) {
+        await endCallViaId(dialStateInstance.currentCallId).unwrap();
       }
-
-      await endCallViaId(dialStateInstance.currentCallId).unwrap();
     } catch (e) {
       notifications.show({
         title: "Error",
@@ -432,8 +441,8 @@ function Dialer() {
   let name = "";
   let phone = "";
 
-  if (dialQueue && dialStateInstance.dialQueueIndex !== null) {
-    const lead = dialQueue[dialStateInstance.dialQueueIndex];
+  if (dialQueue && dialQueueIndex !== null) {
+    const lead = dialQueue[dialQueueIndex];
     name = `${lead.first_name || ""} ${lead.last_name || ""}`;
     phone = phoneFormatter(lead.phone) || "";
   }

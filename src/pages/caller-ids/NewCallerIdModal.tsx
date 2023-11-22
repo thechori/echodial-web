@@ -57,8 +57,12 @@ const NewCallerIdModal = ({
         <Text mb="md">
           In order to protect our users, we must securely verify that you own
           this number. We'll send you a text message and a phone call
-          simultaneously. Enter the Validation Code that you receive via SMS
-          into the phone call to complete this step.
+          simultaneously.
+        </Text>
+
+        <Text mb="md">
+          Enter the Validation Code that you receive via SMS into the phone call
+          to complete this step.
         </Text>
 
         <Group>

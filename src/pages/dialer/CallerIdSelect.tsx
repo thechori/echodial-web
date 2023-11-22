@@ -58,10 +58,11 @@ function CallerIdSelect(props: TCallerIdSelectProps & any) {
   return (
     <Select
       label={props.label}
-      placeholder="Pick one"
+      placeholder="My phone number *"
       data={callerIdItems}
       value={fromNumber || ""}
       onChange={handleSelect}
+      style={{ width: "200px" }}
       {...props}
     />
   );
