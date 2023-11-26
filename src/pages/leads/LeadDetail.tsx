@@ -61,6 +61,39 @@ export const LeadDetail = () => {
         const isValid = isPossiblePhoneNumber(val);
         return isValid ? null : "Invalid phone number";
       },
+      sale_amount: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+        const intValue = parseInt(val, 10);
+
+        return !isNaN(intValue) &&
+          Number.isInteger(intValue) &&
+          intValue === floatValue
+          ? null
+          : "Must be valid number";
+      },
+      sale_commission: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+        const intValue = parseInt(val, 10);
+
+        return !isNaN(intValue) &&
+          Number.isInteger(intValue) &&
+          intValue === floatValue
+          ? null
+          : "Must be valid number";
+      },
+      sale_cost: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+        const intValue = parseInt(val, 10);
+
+        return !isNaN(intValue) &&
+          Number.isInteger(intValue) &&
+          intValue === floatValue
+          ? null
+          : "Must be valid number";
+      },
     },
   });
 
@@ -71,10 +104,12 @@ export const LeadDetail = () => {
           form.setFieldValue(customProperties[i].name, "");
         }
       }
+      setCustomInputs();
     }
-  }, [customProperties]);
+  }, [customProperties, form.values]);
 
   useEffect(() => {
+    form.reset();
     form.setValues({
       ...selectedLead,
       // Note: We must manually set the value to "" in order to avoid having stale values linger -- very confusing and misleading to users
@@ -86,10 +121,16 @@ export const LeadDetail = () => {
           ? new Date(selectedLead.appointment_at)
           : null,
     });
+    // form.setValues((prev) => ({ ...prev, ...selectedLead }));
     form.resetDirty();
+    setCustomInputs();
   }, [selectedLead]);
 
   useEffect(() => {
+    setCustomInputs();
+  }, [form.values]);
+
+  function setCustomInputs() {
     let customInputs: any = [];
     if (customProperties) {
       for (let i = 0; i < customProperties.length; i++) {
@@ -99,14 +140,14 @@ export const LeadDetail = () => {
             w="100%"
             mb="xs"
             label={customProperties[i].label}
-            {...form.getInputProps(customProperties[i].name)}
+            value={form.getInputProps(customProperties[i].name).value ?? ""}
+            onChange={form.getInputProps(customProperties[i].name).onChange}
           />
         );
       }
       setCustomPropertiesInputs(customInputs);
     }
-  }, [form.values]);
-
+  }
   // Close icon
   function handleClose() {
     discardChanges();
@@ -115,6 +156,7 @@ export const LeadDetail = () => {
 
   // Cancel edit
   function discardChanges() {
+    //we have to do form.reset() or else the custom values will linger
     form.reset();
     if (!selectedLead)
       return notifications.show({
@@ -128,7 +170,7 @@ export const LeadDetail = () => {
           : null,
     });
     form.resetDirty();
-    setCustomPropertiesInputs([]);
+    setCustomInputs();
   }
 
   async function editLead() {
@@ -232,7 +274,8 @@ export const LeadDetail = () => {
             <TextInput
               mb="xs"
               label="Email address"
-              {...form.getInputProps("email")}
+              value={form.getInputProps("email").value ?? ""}
+              onChange={form.getInputProps("email").onChange}
             />
             <Select
               mb="xs"

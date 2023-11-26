@@ -118,6 +118,8 @@ function MappingTable() {
     standardPropertiesLoading,
     customPropertiesLoading,
     propertyGroupsLoading,
+    propertyTypes,
+    propertyTypesLoading,
   ]);
 
   const headers = useAppSelector(

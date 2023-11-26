@@ -80,21 +80,7 @@ export const DialerLeadDetail = () => {
   }, [customProperties]);
 
   useEffect(() => {
-    let customInputs: any = [];
-    if (customProperties) {
-      for (let i = 0; i < customProperties.length; i++) {
-        customInputs.push(
-          <TextInput
-            key={i}
-            w="100%"
-            mb="xs"
-            label={customProperties[i].label}
-            {...form.getInputProps(customProperties[i].name)}
-          />
-        );
-      }
-      setCustomPropertiesInputs(customInputs);
-    }
+    setCustomInputs();
   }, [form.values]);
 
   // Grab lead from state use queue and index
@@ -124,6 +110,24 @@ export const DialerLeadDetail = () => {
     form.resetDirty();
   }, [activeLead]);
 
+  function setCustomInputs() {
+    let customInputs: any = [];
+    if (customProperties) {
+      for (let i = 0; i < customProperties.length; i++) {
+        customInputs.push(
+          <TextInput
+            key={i}
+            w="100%"
+            mb="xs"
+            label={customProperties[i].label}
+            {...form.getInputProps(customProperties[i].name)}
+          />
+        );
+      }
+      setCustomPropertiesInputs(customInputs);
+    }
+  }
+
   // Cancel edit
   function discardChanges() {
     form.reset();
@@ -139,6 +143,7 @@ export const DialerLeadDetail = () => {
           : null,
     });
     form.resetDirty();
+    setCustomInputs();
   }
 
   async function editLead() {
