@@ -105,7 +105,7 @@ function DialerQueue() {
 
   return (
     <DialerQueueStyled>
-      <Card withBorder>
+      <Card withBorder mih={300}>
         <Flex justify="space-between" align="center" mb="md">
           <Flex justify="space-between" align="center">
             <ThemeIcon mr="xs">
