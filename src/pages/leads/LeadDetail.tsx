@@ -177,6 +177,7 @@ export const LeadDetail = () => {
   }
 
   async function editLead() {
+    setError("");
     form.validate();
     if (!form.isValid()) {
       return;
@@ -417,10 +418,6 @@ export const LeadDetail = () => {
         </Group>
 
         <Text w="100%" color="red">
-          {/*  @ts-ignore */}
-          {/* {form.errors?.map((e) => (
-            <Text color="red">{e}</Text>
-          ))} */}
           {error}
         </Text>
         <Box></Box>

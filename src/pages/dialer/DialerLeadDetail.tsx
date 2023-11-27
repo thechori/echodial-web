@@ -174,6 +174,7 @@ export const DialerLeadDetail = () => {
   }
 
   async function editLead() {
+    setError("");
     form.validate();
 
     if (!form.isValid()) {
