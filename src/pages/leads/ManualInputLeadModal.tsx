@@ -168,11 +168,7 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
   return (
     <Modal opened={opened} onClose={handleClose} title="Create new lead">
       <Modal.Body>
-        <Text mb="md" size="sm">
-          Manually create your new Lead via the form below.
-        </Text>
-
-        <Box>
+        <Box style={{ height: "370px", overflow: "scroll" }}>
           <Box pb="xs">
             <PhoneInput label="Phone number" {...form.getInputProps("phone")} />
           </Box>
