@@ -55,6 +55,7 @@ interface IDialerState {
   dialQueue: Lead[];
   options: TDialerOptions;
   showOptions: boolean;
+  showNewCallerIdModal: boolean;
 }
 
 const buildInitialState = (): IDialerState => ({
@@ -85,6 +86,7 @@ const buildInitialState = (): IDialerState => ({
   //
   options: buildOptions(),
   showOptions: false,
+  showNewCallerIdModal: false,
 });
 
 export const DialerSlice = createSlice({
@@ -241,6 +243,9 @@ export const DialerSlice = createSlice({
         (lead) => lead.id !== action.payload
       );
     },
+    setShowNewCallerIdModal: (state, action) => {
+      state.showNewCallerIdModal = action.payload;
+    },
   },
 });
 
@@ -267,6 +272,7 @@ export const {
   deleteLeadFromQueue,
   setConnectedAt,
   updateLeadById,
+  setShowNewCallerIdModal,
 } = DialerSlice.actions;
 
 export const selectIsCallActive = (state: RootState) => state.dialer.call;

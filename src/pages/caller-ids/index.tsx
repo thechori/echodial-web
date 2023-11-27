@@ -14,6 +14,7 @@ import {
 } from "@mantine/core";
 import { IconCircleCheck, IconAlertCircle } from "@tabler/icons-react";
 import { BiPlus } from "react-icons/bi";
+import { notifications } from "@mantine/notifications";
 //
 import phoneFormatter from "../../utils/phone-formatter";
 import PhoneNumberMenu from "./PhoneNumberMenu";
@@ -25,9 +26,12 @@ import {
 import NewCallerIdModal from "./NewCallerIdModal";
 import { extractErrorMessage } from "../../utils/error";
 import NewCallerIdValidatingModal from "./NewCallerIdValidatingModal";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setShowNewCallerIdModal } from "../../store/dialer/slice";
 
 function PhoneNumbers() {
   const [error, setError] = useState("");
+  const dispatch = useAppDispatch();
   const {
     data: callerIds,
     error: errorCallerIds,
@@ -39,9 +43,22 @@ function PhoneNumbers() {
     { isLoading: isLoadingDeleteCallerId, error: errorDeleteCallerId },
   ] = useDeleteCallerIdMutation();
 
-  const [opened, { open, close }] = useDisclosure(false);
+  const { showNewCallerIdModal: opened } = useAppSelector(
+    (state) => state.dialer
+  );
+  const close = () => dispatch(setShowNewCallerIdModal(false));
+  const open = () => dispatch(setShowNewCallerIdModal(true));
   const [openedValidating, { open: openValidating, close: closeValidating }] =
     useDisclosure(false);
+
+  const handleDeleteCallerId = async (phone_number: string) => {
+    try {
+      await deleteCallerId(phone_number);
+      notifications.show({ message: "Successfully deleted phone number." });
+    } catch (e) {
+      setError(extractErrorMessage(e));
+    }
+  };
 
   useEffect(() => {
     if (errorCallerIds) {
@@ -91,7 +108,7 @@ function PhoneNumbers() {
                       <Box ml={16}>{phoneFormatter(cid.phone_number)}</Box>
                     </Flex>
                     <PhoneNumberMenu
-                      onDelete={() => deleteCallerId(cid.phone_number)}
+                      onDelete={() => handleDeleteCallerId(cid.phone_number)}
                       isLoading={isLoadingDeleteCallerId}
                     />
                   </Flex>
@@ -99,8 +116,9 @@ function PhoneNumbers() {
               ) : isLoadingCallerIds ? (
                 <Loader py="lg" />
               ) : (
-                <Text size="sm" italic color="dimmed">
-                  No numbers found
+                <Text color="dimmed" py="lg">
+                  Hey! 👋 You don’t have any numbers yet. Add one to get
+                  started.
                 </Text>
               )}
             </Box>

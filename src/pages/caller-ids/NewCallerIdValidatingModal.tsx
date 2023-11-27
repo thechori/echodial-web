@@ -43,7 +43,6 @@ const NewCallerIdValidatingModal = ({
       }
 
       // Limit number of attempts
-      console.log("attempts: ", attempts);
       if (attempts < 0) {
         clearInterval(int);
         notifications.show({
@@ -81,8 +80,6 @@ const NewCallerIdValidatingModal = ({
           return true;
         });
 
-        console.log("shouldSucceed", shouldSucceed);
-
         if (shouldSucceed) {
           notifications.show({
             color: "green",
@@ -107,10 +104,6 @@ const NewCallerIdValidatingModal = ({
   }, [opened, attempts]);
 
   function cancel() {
-    // Cancel API request
-    // TODO
-
-    // Close modal
     handleClose();
   }
 

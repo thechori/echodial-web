@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { Select, SelectItem } from "@mantine/core";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setFromNumber, setIsDialerOpen } from "../../store/dialer/slice";
+import {
+  setFromNumber,
+  setIsDialerOpen,
+  setShowNewCallerIdModal,
+} from "../../store/dialer/slice";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
 import phoneFormatter from "../../utils/phone-formatter";
 import numbers from "../../configs/numbers";
-import { useNavigate } from "react-router-dom";
-import routes from "../../configs/routes";
 import { APP_NAME } from "../../configs/labels";
 
 type TCallerIdSelectProps = {
@@ -16,7 +18,6 @@ type TCallerIdSelectProps = {
 
 function CallerIdSelect(props: TCallerIdSelectProps & any) {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const [callerIdItems, setCallerIdItems] = useState<SelectItem[]>([]);
   const { fromNumber } = useAppSelector((state) => state.dialer);
   const { data: callerIds } = useGetCallerIdsQuery();
@@ -48,7 +49,7 @@ function CallerIdSelect(props: TCallerIdSelectProps & any) {
     // Check for "Add new number" item click
     if (value === addNewCallerIdSelectItem.value) {
       dispatch(setIsDialerOpen(false));
-      navigate(routes.callerIds);
+      dispatch(setShowNewCallerIdModal(true));
       return;
     }
 
