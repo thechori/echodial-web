@@ -213,7 +213,13 @@ export const LeadDetail = () => {
       dispatch(setSelectedRows([]));
       handleClose();
     } catch (e) {
-      setError(extractErrorMessage(e));
+      const errorMessage = extractErrorMessage(e);
+      setError(errorMessage);
+      notifications.show({
+        color: "red",
+        message: errorMessage,
+        title: "Error",
+      });
     }
   }
 

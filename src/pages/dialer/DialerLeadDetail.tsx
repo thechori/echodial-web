@@ -214,7 +214,13 @@ export const DialerLeadDetail = () => {
         updateLeadById({ id: form.values.id, leadUpdated: form.values })
       );
     } catch (e) {
-      setError(extractErrorMessage(e));
+      const errorMessage = extractErrorMessage(e);
+      setError(errorMessage);
+      notifications.show({
+        color: "red",
+        message: errorMessage,
+        title: "Error",
+      });
     }
   }
 
