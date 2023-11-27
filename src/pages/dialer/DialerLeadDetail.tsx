@@ -71,35 +71,21 @@ export const DialerLeadDetail = () => {
       sale_amount: (val: any) => {
         if (!val) return null;
         const floatValue = parseFloat(val);
-        const intValue = parseInt(val, 10);
 
-        return !isNaN(intValue) &&
-          Number.isInteger(intValue) &&
-          intValue === floatValue
-          ? null
-          : "Must be valid number";
+        // Check if the parsed value is a valid number and not NaN
+        return !isNaN(floatValue) ? null : "Invalid value";
       },
       sale_commission: (val: any) => {
         if (!val) return null;
         const floatValue = parseFloat(val);
-        const intValue = parseInt(val, 10);
 
-        return !isNaN(intValue) &&
-          Number.isInteger(intValue) &&
-          intValue === floatValue
-          ? null
-          : "Must be valid number";
+        return !isNaN(floatValue) ? null : "Invalid value";
       },
       sale_cost: (val: any) => {
         if (!val) return null;
         const floatValue = parseFloat(val);
-        const intValue = parseInt(val, 10);
 
-        return !isNaN(intValue) &&
-          Number.isInteger(intValue) &&
-          intValue === floatValue
-          ? null
-          : "Must be valid number";
+        return !isNaN(floatValue) ? null : "Invalid value";
       },
     },
   });

@@ -10,6 +10,7 @@ import {
   TextInput,
   Divider,
   Group,
+  Textarea,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { DateInput } from "@mantine/dates";
@@ -33,21 +34,47 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
   const form = useForm({
     initialValues: {
       email: "",
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       phone: "",
-      error: "",
+      status: "new",
+      appointment_at: null,
+      notes: null,
+      sale_amount: null,
+      sale_cost: null,
+      sale_commission: null,
+      sale_at: null,
+      sale_notes: null,
     },
     validate: {
       // Allow blank, but validate if something has been entered
-      email: (val) => {
+      email: (val: any) => {
         if (!val) return null;
         return /^\S+@\S+$/.test(val) ? null : "Invalid email";
       },
-      phone: (val) => {
+      phone: (val: any) => {
         if (!val) return null;
         const isValid = isPossiblePhoneNumber(val);
         return isValid ? null : "Invalid phone number";
+      },
+      sale_amount: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+
+        // Check if the parsed value is a valid number and not NaN
+        return !isNaN(floatValue) ? null : "Invalid value";
+      },
+      sale_commission: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+
+        return !isNaN(floatValue) ? null : "Invalid value";
+      },
+      sale_cost: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+
+        return !isNaN(floatValue) ? null : "Invalid value";
       },
     },
   });
@@ -59,6 +86,7 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
           form.setFieldValue(customProperties[i].name, "");
         }
       }
+      setCustomInputs();
     }
   }, [customProperties]);
 
@@ -96,20 +124,27 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
       return;
     }
 
-    const {
-      email,
-      firstName: first_name,
-      lastName: last_name,
-      phone,
-    } = form.values;
-
+    const propertyNames = customProperties?.map((property) => property.name);
+    const newConstantProperties = propertyNames?.reduce(
+      (acc: any, property) => {
+        acc[property] = "";
+        return acc;
+      },
+      {}
+    );
+    //if the key is a custom property, we store inside newConstantProperties
+    //else we update it as a standard property
+    const updatedProperties: any = {};
+    for (const [key, value] of Object.entries(form.values)) {
+      if (key in newConstantProperties) {
+        newConstantProperties[key] = value;
+      } else if (key != "custom_properties") {
+        updatedProperties[key] = value;
+      }
+    }
+    updatedProperties["custom_properties"] = newConstantProperties;
     try {
-      await addLead({
-        email,
-        first_name,
-        last_name,
-        phone,
-      }).unwrap();
+      await addLead(updatedProperties).unwrap();
 
       notifications.show({
         title: "Success",
@@ -145,12 +180,12 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
           <TextInput
             pb="xs"
             label="First name"
-            {...form.getInputProps("firstName")}
+            {...form.getInputProps("first_name")}
           />
           <TextInput
             pb="xs"
             label="Last name"
-            {...form.getInputProps("lastName")}
+            {...form.getInputProps("last_name")}
           />
           <TextInput pb="xs" label="Email" {...form.getInputProps("email")} />
           <Select
@@ -170,6 +205,56 @@ const ManualInputLeadModal = ({ opened, close }: any) => {
             clearable
             {...form.getInputProps("appointment_at")}
           />
+          <Textarea
+            label="Notes"
+            w="100%"
+            autosize
+            minRows={3}
+            {...form.getInputProps("notes")}
+          />
+          <Group py="sm">
+            <Flex justify="space-between">
+              <TextInput
+                pr="xs"
+                mb="xs"
+                label="Sale amount"
+                value={form.getInputProps("sale_amount").value ?? ""}
+                onChange={form.getInputProps("sale_amount").onChange}
+                error={form.getInputProps("sale_amount").error}
+              />
+              <TextInput
+                pl="xs"
+                mb="xs"
+                label="Sale cost"
+                value={form.getInputProps("sale_cost").value ?? ""}
+                onChange={form.getInputProps("sale_cost").onChange}
+                error={form.getInputProps("sale_cost").error}
+              />
+            </Flex>
+
+            <Flex>
+              <TextInput
+                pr="xs"
+                mb="xs"
+                label="Sale commission"
+                value={form.getInputProps("sale_commission").value ?? ""}
+                onChange={form.getInputProps("sale_commission").onChange}
+                error={form.getInputProps("sale_commission").error}
+              />
+              <DateInput
+                pl="xs"
+                label="Sale at"
+                clearable
+                {...form.getInputProps("sale_at")}
+              />
+            </Flex>
+            <Textarea
+              minRows={2}
+              w="100%"
+              label="Sale notes"
+              {...form.getInputProps("sale_notes")}
+            />
+          </Group>
           <Text size="sm" color="dimmed" mt="md">
             Custom Properties
           </Text>
