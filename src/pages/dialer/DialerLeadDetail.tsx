@@ -87,7 +87,6 @@ export const DialerLeadDetail = () => {
   useEffect(() => {
     if (dialQueue.length && dialQueueIndex !== null) {
       const lead = dialQueue[dialQueueIndex];
-      console.log(form);
       setActiveLead(lead);
     } else {
       setActiveLead(null);

@@ -49,6 +49,10 @@ export const LeadDetail = () => {
         selectedLead && selectedLead.appointment_at
           ? new Date(selectedLead.appointment_at)
           : null,
+      sale_at:
+        selectedLead && selectedLead.sale_at
+          ? new Date(selectedLead.sale_at)
+          : null,
     },
     validate: {
       // Allow blank, but validate if something has been entered
@@ -97,6 +101,9 @@ export const LeadDetail = () => {
     },
   });
 
+  //when we first import the leads, there might be certain custom properties that are missing
+  //because the properties vary from lead to lead. We need to have this function to make sure
+  //that the form contains all the custom properties that are missing
   useEffect(() => {
     if (customProperties) {
       for (let i = 0; i < customProperties.length; i++) {
@@ -106,10 +113,12 @@ export const LeadDetail = () => {
       }
       setCustomInputs();
     }
-  }, [customProperties, form.values]);
+  }, [customProperties]);
 
   useEffect(() => {
     form.reset();
+    //we have to do form.reset() or else the custom values will linger
+
     form.setValues({
       ...selectedLead,
       // Note: We must manually set the value to "" in order to avoid having stale values linger -- very confusing and misleading to users
@@ -120,8 +129,11 @@ export const LeadDetail = () => {
         selectedLead && selectedLead.appointment_at
           ? new Date(selectedLead.appointment_at)
           : null,
+      sale_at:
+        selectedLead && selectedLead.sale_at
+          ? new Date(selectedLead.sale_at)
+          : null,
     });
-    // form.setValues((prev) => ({ ...prev, ...selectedLead }));
     form.resetDirty();
     setCustomInputs();
   }, [selectedLead]);
@@ -130,6 +142,7 @@ export const LeadDetail = () => {
     setCustomInputs();
   }, [form.values]);
 
+  //set the values for each of the custom property text input boxes
   function setCustomInputs() {
     let customInputs: any = [];
     if (customProperties) {
@@ -142,6 +155,7 @@ export const LeadDetail = () => {
             label={customProperties[i].label}
             value={form.getInputProps(customProperties[i].name).value ?? ""}
             onChange={form.getInputProps(customProperties[i].name).onChange}
+            error={form.getInputProps(customProperties[i].name).error}
           />
         );
       }
@@ -156,7 +170,6 @@ export const LeadDetail = () => {
 
   // Cancel edit
   function discardChanges() {
-    //we have to do form.reset() or else the custom values will linger
     form.reset();
     if (!selectedLead)
       return notifications.show({
@@ -167,6 +180,10 @@ export const LeadDetail = () => {
       appointment_at:
         selectedLead && selectedLead.appointment_at
           ? new Date(selectedLead.appointment_at)
+          : null,
+      sale_at:
+        selectedLead && selectedLead.sale_at
+          ? new Date(selectedLead.sale_at)
           : null,
     });
     form.resetDirty();
@@ -182,6 +199,9 @@ export const LeadDetail = () => {
     if (!form.values) {
       return;
     }
+
+    //grab the property names and create a new object mapping the custom property name
+    //to its value
     const propertyNames = customProperties?.map((property) => property.name);
     const newConstantProperties = propertyNames?.reduce(
       (acc: any, property) => {
@@ -190,6 +210,8 @@ export const LeadDetail = () => {
       },
       {}
     );
+    //if the key is a custom property, we store inside newConstantProperties
+    //else we update it as a standard property
     const updatedProperties: any = {};
     for (const [key, value] of Object.entries(form.values)) {
       if (key in newConstantProperties) {
@@ -257,12 +279,16 @@ export const LeadDetail = () => {
             <TextInput
               mb="xs"
               label="First name"
-              {...form.getInputProps("first_name")}
+              value={form.getInputProps("first_name").value ?? ""}
+              onChange={form.getInputProps("first_name").onChange}
+              error={form.getInputProps("first_name").error}
             />
             <TextInput
               mb="xs"
               label="Last name"
-              {...form.getInputProps("last_name")}
+              value={form.getInputProps("last_name").value ?? ""}
+              onChange={form.getInputProps("last_name").onChange}
+              error={form.getInputProps("last_name").error}
             />
             <Box mb="xs">
               <PhoneInput
@@ -276,6 +302,7 @@ export const LeadDetail = () => {
               label="Email address"
               value={form.getInputProps("email").value ?? ""}
               onChange={form.getInputProps("email").onChange}
+              error={form.getInputProps("email").error}
             />
             <Select
               mb="xs"
@@ -339,17 +366,23 @@ export const LeadDetail = () => {
             <TextInput
               mb="xs"
               label="Sale amount"
-              {...form.getInputProps("sale_amount")}
+              value={form.getInputProps("sale_amount").value ?? ""}
+              onChange={form.getInputProps("sale_amount").onChange}
+              error={form.getInputProps("sale_amount").error}
             />
             <TextInput
               mb="xs"
               label="Sale cost"
-              {...form.getInputProps("sale_cost")}
+              value={form.getInputProps("sale_cost").value ?? ""}
+              onChange={form.getInputProps("sale_cost").onChange}
+              error={form.getInputProps("sale_cost").error}
             />
             <TextInput
               mb="xs"
               label="Sale commission"
-              {...form.getInputProps("sale_commission")}
+              value={form.getInputProps("sale_commission").value ?? ""}
+              onChange={form.getInputProps("sale_commission").onChange}
+              error={form.getInputProps("sale_commission").error}
             />
             <DateInput
               label="Sale at"
