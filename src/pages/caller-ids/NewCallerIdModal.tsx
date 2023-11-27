@@ -52,7 +52,7 @@ const NewCallerIdModal = ({
   }
 
   return (
-    <Modal opened={opened} onClose={handleClose} title="Add Caller ID">
+    <Modal opened={opened} onClose={handleClose} title="Add phone number">
       <Modal.Body>
         <Text mb="md">
           In order to protect our users, we must securely verify that you own
