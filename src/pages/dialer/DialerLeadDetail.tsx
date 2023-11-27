@@ -54,6 +54,8 @@ export const DialerLeadDetail = () => {
         activeLead && activeLead.appointment_at
           ? new Date(activeLead.appointment_at)
           : null,
+      sale_at:
+        activeLead && activeLead.sale_at ? new Date(activeLead.sale_at) : null,
     },
     validate: {
       // Allow blank, but validate if something has been entered
@@ -66,9 +68,41 @@ export const DialerLeadDetail = () => {
         const isValid = isPossiblePhoneNumber(val);
         return isValid ? null : "Invalid phone number";
       },
+      sale_amount: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+        const intValue = parseInt(val, 10);
+
+        return !isNaN(intValue) &&
+          Number.isInteger(intValue) &&
+          intValue === floatValue
+          ? null
+          : "Must be valid number";
+      },
+      sale_commission: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+        const intValue = parseInt(val, 10);
+
+        return !isNaN(intValue) &&
+          Number.isInteger(intValue) &&
+          intValue === floatValue
+          ? null
+          : "Must be valid number";
+      },
+      sale_cost: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+        const intValue = parseInt(val, 10);
+
+        return !isNaN(intValue) &&
+          Number.isInteger(intValue) &&
+          intValue === floatValue
+          ? null
+          : "Must be valid number";
+      },
     },
   });
-
   useEffect(() => {
     if (customProperties) {
       for (let i = 0; i < customProperties.length; i++) {
@@ -76,6 +110,7 @@ export const DialerLeadDetail = () => {
           form.setFieldValue(customProperties[i].name, "");
         }
       }
+      setCustomInputs();
     }
   }, [customProperties]);
 
@@ -93,8 +128,10 @@ export const DialerLeadDetail = () => {
     }
   }, [dialQueue, dialQueueIndex]);
 
-  // Handle changed activeLead
   useEffect(() => {
+    form.reset();
+    //we have to do form.reset() or else the custom values will linger
+
     form.setValues({
       ...activeLead,
       // Note: We must manually set the value to "" in order to avoid having stale values linger -- very confusing and misleading to users
@@ -105,8 +142,11 @@ export const DialerLeadDetail = () => {
         activeLead && activeLead.appointment_at
           ? new Date(activeLead.appointment_at)
           : null,
+      sale_at:
+        activeLead && activeLead.sale_at ? new Date(activeLead.sale_at) : null,
     });
     form.resetDirty();
+    setCustomInputs();
   }, [activeLead]);
 
   function setCustomInputs() {
@@ -119,7 +159,9 @@ export const DialerLeadDetail = () => {
             w="100%"
             mb="xs"
             label={customProperties[i].label}
-            {...form.getInputProps(customProperties[i].name)}
+            value={form.getInputProps(customProperties[i].name).value ?? ""}
+            onChange={form.getInputProps(customProperties[i].name).onChange}
+            error={form.getInputProps(customProperties[i].name).error}
           />
         );
       }
@@ -228,18 +270,24 @@ export const DialerLeadDetail = () => {
             <TextInput
               mb="xs"
               label="First name"
-              {...form.getInputProps("first_name")}
+              value={form.getInputProps("first_name").value ?? ""}
+              onChange={form.getInputProps("first_name").onChange}
+              error={form.getInputProps("first_name").error}
             />
             <TextInput
               mb="xs"
               label="Last name"
-              {...form.getInputProps("last_name")}
+              value={form.getInputProps("last_name").value ?? ""}
+              onChange={form.getInputProps("last_name").onChange}
+              error={form.getInputProps("last_name").error}
             />
 
             <TextInput
               mb="xs"
               label="Email address"
-              {...form.getInputProps("email")}
+              value={form.getInputProps("email").value ?? ""}
+              onChange={form.getInputProps("email").onChange}
+              error={form.getInputProps("email").error}
             />
             <Select
               mb="xs"
@@ -303,17 +351,23 @@ export const DialerLeadDetail = () => {
             <TextInput
               mb="xs"
               label="Sale amount"
-              {...form.getInputProps("sale_amount")}
+              value={form.getInputProps("sale_amount").value ?? ""}
+              onChange={form.getInputProps("sale_amount").onChange}
+              error={form.getInputProps("sale_amount").error}
             />
             <TextInput
               mb="xs"
               label="Sale cost"
-              {...form.getInputProps("sale_cost")}
+              value={form.getInputProps("sale_cost").value ?? ""}
+              onChange={form.getInputProps("sale_cost").onChange}
+              error={form.getInputProps("sale_cost").error}
             />
             <TextInput
               mb="xs"
               label="Sale commission"
-              {...form.getInputProps("sale_commission")}
+              value={form.getInputProps("sale_commission").value ?? ""}
+              onChange={form.getInputProps("sale_commission").onChange}
+              error={form.getInputProps("sale_commission").error}
             />
             <DateInput
               label="Sale at"
