@@ -8,7 +8,10 @@ const SidebarStyled = styled.div`
   position: sticky;
   top: 0;
   z-index: 99;
-  height: 100vh;
+
+  @media ${devices.tablet} {
+    height: 100vh;
+  }
 
   .mobile {
     display: block;
