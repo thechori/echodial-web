@@ -3,7 +3,12 @@ import { Call, Device } from "@twilio/voice-sdk";
 import { ActionIcon, Card, Text, Tooltip } from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { MdOutlineTune, MdExpandLess, MdExpandMore } from "react-icons/md";
+import {
+  MdOutlineTune,
+  MdExpandLess,
+  MdExpandMore,
+  MdInfoOutline,
+} from "react-icons/md";
 import { IconPlayerSkipForwardFilled } from "@tabler/icons-react";
 //
 import {
@@ -522,10 +527,12 @@ function Dialer() {
               label="The selected phone number is what we will use to call your
                       leads. This number will appear as your caller ID on the lead's phone."
             >
-              <div>
-                <CallerIdSelect pr="xs" w={180} />
-              </div>
+              <Flex mr={8}>
+                <MdInfoOutline fontSize="1.5rem" color="grey" />
+              </Flex>
             </Tooltip>
+
+            <CallerIdSelect pr="xs" w={180} />
 
             <Tooltip label="Open dialer settings" openDelay={500}>
               <ActionIcon
