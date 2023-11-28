@@ -9,8 +9,6 @@ import {
 } from "../../store/dialer/slice";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
 import phoneFormatter from "../../utils/phone-formatter";
-import numbers from "../../configs/numbers";
-import { APP_NAME } from "../../configs/labels";
 import routes from "../../configs/routes";
 
 type TCallerIdSelectProps = {
@@ -44,14 +42,8 @@ function CallerIdSelect(props: TCallerIdSelectProps & any) {
         label: phoneFormatter(cid.phone_number) || "",
       }));
 
-      const appCallerIds: SelectItem[] = numbers.map((n) => ({
-        group: `${APP_NAME} numbers`,
-        value: n.value,
-        label: n.label,
-      }));
       setCallerIdItems([
         ...items,
-        ...appCallerIds,
         addNewCallerIdSelectItem,
         manageCallerIdSelectItem,
       ]);
@@ -64,7 +56,7 @@ function CallerIdSelect(props: TCallerIdSelectProps & any) {
       dispatch(setShowNewCallerIdModal(true));
       return;
     } else if (value === manageCallerIdSelectItem.value) {
-      navigate(routes.myNumbers);
+      navigate(routes.phoneNumbers);
       return;
     }
 

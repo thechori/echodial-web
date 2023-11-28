@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import Sidebar from "../sidebar";
 import devices from "../../styles/devices";
 import DialerOptionsModal from "../../pages/dialer/DialerOptionsModal";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppDispatch } from "../../store/hooks";
 import { setIsDialerOpen } from "../../store/dialer/slice";
 import { Box } from "@mantine/core";
 import Dialer from "../../pages/dialer/Dialer";
@@ -28,15 +28,11 @@ const Container = styled.div`
 const AuthenticatedUserLayout = ({ children }: any) => {
   const dispatch = useAppDispatch();
 
-  const { isDialerOpen } = useAppSelector((state) => state.dialer);
-
   // Detect route changes in order to hide the dialer overlay - improved UX to avoid them being confused when clicking side nav items and nothing happens
   const location = useLocation();
   useEffect(() => {
-    if (isDialerOpen) {
-      dispatch(setIsDialerOpen(false));
-    }
-  }, [location, dispatch, isDialerOpen]);
+    dispatch(setIsDialerOpen(false));
+  }, [location, dispatch]);
 
   return (
     <Container>

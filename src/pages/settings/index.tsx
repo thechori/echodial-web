@@ -61,7 +61,7 @@ function Settings() {
   }
 
   function manageCallerIDs() {
-    navigate(routes.myNumbers);
+    navigate(routes.phoneNumbers);
   }
 
   async function manageSubscription() {
@@ -216,7 +216,7 @@ function Settings() {
 
         <Grid.Col xs={12} sm={6}>
           <Card withBorder shadow="md">
-            <Title order={3}>Manage subscription</Title>
+            <Title order={3}>Subscription</Title>
 
             <Box py="md">
               <Text>
@@ -242,7 +242,7 @@ function Settings() {
 
         <Grid.Col xs={12} sm={6}>
           <Card withBorder shadow="md">
-            <Title order={3}>My numbers</Title>
+            <Title order={3}>Phone numbers</Title>
             <Box>
               <Text py="md">
                 Manage phone numbers required to make outbound calls with.
