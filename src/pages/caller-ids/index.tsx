@@ -18,15 +18,12 @@ import { notifications } from "@mantine/notifications";
 //
 import phoneFormatter from "../../utils/phone-formatter";
 import PhoneNumberMenu from "./PhoneNumberMenu";
-import { useDisclosure } from "@mantine/hooks";
 import {
   useDeleteCallerIdMutation,
   useGetCallerIdsQuery,
 } from "../../services/caller-id";
-import NewCallerIdModal from "./NewCallerIdModal";
 import { extractErrorMessage } from "../../utils/error";
-import NewCallerIdValidatingModal from "./NewCallerIdValidatingModal";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppDispatch } from "../../store/hooks";
 import { setShowNewCallerIdModal } from "../../store/dialer/slice";
 
 function PhoneNumbers() {
@@ -42,14 +39,6 @@ function PhoneNumbers() {
     deleteCallerId,
     { isLoading: isLoadingDeleteCallerId, error: errorDeleteCallerId },
   ] = useDeleteCallerIdMutation();
-
-  const { showNewCallerIdModal: opened } = useAppSelector(
-    (state) => state.dialer
-  );
-  const close = () => dispatch(setShowNewCallerIdModal(false));
-  const open = () => dispatch(setShowNewCallerIdModal(true));
-  const [openedValidating, { open: openValidating, close: closeValidating }] =
-    useDisclosure(false);
 
   const handleDeleteCallerId = async (phone_number: string) => {
     try {
@@ -126,69 +115,16 @@ function PhoneNumbers() {
             <Text color="red">{error}</Text>
 
             <Group>
-              <Button onClick={open} leftIcon={<BiPlus />}>
+              <Button
+                onClick={() => dispatch(setShowNewCallerIdModal(true))}
+                leftIcon={<BiPlus />}
+              >
                 Add new
               </Button>
             </Group>
           </Card>
         </Grid.Col>
-
-        {/* <Grid.Col xs={12} sm={12}>
-            <Card
-              className="disabled"
-              shadow="md"
-              withBorder
-              radius="md"
-              m="lg"
-            >
-              <Title order={3} mb={16}>
-                {APP_NAME}
-              </Title>
-              <Text>Phone numbers purchased through subscription</Text>
-              <Box p="lg">
-                {echodialOwnedPhoneNumbers.length ? (
-                  echodialOwnedPhoneNumbers.map((number) => (
-                    <Flex
-                      key={number.id}
-                      py={4}
-                      align="center"
-                      justify="space-between"
-                    >
-                      <Flex align="center">
-                        <ThemeIcon color="teal" size={24} radius="xl">
-                          <IconCircleCheck size="1rem" />
-                        </ThemeIcon>
-                        <Box ml={16}>{phoneFormatter(number.number)}</Box>
-                      </Flex>
-                      <PhoneNumberMenu />
-                    </Flex>
-                  ))
-                ) : (
-                  <Text size="sm" italic color="dimmed">
-                    No numbers found
-                  </Text>
-                )}
-              </Box>
-              <Group>
-                <Button onClick={open} leftIcon={<BiPlus />}>
-                  Add new
-                </Button>
-
-                <Button leftIcon={<BiRefresh />}>Refresh</Button>
-              </Group>{" "}
-            </Card>
-          </Grid.Col> */}
       </Grid>
-
-      <NewCallerIdModal
-        opened={opened}
-        close={close}
-        triggerOpenValidatingModal={openValidating}
-      />
-      <NewCallerIdValidatingModal
-        opened={openedValidating}
-        close={closeValidating}
-      />
     </Container>
   );
 }

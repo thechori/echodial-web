@@ -1,22 +1,21 @@
+import { useState } from "react";
 import { Button, Checkbox, Group, Modal, Text } from "@mantine/core";
 import { isPossiblePhoneNumber } from "react-phone-number-input";
 //
 import { useRequestAddCallerIdMutation } from "../../services/caller-id";
-import { useState } from "react";
 import { extractErrorMessage } from "../../utils/error";
 import { PhoneInput } from "../../components/phone-input";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  setShowNewCallerIdModal,
+  setShowNewCallerIdValidatingModal,
+} from "../../store/dialer/slice";
 
-type TNewCallerIdModalProps = {
-  opened: boolean;
-  close: () => void;
-  triggerOpenValidatingModal: () => void;
-};
+const NewCallerIdModal = () => {
+  const dispatch = useAppDispatch();
 
-const NewCallerIdModal = ({
-  opened,
-  close,
-  triggerOpenValidatingModal,
-}: TNewCallerIdModalProps) => {
+  const opened = useAppSelector((state) => state.dialer.showNewCallerIdModal);
+
   const [
     requestAddCallerId,
     { error: errorRequestAddCallerId, isLoading: isLoadingRequestAddCallerId },
@@ -38,21 +37,21 @@ const NewCallerIdModal = ({
 
     try {
       await requestAddCallerId(phoneNumber).unwrap();
-      triggerOpenValidatingModal();
+      dispatch(setShowNewCallerIdValidatingModal(true));
       close();
     } catch (e) {
       console.error(e);
     }
   }
 
-  function handleClose() {
+  function close() {
     setPhoneNumber("");
     setAgree(false);
-    close();
+    dispatch(setShowNewCallerIdModal(false));
   }
 
   return (
-    <Modal opened={opened} onClose={handleClose} title="Add phone number">
+    <Modal opened={opened} onClose={close} title="Add phone number">
       <Modal.Body>
         <Text mb="md">
           In order to protect our users, we must securely verify that you own

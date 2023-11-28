@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Select, SelectItem } from "@mantine/core";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   setFromNumber,
-  setIsDialerOpen,
   setShowNewCallerIdModal,
 } from "../../store/dialer/slice";
 import { useGetCallerIdsQuery } from "../../services/caller-id";
 import phoneFormatter from "../../utils/phone-formatter";
 import numbers from "../../configs/numbers";
 import { APP_NAME } from "../../configs/labels";
+import routes from "../../configs/routes";
 
 type TCallerIdSelectProps = {
   label?: string;
@@ -18,14 +19,21 @@ type TCallerIdSelectProps = {
 
 function CallerIdSelect(props: TCallerIdSelectProps & any) {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [callerIdItems, setCallerIdItems] = useState<SelectItem[]>([]);
   const { fromNumber } = useAppSelector((state) => state.dialer);
-  const { data: callerIds } = useGetCallerIdsQuery();
+  const { data: callerIds, isLoading } = useGetCallerIdsQuery();
 
   const addNewCallerIdSelectItem: SelectItem = {
     value: "-1",
     group: "Options",
     label: "+ Add new number",
+  };
+
+  const manageCallerIdSelectItem: SelectItem = {
+    value: "-2",
+    group: "Options",
+    label: "Manage numbers",
   };
 
   useEffect(() => {
@@ -41,15 +49,22 @@ function CallerIdSelect(props: TCallerIdSelectProps & any) {
         value: n.value,
         label: n.label,
       }));
-      setCallerIdItems([...items, ...appCallerIds, addNewCallerIdSelectItem]);
+      setCallerIdItems([
+        ...items,
+        ...appCallerIds,
+        addNewCallerIdSelectItem,
+        manageCallerIdSelectItem,
+      ]);
     }
   }, [callerIds]);
 
   function handleSelect(value: string) {
     // Check for "Add new number" item click
     if (value === addNewCallerIdSelectItem.value) {
-      dispatch(setIsDialerOpen(false));
       dispatch(setShowNewCallerIdModal(true));
+      return;
+    } else if (value === manageCallerIdSelectItem.value) {
+      navigate(routes.myNumbers);
       return;
     }
 
@@ -59,7 +74,7 @@ function CallerIdSelect(props: TCallerIdSelectProps & any) {
   return (
     <Select
       label={props.label}
-      placeholder="My phone number *"
+      placeholder={isLoading ? "Loading..." : "My phone number *"}
       data={callerIdItems}
       value={fromNumber || ""}
       onChange={handleSelect}

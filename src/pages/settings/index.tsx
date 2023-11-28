@@ -61,7 +61,7 @@ function Settings() {
   }
 
   function manageCallerIDs() {
-    navigate(routes.callerIds);
+    navigate(routes.myNumbers);
   }
 
   async function manageSubscription() {

@@ -17,9 +17,9 @@ const routes = {
   leads: "/leads",
   buckets: "/buckets",
   reports: "/reports",
-  callerIds: "/caller-ids",
+  myNumbers: "/my-numbers",
   billing: "/billing",
-  importLeads: "/import", 
+  importLeads: "/import",
   subscription: "/subscription",
   subscriptionCallback: "/subscription/callback",
 };

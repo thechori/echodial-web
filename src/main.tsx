@@ -139,7 +139,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                 }
               />
               <Route
-                path={routes.callerIds}
+                path={routes.myNumbers}
                 element={
                   <ProtectedRoute>
                     <AuthenticatedUserLayout>

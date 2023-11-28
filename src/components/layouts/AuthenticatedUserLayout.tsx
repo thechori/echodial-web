@@ -4,15 +4,13 @@ import Sidebar from "../sidebar";
 import devices from "../../styles/devices";
 import DialerOptionsModal from "../../pages/dialer/DialerOptionsModal";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import {
-  selectIsDialerOptionsModalOpen,
-  setIsDialerOpen,
-  setShowOptions,
-} from "../../store/dialer/slice";
+import { setIsDialerOpen } from "../../store/dialer/slice";
 import { Box } from "@mantine/core";
 import Dialer from "../../pages/dialer/Dialer";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import NewCallerIdModal from "../../pages/caller-ids/NewCallerIdModal";
+import NewCallerIdValidatingModal from "../../pages/caller-ids/NewCallerIdValidatingModal";
 
 const Container = styled.div`
   height: 100%;
@@ -29,9 +27,7 @@ const Container = styled.div`
 
 const AuthenticatedUserLayout = ({ children }: any) => {
   const dispatch = useAppDispatch();
-  const isDialerOptionsModalOpen = useAppSelector(
-    selectIsDialerOptionsModalOpen
-  );
+
   const { isDialerOpen } = useAppSelector((state) => state.dialer);
 
   // Detect route changes in order to hide the dialer overlay - improved UX to avoid them being confused when clicking side nav items and nothing happens
@@ -40,7 +36,7 @@ const AuthenticatedUserLayout = ({ children }: any) => {
     if (isDialerOpen) {
       dispatch(setIsDialerOpen(false));
     }
-  }, [location]);
+  }, [location, dispatch, isDialerOpen]);
 
   return (
     <Container>
@@ -50,10 +46,11 @@ const AuthenticatedUserLayout = ({ children }: any) => {
       <Box className="content">{children}</Box>
 
       {/* Modals */}
-      <DialerOptionsModal
-        opened={isDialerOptionsModalOpen}
-        onClose={() => dispatch(setShowOptions(false))}
-      />
+      <DialerOptionsModal />
+      <NewCallerIdModal />
+      <NewCallerIdValidatingModal />
+
+      {/* Dialer */}
       <Dialer />
     </Container>
   );

@@ -1,25 +1,23 @@
+import { useEffect, useState } from "react";
+import { notifications } from "@mantine/notifications";
 import { Button, Center, Loader, Modal, Text } from "@mantine/core";
 //
-import { useEffect, useState } from "react";
 import { extractErrorMessage } from "../../utils/error";
 import { useLazyGetCallerIdsQuery } from "../../services/caller-id";
-import { notifications } from "@mantine/notifications";
-import { useAppSelector } from "../../store/hooks";
-import { selectJwtDecoded } from "../../store/user/slice";
 
-type TNewCallerIdValidatingModalProps = {
-  opened: boolean;
-  close: () => void;
-};
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectJwtDecoded } from "../../store/user/slice";
+import { setShowNewCallerIdValidatingModal } from "../../store/dialer/slice";
 
 // MAX_ATTEMPTS * RETRY_COOLDOWN_IN_MS = ~1 minute (in MS)
 const MAX_ATTEMPTS = 24;
 const RETRY_COOLDOWN_IN_MS = 2500;
 
-const NewCallerIdValidatingModal = ({
-  opened,
-  close,
-}: TNewCallerIdValidatingModalProps) => {
+const NewCallerIdValidatingModal = () => {
+  const dispatch = useAppDispatch();
+  const opened = useAppSelector(
+    (state) => state.dialer.showNewCallerIdValidatingModal
+  );
   const [attempts, setAttempts] = useState(MAX_ATTEMPTS);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -30,7 +28,7 @@ const NewCallerIdValidatingModal = ({
     setSuccess(false);
     setAttempts(MAX_ATTEMPTS);
     setError("");
-    close();
+    dispatch(setShowNewCallerIdValidatingModal(false));
   };
 
   useEffect(() => {

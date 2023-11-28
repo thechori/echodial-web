@@ -1,13 +1,19 @@
 import { Button, Group, Text } from "@mantine/core";
 //
 import { StyledModal } from "./DialerOptionsModal.styles";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  selectIsDialerOptionsModalOpen,
+  setShowOptions,
+} from "../../store/dialer/slice";
 
-type TDialerOptionsModalProps = {
-  opened: boolean;
-  onClose: () => void;
-};
+const DialerOptionsModal = () => {
+  const dispatch = useAppDispatch();
 
-const DialerOptionsModal = ({ opened, onClose }: TDialerOptionsModalProps) => {
+  const opened = useAppSelector(selectIsDialerOptionsModalOpen);
+
+  const onClose = () => dispatch(setShowOptions(false));
+
   return (
     <StyledModal opened={opened} onClose={onClose} title="Dialer settings">
       <Text>

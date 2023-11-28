@@ -56,6 +56,7 @@ interface IDialerState {
   options: TDialerOptions;
   showOptions: boolean;
   showNewCallerIdModal: boolean;
+  showNewCallerIdValidatingModal: boolean;
 }
 
 const buildInitialState = (): IDialerState => ({
@@ -87,6 +88,7 @@ const buildInitialState = (): IDialerState => ({
   options: buildOptions(),
   showOptions: false,
   showNewCallerIdModal: false,
+  showNewCallerIdValidatingModal: false,
 });
 
 export const DialerSlice = createSlice({
@@ -246,6 +248,9 @@ export const DialerSlice = createSlice({
     setShowNewCallerIdModal: (state, action) => {
       state.showNewCallerIdModal = action.payload;
     },
+    setShowNewCallerIdValidatingModal: (state, action) => {
+      state.showNewCallerIdValidatingModal = action.payload;
+    },
   },
 });
 
@@ -273,6 +278,7 @@ export const {
   setConnectedAt,
   updateLeadById,
   setShowNewCallerIdModal,
+  setShowNewCallerIdValidatingModal,
 } = DialerSlice.actions;
 
 export const selectIsCallActive = (state: RootState) => state.dialer.call;
