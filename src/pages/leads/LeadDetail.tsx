@@ -29,6 +29,7 @@ import { setSelectedRows } from "../../store/leads/slice";
 import { extractErrorMessage } from "../../utils/error";
 import { PhoneInput } from "../../components/phone-input";
 import { setSelectedLead } from "../../store/lead-detail/slice";
+import { useGetLeadCustomPropertiesQuery } from "../../services/lead";
 
 export const LeadDetail = () => {
   const dispatch = useAppDispatch();
@@ -38,12 +39,19 @@ export const LeadDetail = () => {
   const { data: availableStatuses } = useGetLeadStatusesQuery();
   const [updateLead, { isLoading }] = useUpdateLeadMutation();
 
+  const [customPropertiesInputs, setCustomPropertiesInputs] = useState([]);
+  const { data: customProperties } = useGetLeadCustomPropertiesQuery();
+
   const form = useForm({
     initialValues: {
       ...selectedLead,
       appointment_at:
         selectedLead && selectedLead.appointment_at
           ? new Date(selectedLead.appointment_at)
+          : null,
+      sale_at:
+        selectedLead && selectedLead.sale_at
+          ? new Date(selectedLead.sale_at)
           : null,
     },
     validate: {
@@ -57,10 +65,46 @@ export const LeadDetail = () => {
         const isValid = isPossiblePhoneNumber(val);
         return isValid ? null : "Invalid phone number";
       },
+      sale_amount: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+
+        // Check if the parsed value is a valid number and not NaN
+        return !isNaN(floatValue) ? null : "Invalid value";
+      },
+      sale_commission: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+
+        return !isNaN(floatValue) ? null : "Invalid value";
+      },
+      sale_cost: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+
+        return !isNaN(floatValue) ? null : "Invalid value";
+      },
     },
   });
 
+  //when we first import the leads, there might be certain custom properties that are missing
+  //because the properties vary from lead to lead. We need to have this function to make sure
+  //that the form contains all the custom properties that are missing
   useEffect(() => {
+    if (customProperties) {
+      for (let i = 0; i < customProperties.length; i++) {
+        if (!(customProperties[i].name in form.values)) {
+          form.setFieldValue(customProperties[i].name, "");
+        }
+      }
+      setCustomInputs();
+    }
+  }, [customProperties]);
+
+  useEffect(() => {
+    form.reset();
+    //we have to do form.reset() or else the custom values will linger
+
     form.setValues({
       ...selectedLead,
       // Note: We must manually set the value to "" in order to avoid having stale values linger -- very confusing and misleading to users
@@ -71,10 +115,39 @@ export const LeadDetail = () => {
         selectedLead && selectedLead.appointment_at
           ? new Date(selectedLead.appointment_at)
           : null,
+      sale_at:
+        selectedLead && selectedLead.sale_at
+          ? new Date(selectedLead.sale_at)
+          : null,
     });
     form.resetDirty();
+    setCustomInputs();
   }, [selectedLead]);
 
+  useEffect(() => {
+    setCustomInputs();
+  }, [form.values]);
+
+  //set the values for each of the custom property text input boxes
+  function setCustomInputs() {
+    let customInputs: any = [];
+    if (customProperties) {
+      for (let i = 0; i < customProperties.length; i++) {
+        customInputs.push(
+          <TextInput
+            key={i}
+            w="100%"
+            mb="xs"
+            label={customProperties[i].label}
+            value={form.getInputProps(customProperties[i].name).value ?? ""}
+            onChange={form.getInputProps(customProperties[i].name).onChange}
+            error={form.getInputProps(customProperties[i].name).error}
+          />
+        );
+      }
+      setCustomPropertiesInputs(customInputs);
+    }
+  }
   // Close icon
   function handleClose() {
     discardChanges();
@@ -94,13 +167,18 @@ export const LeadDetail = () => {
         selectedLead && selectedLead.appointment_at
           ? new Date(selectedLead.appointment_at)
           : null,
+      sale_at:
+        selectedLead && selectedLead.sale_at
+          ? new Date(selectedLead.sale_at)
+          : null,
     });
     form.resetDirty();
+    setCustomInputs();
   }
 
   async function editLead() {
+    setError("");
     form.validate();
-
     if (!form.isValid()) {
       return;
     }
@@ -109,13 +187,40 @@ export const LeadDetail = () => {
       return;
     }
 
+    //grab the property names and create a new object mapping the custom property name
+    //to its value
+    const propertyNames = customProperties?.map((property) => property.name);
+    const newConstantProperties = propertyNames?.reduce(
+      (acc: any, property) => {
+        acc[property] = "";
+        return acc;
+      },
+      {}
+    );
+    //if the key is a custom property, we store inside newConstantProperties
+    //else we update it as a standard property
+    const updatedProperties: any = {};
+    for (const [key, value] of Object.entries(form.values)) {
+      if (key in newConstantProperties) {
+        newConstantProperties[key] = value;
+      } else if (key != "custom_properties") {
+        updatedProperties[key] = value;
+      }
+    }
+    updatedProperties["custom_properties"] = newConstantProperties;
     try {
-      await updateLead(form.values).unwrap();
+      await updateLead(updatedProperties).unwrap();
       notifications.show({ message: "Successfully updated lead" });
       dispatch(setSelectedRows([]));
       handleClose();
     } catch (e) {
-      setError(extractErrorMessage(e));
+      const errorMessage = extractErrorMessage(e);
+      setError(errorMessage);
+      notifications.show({
+        color: "red",
+        message: errorMessage,
+        title: "Error",
+      });
     }
   }
 
@@ -167,12 +272,16 @@ export const LeadDetail = () => {
             <TextInput
               mb="xs"
               label="First name"
-              {...form.getInputProps("first_name")}
+              value={form.getInputProps("first_name").value ?? ""}
+              onChange={form.getInputProps("first_name").onChange}
+              error={form.getInputProps("first_name").error}
             />
             <TextInput
               mb="xs"
               label="Last name"
-              {...form.getInputProps("last_name")}
+              value={form.getInputProps("last_name").value ?? ""}
+              onChange={form.getInputProps("last_name").onChange}
+              error={form.getInputProps("last_name").error}
             />
             <Box mb="xs">
               <PhoneInput
@@ -184,7 +293,9 @@ export const LeadDetail = () => {
             <TextInput
               mb="xs"
               label="Email address"
-              {...form.getInputProps("email")}
+              value={form.getInputProps("email").value ?? ""}
+              onChange={form.getInputProps("email").onChange}
+              error={form.getInputProps("email").error}
             />
             <Select
               mb="xs"
@@ -248,17 +359,23 @@ export const LeadDetail = () => {
             <TextInput
               mb="xs"
               label="Sale amount"
-              {...form.getInputProps("sale_amount")}
+              value={form.getInputProps("sale_amount").value ?? ""}
+              onChange={form.getInputProps("sale_amount").onChange}
+              error={form.getInputProps("sale_amount").error}
             />
             <TextInput
               mb="xs"
               label="Sale cost"
-              {...form.getInputProps("sale_cost")}
+              value={form.getInputProps("sale_cost").value ?? ""}
+              onChange={form.getInputProps("sale_cost").onChange}
+              error={form.getInputProps("sale_cost").error}
             />
             <TextInput
               mb="xs"
               label="Sale commission"
-              {...form.getInputProps("sale_commission")}
+              value={form.getInputProps("sale_commission").value ?? ""}
+              onChange={form.getInputProps("sale_commission").onChange}
+              error={form.getInputProps("sale_commission").error}
             />
             <DateInput
               label="Sale at"
@@ -272,6 +389,11 @@ export const LeadDetail = () => {
               {...form.getInputProps("sale_notes")}
             />
           </Group>
+          <Text size="sm" color="dimmed" mt="md">
+            Custom Properties
+          </Text>
+          <Divider py={8} />
+          <Group>{customPropertiesInputs}</Group>
         </Box>
 
         <Box id="footer-buttons-overlay" />
@@ -296,10 +418,6 @@ export const LeadDetail = () => {
         </Group>
 
         <Text w="100%" color="red">
-          {/*  @ts-ignore */}
-          {/* {form.errors?.map((e) => (
-            <Text color="red">{e}</Text>
-          ))} */}
           {error}
         </Text>
         <Box></Box>

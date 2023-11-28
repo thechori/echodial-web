@@ -32,6 +32,7 @@ import {
   useGetLeadPropertyTypesQuery,
 } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
+import { TableContainer } from "./MappingTable.styles";
 
 function MappingTable() {
   const dispatch = useDispatch();
@@ -118,6 +119,8 @@ function MappingTable() {
     standardPropertiesLoading,
     customPropertiesLoading,
     propertyGroupsLoading,
+    propertyTypes,
+    propertyTypesLoading,
   ]);
 
   const headers = useAppSelector(
@@ -160,7 +163,7 @@ function MappingTable() {
         <tr key={i}>
           <td>{headers[i].columnHeader}</td>
           <td>
-            <Stack spacing="xs" py="xs">
+            <Stack spacing={2} py="xs">
               {headers[i].preview.map((row, i) => (
                 <div key={i}>{row}</div>
               ))}
@@ -186,10 +189,14 @@ function MappingTable() {
             <Flex justify="flex-start">
               <Select
                 placeholder={
-                  headers[i].property === null ? "Select" : headers[i].property
+                  headers[i].property === null
+                    ? "Search..."
+                    : headers[i].property
                 }
                 value={
-                  headers[i].property === null ? "Select" : headers[i].property
+                  headers[i].property === null
+                    ? "Search..."
+                    : headers[i].property
                 }
                 data={properties}
                 onChange={(newProperty) => handleChange(newProperty, i)}
@@ -312,35 +319,38 @@ function MappingTable() {
       </Drawer>
 
       <Container fluid pb={125} style={{ overflowX: "scroll" }}>
-        <Flex justify="center" py="xs">
-          <Title order={2}>
+        <Flex justify="center">
+          <Title order={3}>
             Map columns in your file to contact properties
           </Title>
         </Flex>
-        <Flex justify="center" py="xs">
-          <Text c="dimmed">
+        <Flex justify="center" mb={24}>
+          <Text size="sm" c="dimmed" maw={450} ta="center" lh="1rem">
             Each column header below must be manually mapped to a contact
-            property. Option to add a property can be found at the bottom of the
-            dropdown menus.
+            property or excluded from the import. Option to add a property can
+            be found at the bottom of the dropdown menus.
           </Text>
         </Flex>
-        <Table
-          highlightOnHover
-          horizontalSpacing="lg"
-          verticalSpacing="xs"
-          withBorder
-        >
-          <thead>
-            <tr>
-              <th>Column Header</th>
-              <th>Preview Information</th>
-              <th>Mapped</th>
-              <th>Property</th>
-              <th>Exclude Column</th>
-            </tr>
-          </thead>
-          <tbody>{mappingTable}</tbody>
-        </Table>
+
+        <TableContainer>
+          <Table
+            highlightOnHover
+            horizontalSpacing="lg"
+            verticalSpacing="xs"
+            withBorder
+          >
+            <thead>
+              <tr>
+                <th>Column Header</th>
+                <th>Preview Information</th>
+                <th>Mapped</th>
+                <th>Property</th>
+                <th>Exclude Column</th>
+              </tr>
+            </thead>
+            <tbody>{mappingTable}</tbody>
+          </Table>
+        </TableContainer>
         <Text color="red">{error}</Text>
       </Container>
     </>

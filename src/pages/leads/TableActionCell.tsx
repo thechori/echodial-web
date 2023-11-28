@@ -8,6 +8,15 @@ export const TableActionCell = (props: any) => {
   const { selectedLead } = useAppSelector((state) => state.leadDetail);
 
   const handleClick = () => {
+    // const custom_properties = props.data.custom_properties;
+    // const keysToRemove = Object.keys(custom_properties);
+    // const result = Object.keys(props.data)
+    //   .filter((key) => !keysToRemove.includes(key))
+    //   .reduce((acc: any, key) => {
+    //     acc[key] = props.data[key];
+    //     return acc;
+    //   }, {});
+    // dispatch(setSelectedLead(result));
     dispatch(setSelectedLead(props.data));
   };
 

@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   Paper,
-  Space,
   Modal,
   Table,
   Title,
@@ -90,8 +89,7 @@ function ImportLeads() {
 
   return (
     <ImportLeadsStyled>
-      <Space h="lg" />
-      <Stepper active={active} py="xl" px="xl">
+      <Stepper active={active} py="lg" px="lg">
         <Stepper.Step label="Import files">Contents</Stepper.Step>
         <Stepper.Step label="Map columns"></Stepper.Step>
         <Stepper.Step label="Confirmation"></Stepper.Step>
@@ -134,8 +132,14 @@ function ImportLeads() {
         radius="xs"
         bg="gray.3"
       >
-        <Flex justify="space-between" align="center" py="lg" px="xl">
-          <Button onClick={() => navigate(routes.leads)}>Cancel</Button>
+        <Flex justify="space-between" align="center" py="md" px="md">
+          <Button
+            color="red"
+            variant="subtle"
+            onClick={() => navigate(routes.leads)}
+          >
+            Cancel
+          </Button>
           <Flex justify="space-between" gap="md" align="center">
             <Button onClick={openModal} disabled={!showButton}>
               Next

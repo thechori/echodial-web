@@ -34,6 +34,8 @@ import {
 import { TableActionCell } from "./TableActionCell";
 import { LeadsFilteredListStyled } from "./LeadsFilteredList.styles";
 import { dialStateInstance } from "../dialer/DialState.class";
+import { useGetLeadCustomPropertiesQuery } from "../../services/lead";
+import { ColDef } from "ag-grid-community";
 
 function LeadsFilteredList() {
   const { data: leadStatuses } = useGetLeadStatusesQuery();
@@ -43,6 +45,10 @@ function LeadsFilteredList() {
     { open: openDeleteConfirmationModal, close: closeDeleteConfirmationModal },
   ] = useDisclosure(false);
 
+  //Custom Properties
+  const { data: customProperties, isLoading: customPropertiesLoading } =
+    useGetLeadCustomPropertiesQuery();
+
   // Register custom cell renderer components for AG Grid (in hopes of improving terrible current performance)
   const components = useMemo(
     () => ({
@@ -51,7 +57,28 @@ function LeadsFilteredList() {
     []
   );
 
-  const columnDefs = useMemo(() => leadColDefs, []);
+  const [columnDefs, setColumnDefs] = useState<ColDef<Lead>[]>([]);
+  useEffect(() => {
+    let newCustomPropertiesArray: ColDef<Lead>[] = [];
+    if (!customPropertiesLoading && customProperties) {
+      for (const property of customProperties) {
+        const newColumn: ColDef<Lead> = {
+          headerName: property.label,
+          field: property.name,
+          resizable: true,
+          sortable: true,
+          filter: true,
+        };
+        if (
+          !newCustomPropertiesArray.some((col) => col.field === newColumn.field)
+        ) {
+          newCustomPropertiesArray = [...newCustomPropertiesArray, newColumn];
+        }
+      }
+      const updatedColsArray = [...leadColDefs, ...newCustomPropertiesArray];
+      setColumnDefs(updatedColsArray);
+    }
+  }, [customProperties, customPropertiesLoading]);
 
   const dispatch = useAppDispatch();
   const gridRef = useRef<AgGridReact<Lead>>(null);
@@ -78,7 +105,6 @@ function LeadsFilteredList() {
 
         // Init return array
         let filteredLeads = leads;
-
         /* Filter by status */
 
         // Filters are present, filter on them
@@ -103,10 +129,18 @@ function LeadsFilteredList() {
           }
         }
 
-        /* TODO: Recommended filters */
+        // Add Custom property to leads
+        const leadsWithCustomProperties = filteredLeads.map((lead: any) => {
+          const customProperties = lead.custom_properties || {}; // Make sure custom_properties is defined
+          return {
+            ...lead,
+            ...customProperties,
+          };
+        });
 
+        /* TODO: Recommended filters */
         // Return what's left over from the filters
-        return filteredLeads;
+        return leadsWithCustomProperties;
       }
     );
   }, [selectedStatuses, keyword, appliedFilters]);

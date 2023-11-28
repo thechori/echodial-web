@@ -28,6 +28,7 @@ import { extractErrorMessage } from "../../utils/error";
 import { Lead } from "../../types";
 import phoneFormatter from "../../utils/phone-formatter";
 import { updateLeadById } from "../../store/dialer/slice";
+import { useGetLeadCustomPropertiesQuery } from "../../services/lead";
 
 export const DialerLeadDetail = () => {
   const dispatch = useAppDispatch();
@@ -40,6 +41,8 @@ export const DialerLeadDetail = () => {
   const { data: availableStatuses } = useGetLeadStatusesQuery();
   const [updateLead, { isLoading }] = useUpdateLeadMutation();
 
+  const [customPropertiesInputs, setCustomPropertiesInputs] = useState([]);
+  const { data: customProperties } = useGetLeadCustomPropertiesQuery();
   // TODO: Fix bug here that causes following bug:
   // Warning: `value` prop on `input` should not be null. Consider using an empty string to clear the component or `undefined` for uncontrolled components.
   // Note: Seems to be remedied when you set the initial value of a field to ""
@@ -51,6 +54,8 @@ export const DialerLeadDetail = () => {
         activeLead && activeLead.appointment_at
           ? new Date(activeLead.appointment_at)
           : null,
+      sale_at:
+        activeLead && activeLead.sale_at ? new Date(activeLead.sale_at) : null,
     },
     validate: {
       // Allow blank, but validate if something has been entered
@@ -63,8 +68,41 @@ export const DialerLeadDetail = () => {
         const isValid = isPossiblePhoneNumber(val);
         return isValid ? null : "Invalid phone number";
       },
+      sale_amount: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+
+        // Check if the parsed value is a valid number and not NaN
+        return !isNaN(floatValue) ? null : "Invalid value";
+      },
+      sale_commission: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+
+        return !isNaN(floatValue) ? null : "Invalid value";
+      },
+      sale_cost: (val: any) => {
+        if (!val) return null;
+        const floatValue = parseFloat(val);
+
+        return !isNaN(floatValue) ? null : "Invalid value";
+      },
     },
   });
+  useEffect(() => {
+    if (customProperties) {
+      for (let i = 0; i < customProperties.length; i++) {
+        if (!(customProperties[i].name in form.values)) {
+          form.setFieldValue(customProperties[i].name, "");
+        }
+      }
+      setCustomInputs();
+    }
+  }, [customProperties]);
+
+  useEffect(() => {
+    setCustomInputs();
+  }, [form.values]);
 
   // Grab lead from state use queue and index
   useEffect(() => {
@@ -76,8 +114,10 @@ export const DialerLeadDetail = () => {
     }
   }, [dialQueue, dialQueueIndex]);
 
-  // Handle changed activeLead
   useEffect(() => {
+    form.reset();
+    //we have to do form.reset() or else the custom values will linger
+
     form.setValues({
       ...activeLead,
       // Note: We must manually set the value to "" in order to avoid having stale values linger -- very confusing and misleading to users
@@ -88,9 +128,32 @@ export const DialerLeadDetail = () => {
         activeLead && activeLead.appointment_at
           ? new Date(activeLead.appointment_at)
           : null,
+      sale_at:
+        activeLead && activeLead.sale_at ? new Date(activeLead.sale_at) : null,
     });
     form.resetDirty();
+    setCustomInputs();
   }, [activeLead]);
+
+  function setCustomInputs() {
+    let customInputs: any = [];
+    if (customProperties) {
+      for (let i = 0; i < customProperties.length; i++) {
+        customInputs.push(
+          <TextInput
+            key={i}
+            w="100%"
+            mb="xs"
+            label={customProperties[i].label}
+            value={form.getInputProps(customProperties[i].name).value ?? ""}
+            onChange={form.getInputProps(customProperties[i].name).onChange}
+            error={form.getInputProps(customProperties[i].name).error}
+          />
+        );
+      }
+      setCustomPropertiesInputs(customInputs);
+    }
+  }
 
   // Cancel edit
   function discardChanges() {
@@ -107,9 +170,11 @@ export const DialerLeadDetail = () => {
           : null,
     });
     form.resetDirty();
+    setCustomInputs();
   }
 
   async function editLead() {
+    setError("");
     form.validate();
 
     if (!form.isValid()) {
@@ -119,9 +184,25 @@ export const DialerLeadDetail = () => {
     if (!form.values) {
       return;
     }
-
+    const propertyNames = customProperties?.map((property) => property.name);
+    const newConstantProperties = propertyNames?.reduce(
+      (acc: any, property) => {
+        acc[property] = "";
+        return acc;
+      },
+      {}
+    );
+    const updatedProperties: any = {};
+    for (const [key, value] of Object.entries(form.values)) {
+      if (key in newConstantProperties) {
+        newConstantProperties[key] = value;
+      } else if (key != "custom_properties") {
+        updatedProperties[key] = value;
+      }
+    }
+    updatedProperties["custom_properties"] = newConstantProperties;
     try {
-      await updateLead(form.values).unwrap();
+      await updateLead(updatedProperties).unwrap();
       notifications.show({ message: "Successfully updated lead" });
 
       if (form.values.id === undefined) {
@@ -134,7 +215,13 @@ export const DialerLeadDetail = () => {
         updateLeadById({ id: form.values.id, leadUpdated: form.values })
       );
     } catch (e) {
-      setError(extractErrorMessage(e));
+      const errorMessage = extractErrorMessage(e);
+      setError(errorMessage);
+      notifications.show({
+        color: "red",
+        message: errorMessage,
+        title: "Error",
+      });
     }
   }
 
@@ -176,18 +263,24 @@ export const DialerLeadDetail = () => {
             <TextInput
               mb="xs"
               label="First name"
-              {...form.getInputProps("first_name")}
+              value={form.getInputProps("first_name").value ?? ""}
+              onChange={form.getInputProps("first_name").onChange}
+              error={form.getInputProps("first_name").error}
             />
             <TextInput
               mb="xs"
               label="Last name"
-              {...form.getInputProps("last_name")}
+              value={form.getInputProps("last_name").value ?? ""}
+              onChange={form.getInputProps("last_name").onChange}
+              error={form.getInputProps("last_name").error}
             />
 
             <TextInput
               mb="xs"
               label="Email address"
-              {...form.getInputProps("email")}
+              value={form.getInputProps("email").value ?? ""}
+              onChange={form.getInputProps("email").onChange}
+              error={form.getInputProps("email").error}
             />
             <Select
               mb="xs"
@@ -251,17 +344,23 @@ export const DialerLeadDetail = () => {
             <TextInput
               mb="xs"
               label="Sale amount"
-              {...form.getInputProps("sale_amount")}
+              value={form.getInputProps("sale_amount").value ?? ""}
+              onChange={form.getInputProps("sale_amount").onChange}
+              error={form.getInputProps("sale_amount").error}
             />
             <TextInput
               mb="xs"
               label="Sale cost"
-              {...form.getInputProps("sale_cost")}
+              value={form.getInputProps("sale_cost").value ?? ""}
+              onChange={form.getInputProps("sale_cost").onChange}
+              error={form.getInputProps("sale_cost").error}
             />
             <TextInput
               mb="xs"
               label="Sale commission"
-              {...form.getInputProps("sale_commission")}
+              value={form.getInputProps("sale_commission").value ?? ""}
+              onChange={form.getInputProps("sale_commission").onChange}
+              error={form.getInputProps("sale_commission").error}
             />
             <DateInput
               label="Sale at"
@@ -275,6 +374,11 @@ export const DialerLeadDetail = () => {
               {...form.getInputProps("sale_notes")}
             />
           </Group>
+          <Text size="sm" color="dimmed" mt="md">
+            Custom Properties
+          </Text>
+          <Divider py={8} />
+          <Group>{customPropertiesInputs}</Group>
         </Box>
 
         <Box id="footer-buttons-overlay" />
