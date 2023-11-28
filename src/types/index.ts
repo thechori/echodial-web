@@ -135,9 +135,6 @@ export type Lead = {
   updated_at: Date;
   user_id: number;
   call_count: number;
-  sale_amount: number | null;
-  sale_commission: number | null;
-  sale_cost: number | null;
   sale_notes: string | null;
   sale_at: Date | null;
   notes: string | null;
@@ -152,6 +149,9 @@ export type Lead = {
   bad_number: boolean | null;
   left_message: boolean | null;
   custom_properties: unknown | null;
+  sale_amount: string | null;
+  sale_commission: string | null;
+  sale_cost: string | null;
 };
 
 export type LeadCustomProperty = {
