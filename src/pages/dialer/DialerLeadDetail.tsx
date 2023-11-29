@@ -206,7 +206,7 @@ export const DialerLeadDetail = () => {
       notifications.show({ message: "Successfully updated lead" });
 
       if (form.values.id === undefined) {
-        throw "No lead ID found";
+        throw Error("No lead ID found");
       }
 
       // Update local lead in queue

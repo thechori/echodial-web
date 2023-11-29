@@ -74,7 +74,7 @@ const DialerQueueStyled = styled.div`
 
   .scroll-area {
     overflow: scroll;
-    max-height: calc(100vh - 280px);
+    height: calc(100vh - 280px);
   }
 `;
 

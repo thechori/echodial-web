@@ -12,22 +12,27 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconCircleCheck } from "@tabler/icons-react";
+import { IconCircleCheck, IconAlertCircle } from "@tabler/icons-react";
 import { BiPlus } from "react-icons/bi";
+import { notifications } from "@mantine/notifications";
 //
 import phoneFormatter from "../../utils/phone-formatter";
 import PhoneNumberMenu from "./PhoneNumberMenu";
-import { useDisclosure } from "@mantine/hooks";
 import {
   useDeleteCallerIdMutation,
   useGetCallerIdsQuery,
 } from "../../services/caller-id";
-import NewCallerIdModal from "./NewCallerIdModal";
 import { extractErrorMessage } from "../../utils/error";
-import NewCallerIdValidatingModal from "./NewCallerIdValidatingModal";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  setFromNumber,
+  setShowNewCallerIdModal,
+} from "../../store/dialer/slice";
 
 function PhoneNumbers() {
   const [error, setError] = useState("");
+  const { fromNumber } = useAppSelector((state) => state.dialer);
+  const dispatch = useAppDispatch();
   const {
     data: callerIds,
     error: errorCallerIds,
@@ -39,9 +44,19 @@ function PhoneNumbers() {
     { isLoading: isLoadingDeleteCallerId, error: errorDeleteCallerId },
   ] = useDeleteCallerIdMutation();
 
-  const [opened, { open, close }] = useDisclosure(false);
-  const [openedValidating, { open: openValidating, close: closeValidating }] =
-    useDisclosure(false);
+  const handleDeleteCallerId = async (phone_number: string) => {
+    try {
+      await deleteCallerId(phone_number);
+      notifications.show({ message: "Successfully deleted phone number." });
+
+      // Remove from state and local storage (if active is being deleted)
+      if (fromNumber === phone_number) {
+        dispatch(setFromNumber(null));
+      }
+    } catch (e) {
+      setError(extractErrorMessage(e));
+    }
+  };
 
   useEffect(() => {
     if (errorCallerIds) {
@@ -77,13 +92,21 @@ function PhoneNumbers() {
                     w={250}
                   >
                     <Flex align="center">
-                      <ThemeIcon color="teal" size={24} radius="xl">
-                        <IconCircleCheck size="1rem" />
+                      <ThemeIcon
+                        color={cid.twilio_sid ? "teal" : "yellow"}
+                        size={24}
+                        radius="xl"
+                      >
+                        {cid.twilio_sid ? (
+                          <IconCircleCheck size="1rem" />
+                        ) : (
+                          <IconAlertCircle size="1rem" />
+                        )}
                       </ThemeIcon>
                       <Box ml={16}>{phoneFormatter(cid.phone_number)}</Box>
                     </Flex>
                     <PhoneNumberMenu
-                      onDelete={() => deleteCallerId(cid.phone_number)}
+                      onDelete={() => handleDeleteCallerId(cid.phone_number)}
                       isLoading={isLoadingDeleteCallerId}
                     />
                   </Flex>
@@ -91,8 +114,9 @@ function PhoneNumbers() {
               ) : isLoadingCallerIds ? (
                 <Loader py="lg" />
               ) : (
-                <Text size="sm" italic color="dimmed">
-                  No numbers found
+                <Text color="dimmed" py="lg">
+                  Hey! 👋 You don’t have any numbers yet. Add one to get
+                  started.
                 </Text>
               )}
             </Box>
@@ -100,69 +124,16 @@ function PhoneNumbers() {
             <Text color="red">{error}</Text>
 
             <Group>
-              <Button onClick={open} leftIcon={<BiPlus />}>
+              <Button
+                onClick={() => dispatch(setShowNewCallerIdModal(true))}
+                leftIcon={<BiPlus />}
+              >
                 Add new
               </Button>
             </Group>
           </Card>
         </Grid.Col>
-
-        {/* <Grid.Col xs={12} sm={12}>
-            <Card
-              className="disabled"
-              shadow="md"
-              withBorder
-              radius="md"
-              m="lg"
-            >
-              <Title order={3} mb={16}>
-                {APP_NAME}
-              </Title>
-              <Text>Phone numbers purchased through subscription</Text>
-              <Box p="lg">
-                {echodialOwnedPhoneNumbers.length ? (
-                  echodialOwnedPhoneNumbers.map((number) => (
-                    <Flex
-                      key={number.id}
-                      py={4}
-                      align="center"
-                      justify="space-between"
-                    >
-                      <Flex align="center">
-                        <ThemeIcon color="teal" size={24} radius="xl">
-                          <IconCircleCheck size="1rem" />
-                        </ThemeIcon>
-                        <Box ml={16}>{phoneFormatter(number.number)}</Box>
-                      </Flex>
-                      <PhoneNumberMenu />
-                    </Flex>
-                  ))
-                ) : (
-                  <Text size="sm" italic color="dimmed">
-                    No numbers found
-                  </Text>
-                )}
-              </Box>
-              <Group>
-                <Button onClick={open} leftIcon={<BiPlus />}>
-                  Add new
-                </Button>
-
-                <Button leftIcon={<BiRefresh />}>Refresh</Button>
-              </Group>{" "}
-            </Card>
-          </Grid.Col> */}
       </Grid>
-
-      <NewCallerIdModal
-        opened={opened}
-        close={close}
-        triggerOpenValidatingModal={openValidating}
-      />
-      <NewCallerIdValidatingModal
-        opened={openedValidating}
-        close={closeValidating}
-      />
     </Container>
   );
 }

@@ -61,9 +61,9 @@ function Settings() {
   }
 
   function manageCallerIDs() {
-    navigate(routes.callerIds)
+    navigate(routes.phoneNumbers);
   }
-  
+
   async function manageSubscription() {
     // If user has no subscription, take them to the /subscription page to enroll in a NEW subscription
     if (!subscription) {
@@ -216,7 +216,7 @@ function Settings() {
 
         <Grid.Col xs={12} sm={6}>
           <Card withBorder shadow="md">
-            <Title order={3}>Manage subscription</Title>
+            <Title order={3}>Subscription</Title>
 
             <Box py="md">
               <Text>
@@ -242,16 +242,13 @@ function Settings() {
 
         <Grid.Col xs={12} sm={6}>
           <Card withBorder shadow="md">
-            <Title order={3}>Caller IDs</Title>
+            <Title order={3}>Phone numbers</Title>
             <Box>
               <Text py="md">
-                Manage your Caller IDs.
+                Manage phone numbers required to make outbound calls with.
               </Text>
-              <Button
-                variant="outline"
-                onClick={manageCallerIDs}
-              >
-                Manage Caller IDs
+              <Button variant="outline" onClick={manageCallerIDs}>
+                Manage
               </Button>
             </Box>
           </Card>

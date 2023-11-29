@@ -74,7 +74,7 @@ function MappingTable() {
       // Note: We only support `text` types for now -- do a lookup for this to get the id
       const textType = propertyTypes?.find((type) => type.name === "text");
       if (!propertyTypesLoading && textType === undefined) {
-        throw "Issue fetching roperty types, please try again later.";
+        throw Error("Issue fetching roperty types, please try again later.");
       }
 
       if (standardPropertiesError) {

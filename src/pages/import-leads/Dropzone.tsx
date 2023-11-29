@@ -19,7 +19,7 @@ function Dropzone({
       onDrop={onDrop}
       onReject={onReject}
       maxSize={MAX_FILE_SIZE_IN_MB * 1024 ** 2}
-      accept={[MIME_TYPES.csv, MIME_TYPES.xls, MIME_TYPES.xlsx]}
+      accept={[MIME_TYPES.csv]}
       maxFiles={1}
       multiple={false}
     >
@@ -56,7 +56,7 @@ function Dropzone({
           ) : (
             <>
               <Text size="md" inline align="center">
-                Drag file here or click to select a file (.csv or .xlsx)
+                Drag .csv file here or click to select file
               </Text>
               <Text size="xs" color="dimmed" inline mt={10} align="center">
                 Max file size {MAX_FILE_SIZE_IN_MB} MB

@@ -1,36 +1,37 @@
+import { useEffect, useState } from "react";
+import { notifications } from "@mantine/notifications";
 import { Button, Center, Loader, Modal, Text } from "@mantine/core";
 //
-import { useEffect, useState } from "react";
 import { extractErrorMessage } from "../../utils/error";
 import { useLazyGetCallerIdsQuery } from "../../services/caller-id";
-import { notifications } from "@mantine/notifications";
-import { useAppSelector } from "../../store/hooks";
-import { selectJwtDecoded } from "../../store/user/slice";
 
-type TNewCallerIdValidatingModalProps = {
-  opened: boolean;
-  close: () => void;
-};
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectJwtDecoded } from "../../store/user/slice";
+import {
+  setFromNumber,
+  setShowNewCallerIdValidatingModal,
+} from "../../store/dialer/slice";
 
 // MAX_ATTEMPTS * RETRY_COOLDOWN_IN_MS = ~1 minute (in MS)
 const MAX_ATTEMPTS = 24;
 const RETRY_COOLDOWN_IN_MS = 2500;
 
-const NewCallerIdValidatingModal = ({
-  opened,
-  close,
-}: TNewCallerIdValidatingModalProps) => {
+const NewCallerIdValidatingModal = () => {
+  const dispatch = useAppDispatch();
+  const { showNewCallerIdValidatingModal: opened, fromNumber } = useAppSelector(
+    (state) => state.dialer
+  );
   const [attempts, setAttempts] = useState(MAX_ATTEMPTS);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-  const [getCallerIds] = useLazyGetCallerIdsQuery();
+  const [getCallerIds, { data: callerIdData }] = useLazyGetCallerIdsQuery();
   const jwtDecoded = useAppSelector(selectJwtDecoded);
 
   const handleClose = () => {
     setSuccess(false);
     setAttempts(MAX_ATTEMPTS);
     setError("");
-    close();
+    dispatch(setShowNewCallerIdValidatingModal(false));
   };
 
   useEffect(() => {
@@ -43,7 +44,6 @@ const NewCallerIdValidatingModal = ({
       }
 
       // Limit number of attempts
-      console.log("attempts: ", attempts);
       if (attempts < 0) {
         clearInterval(int);
         notifications.show({
@@ -81,8 +81,6 @@ const NewCallerIdValidatingModal = ({
           return true;
         });
 
-        console.log("shouldSucceed", shouldSucceed);
-
         if (shouldSucceed) {
           notifications.show({
             color: "green",
@@ -93,6 +91,12 @@ const NewCallerIdValidatingModal = ({
           setSuccess(true);
           clearInterval(int);
           handleClose();
+
+          // TODO: improve this -- find the item in filteredCallerIds with the most recent `updatedAt` value
+          if (!fromNumber && filteredCallerIds.length === 1) {
+            // Get first one
+            dispatch(setFromNumber(filteredCallerIds[0].phone_number));
+          }
         }
 
         // Once they no longer exist, we assume success
@@ -104,13 +108,9 @@ const NewCallerIdValidatingModal = ({
     return () => {
       clearInterval(int);
     };
-  }, [opened, attempts]);
+  }, [opened, attempts, fromNumber, callerIdData]);
 
   function cancel() {
-    // Cancel API request
-    // TODO
-
-    // Close modal
     handleClose();
   }
 
