@@ -11,9 +11,10 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
 //
-import logo from "../../assets/EchoDial-temp-logo-full-dark.png";
+import logo from "../../assets/images/logo/logo@2x.png";
 import apiService from "../../services/api";
 import { extractErrorMessage } from "../../utils/error";
+import { APP_NAME } from "../../configs/labels";
 
 function ResetPassword() {
   let { resetPasswordToken } = useParams();
@@ -101,7 +102,7 @@ function ResetPassword() {
     >
       <Box>
         <Box w={300} mx="auto" mb={32}>
-          <Image src={logo} alt="EchoDial logo" />
+          <Image src={logo} alt={`${APP_NAME} logo`} />
         </Box>
         <Title ta="center" order={2} py="lg">
           Reset your password

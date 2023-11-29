@@ -5,7 +5,7 @@ import { IconCircleCheck } from "@tabler/icons-react";
 import { isPossiblePhoneNumber } from "react-phone-number-input";
 //
 import SignUpStyled from "./SignUp.styles";
-import appLogo from "../../assets/EchoDial-temp-logo-full.png";
+import logo from "../../assets/images/logo/logo-white@2x.png";
 import routes from "../../configs/routes";
 import { extractErrorMessage } from "../../utils/error";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -102,7 +102,7 @@ function SignUp() {
             className="logo-container hoverable"
             onClick={() => document.location.replace(MARKETING_SITE_URL)}
           >
-            <img src={appLogo} alt={`${APP_NAME} logo`} />
+            <img src={logo} alt={`${APP_NAME} logo`} />
           </Box>
 
           <Box py="md">
@@ -129,7 +129,7 @@ function SignUp() {
                   </ThemeIcon>
                 }
               >
-                <List.Item>The world's first truly autonomous dialer</List.Item>
+                <List.Item>The dialer with total awareness</List.Item>
                 <List.Item>Best-in-class user interface</List.Item>
                 <List.Item>High-quality voice calls</List.Item>
                 <List.Item>1500+ voice call minutes per month</List.Item>

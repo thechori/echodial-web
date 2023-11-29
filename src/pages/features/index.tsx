@@ -35,7 +35,7 @@ function Features() {
                   </ThemeIcon>
                 }
               >
-                <List.Item>The world's first truly autonomous dialer</List.Item>
+                <List.Item>The dialer with total awareness</List.Item>
                 <List.Item>
                   Industry leading user-friendly and intuitive interface
                 </List.Item>

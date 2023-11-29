@@ -49,7 +49,12 @@ Sentry.init({
     new Sentry.BrowserTracing({
       // TODO: update these values to be proper or remove
       // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-      tracePropagationTargets: ["localhost", "https://api.echodial.com/"],
+      tracePropagationTargets: [
+        "localhost",
+        "https://api.echodial.com",
+        "https://staging.api.unagidialer.com",
+        "https://api.unagidialer.com",
+      ],
     }),
     new Sentry.Replay(),
   ],

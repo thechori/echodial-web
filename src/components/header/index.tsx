@@ -4,10 +4,11 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { Box, Button } from "@mantine/core";
 //
 import HeaderStyled from "./Header.styles";
-import echodialLogoFull from "../../assets/EchoDial-temp-logo-full.png";
+import logo from "../../assets/images/logo/logo@2x.png";
 import routes from "../../configs/routes";
 import { useAppSelector } from "../../store/hooks";
 import { selectJwt } from "../../store/user/slice";
+import { APP_NAME } from "../../configs/labels";
 
 const Header = () => {
   const [expanded, setExpanded] = useState(false);
@@ -27,7 +28,7 @@ const Header = () => {
             className="logo hoverable"
             onClick={() => navigate(routes.landing)}
           >
-            <img src={echodialLogoFull} alt="EchoDial company logo" />
+            <img src={logo} alt={`${APP_NAME} company logo`} />
           </div>
           <div className="links">
             <div

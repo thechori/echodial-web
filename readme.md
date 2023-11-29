@@ -1,4 +1,4 @@
-# EchoDial Web
+# EchoDial Unagi Web
 
 React app (Vite) built for the frontend of the app
 
