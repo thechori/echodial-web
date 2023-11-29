@@ -532,7 +532,7 @@ function Dialer() {
               </Flex>
             </Tooltip>
 
-            <CallerIdSelect pr="xs" w={180} />
+            <CallerIdSelect w={180} />
 
             <Tooltip label="Open dialer settings" openDelay={500}>
               <ActionIcon

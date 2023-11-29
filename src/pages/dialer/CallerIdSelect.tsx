@@ -10,6 +10,7 @@ import {
 import { useGetCallerIdsQuery } from "../../services/caller-id";
 import phoneFormatter from "../../utils/phone-formatter";
 import routes from "../../configs/routes";
+import { styled } from "styled-components";
 
 type TCallerIdSelectProps = {
   label?: string;
@@ -64,16 +65,29 @@ function CallerIdSelect(props: TCallerIdSelectProps & any) {
   }
 
   return (
-    <Select
-      label={props.label}
-      placeholder={isLoading ? "Loading..." : "My phone number *"}
-      data={callerIdItems}
-      value={fromNumber || ""}
-      onChange={handleSelect}
-      style={{ width: "200px" }}
-      {...props}
-    />
+    <SelectContainer $error={fromNumber === null}>
+      <Select
+        label={props.label}
+        placeholder={isLoading ? "Loading..." : "My phone number *"}
+        data={callerIdItems}
+        value={fromNumber || ""}
+        onChange={handleSelect}
+        style={{ width: "200px" }}
+        {...props}
+      />
+    </SelectContainer>
   );
 }
 
 export default CallerIdSelect;
+
+const SelectContainer = styled.div<{ $error: boolean }>`
+  background-color: ${(props) => (props.$error ? "red" : "")};
+  padding: 1px;
+  border-radius: 4px;
+  margin-right: 8px;
+
+  .mantine-InputWrapper-root .mantine-Select-root {
+    padding-right: 0;
+  }
+`;

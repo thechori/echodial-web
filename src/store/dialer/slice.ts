@@ -33,7 +33,7 @@ export type TDialerOptions = {
 
 export type TRequestAction = null | "startCall" | "stopCall" | "skipToNextLead";
 
-interface IDialerState {
+type TDialerState = {
   // This variable is to manage the state across the app, while being explicit about the ONE thing the
   // dialer component should be doing to make the state more approachable
   requestAction: TRequestAction;
@@ -50,16 +50,16 @@ interface IDialerState {
   token: null | string;
   tokenLoading: boolean;
   identity: null | string;
-  fromNumber: string;
+  fromNumber: null | string;
   dialQueueIndex: null | number;
   dialQueue: Lead[];
   options: TDialerOptions;
   showOptions: boolean;
   showNewCallerIdModal: boolean;
   showNewCallerIdValidatingModal: boolean;
-}
+};
 
-const buildInitialState = (): IDialerState => ({
+const buildInitialState = (): TDialerState => ({
   requestAction: null,
   //
   isDialerOpen:
@@ -73,7 +73,8 @@ const buildInitialState = (): IDialerState => ({
   connectedAt: null,
   currentDialAttempts: null,
   muted: false,
-  fromNumber: localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER) || "",
+  fromNumber:
+    localStorage.getItem(LOCAL_STORAGE_KEY__DIALER_FROM_NUMBER) || null,
   error: "",
   status: Call.State.Closed,
   token: null,

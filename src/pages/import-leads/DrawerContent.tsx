@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { notifications } from "@mantine/notifications";
 import { extractErrorMessage } from "../../utils/error";
 function DrawerContent(props: any) {
+  const [error, setError] = useState("");
   const [newLabel, setNewLabel] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newGroup, setNewGroup] = useState("");
@@ -50,9 +51,10 @@ function DrawerContent(props: any) {
       notifications.show({ message: "Custom property successfully created!" });
       props.close();
     } catch (e) {
-      const error = extractErrorMessage(e);
+      const errorMessage = extractErrorMessage(e);
+      setError(errorMessage);
       notifications.show({
-        message: "Failed to create custom property: " + error,
+        message: "Failed to create custom property: " + errorMessage,
       });
     }
   }
@@ -86,6 +88,7 @@ function DrawerContent(props: any) {
       >
         Submit
       </Button>
+      <Text color="red">{error}</Text>
     </>
   );
 }

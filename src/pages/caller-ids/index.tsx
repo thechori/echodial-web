@@ -23,11 +23,15 @@ import {
   useGetCallerIdsQuery,
 } from "../../services/caller-id";
 import { extractErrorMessage } from "../../utils/error";
-import { useAppDispatch } from "../../store/hooks";
-import { setShowNewCallerIdModal } from "../../store/dialer/slice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  setFromNumber,
+  setShowNewCallerIdModal,
+} from "../../store/dialer/slice";
 
 function PhoneNumbers() {
   const [error, setError] = useState("");
+  const { fromNumber } = useAppSelector((state) => state.dialer);
   const dispatch = useAppDispatch();
   const {
     data: callerIds,
@@ -44,6 +48,11 @@ function PhoneNumbers() {
     try {
       await deleteCallerId(phone_number);
       notifications.show({ message: "Successfully deleted phone number." });
+
+      // Remove from state and local storage (if active is being deleted)
+      if (fromNumber === phone_number) {
+        dispatch(setFromNumber(null));
+      }
     } catch (e) {
       setError(extractErrorMessage(e));
     }
