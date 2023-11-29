@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 //
 import SignInStyled from "./SignIn.styles";
-import echodialLogo from "../../assets/EchoDial-temp-logo-full-dark.png";
+import logo from "../../assets/images/logo/logo@2x.png";
 import routes from "../../configs/routes";
 
 import { extractErrorMessage } from "../../utils/error";
@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectJwt, setJwt } from "../../store/user/slice";
 import apiService from "../../services/api";
 import { MARKETING_SITE_URL } from "../../configs/urls";
+import { APP_NAME } from "../../configs/labels";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -93,7 +94,7 @@ function SignIn() {
             className="logo-container hoverable"
             onClick={() => document.location.replace(MARKETING_SITE_URL)}
           >
-            <img src={echodialLogo} alt="EchoDial logo" />
+            <img src={logo} alt={`${APP_NAME} logo`} />
           </div>
 
           <form onSubmit={handleFormSubmit}>

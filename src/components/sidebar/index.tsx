@@ -9,11 +9,12 @@ import { Box, Divider } from "@mantine/core";
 //
 import SidebarStyled from "./Sidebar.styles";
 import routes from "../../configs/routes";
-import logo from "../../assets/EchoDial-temp-logo-full.png";
+import logo from "../../assets/images/logo/logo-white.png";
 import colors from "../../styles/colors";
 import { SidebarSubscriptionDetail } from "./SidebarSubscriptionDetail";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setIsDialerOpen } from "../../store/dialer/slice";
+import { APP_NAME } from "../../configs/labels";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -47,7 +48,7 @@ const Sidebar = () => {
           <img
             className="hoverable"
             src={logo}
-            alt="EchoDial logo"
+            alt={`${APP_NAME} logo`}
             onClick={() => clickWrapper(navigate(routes.leads))}
           />
           <div
@@ -92,7 +93,7 @@ const Sidebar = () => {
           <div className="header">
             <img
               src={logo}
-              alt="EchoDial logo"
+              alt={`${APP_NAME} logo`}
               className="hoverable"
               onClick={() => clickWrapper(navigate(routes.leads))}
             />

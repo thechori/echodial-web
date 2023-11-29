@@ -1,2 +1,2 @@
-export const APP_NAME = "EchoDial";
-export const APP_MOTTO = "The world’s first truly autonomous dialer";
+export const APP_NAME = "Unagi";
+export const APP_MOTTO = "The dialer with total awareness";
