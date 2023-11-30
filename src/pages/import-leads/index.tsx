@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import routes from "../../configs/routes";
 import styled from "@emotion/styled";
 import MappingTable from "./MappingTable";
+import * as amplitude from "@amplitude/analytics-browser";
 
 const ImportLeadsStyled = styled.div`
   min-height: calc(100vh);
@@ -72,6 +73,7 @@ function ImportLeads() {
       file.append("headerToProperties", headerToPropertiesString);
       await addLeadsViaCsv(file).unwrap();
       notifications.show({ message: "Leads successfully uploaded!" });
+      amplitude.track("Leads successfully uploaded");
       close();
       navigate(routes.leads);
     } catch (error) {

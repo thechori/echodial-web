@@ -34,6 +34,7 @@ import DeleteAccountModal from "./DeleteAccountConfirmationModal";
 import { extractErrorMessage } from "../../utils/error";
 import apiService from "../../services/api";
 import { useGetSubscriptionStatusQuery } from "../../services/stripe";
+import * as amplitude from "@amplitude/analytics-browser";
 
 function Settings() {
   const dispatch = useAppDispatch();
@@ -49,6 +50,7 @@ function Settings() {
 
   function handleSignOut() {
     dispatch(signOut());
+    amplitude.track("User sign out");
     navigate(routes.signIn);
   }
 

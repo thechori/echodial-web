@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import Papa from "papaparse";
 import { useDispatch } from "react-redux";
 import { setFileHeaders, setFileRows, setFile } from "../../store/import/slice";
+import * as amplitude from "@amplitude/analytics-browser";
 
 const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
   const navigate = useNavigate();
@@ -50,6 +51,8 @@ const UploadLeadsViaCsvModal = ({ opened, close }: any) => {
               const rowKeys = Object.getOwnPropertyNames(row);
               return rowKeys.length === firstRowLength;
             });
+            amplitude.track("Upload files successfully uploaded");
+
             dispatch(setFileHeaders(results.meta.fields));
             dispatch(setFileRows(filteredRows));
             navigate(routes.importLeads);

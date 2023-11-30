@@ -44,6 +44,7 @@ import { useDeductTrialCreditMutation } from "../../services/trial-credit";
 import { DialerPrimaryButton } from "./DialerPrimaryButton";
 import phoneFormatter from "../../utils/phone-formatter";
 import { Duration, intervalToDuration } from "date-fns";
+import * as amplitude from "@amplitude/analytics-browser";
 
 function Dialer() {
   const dispatch = useAppDispatch();
@@ -119,6 +120,8 @@ function Dialer() {
 
   // Begin calling the current index
   const startCall = useCallback(async () => {
+    amplitude.track("Start call");
+
     // Check for caller ID select
     if (!fromNumber) {
       notifications.show({
@@ -322,7 +325,7 @@ function Dialer() {
       });
       return;
     }
-
+    amplitude.track("Next lead");
     // Point to the next Lead in the queue
     const value = dialStateInstance.dialQueueIndex + 1;
     dialStateInstance.dialQueueIndex = value;
@@ -346,9 +349,10 @@ function Dialer() {
   // - An error occurs
   // - Call disconnects
   const stopCall = useCallback(async () => {
+    amplitude.track("Stop call");
+
     dialStateInstance.connectedAt = null;
     dispatch(setConnectedAt(dialStateInstance.connectedAt));
-
     try {
       if (dialStateInstance.call) {
         dialStateInstance.call.disconnect();
