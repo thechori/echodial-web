@@ -209,8 +209,21 @@ function SignUp() {
                   }
                 />
                 <Text size="xs">
-                  I accept the <a href="#">{APP_NAME} Terms of Service</a> and
-                  have read the <a href="#">{APP_NAME} Privacy Notice</a>.
+                  I accept the{" "}
+                  <a
+                    href="https://unagidialer.wpcomstaging.com/terms-of-service/"
+                    target="_blank"
+                  >
+                    Terms of Service
+                  </a>{" "}
+                  and have read and agree to the{" "}
+                  <a
+                    href="https://unagidialer.wpcomstaging.com/privacy-policy/"
+                    target="_blank"
+                  >
+                    Privacy Policy
+                  </a>
+                  .
                 </Text>
               </Flex>
 
