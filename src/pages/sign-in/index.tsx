@@ -19,6 +19,7 @@ import { selectJwt, setJwt } from "../../store/user/slice";
 import apiService from "../../services/api";
 import { MARKETING_SITE_URL } from "../../configs/urls";
 import { APP_NAME } from "../../configs/labels";
+import * as amplitude from "@amplitude/analytics-browser";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -45,6 +46,7 @@ function SignIn() {
       });
 
       dispatch(setJwt(res.data));
+      amplitude.track("User sign in");
       navigate(routes.leads);
     } catch (error) {
       setError(extractErrorMessage(error));
