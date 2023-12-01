@@ -285,7 +285,6 @@ export const DialerLeadDetail = () => {
             <Select
               mb="xs"
               label="Status"
-              required
               {...form.getInputProps("status")}
               data={
                 availableStatuses?.map((s) => ({

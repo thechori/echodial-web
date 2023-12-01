@@ -286,7 +286,6 @@ export const LeadDetail = () => {
             <Box mb="xs">
               <PhoneInput
                 label="Phone number"
-                required
                 {...form.getInputProps("phone")}
               />
             </Box>
@@ -300,7 +299,6 @@ export const LeadDetail = () => {
             <Select
               mb="xs"
               label="Status"
-              required
               {...form.getInputProps("status")}
               data={
                 availableStatuses?.map((s) => ({
