@@ -18,6 +18,7 @@ export function CallHistory() {
   const columnDefs: ColDef<Call>[] = [
     {
       sortable: true,
+      sort: "desc",
       resizable: true,
       filter: true,
       headerName: "Called at",

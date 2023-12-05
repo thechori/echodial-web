@@ -16,7 +16,6 @@ export const leadColDefs: ColDef<Lead>[] = [
   },
   {
     width: 120,
-    headerName: "Actions",
     cellRenderer: "tableActionCell", // name comes from `components` memoized object which gets passed to AG Grid `components` parameter
   },
   {
@@ -116,6 +115,7 @@ export const leadColDefs: ColDef<Lead>[] = [
     headerName: "Created at",
     resizable: true,
     sortable: true,
+    sort: "desc",
     filter: true,
     valueFormatter: (param) => format(new Date(param.value), "Pp"),
   },
