@@ -28,12 +28,30 @@ export const leadColDefs: ColDef<Lead>[] = [
     valueFormatter: (val) => capitalizeFirstLetter(val.value),
   },
   {
-    headerName: "Full name",
+    headerName: "Name",
     sortable: true,
     resizable: true,
-    filter: true,
-    valueGetter: (params) =>
-      `${params.data?.first_name || ""} ${params.data?.last_name || ""}`,
+    filter: "agTextColumnFilter",
+    valueGetter: (params) => {
+      let val = "";
+
+      const { data } = params;
+
+      if (!data) return val;
+
+      const { first_name, last_name } = data;
+
+      val = first_name || "";
+
+      // Handle dynamic space between first and last name
+      if (first_name) {
+        val += " ";
+      }
+
+      val += last_name || "";
+
+      return val;
+    },
   },
   {
     field: "phone",
@@ -55,7 +73,7 @@ export const leadColDefs: ColDef<Lead>[] = [
     headerName: "Appointment at",
     resizable: true,
     sortable: true,
-    filter: true,
+    filter: "agDateColumnFilter",
     valueFormatter: ({ value }) => {
       return value ? format(new Date(value), "Pp") : "";
     },
@@ -116,7 +134,7 @@ export const leadColDefs: ColDef<Lead>[] = [
     resizable: true,
     sortable: true,
     sort: "desc",
-    filter: true,
+    filter: "agDateColumnFilter",
     valueFormatter: (param) => format(new Date(param.value), "Pp"),
   },
 ];

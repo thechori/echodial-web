@@ -279,6 +279,7 @@ function LeadsFilteredList() {
               quickFilterText={keyword}
               onSelectionChanged={onSelectionChanged}
               components={components}
+              suppressMenuHide={true}
             />
           </Box>
         )}

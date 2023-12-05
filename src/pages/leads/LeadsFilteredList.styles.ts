@@ -8,12 +8,21 @@ export const LeadsFilteredListStyled = styled.div`
     opacity: 0;
   }
 
+  .ag-row-hover:hover {
+    cursor: pointer;
+  }
+
   .ag-row-hover .hover-button {
     opacity: 1;
   }
 
   .ag-row-hover .hover-button:hover {
     background-color: ${lighten(0.4, colors.appBlue)};
+  }
+
+  .ag-cell-focus,
+  .ag-cell-no-focus {
+    border: none !important;
   }
 
   .start-dial-session-disabled-button {
