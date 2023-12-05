@@ -339,13 +339,6 @@ export const LeadDetail = () => {
               disabled
               {...form.getInputProps("answer_count")}
             />
-
-            <Textarea
-              w="100%"
-              minRows={1}
-              label="Not interested reason"
-              {...form.getInputProps("not_interested_reason")}
-            />
           </Group>
 
           <Text size="sm" color="dimmed" mt="md">

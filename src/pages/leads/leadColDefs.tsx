@@ -120,14 +120,6 @@ export const leadColDefs: ColDef<Lead>[] = [
     sortable: true,
     filter: true,
   },
-
-  {
-    field: "not_interested_reason",
-    headerName: "Not interested reason",
-    resizable: true,
-    sortable: true,
-    filter: true,
-  },
   {
     field: "created_at",
     headerName: "Created at",
