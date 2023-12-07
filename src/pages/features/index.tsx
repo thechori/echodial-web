@@ -44,7 +44,7 @@ function Features() {
                 </List.Item>
                 <List.Item>Mobile friendly -- call on the go!</List.Item>
                 <List.Item>
-                  1500 minutes included in our Standard plan (50% more than our
+                  1,500 minutes included in our Standard plan (50% more than our
                   big competitors)
                 </List.Item>
                 <List.Item>Web-based, no need to download an app</List.Item>
