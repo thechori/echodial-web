@@ -37,6 +37,7 @@ import { dialStateInstance } from "../dialer/DialState.class";
 import { useGetLeadCustomPropertiesQuery } from "../../services/lead";
 import { ColDef } from "ag-grid-community";
 import { MdLibraryAddCheck } from "react-icons/md";
+import { setSelectedLead } from "../../store/lead-detail/slice";
 
 function LeadsFilteredList() {
   const { isSelectModeActive } = useAppSelector((state) => state.leads);
@@ -167,9 +168,7 @@ function LeadsFilteredList() {
     // TODO: Check to see if details are open and dirty, if so, show a confirmation dialog to abandon changes
 
     // Proceed
-    console.log(event.data.id);
-    // const selectedRows = e.api.getSelectedNodes();
-    // console.log(selectedRows);
+    dispatch(setSelectedLead(event.data));
   };
 
   const openImportModal = () => {
