@@ -6,14 +6,14 @@ import { capitalizeFirstLetter } from "../../utils/string-formatters";
 import phoneFormatter from "../../utils/phone-formatter";
 
 export const leadColDefs: ColDef<Lead>[] = [
-  // {
-  // width: 50,
-  // sortable: true,
-  // headerCheckboxSelection: true,
-  // checkboxSelection: true,
-  // showDisabledCheckboxes: true,
-  // headerCheckboxSelectionFilteredOnly: true,
-  // },
+  {
+    width: 50,
+    sortable: true,
+    headerCheckboxSelection: true,
+    checkboxSelection: true,
+    showDisabledCheckboxes: true,
+    headerCheckboxSelectionFilteredOnly: true,
+  },
   {
     width: 100,
     cellRenderer: "tableActionCell", // name comes from `components` memoized object which gets passed to AG Grid `components` parameter

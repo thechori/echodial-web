@@ -24,8 +24,9 @@ import { useGetLeadsQuery } from "../../services/lead";
 import LeadsFilterDrawer from "./LeadsFilterDrawer";
 import { leadColDefs } from "./leadColDefs";
 import { useGetLeadStatusesQuery } from "../../services/lead.status";
-import { SelectionChangedEvent } from "ag-grid-community";
+import { CellClickedEvent, SelectionChangedEvent } from "ag-grid-community";
 import {
+  setIsSelectModeActive,
   setRequestForImportLeadsModal,
   setRequestForManualCreateLeadsModal,
   setSelectedRows,
@@ -35,8 +36,10 @@ import { LeadsFilteredListStyled } from "./LeadsFilteredList.styles";
 import { dialStateInstance } from "../dialer/DialState.class";
 import { useGetLeadCustomPropertiesQuery } from "../../services/lead";
 import { ColDef } from "ag-grid-community";
+import { MdLibraryAddCheck } from "react-icons/md";
 
 function LeadsFilteredList() {
+  const { isSelectModeActive } = useAppSelector((state) => state.leads);
   const { data: leadStatuses } = useGetLeadStatusesQuery();
   const { data: leads } = useGetLeadsQuery();
   const [
@@ -44,7 +47,7 @@ function LeadsFilteredList() {
     { open: openDeleteConfirmationModal, close: closeDeleteConfirmationModal },
   ] = useDisclosure(false);
 
-  //Custom Properties
+  // Custom Properties
   const { data: customProperties, isLoading: customPropertiesLoading } =
     useGetLeadCustomPropertiesQuery();
 
@@ -57,6 +60,7 @@ function LeadsFilteredList() {
   );
 
   const [columnDefs, setColumnDefs] = useState<ColDef<Lead>[]>([]);
+
   useEffect(() => {
     let newCustomPropertiesArray: ColDef<Lead>[] = [];
     if (!customPropertiesLoading && customProperties) {
@@ -155,7 +159,17 @@ function LeadsFilteredList() {
   });
 
   const onSelectionChanged = (event: SelectionChangedEvent) => {
+    console.log("hey", event.api.getSelectedRows());
     dispatch(setSelectedRows(event.api.getSelectedRows()));
+  };
+
+  const onCellClicked = (event: CellClickedEvent) => {
+    // TODO: Check to see if details are open and dirty, if so, show a confirmation dialog to abandon changes
+
+    // Proceed
+    console.log(event.data.id);
+    // const selectedRows = e.api.getSelectedNodes();
+    // console.log(selectedRows);
   };
 
   const openImportModal = () => {
@@ -190,6 +204,10 @@ function LeadsFilteredList() {
     dialStateInstance.gridRef = gridRef;
   }, [gridRef]);
 
+  useEffect(() => {
+    console.log(columnDefs);
+  }, [isSelectModeActive]);
+
   return (
     <LeadsFilteredListStyled>
       <Card
@@ -222,7 +240,16 @@ function LeadsFilteredList() {
           </Flex>
 
           <Flex align="center">
-            {selectedRows.length > 0 && (
+            {!isSelectModeActive && (
+              <Button
+                variant="subtle"
+                leftIcon={<MdLibraryAddCheck fontSize="1.25rem" />}
+                onClick={() => dispatch(setIsSelectModeActive(true))}
+              >
+                Select
+              </Button>
+            )}
+            {isSelectModeActive && (
               <Button
                 size="xs"
                 color="red"
@@ -230,6 +257,7 @@ function LeadsFilteredList() {
                 leftIcon={<IconTrash />}
                 variant="subtle"
                 onClick={deleteLeads}
+                disabled={selectedRows.length === 0}
               >
                 Delete
               </Button>
@@ -267,9 +295,10 @@ function LeadsFilteredList() {
               columnDefs={columnDefs}
               animateRows={true}
               rowSelection="multiple"
-              suppressRowClickSelection
+              suppressRowClickSelection={true}
               quickFilterText={keyword}
               onSelectionChanged={onSelectionChanged}
+              onCellClicked={onCellClicked}
               components={components}
               suppressMenuHide={true}
             />
