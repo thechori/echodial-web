@@ -19,15 +19,15 @@ export const TableActionCell = (props: any) => {
     dispatch(setRequestAction("stopCall"));
   };
 
-  const active = !call && activeLead?.id === props.data.id;
+  const active = !!call && activeLead?.id === props.data.id;
   // const active = call && call.id === props.data.id;
 
   return (
     <span>
       <CallButtonSimple
-        active={!active}
-        onInactiveClick={endCall}
-        onActiveClick={startCall}
+        active={active}
+        onInactiveClick={startCall}
+        onActiveClick={endCall}
       />
     </span>
   );
