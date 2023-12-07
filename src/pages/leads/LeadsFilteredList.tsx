@@ -213,7 +213,7 @@ function LeadsFilteredList() {
             />
             <TextInput
               placeholder="Search..."
-              maw={200}
+              w={300}
               px="md"
               icon={<IconSearch size="1rem" />}
               value={keyword}
