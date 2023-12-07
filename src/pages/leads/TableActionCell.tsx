@@ -1,5 +1,3 @@
-// import { Button } from "@mantine/core";
-//
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import CallButtonSimple from "../../components/call-buttons/CallButtonSimple";
 import { setActiveLead, setRequestAction } from "../../store/dialer/slice";
@@ -20,7 +18,6 @@ export const TableActionCell = (props: any) => {
   };
 
   const active = !!call && activeLead?.id === props.data.id;
-  // const active = call && call.id === props.data.id;
 
   return (
     <span>

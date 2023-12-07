@@ -5,17 +5,15 @@ import devices from "../../styles/devices";
 type TDialerState = "hidden" | "expanded" | "collapsed";
 
 export const DialerStatus = styled.div<{ $visible: boolean }>`
-  width: ${(props) => (props.$visible ? "110px" : "0px")};
+  width: ${(props) => (props.$visible ? "100px" : "0px")};
   text-align: center;
   opacity: ${(props) => (props.$visible ? 1 : 0)};
   transition: all 1s ease;
-  padding-left: 1rem;
-  padding-right: 1rem;
 
   .duration {
     background-color: #d3f9d8;
     color: #2b8a3e;
-    padding: 0.1rem 0.25rem;
+    padding: 0.1rem 0.5rem;
     border-radius: 8px;
   }
 `;

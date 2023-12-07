@@ -437,7 +437,7 @@ function Dialer() {
                 </Text>
               </DialerStatus>
 
-              <Box>
+              <Box ml={16}>
                 <Text fw={500} lh="1.1rem">
                   {name}
                 </Text>
