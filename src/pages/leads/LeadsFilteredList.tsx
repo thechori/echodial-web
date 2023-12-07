@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useWindowEvent } from "@mantine/hooks";
 import { createSelector } from "@reduxjs/toolkit";
-import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { AgGridReact } from "ag-grid-react";
 import { IconSearch, IconTrash } from "@tabler/icons-react";
 import {
@@ -220,13 +219,6 @@ function LeadsFilteredList() {
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
             />
-            <Button
-              variant={appliedFilters.length ? "light" : "subtle"}
-              onClick={() => setFilterDrawerOpen(!filterDrawerOpen)}
-              leftIcon={<HiOutlineAdjustmentsHorizontal size={20} />}
-            >
-              Filters ({appliedFilters.length})
-            </Button>
           </Flex>
 
           <Flex align="center">

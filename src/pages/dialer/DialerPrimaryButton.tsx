@@ -3,17 +3,16 @@ import { PiPhoneDisconnect } from "react-icons/pi";
 import { MdPhone } from "react-icons/md";
 //
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { dialStateInstance } from "./DialState.class";
-import { setDialQueueIndex, setRequestAction } from "../../store/dialer/slice";
+import { setRequestAction } from "../../store/dialer/slice";
 import { Call } from "@twilio/voice-sdk";
 import { EndButton, StartButton } from "./DialerPrimaryButton.styles";
 
 /**
  * Primary action button for the dialer
  *
- * [ ] Green call button when no call is active
- * [ ] Red outline when call is pending
- * [ ] Red solid when call is connected
+ * [x] Green call button when no call is active
+ * [x] Red outline when call is pending
+ * [x] Red solid when call is connected
  *
  */
 const DialerPrimaryButton = () => {
@@ -21,15 +20,7 @@ const DialerPrimaryButton = () => {
   const { call, status } = useAppSelector((state) => state.dialer);
   const { subscriptionActive } = useAppSelector((state) => state.user);
 
-  function requestStartDialer() {
-    // Start from 0 UNLESS there is a currently selected index
-    const newIndex =
-      dialStateInstance.dialQueueIndex === null
-        ? 0
-        : dialStateInstance.dialQueueIndex;
-
-    dialStateInstance.dialQueueIndex = newIndex;
-    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
+  function startCall() {
     dispatch(setRequestAction("startCall"));
   }
 
@@ -58,11 +49,8 @@ const DialerPrimaryButton = () => {
             </HoverCard.Dropdown>
           </HoverCard>
         ) : !call ? (
-          <Tooltip
-            label="Begin making calls to the leads in the Call queue"
-            openDelay={500}
-          >
-            <StartButton onClick={requestStartDialer} className="hoverable">
+          <Tooltip label="Begin calling selected lead" openDelay={500}>
+            <StartButton onClick={startCall} className="hoverable">
               <MdPhone fontSize="1.5rem" />
             </StartButton>
           </Tooltip>

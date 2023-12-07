@@ -51,8 +51,7 @@ type TDialerState = {
   tokenLoading: boolean;
   identity: null | string;
   fromNumber: null | string;
-  dialQueueIndex: null | number;
-  dialQueue: Lead[];
+  activeLead: null | Lead;
   options: TDialerOptions;
   showOptions: boolean;
   showNewCallerIdModal: boolean;
@@ -79,10 +78,7 @@ const buildInitialState = (): TDialerState => ({
   status: Call.State.Closed,
   token: null,
   identity: null,
-  dialQueue: JSON.parse(
-    localStorage.getItem(LOCAL_STORAGE_KEY__DIAL_QUEUE) || "[]"
-  ),
-  dialQueueIndex: JSON.parse(
+  activeLead: JSON.parse(
     localStorage.getItem(LOCAL_STORAGE_KEY__DIAL_QUEUE_INDEX) || "null"
   ),
   //
@@ -137,8 +133,8 @@ export const DialerSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
-    setDialQueueIndex: (state, action) => {
-      state.dialQueueIndex = action.payload;
+    setActiveLead: (state, action) => {
+      state.activeLead = action.payload;
 
       // Persist in local storage
       localStorage.setItem(
@@ -146,30 +142,7 @@ export const DialerSlice = createSlice({
         JSON.stringify(action.payload)
       );
     },
-    setDialQueue: (state, action) => {
-      state.dialQueue = action.payload;
 
-      // Persist in local storage
-      localStorage.setItem(
-        LOCAL_STORAGE_KEY__DIAL_QUEUE,
-        JSON.stringify(action.payload)
-      );
-    },
-    updateLeadById: (
-      state,
-      action: PayloadAction<{ id: number; leadUpdated: Lead }>
-    ) => {
-      const { dialQueue } = state;
-      const { id, leadUpdated } = action.payload;
-      const indexFound = dialQueue.findIndex((lead) => lead.id === id);
-      if (indexFound === -1) {
-        return console.log("Error finding lead in queue");
-      }
-      dialQueue[indexFound] = leadUpdated;
-    },
-    setIsMuted: (state, action) => {
-      state.muted = action.payload;
-    },
     setConnectedAt: (state, action) => {
       state.connectedAt = action.payload;
     },
@@ -191,61 +164,7 @@ export const DialerSlice = createSlice({
     setCurrentDialAttempts: (state, action) => {
       state.currentDialAttempts = action.payload;
     },
-    moveLeadUpInQueue: (state, action) => {
-      const id = action.payload;
-      const indexFound = state.dialQueue.findIndex((lead) => lead.id === id);
 
-      if (indexFound === -1) {
-        console.error("Lead index not found");
-        return;
-      }
-
-      // If at the top, do nothing
-      if (indexFound === 0) {
-        return;
-      }
-
-      const queue = [...state.dialQueue];
-      const item = queue.splice(indexFound, 1)[0];
-      queue.splice(indexFound - 1, 0, item);
-
-      state.dialQueue = queue;
-
-      // Update dial index, if active
-      if (state.dialQueueIndex !== null) {
-        state.dialQueueIndex--;
-      }
-    },
-    moveLeadDownInQueue: (state, action) => {
-      const id = action.payload;
-      const indexFound = state.dialQueue.findIndex((lead) => lead.id === id);
-
-      if (indexFound === -1) {
-        console.error("Lead index not found");
-        return;
-      }
-
-      // If at the bottom, do nothing
-      if (indexFound === state.dialQueue.length - 1) {
-        return;
-      }
-
-      const queue = [...state.dialQueue];
-      const item = queue.splice(indexFound, 1)[0];
-      queue.splice(indexFound + 1, 0, item);
-
-      state.dialQueue = queue;
-
-      // Update dial index, if active
-      if (state.dialQueueIndex !== null) {
-        state.dialQueueIndex++;
-      }
-    },
-    deleteLeadFromQueue: (state, action) => {
-      state.dialQueue = state.dialQueue.filter(
-        (lead) => lead.id !== action.payload
-      );
-    },
     setShowNewCallerIdModal: (state, action) => {
       state.showNewCallerIdModal = action.payload;
     },
@@ -267,37 +186,14 @@ export const {
   setIdentity,
   setToken,
   setError,
-  setDialQueue,
-  setDialQueueIndex,
-  setIsMuted,
+  setActiveLead,
   setStatus,
   setShowOptions,
   setOptions,
-  moveLeadUpInQueue,
-  moveLeadDownInQueue,
-  deleteLeadFromQueue,
   setConnectedAt,
-  updateLeadById,
   setShowNewCallerIdModal,
   setShowNewCallerIdValidatingModal,
 } = DialerSlice.actions;
-
-export const selectIsCallActive = (state: RootState) => state.dialer.call;
-
-export const selectActivePhoneNumber = (state: RootState) => {
-  const { dialQueueIndex, dialQueue } = state.dialer;
-  return dialQueueIndex !== null ? dialQueue[dialQueueIndex].phone : undefined;
-};
-
-export const selectActiveFullName = (state: RootState) => {
-  const { dialQueueIndex, dialQueue } = state.dialer;
-  return dialQueueIndex !== null
-    ? `${dialQueue[dialQueueIndex].first_name} ${dialQueue[dialQueueIndex].last_name}`
-    : undefined;
-};
-
-export const selectShowAlphaDialer = (state: RootState) =>
-  state.dialer.isDialerOpen;
 
 export const selectIsDialerOptionsModalOpen = (state: RootState) =>
   state.dialer.showOptions;

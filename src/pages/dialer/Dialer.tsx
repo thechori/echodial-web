@@ -1,15 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { Call, Device } from "@twilio/voice-sdk";
-import { ActionIcon, Card, Text, Tooltip } from "@mantine/core";
+import { Text, Tooltip } from "@mantine/core";
 import { Box, Flex } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import {
-  MdOutlineTune,
-  MdExpandLess,
-  MdExpandMore,
-  MdInfoOutline,
-} from "react-icons/md";
-import { IconPlayerSkipForwardFilled } from "@tabler/icons-react";
+import { MdInfoOutline } from "react-icons/md";
 //
 import {
   useAddCallMutation,
@@ -29,22 +23,19 @@ import {
   setCurrentDialAttempts,
   setRequestAction,
   setConnectedAt,
-  setDialQueueIndex,
-  setShowOptions,
-  setIsDialerOpen,
+  setActiveLead,
   setStatus,
 } from "../../store/dialer/slice";
 import { DialerStyled, DialerStatus } from "./Dialer.styles";
 import { Call as TCall } from "../../types";
-import DialerQueue from "./DialerQueue";
 import CallerIdSelect from "./CallerIdSelect";
-import { DialerLeadDetail } from "./DialerLeadDetail";
 import { dialStateInstance } from "./DialState.class";
 import { useDeductTrialCreditMutation } from "../../services/trial-credit";
 import { DialerPrimaryButton } from "./DialerPrimaryButton";
 import phoneFormatter from "../../utils/phone-formatter";
 import { Duration, intervalToDuration } from "date-fns";
 import * as amplitude from "@amplitude/analytics-browser";
+import { useGetLeadsQuery } from "../../services/lead";
 
 function Dialer() {
   const dispatch = useAppDispatch();
@@ -52,20 +43,18 @@ function Dialer() {
   const [elapsedTime, setElapsedTime] = useState("0:00:00");
 
   const jwtDecoded = useAppSelector(selectJwtDecoded);
+  const { data: leads } = useGetLeadsQuery();
   const {
     requestAction,
     call,
     device,
     token,
     fromNumber,
-    dialQueue,
-    isDialerOpen,
     error,
     status,
     connectedAt,
-    dialQueueIndex,
+    activeLead,
   } = useAppSelector((state) => state.dialer);
-  const { subscriptionActive } = useAppSelector((state) => state.user);
   //
   const [addCall] = useAddCallMutation();
   const [updateCallViaId] = useUpdateCallViaIdMutation();
@@ -132,7 +121,6 @@ function Dialer() {
       return;
     }
 
-    // Stop call
     await stopCall();
 
     // Clear error
@@ -145,20 +133,7 @@ function Dialer() {
       return;
     }
 
-    // Check for items in queue
-    if (dialQueue.length === 0) {
-      dialStateInstance.error =
-        "No leads in call queue, be sure to add some before running the dialer";
-      dispatch(setError(dialStateInstance.error));
-      return;
-    }
-
-    // Initialize index if none provided AND current index is not set
-    if (dialStateInstance.dialQueueIndex === null) {
-      dialStateInstance.dialQueueIndex = 0;
-    }
-
-    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
+    dispatch(setActiveLead(dialStateInstance.activeLead));
 
     // Initialize or increment current dial attempts
     if (dialStateInstance.currentDialAttempts === null) {
@@ -170,8 +145,20 @@ function Dialer() {
 
     dispatch(setCurrentDialAttempts(dialStateInstance.currentDialAttempts));
 
+    if (!leads) {
+      dispatch(setError("No leads found"));
+      return;
+    }
+
+    if (!activeLead) {
+      dispatch(
+        setError(`Lead with id ${dialStateInstance.activeLead} not found`)
+      );
+      return;
+    }
+
     const params = {
-      To: dialQueue[dialStateInstance.dialQueueIndex].phone,
+      To: activeLead.phone,
       From: fromNumber,
       user_id: jwtDecoded?.id || null,
     };
@@ -197,16 +184,15 @@ function Dialer() {
         return;
       }
 
-      if (dialStateInstance.dialQueueIndex === null) {
+      if (dialStateInstance.activeLead === null) {
         return;
       }
 
       const newCall: Partial<TCall> = {
         user_id: jwtDecoded?.id,
-        lead_id: dialQueue[dialStateInstance.dialQueueIndex].id,
+        lead_id: activeLead.id,
         from_number: fromNumber,
-        to_number:
-          dialQueue[dialStateInstance.dialQueueIndex].phone || undefined,
+        to_number: activeLead.phone || undefined,
       };
 
       try {
@@ -286,8 +272,9 @@ function Dialer() {
     addCall,
     deductTrialCredit,
     device,
-    dialQueue,
     dispatch,
+    leads,
+    activeLead,
     fromNumber,
     jwtDecoded?.id,
     updateCallViaId,
@@ -299,50 +286,6 @@ function Dialer() {
     dialStateInstance.currentCallId = null;
     dispatch(setCurrentCallId(dialStateInstance.currentCallId));
   }, [dispatch]);
-
-  // Invoked when:
-  // - Next arrow is click
-  async function skipToNextLead() {
-    // Stop call
-    await stopCall();
-
-    // Check for existing index before proceeding
-    if (dialStateInstance.dialQueueIndex === dialQueue.length - 1) {
-      notifications.show({
-        message: "You've made it through all of your leads! Great job 🎉",
-      });
-
-      dialStateInstance.dialQueueIndex = null;
-      dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-      return;
-    }
-
-    // Check for null dial index
-    if (dialStateInstance.dialQueueIndex === null) {
-      notifications.show({
-        message:
-          "Dial index is null. Try selecting a different lead and trying again",
-      });
-      return;
-    }
-    amplitude.track("Next lead");
-    // Point to the next Lead in the queue
-    const value = dialStateInstance.dialQueueIndex + 1;
-    dialStateInstance.dialQueueIndex = value;
-    dispatch(setDialQueueIndex(dialStateInstance.dialQueueIndex));
-
-    // Reset attempt count
-    dialStateInstance.currentDialAttempts = 0;
-    dispatch(setCurrentDialAttempts(dialStateInstance.currentDialAttempts));
-
-    // Check for null active index
-    if (dialStateInstance.dialQueueIndex === null) {
-      return console.error("No active contact index found");
-    }
-
-    // We're safe to proceed
-    startCall();
-  }
 
   // Invoked when:
   // - Stop button is clicked
@@ -372,10 +315,6 @@ function Dialer() {
 
     return true;
   }, [dispatch, endCallViaId, resetDialerState]);
-
-  const openDialerOptions = () => {
-    dispatch(setShowOptions(true));
-  };
 
   //////////////////////// HOOKS ///////////////////////////
 
@@ -414,17 +353,11 @@ function Dialer() {
         break;
       }
 
-      case "skipToNextLead": {
-        skipToNextLead();
-        dispatch(setRequestAction(null));
-        break;
-      }
-
       default: {
         dispatch(setRequestAction(null));
       }
     }
-  }, [requestAction, call, dispatch, stopCall, startCall, skipToNextLead]);
+  }, [requestAction, call, dispatch, stopCall, startCall]);
 
   useEffect(() => {
     if (!connectedAt) return;
@@ -450,23 +383,14 @@ function Dialer() {
   let name = "";
   let phone = "";
 
-  if (dialQueue && dialQueueIndex !== null) {
-    const lead = dialQueue[dialQueueIndex];
-    name = `${lead.first_name || ""} ${lead.last_name || ""}`;
-    phone = phoneFormatter(lead.phone) || "";
+  if (activeLead !== null) {
+    name = `${activeLead.first_name || ""} ${activeLead.last_name || ""}`;
+    phone = phoneFormatter(activeLead.phone) || "";
   }
 
   return (
     // Don't show the Dialer if there are no leads in the queue
-    <DialerStyled
-      $state={
-        dialQueue.length === 0
-          ? "hidden"
-          : isDialerOpen
-          ? "expanded"
-          : "collapsed"
-      }
-    >
+    <DialerStyled $state={"collapsed"}>
       <Flex
         align="flex-start"
         justify="space-between"
@@ -486,7 +410,7 @@ function Dialer() {
             <Flex align="center">
               <DialerPrimaryButton />
 
-              <Tooltip label="Skip to next Lead" openDelay={500}>
+              {/* <Tooltip label="Skip to next Lead" openDelay={500}>
                 <ActionIcon
                   size="lg"
                   disabled={!subscriptionActive}
@@ -495,7 +419,7 @@ function Dialer() {
                 >
                   <IconPlayerSkipForwardFilled />
                 </ActionIcon>
-              </Tooltip>
+              </Tooltip> */}
 
               <DialerStatus
                 $visible={
@@ -520,6 +444,10 @@ function Dialer() {
                 <Text size="sm" lh="1.1rem">
                   {phone}
                 </Text>
+
+                <Text size="xs" color="red">
+                  {error}
+                </Text>
               </Box>
             </Flex>
           </Flex>
@@ -537,54 +465,8 @@ function Dialer() {
             </Tooltip>
 
             <CallerIdSelect w={180} />
-
-            <Tooltip label="Open dialer settings" openDelay={500}>
-              <ActionIcon
-                variant="outline"
-                onClick={openDialerOptions}
-                size="lg"
-              >
-                <MdOutlineTune />
-              </ActionIcon>
-            </Tooltip>
-
-            <Tooltip label="Toggle visibility of the dialer" openDelay={500}>
-              <Flex ml="xs" align="center">
-                {isDialerOpen ? (
-                  <MdExpandMore
-                    className="hoverable"
-                    fontSize="2rem"
-                    color="grey"
-                    onClick={() => dispatch(setIsDialerOpen(false))}
-                  />
-                ) : (
-                  <MdExpandLess
-                    className="hoverable"
-                    fontSize="2rem"
-                    color="grey"
-                    onClick={() => dispatch(setIsDialerOpen(true))}
-                  />
-                )}
-              </Flex>
-            </Tooltip>
           </Flex>
         </Flex>
-      </Flex>
-
-      <Flex className="split">
-        <Box m="md">
-          <DialerQueue />
-
-          {error && (
-            <Card withBorder mt="md">
-              <Text>Error</Text>
-              <Text color="red">{error}</Text>
-            </Card>
-          )}
-        </Box>
-        <Box m="md">
-          <DialerLeadDetail />
-        </Box>
       </Flex>
     </DialerStyled>
   );
