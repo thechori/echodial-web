@@ -21,9 +21,11 @@ All features and bugs should live within git branches (e.g., `bucket-module`) an
 
 ## Deployment
 
-This deployment is managed by DigitalOcean Apps. When code is merged into the `main` branch, the CI/CD pipeline will handle the building of the application and deployment to the site.
+This deployment is managed by DigitalOcean Apps.
 
-_TODO: Update docs once multiple environments are setup_
+When code is merged into the `main` branch, the CI/CD pipeline will handle the building of the application and deployment to the staging site (https://staging.app.unagidialer.com).
+
+When ode is merged into the `production` branch, the CI/CD pipeline will handle the building of the application and deployment to the production site (https://app.unagidialer.com).
 
 ## Important
 
@@ -32,7 +34,7 @@ _TODO: Update docs once multiple environments are setup_
   - See instructions here for details on how to do this within the Twilio dashboard
     - _TODO: Create doc for this_
 
-- Database migrations are used to update the Postgres schema via knex. When these are completed, be sure to also run the npm script (npm run generate-types:dev) in order to properly update the generates types within the app (output will be at src/types/index.ts)
+- Whenever changes to the database schema are made, be sure to check the `echodial-api` project and grab the most-up-to-date type definitions from `src/types.ts` and copy the contents into this projects types file at `src/types.ts` -- this is the temporary solution until a proper one can be created
 
 - Whenever new environment variables are added to the `.env.local` file, corresponding environment variables must be added to the Digital Ocean App settings
 
