@@ -189,7 +189,9 @@ export const LeadDetail = () => {
 
     //grab the property names and create a new object mapping the custom property name
     //to its value
-    const propertyNames = customProperties?.map((property) => property.name);
+    const propertyNames = customProperties?.map(
+      (property: any) => property.name
+    );
     const newConstantProperties = propertyNames?.reduce(
       (acc: any, property) => {
         acc[property] = "";

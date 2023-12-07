@@ -39,6 +39,16 @@ import { ColDef } from "ag-grid-community";
 import { MdLibraryAddCheck } from "react-icons/md";
 import { setSelectedLead } from "../../store/lead-detail/slice";
 
+const selectColDef: ColDef = {
+  colId: "select-col",
+  width: 50,
+  sortable: true,
+  headerCheckboxSelection: true,
+  checkboxSelection: true,
+  showDisabledCheckboxes: true,
+  headerCheckboxSelectionFilteredOnly: true,
+};
+
 function LeadsFilteredList() {
   const { isSelectModeActive } = useAppSelector((state) => state.leads);
   const { data: leadStatuses } = useGetLeadStatusesQuery();
@@ -160,7 +170,6 @@ function LeadsFilteredList() {
   });
 
   const onSelectionChanged = (event: SelectionChangedEvent) => {
-    console.log("hey", event.api.getSelectedRows());
     dispatch(setSelectedRows(event.api.getSelectedRows()));
   };
 
@@ -205,6 +214,11 @@ function LeadsFilteredList() {
 
   useEffect(() => {
     console.log(columnDefs);
+    if (isSelectModeActive) {
+      setColumnDefs([selectColDef, ...columnDefs]);
+    } else {
+      setColumnDefs(columnDefs.filter((cd) => cd.colId !== "select-col"));
+    }
   }, [isSelectModeActive]);
 
   return (
@@ -239,15 +253,6 @@ function LeadsFilteredList() {
           </Flex>
 
           <Flex align="center">
-            {!isSelectModeActive && (
-              <Button
-                variant="subtle"
-                leftIcon={<MdLibraryAddCheck fontSize="1.25rem" />}
-                onClick={() => dispatch(setIsSelectModeActive(true))}
-              >
-                Select
-              </Button>
-            )}
             {isSelectModeActive && (
               <Button
                 size="xs"
@@ -259,6 +264,24 @@ function LeadsFilteredList() {
                 disabled={selectedRows.length === 0}
               >
                 Delete
+              </Button>
+            )}
+
+            {isSelectModeActive ? (
+              <Button
+                variant="subtle"
+                leftIcon={<MdLibraryAddCheck fontSize="1.25rem" />}
+                onClick={() => dispatch(setIsSelectModeActive(false))}
+              >
+                Cancel
+              </Button>
+            ) : (
+              <Button
+                variant="subtle"
+                leftIcon={<MdLibraryAddCheck fontSize="1.25rem" />}
+                onClick={() => dispatch(setIsSelectModeActive(true))}
+              >
+                Select
               </Button>
             )}
           </Flex>
