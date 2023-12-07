@@ -222,14 +222,14 @@ function SignUp() {
                 <Text size="xs">
                   I accept the{" "}
                   <a
-                    href="https://unagidialer.wpcomstaging.com/terms-of-service/"
+                    href="https://unagidialer.com/terms-of-service/"
                     target="_blank"
                   >
                     Terms of Service
                   </a>{" "}
                   and have read and agree to the{" "}
                   <a
-                    href="https://unagidialer.wpcomstaging.com/privacy-policy/"
+                    href="https://unagidialer.com/privacy-policy/"
                     target="_blank"
                   >
                     Privacy Policy
