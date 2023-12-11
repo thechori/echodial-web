@@ -157,14 +157,31 @@ function Dialer() {
       return;
     }
 
-    const params = {
-      To: activeLead.phone,
-      From: fromNumber,
-      user_id: jwtDecoded?.id || null,
+    if (!activeLead.phone) {
+      dispatch(setError("No phone number found"));
+      return;
+    }
+
+    if (!jwtDecoded || !jwtDecoded.id) {
+      dispatch(setError("No user id found in jwt"));
+      return;
+    }
+
+    if (activeLead.phone === fromNumber) {
+      dispatch(setError("A phone number cannot call itself"));
+      return;
+    }
+
+    const connectOptions: Device.ConnectOptions = {
+      params: {
+        To: activeLead.phone,
+        From: fromNumber,
+        user_id: jwtDecoded.id.toString(),
+      },
     };
 
     // Start Call
-    const c = (await device.connect({ params })) as Call;
+    const c = (await device.connect(connectOptions)) as Call;
 
     dialStateInstance.status = Call.State.Connecting;
     dispatch(setStatus(dialStateInstance.status));
