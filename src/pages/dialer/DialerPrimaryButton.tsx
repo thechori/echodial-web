@@ -17,7 +17,7 @@ import { EndButton, StartButton } from "./DialerPrimaryButton.styles";
  */
 const DialerPrimaryButton = () => {
   const dispatch = useAppDispatch();
-  const { call, status } = useAppSelector((state) => state.dialer);
+  const { call, status, activeLead } = useAppSelector((state) => state.dialer);
   const { subscriptionActive } = useAppSelector((state) => state.user);
 
   function startCall() {
@@ -50,7 +50,11 @@ const DialerPrimaryButton = () => {
           </HoverCard>
         ) : !call ? (
           <Tooltip label="Begin calling selected lead" openDelay={500}>
-            <StartButton onClick={startCall} className="hoverable">
+            <StartButton
+              onClick={startCall}
+              className="hoverable"
+              disabled={!activeLead}
+            >
               <MdPhone fontSize="1.5rem" />
             </StartButton>
           </Tooltip>
