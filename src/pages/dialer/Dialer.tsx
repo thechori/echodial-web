@@ -406,7 +406,6 @@ function Dialer() {
   }
 
   return (
-    // Don't show the Dialer if there are no leads in the queue
     <DialerStyled $state={"collapsed"}>
       <Flex
         align="flex-start"

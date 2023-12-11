@@ -35,7 +35,7 @@ const DialerPrimaryButton = () => {
           <HoverCard width={280} shadow="md">
             <HoverCard.Target>
               <div>
-                <StartButton disabled={!subscriptionActive}>
+                <StartButton $error disabled={!subscriptionActive}>
                   <MdPhone fontSize="1.5rem" />
                 </StartButton>
               </div>
@@ -51,6 +51,7 @@ const DialerPrimaryButton = () => {
         ) : !call ? (
           <Tooltip label="Begin calling selected lead" openDelay={500}>
             <StartButton
+              $error={false}
               onClick={startCall}
               className="hoverable"
               disabled={!activeLead}
