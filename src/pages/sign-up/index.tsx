@@ -118,24 +118,35 @@ function SignUp() {
         <div className="card">
           <div className="left">
             <div className="value-proposition">
-              <div className="title">With {APP_NAME} you get:</div>
-              <List
-                spacing="md"
-                size="md"
-                center
-                icon={
-                  <ThemeIcon color="teal" size={24} radius="xl">
-                    <IconCircleCheck size="1rem" />
-                  </ThemeIcon>
-                }
-              >
-                <List.Item>The dialer with total awareness</List.Item>
-                <List.Item>Best-in-class user interface</List.Item>
-                <List.Item>High-quality voice calls</List.Item>
-                <List.Item>1500+ voice call minutes per month</List.Item>
-                <List.Item>Access to premium support</List.Item>
-                <List.Item>Free trial</List.Item>
-              </List>
+              <Flex direction="column">
+                <div className="title">With {APP_NAME} you get:</div>
+                <List
+                  spacing="md"
+                  size="md"
+                  center
+                  icon={
+                    <ThemeIcon color="teal" size={24} radius="xl">
+                      <IconCircleCheck size="1rem" />
+                    </ThemeIcon>
+                  }
+                >
+                  <List.Item>The dialer with total awareness</List.Item>
+                  <List.Item>Best-in-class user interface</List.Item>
+                  <List.Item>High-quality voice calls</List.Item>
+                  <List.Item>1500+ voice call minutes per month</List.Item>
+                  <List.Item>Access to premium support</List.Item>
+                  <List.Item>Free trial</List.Item>
+                </List>
+              </Flex>
+
+              <Box>
+                <Text size="sm" pb={4}>
+                  Already have an account?
+                </Text>
+                <Button compact onClick={() => navigate(routes.signIn)}>
+                  Sign In
+                </Button>
+              </Box>
             </div>
           </div>
           <div className="right">
@@ -211,14 +222,14 @@ function SignUp() {
                 <Text size="xs">
                   I accept the{" "}
                   <a
-                    href="https://unagidialer.wpcomstaging.com/terms-of-service/"
+                    href="https://unagidialer.com/terms-of-service/"
                     target="_blank"
                   >
                     Terms of Service
                   </a>{" "}
                   and have read and agree to the{" "}
                   <a
-                    href="https://unagidialer.wpcomstaging.com/privacy-policy/"
+                    href="https://unagidialer.com/privacy-policy/"
                     target="_blank"
                   >
                     Privacy Policy
@@ -239,13 +250,6 @@ function SignUp() {
             </form>
           </div>
         </div>
-
-        <Flex align="center" justify="space-between" w={300} py={32} mx="auto">
-          <Text color="white">Already have an account?</Text>
-          <Button variant="white" onClick={() => navigate(routes.signIn)}>
-            Sign In
-          </Button>
-        </Flex>
       </Container>
     </SignUpStyled>
   );

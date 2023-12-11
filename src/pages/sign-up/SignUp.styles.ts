@@ -31,6 +31,7 @@ const SignUpStyled = styled.div`
     margin-left: auto;
     margin-right: auto;
     display: block;
+    padding-bottom: 32px;
 
     @media ${devices.tablet} {
       display: flex;
@@ -51,7 +52,10 @@ const SignUpStyled = styled.div`
       }
 
       .value-proposition {
-        padding: 40px 55px 75px 55px;
+        padding: 40px 55px 32px 55px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
         .title {
           margin-bottom: 1rem;

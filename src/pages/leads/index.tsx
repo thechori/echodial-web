@@ -16,7 +16,7 @@ function Leads() {
         <LeadsFilteredList />
       </Box>
 
-      <LeadDetailContainer $open={!!selectedLead}>
+      <LeadDetailContainer $open={selectedLead !== null}>
         <LeadDetail />
       </LeadDetailContainer>
     </LeadsStyled>

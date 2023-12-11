@@ -15,6 +15,7 @@ export enum Table {
   LeadPropertyType = "lead_property_type",
   LeadStandardProperty = "lead_standard_property",
   LeadStatus = "lead_status",
+  LeadTag = "lead_tag",
   PasswordResetToken = "password_reset_token",
   TrialCredit = "trial_credit",
   User = "user",
@@ -34,6 +35,7 @@ export type Tables = {
   lead_property_type: LeadPropertyType;
   lead_standard_property: LeadStandardProperty;
   lead_status: LeadStatus;
+  lead_tag: LeadTag;
   password_reset_token: PasswordResetToken;
   trial_credit: TrialCredit;
   user: User;
@@ -192,6 +194,14 @@ export type LeadStatus = {
   value: string;
   description: string | null;
   label: string;
+};
+
+export type LeadTag = {
+  id: number;
+  user_id: number;
+  name: string;
+  label: string;
+  color: string;
 };
 
 export type PasswordResetToken = {

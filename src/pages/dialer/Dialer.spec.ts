@@ -28,7 +28,7 @@ describe("dialer", () => {
   });
 
   // TODO: add back and TDD
-  // it("should stop dialing when an error occurs, while keeping the `dialQueueIndex`", () => {
+  // it("should stop dialing when an error occurs, while keeping the `activeLead`", () => {
   //   const done = false;
   //   expect(true).toEqual(done);
   // });

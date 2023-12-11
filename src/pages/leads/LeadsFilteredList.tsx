@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useWindowEvent } from "@mantine/hooks";
 import { createSelector } from "@reduxjs/toolkit";
-import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { AgGridReact } from "ag-grid-react";
 import { IconSearch, IconTrash } from "@tabler/icons-react";
 import {
@@ -25,8 +24,9 @@ import { useGetLeadsQuery } from "../../services/lead";
 import LeadsFilterDrawer from "./LeadsFilterDrawer";
 import { leadColDefs } from "./leadColDefs";
 import { useGetLeadStatusesQuery } from "../../services/lead.status";
-import { SelectionChangedEvent } from "ag-grid-community";
+import { CellClickedEvent, SelectionChangedEvent } from "ag-grid-community";
 import {
+  setIsSelectModeActive,
   setRequestForImportLeadsModal,
   setRequestForManualCreateLeadsModal,
   setSelectedRows,
@@ -36,8 +36,21 @@ import { LeadsFilteredListStyled } from "./LeadsFilteredList.styles";
 import { dialStateInstance } from "../dialer/DialState.class";
 import { useGetLeadCustomPropertiesQuery } from "../../services/lead";
 import { ColDef } from "ag-grid-community";
+import { MdLibraryAddCheck } from "react-icons/md";
+import { setSelectedLead } from "../../store/lead-detail/slice";
+
+const selectColDef: ColDef = {
+  colId: "select-col",
+  width: 50,
+  sortable: true,
+  headerCheckboxSelection: true,
+  checkboxSelection: true,
+  showDisabledCheckboxes: true,
+  headerCheckboxSelectionFilteredOnly: true,
+};
 
 function LeadsFilteredList() {
+  const { isSelectModeActive } = useAppSelector((state) => state.leads);
   const { data: leadStatuses } = useGetLeadStatusesQuery();
   const { data: leads } = useGetLeadsQuery();
   const [
@@ -45,7 +58,7 @@ function LeadsFilteredList() {
     { open: openDeleteConfirmationModal, close: closeDeleteConfirmationModal },
   ] = useDisclosure(false);
 
-  //Custom Properties
+  // Custom Properties
   const { data: customProperties, isLoading: customPropertiesLoading } =
     useGetLeadCustomPropertiesQuery();
 
@@ -58,6 +71,7 @@ function LeadsFilteredList() {
   );
 
   const [columnDefs, setColumnDefs] = useState<ColDef<Lead>[]>([]);
+
   useEffect(() => {
     let newCustomPropertiesArray: ColDef<Lead>[] = [];
     if (!customPropertiesLoading && customProperties) {
@@ -159,6 +173,13 @@ function LeadsFilteredList() {
     dispatch(setSelectedRows(event.api.getSelectedRows()));
   };
 
+  const onCellClicked = (event: CellClickedEvent) => {
+    // TODO: Check to see if details are open and dirty, if so, show a confirmation dialog to abandon changes
+
+    // Proceed
+    dispatch(setSelectedLead(event.data));
+  };
+
   const openImportModal = () => {
     dispatch(setRequestForImportLeadsModal(true));
   };
@@ -191,6 +212,15 @@ function LeadsFilteredList() {
     dialStateInstance.gridRef = gridRef;
   }, [gridRef]);
 
+  useEffect(() => {
+    console.log(columnDefs);
+    if (isSelectModeActive) {
+      setColumnDefs([selectColDef, ...columnDefs]);
+    } else {
+      setColumnDefs(columnDefs.filter((cd) => cd.colId !== "select-col"));
+    }
+  }, [isSelectModeActive]);
+
   return (
     <LeadsFilteredListStyled>
       <Card
@@ -214,23 +244,16 @@ function LeadsFilteredList() {
             />
             <TextInput
               placeholder="Search..."
-              maw={200}
+              w={300}
               px="md"
               icon={<IconSearch size="1rem" />}
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
             />
-            <Button
-              variant={appliedFilters.length ? "light" : "subtle"}
-              onClick={() => setFilterDrawerOpen(!filterDrawerOpen)}
-              leftIcon={<HiOutlineAdjustmentsHorizontal size={20} />}
-            >
-              Filters ({appliedFilters.length})
-            </Button>
           </Flex>
 
           <Flex align="center">
-            {selectedRows.length > 0 && (
+            {isSelectModeActive && (
               <Button
                 size="xs"
                 color="red"
@@ -238,8 +261,27 @@ function LeadsFilteredList() {
                 leftIcon={<IconTrash />}
                 variant="subtle"
                 onClick={deleteLeads}
+                disabled={selectedRows.length === 0}
               >
                 Delete
+              </Button>
+            )}
+
+            {isSelectModeActive ? (
+              <Button
+                variant="subtle"
+                leftIcon={<MdLibraryAddCheck fontSize="1.25rem" />}
+                onClick={() => dispatch(setIsSelectModeActive(false))}
+              >
+                Cancel
+              </Button>
+            ) : (
+              <Button
+                variant="subtle"
+                leftIcon={<MdLibraryAddCheck fontSize="1.25rem" />}
+                onClick={() => dispatch(setIsSelectModeActive(true))}
+              >
+                Select
               </Button>
             )}
           </Flex>
@@ -275,10 +317,12 @@ function LeadsFilteredList() {
               columnDefs={columnDefs}
               animateRows={true}
               rowSelection="multiple"
-              suppressRowClickSelection
+              suppressRowClickSelection={true}
               quickFilterText={keyword}
               onSelectionChanged={onSelectionChanged}
+              onCellClicked={onCellClicked}
               components={components}
+              suppressMenuHide={true}
             />
           </Box>
         )}

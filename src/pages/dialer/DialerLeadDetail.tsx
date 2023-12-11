@@ -21,18 +21,16 @@ import { notifications } from "@mantine/notifications";
 import { format } from "date-fns";
 //
 import { LeadDetailStyled } from "../leads/LeadDetail.styles";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppSelector } from "../../store/hooks";
 import { useGetLeadStatusesQuery } from "../../services/lead.status";
 import { useUpdateLeadMutation } from "../../services/lead";
 import { extractErrorMessage } from "../../utils/error";
 import { Lead } from "../../types";
 import phoneFormatter from "../../utils/phone-formatter";
-import { updateLeadById } from "../../store/dialer/slice";
 import { useGetLeadCustomPropertiesQuery } from "../../services/lead";
 
 export const DialerLeadDetail = () => {
-  const dispatch = useAppDispatch();
-  const { dialQueue, dialQueueIndex, call } = useAppSelector(
+  const { activeLead: _activeLead, call } = useAppSelector(
     (state) => state.dialer
   );
 
@@ -106,13 +104,12 @@ export const DialerLeadDetail = () => {
 
   // Grab lead from state use queue and index
   useEffect(() => {
-    if (dialQueue.length && dialQueueIndex !== null) {
-      const lead = dialQueue[dialQueueIndex];
-      setActiveLead(lead);
+    if (_activeLead !== null) {
+      setActiveLead(_activeLead);
     } else {
       setActiveLead(null);
     }
-  }, [dialQueue, dialQueueIndex]);
+  }, [_activeLead]);
 
   useEffect(() => {
     form.reset();
@@ -208,12 +205,6 @@ export const DialerLeadDetail = () => {
       if (form.values.id === undefined) {
         throw Error("No lead ID found");
       }
-
-      // Update local lead in queue
-      dispatch(
-        // @ts-ignore - we checked for undefined `id` above
-        updateLeadById({ id: form.values.id, leadUpdated: form.values })
-      );
     } catch (e) {
       const errorMessage = extractErrorMessage(e);
       setError(errorMessage);
@@ -324,13 +315,6 @@ export const DialerLeadDetail = () => {
               label="Answer count"
               disabled
               {...form.getInputProps("answer_count")}
-            />
-
-            <Textarea
-              w="100%"
-              minRows={1}
-              label="Not interested reason"
-              {...form.getInputProps("not_interested_reason")}
             />
           </Group>
 

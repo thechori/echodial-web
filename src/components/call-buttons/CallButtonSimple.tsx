@@ -1,7 +1,8 @@
 import { PiPhoneDisconnect } from "react-icons/pi";
-import CallButtonSimpleStyled from "./CallButtonSimple.styles";
-import { Tooltip } from "@mantine/core";
+import { Flex } from "@mantine/core";
 import { MdPhone } from "react-icons/md";
+//
+import CallButtonSimpleStyled from "./CallButtonSimple.styles";
 
 export type TCallButtonSimpleProps = {
   active: boolean;
@@ -15,29 +16,23 @@ const CallButtonSimple = ({
   onInactiveClick,
   onActiveClick,
 }: TCallButtonSimpleProps) => {
-  if (!active) {
+  if (active) {
     return (
-      <CallButtonSimpleStyled>
-        <Tooltip label="End call" openDelay={500}>
-          <div>
-            <PiPhoneDisconnect
-              color="red"
-              fontSize="1.5rem"
-              onClick={onInactiveClick}
-            />
-          </div>
-        </Tooltip>
+      <CallButtonSimpleStyled $active={active}>
+        <PiPhoneDisconnect
+          color="red"
+          fontSize="1.5rem"
+          onClick={onActiveClick}
+        />
       </CallButtonSimpleStyled>
     );
   }
 
   return (
-    <CallButtonSimpleStyled>
-      <Tooltip label="Call" openDelay={500}>
-        <div>
-          <MdPhone color="green" fontSize="1.5rem" onClick={onActiveClick} />
-        </div>
-      </Tooltip>
+    <CallButtonSimpleStyled $active={active}>
+      <Flex align="center">
+        <MdPhone color="green" fontSize="1.5rem" onClick={onInactiveClick} />
+      </Flex>
     </CallButtonSimpleStyled>
   );
 };

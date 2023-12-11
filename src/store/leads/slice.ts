@@ -28,6 +28,7 @@ const buildInitialState = (): TLeadsState => ({
   filteredRows: [],
   appliedFilters: [],
   selectedRows: [],
+  isSelectModeActive: false,
   shouldImportLeadsModalOpen: false,
   shouldManualCreateLeadModalOpen: false,
   //
@@ -65,6 +66,9 @@ export const LeadsSlice = createSlice({
     setRequestForManualCreateLeadsModal: (state, action) => {
       state.shouldManualCreateLeadModalOpen = action.payload;
     },
+    setIsSelectModeActive: (state, action) => {
+      state.isSelectModeActive = action.payload;
+    },
   },
 });
 
@@ -76,6 +80,7 @@ export const {
   setRequestForImportLeadsModal,
   setRequestForManualCreateLeadsModal,
   setOptions,
+  setIsSelectModeActive,
 } = LeadsSlice.actions;
 
 export default LeadsSlice.reducer;

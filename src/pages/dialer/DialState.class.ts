@@ -1,10 +1,11 @@
 import { Call, Device } from "@twilio/voice-sdk";
+import { Lead } from "../../types";
 
 class DialerState {
   error: string;
   connectedAt: Date | null;
   currentCallId: number | null;
-  dialQueueIndex: number | null;
+  activeLead: Lead | null;
   currentDialAttempts: number;
   call: Call | null;
   device: Device | null;
@@ -19,7 +20,7 @@ class DialerState {
     this.error = "";
     this.connectedAt = null;
     this.currentCallId = null;
-    this.dialQueueIndex = null;
+    this.activeLead = null;
     this.currentDialAttempts = 0;
     this.call = null;
     this.device = null;

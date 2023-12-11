@@ -7,16 +7,7 @@ import phoneFormatter from "../../utils/phone-formatter";
 
 export const leadColDefs: ColDef<Lead>[] = [
   {
-    width: 50,
-    sortable: true,
-    headerCheckboxSelection: true,
-    checkboxSelection: true,
-    showDisabledCheckboxes: true,
-    headerCheckboxSelectionFilteredOnly: true,
-  },
-  {
-    width: 120,
-    headerName: "Actions",
+    width: 100,
     cellRenderer: "tableActionCell", // name comes from `components` memoized object which gets passed to AG Grid `components` parameter
   },
   {
@@ -29,12 +20,36 @@ export const leadColDefs: ColDef<Lead>[] = [
     valueFormatter: (val) => capitalizeFirstLetter(val.value),
   },
   {
-    headerName: "Full name",
+    headerName: "Tags",
+    resizable: true,
+    filter: "agTextColumnFilter",
+    width: 100,
+  },
+  {
+    headerName: "Name",
     sortable: true,
     resizable: true,
-    filter: true,
-    valueGetter: (params) =>
-      `${params.data?.first_name || ""} ${params.data?.last_name || ""}`,
+    filter: "agTextColumnFilter",
+    valueGetter: (params) => {
+      let val = "";
+
+      const { data } = params;
+
+      if (!data) return val;
+
+      const { first_name, last_name } = data;
+
+      val = first_name || "";
+
+      // Handle dynamic space between first and last name
+      if (first_name) {
+        val += " ";
+      }
+
+      val += last_name || "";
+
+      return val;
+    },
   },
   {
     field: "phone",
@@ -44,19 +59,11 @@ export const leadColDefs: ColDef<Lead>[] = [
     cellRenderer: (param: any) => phoneFormatter(param.value),
   },
   {
-    field: "call_count",
-    headerName: "Call count",
-    width: 120,
-    resizable: true,
-    sortable: true,
-    filter: true,
-  },
-  {
     field: "appointment_at",
     headerName: "Appointment at",
     resizable: true,
     sortable: true,
-    filter: true,
+    filter: "agDateColumnFilter",
     valueFormatter: ({ value }) => {
       return value ? format(new Date(value), "Pp") : "";
     },
@@ -67,6 +74,7 @@ export const leadColDefs: ColDef<Lead>[] = [
     resizable: true,
     sortable: true,
     filter: true,
+    hide: true,
   },
   {
     field: "address1",
@@ -74,6 +82,7 @@ export const leadColDefs: ColDef<Lead>[] = [
     resizable: true,
     sortable: true,
     filter: true,
+    hide: true,
   },
   {
     field: "city",
@@ -81,6 +90,7 @@ export const leadColDefs: ColDef<Lead>[] = [
     resizable: true,
     sortable: true,
     filter: true,
+    hide: true,
   },
   {
     field: "state",
@@ -88,6 +98,7 @@ export const leadColDefs: ColDef<Lead>[] = [
     resizable: true,
     sortable: true,
     filter: true,
+    hide: true,
   },
   {
     field: "zip",
@@ -95,28 +106,15 @@ export const leadColDefs: ColDef<Lead>[] = [
     resizable: true,
     sortable: true,
     filter: true,
-  },
-  {
-    field: "do_not_call",
-    headerName: "Do not call (DNC)",
-    resizable: true,
-    sortable: true,
-    filter: true,
-  },
-
-  {
-    field: "not_interested_reason",
-    headerName: "Not interested reason",
-    resizable: true,
-    sortable: true,
-    filter: true,
+    hide: true,
   },
   {
     field: "created_at",
     headerName: "Created at",
     resizable: true,
     sortable: true,
-    filter: true,
+    sort: "desc",
+    filter: "agDateColumnFilter",
     valueFormatter: (param) => format(new Date(param.value), "Pp"),
   },
 ];
