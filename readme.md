@@ -2,6 +2,8 @@
 
 React app (Vite) built for the frontend of the app
 
+Open sourced on 2024-11-07
+
 ## Requirements
 
 - Node.js v20.5.0+
